@@ -22,3 +22,11 @@ cd sim
 # Inside the Docker container
 ./runheadless.native.sh -v
 ```
+
+### Notes
+
+1. After cloning Isaac Gym, sometimes the bindings mysteriously disappear. To fix this, update the submodule:
+
+```bash
+git submodule update --init --recursive
+```
