@@ -7,8 +7,8 @@ checkers and VSCode. I am just doing it this way to get something working
 quickly.
 """
 
-from .humanoid_config import XBotLCfg, XBotLCfgPPO
-from .humanoid_env import XBotLFreeEnv
+from .humanoid_config import StompyCfg, StompyPPO
+from .humanoid_env import StompyFreeEnv
 
 
 def register_tasks() -> None:
@@ -19,7 +19,7 @@ def register_tasks() -> None:
     """
     from humanoid.utils.task_registry import task_registry
 
-    task_registry.register("humanoid_ppo", XBotLFreeEnv, XBotLCfg(), XBotLCfgPPO())
+    task_registry.register("humanoid_ppo", StompyFreeEnv, StompyCfg(), StompyPPO())
 
 
 register_tasks()

@@ -9,7 +9,7 @@ the simulation, and how to configure the DOF properties of the robot.
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Literal, NewType
 
 from isaacgym import gymapi, gymutil
 
@@ -19,12 +19,12 @@ from sim.stompy.joints import Stompy
 
 logger = logging.getLogger(__name__)
 
-Gym = Any
-Env = Any
-Sim = Any
-Robot = Any
-Viewer = Any
-Args = Any
+Gym = NewType("Gym", Any)
+Env = NewType("Env", Any)
+Sim = NewType("Sim", Any)
+Robot = NewType("Robot", Any)
+Viewer = NewType("Viewer", Any)
+Args = NewType("Args", Any)
 
 DRIVE_MODE = gymapi.DOF_MODE_EFFORT
 # DRIVE_MODE = gymapi.DOF_MODE_POS

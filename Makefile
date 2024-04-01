@@ -23,6 +23,16 @@ all:
 .PHONY: all
 
 # ------------------------ #
+#          Train           #
+# ------------------------ #
+
+train-one:
+	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 1
+
+train:
+	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 1024 --headless
+
+# ------------------------ #
 #          Build           #
 # ------------------------ #
 

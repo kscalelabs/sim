@@ -116,6 +116,8 @@ class Stompy(Node):
 
 
 def print_joints() -> None:
+    joints = Stompy.all_joints()
+    assert len(joints) == len(set(joints)), "Duplicate joint names found!"
     print(Stompy())
 
 
