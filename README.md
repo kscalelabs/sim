@@ -25,8 +25,22 @@ cd sim
 
 ### Notes
 
-1. After cloning Isaac Gym, sometimes the bindings mysteriously disappear. To fix this, update the submodule:
+- After cloning Isaac Gym, sometimes the bindings mysteriously disappear. To fix this, update the submodule:
 
 ```bash
 git submodule update --init --recursive
 ```
+
+- After generating the URDF, for some reason, Isaac Gym has a weird issue with the knee joints. To fix this, you should change the axis of the knee joints from:
+
+```xml
+<axis xyz="0 0 1" />
+```
+
+to
+
+```xml
+<axis xyz="0 0 -1" />
+```
+
+For some reason this doesn't seem to happen for any other joints like the ankle, and also doesn't happen in other simulators like PyBullet.
