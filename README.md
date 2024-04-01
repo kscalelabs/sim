@@ -44,3 +44,5 @@ to
 ```
 
 For some reason this doesn't seem to happen for any other joints like the ankle, and also doesn't happen in other simulators like PyBullet.
+
+It might also be a good idea to remove the `mimic` joints between the motors and the ankles / knees.
