@@ -1,3 +1,6 @@
 [submodule "third_party/isaacgym"]
 	path = third_party/isaacgym
 	url = git@github.com:kscalelabs/isaacgym.git
+[submodule "third_party/humanoid-gym"]
+	path = third_party/humanoid-gym
+	url = git@github.com:kscalelabs/humanoid-gym.git
