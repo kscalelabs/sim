@@ -42,64 +42,64 @@ class Node(ABC):
 
 
 class Head(Node):
-    left_right: str = "joint_head_1_x4_1_dof"
-    up_down: str = "joint_head_1_x4_2_dof"
+    left_right: str = "joint_head_1_x4_1_dof_x4"
+    up_down: str = "joint_head_1_x4_2_dof_x4"
 
 
 class Torso(Node):
-    pitch: str = "joint_torso_1_x8_1_dof"
+    pitch: str = "joint_torso_1_x8_1_dof_x8"
 
 
 class LeftHand(Node):
-    hand_roll: str = "joint_left_arm_2_hand_1_x4_1_dof"
-    hand_grip: str = "joint_left_arm_2_hand_1_x4_2_dof"
+    hand_roll: str = "joint_left_arm_2_hand_1_x4_1_dof_x4"
+    hand_grip: str = "joint_left_arm_2_hand_1_x4_2_dof_x4"
     slider_a: str = "joint_left_arm_2_hand_1_slider_1"
     slider_b: str = "joint_left_arm_2_hand_1_slider_2"
 
 
 class LeftArm(Node):
-    shoulder_yaw: str = "joint_left_arm_2_x8_1_dof"
-    shoulder_pitch: str = "joint_left_arm_2_x8_2_dof"
-    shoulder_roll: str = "joint_left_arm_2_x6_1_dof"
-    elbow_yaw: str = "joint_left_arm_2_x6_2_dof"
+    shoulder_yaw: str = "joint_left_arm_2_x8_1_dof_x8"
+    shoulder_pitch: str = "joint_left_arm_2_x8_2_dof_x8"
+    shoulder_roll: str = "joint_left_arm_2_x6_1_dof_x6"
+    elbow_yaw: str = "joint_left_arm_2_x6_2_dof_x6"
     hand: Node = LeftHand()
 
 
 class RightHand(Node):
-    hand_roll: str = "joint_right_arm_1_hand_1_x4_1_dof"
-    hand_grip: str = "joint_right_arm_1_hand_1_x4_2_dof"
+    hand_roll: str = "joint_right_arm_1_hand_1_x4_1_dof_x4"
+    hand_grip: str = "joint_right_arm_1_hand_1_x4_2_dof_x4"
     slider_a: str = "joint_right_arm_1_hand_1_slider_1"
     slider_b: str = "joint_right_arm_1_hand_1_slider_2"
 
 
 class RightArm(Node):
-    shoulder_yaw: str = "joint_right_arm_1_x8_1_dof"
-    shoulder_pitch: str = "joint_right_arm_1_x8_2_dof"
-    shoulder_roll: str = "joint_right_arm_1_x6_1_dof"
-    elbow_yaw: str = "joint_right_arm_1_x6_2_dof"
+    shoulder_yaw: str = "joint_right_arm_1_x8_1_dof_x8"
+    shoulder_pitch: str = "joint_right_arm_1_x8_2_dof_x8"
+    shoulder_roll: str = "joint_right_arm_1_x6_1_dof_x6"
+    elbow_yaw: str = "joint_right_arm_1_x6_2_dof_x6"
     hand: Node = RightHand()
 
 
 class LeftLeg(Node):
-    hip_roll: str = "joint_legs_1_x8_2_dof"
-    hip_yaw: str = "joint_legs_1_left_leg_1_x8_1_dof"
-    hip_pitch: str = "joint_legs_1_left_leg_1_x10_1_dof"
-    knee_motor: str = "joint_legs_1_left_leg_1_x10_2_dof"
+    hip_roll: str = "joint_legs_1_x8_2_dof_x8"
+    hip_yaw: str = "joint_legs_1_left_leg_1_x8_1_dof_x8"
+    hip_pitch: str = "joint_legs_1_left_leg_1_x10_1_dof_x10"
+    knee_motor: str = "joint_legs_1_left_leg_1_x10_2_dof_x10"
     knee: str = "joint_legs_1_left_leg_1_knee_revolute"
-    ankle_motor: str = "joint_legs_1_left_leg_1_x6_1_dof"
+    ankle_motor: str = "joint_legs_1_left_leg_1_x6_1_dof_x6"
     ankle: str = "joint_legs_1_left_leg_1_ankle_revolute"
-    foot_roll: str = "joint_legs_1_left_leg_1_x4_1_dof"
+    foot_roll: str = "joint_legs_1_left_leg_1_x4_1_dof_x4"
 
 
 class RightLeg(Node):
-    hip_roll: str = "joint_legs_1_x8_1_dof"
-    hip_yaw: str = "joint_legs_1_right_leg_1_x8_1_dof"
-    hip_pitch: str = "joint_legs_1_right_leg_1_x10_2_dof"
-    knee_motor: str = "joint_legs_1_right_leg_1_x10_1_dof"
+    hip_roll: str = "joint_legs_1_x8_1_dof_x8"
+    hip_yaw: str = "joint_legs_1_right_leg_1_x8_1_dof_x8"
+    hip_pitch: str = "joint_legs_1_right_leg_1_x10_2_dof_x10"
+    knee_motor: str = "joint_legs_1_right_leg_1_x10_1_dof_x10"
     knee: str = "joint_legs_1_right_leg_1_knee_revolute"
-    ankle_motor: str = "joint_legs_1_right_leg_1_x6_1_dof"
+    ankle_motor: str = "joint_legs_1_right_leg_1_x6_1_dof_x6"
     ankle: str = "joint_legs_1_right_leg_1_ankle_revolute"
-    foot_roll: str = "joint_legs_1_right_leg_1_x4_1_dof"
+    foot_roll: str = "joint_legs_1_right_leg_1_x4_1_dof_x4"
 
 
 class Legs(Node):

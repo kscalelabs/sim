@@ -55,10 +55,6 @@ def main() -> None:
 
     replace_leaves(joint_tree, "")
 
-    import json
-
-    print(json.dumps(joint_tree, indent=2))
-
     # Prints the tree.
     def print_tree(tree: Dict, depth: int = 0) -> None:
         for key, value in tree.items():

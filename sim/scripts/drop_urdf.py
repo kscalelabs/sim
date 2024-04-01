@@ -7,6 +7,7 @@ the simulation, and how to configure the DOF properties of the robot.
 """
 
 import logging
+import time
 from dataclasses import dataclass
 from typing import Any
 
@@ -19,17 +20,21 @@ from sim.stompy.joints import Stompy
 logger = logging.getLogger(__name__)
 
 Gym = Any
+Env = Any
 Sim = Any
+Robot = Any
 Viewer = Any
 Args = Any
 
-# DRIVE_MODE = gymapi.DOF_MODE_EFFORT
-DRIVE_MODE = gymapi.DOF_MODE_POS
+DRIVE_MODE = gymapi.DOF_MODE_EFFORT
+# DRIVE_MODE = gymapi.DOF_MODE_POS
 
 # Stiffness and damping are Kp and Kd parameters for the PD controller
 # that drives the joints to the desired position.
-STIFFNESS = 80.0
-DAMPING = 5.0
+# STIFFNESS = 80.0
+# DAMPING = 5.0
+STIFFNESS = 0.0
+DAMPING = 0.0
 
 # Armature is a parameter that can be used to model the inertia of the joint.
 # We set it to zero because the URDF already models the inertia of the joints.
@@ -39,7 +44,9 @@ ARMATURE = 0.0
 @dataclass
 class GymParams:
     gym: Gym
+    env: Env
     sim: Sim
+    robot: Robot
     viewer: Viewer
     args: Args
 
@@ -57,8 +64,8 @@ def load_gym() -> GymParams:
     sim_params.dt = 1.0 / 60.0
 
     sim_params.physx.solver_type = 1
-    sim_params.physx.num_position_iterations = 4
-    sim_params.physx.num_velocity_iterations = 1
+    sim_params.physx.num_position_iterations = 5
+    sim_params.physx.num_velocity_iterations = 5
     sim_params.physx.contact_offset = 0.01
     sim_params.physx.rest_offset = 0.0
     sim_params.physx.bounce_threshold_velocity = 0.1
@@ -112,11 +119,6 @@ def load_gym() -> GymParams:
     initial_pose.p = gymapi.Vec3(0.0, 5.0, 0.0)
     robot = gym.create_actor(env, robot_asset, initial_pose, "robot")
 
-    # Log all the DOF names.
-    dof_props = gym.get_actor_dof_properties(env, robot)
-    for i, prop in enumerate(dof_props):
-        logger.debug("DOF %d: %s", i, prop)
-
     # Configure DOF properties.
     props = gym.get_actor_dof_properties(env, robot)
     props["driveMode"] = DRIVE_MODE
@@ -132,7 +134,9 @@ def load_gym() -> GymParams:
 
     return GymParams(
         gym=gym,
+        env=env,
         sim=sim,
+        robot=robot,
         viewer=viewer,
         args=args,
     )
@@ -140,7 +144,9 @@ def load_gym() -> GymParams:
 
 def run_gym(gym: GymParams) -> None:
     flag = False
-    joints = Stompy.legs.all_joints()
+    joints = Stompy.all_joints()
+    last_time = time.time()
+    dof_ids = gym.gym.get_actor_dof_dict(gym.env, gym.robot)
 
     while not gym.gym.query_viewer_has_closed(gym.viewer):
         gym.gym.simulate(gym.sim)
@@ -150,10 +156,14 @@ def run_gym(gym: GymParams) -> None:
         gym.gym.sync_frame_time(gym.sim)
 
         # Every second, set the target effort for each joint to the reverse.
-        effort = 1.0 if flag else -1.0
-        flag = not flag
-        for joint in joints:
-            gym.gym.set_dof_force_target(gym.sim, joint, effort)
+        curr_time = time.time()
+        if curr_time - last_time > 1.0:
+            last_time = curr_time
+            effort = 10.0 if flag else -10.0
+            flag = not flag
+            for joint in joints:
+                joint_id = dof_ids[joint]
+                gym.gym.apply_dof_effort(gym.env, joint_id, effort)
 
     gym.gym.destroy_viewer(gym.viewer)
     gym.gym.destroy_sim(gym.sim)
