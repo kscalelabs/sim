@@ -9,7 +9,7 @@ the simulation, and how to configure the DOF properties of the robot.
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 from isaacgym import gymapi, gymutil
 
@@ -60,17 +60,17 @@ def load_gym() -> GymParams:
 
     # Sets the simulation parameters.
     sim_params = gymapi.SimParams()
-    sim_params.substeps = 2
-    sim_params.dt = 1.0 / 60.0
+    sim_params.substeps = 1
+    sim_params.dt = 0.005
 
     sim_params.physx.solver_type = 1
-    sim_params.physx.num_position_iterations = 5
-    sim_params.physx.num_velocity_iterations = 5
-    sim_params.physx.contact_offset = 0.01
-    sim_params.physx.rest_offset = 0.0
-    sim_params.physx.bounce_threshold_velocity = 0.1
-    sim_params.physx.max_depenetration_velocity = 1.0
-    sim_params.physx.max_gpu_contact_pairs = 2**23
+    sim_params.physx.num_position_iterations = 4
+    sim_params.physx.num_velocity_iterations = 0
+    sim_params.physx.contact_offset = 0.02
+    sim_params.physx.rest_offset = 0.01
+    sim_params.physx.bounce_threshold_velocity = 1.0
+    sim_params.physx.max_depenetration_velocity = 0.5
+    sim_params.physx.max_gpu_contact_pairs = 2**24
     sim_params.physx.default_buffer_size_multiplier = 5
     sim_params.physx.contact_collection = gymapi.CC_ALL_SUBSTEPS
 
@@ -111,8 +111,9 @@ def load_gym() -> GymParams:
     # Loads the robot asset.
     asset_options = gymapi.AssetOptions()
     asset_options.default_dof_drive_mode = DRIVE_MODE
+    asset_options.collapse_fixed_joints = True
     asset_path = stompy_urdf_path()
-    robot_asset = gym.load_asset(sim, str(asset_path.parent), str(asset_path.name), asset_options)
+    robot_asset = gym.load_urdf(sim, str(asset_path.parent), str(asset_path.name), asset_options)
 
     # Adds the robot to the environment.
     initial_pose = gymapi.Transform()
@@ -142,11 +143,13 @@ def load_gym() -> GymParams:
     )
 
 
-def run_gym(gym: GymParams) -> None:
-    flag = False
+def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all_at_once") -> None:
     joints = Stompy.all_joints()
     last_time = time.time()
     dof_ids = gym.gym.get_actor_dof_dict(gym.env, gym.robot)
+
+    joint_id = 0
+    effort = 10.0
 
     while not gym.gym.query_viewer_has_closed(gym.viewer):
         gym.gym.simulate(gym.sim)
@@ -157,13 +160,26 @@ def run_gym(gym: GymParams) -> None:
 
         # Every second, set the target effort for each joint to the reverse.
         curr_time = time.time()
-        if curr_time - last_time > 1.0:
-            last_time = curr_time
-            effort = 10.0 if flag else -10.0
-            flag = not flag
-            for joint in joints:
-                joint_id = dof_ids[joint]
+
+        if mode == "one_at_a_time":
+            if curr_time - last_time > 0.25:
+                last_time = curr_time
+                gym.gym.apply_dof_effort(gym.env, joint_id, 0.0)
+                joint_id += 1
+                if joint_id >= len(joints):
+                    effort = -effort
+                    joint_id = 0
                 gym.gym.apply_dof_effort(gym.env, joint_id, effort)
+
+        elif mode == "all_at_once":
+            if curr_time - last_time > 1.0:
+                last_time = curr_time
+                effort = -effort
+                for joint_name in joints:
+                    gym.gym.apply_dof_effort(gym.env, dof_ids[joint_name], effort)
+
+        else:
+            raise ValueError(f"Invalid mode: {mode}")
 
     gym.gym.destroy_viewer(gym.viewer)
     gym.gym.destroy_sim(gym.sim)

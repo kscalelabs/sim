@@ -284,6 +284,34 @@ dir_gymapi = [
     "transform_inverse",
 ]
 
+dir_asset_options = [
+    "angular_damping",
+    "armature",
+    "collapse_fixed_joints",
+    "convex_decomposition_from_submeshes",
+    "default_dof_drive_mode",
+    "density",
+    "disable_gravity",
+    "enable_gyroscopic_forces",
+    "fix_base_link",
+    "flip_visual_attachments",
+    "linear_damping",
+    "max_angular_velocity",
+    "max_linear_velocity",
+    "mesh_normal_mode",
+    "min_particle_mass",
+    "override_com",
+    "override_inertia",
+    "replace_cylinder_with_capsule",
+    "slices_per_cylinder",
+    "tendon_limit_stiffness",
+    "thickness",
+    "use_mesh_materials",
+    "use_physx_armature",
+    "vhacd_enabled",
+    "vhacd_params",
+]
+
 dir_simparams = [
     "dt",
     "enable_actor_creation_warning",
