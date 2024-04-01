@@ -23,7 +23,6 @@ def get_sim_params(num_threads: int, use_gpu: bool) -> gymapi.SimParams:
     return sim_params
 
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Drop a URDF in Isaac Gym.")
     parser.add_argument("urdf_path", help="Path to the URDF file to load")
