@@ -14,6 +14,7 @@ from isaacgym import gymapi, gymutil
 
 from sim.env import stompy_urdf_path
 from sim.logging import configure_logging
+from sim.stompy.joints import Stompy
 
 logger = logging.getLogger(__name__)
 
@@ -138,12 +139,21 @@ def load_gym() -> GymParams:
 
 
 def run_gym(gym: GymParams) -> None:
+    flag = False
+    joints = Stompy.legs.all_joints()
+
     while not gym.gym.query_viewer_has_closed(gym.viewer):
         gym.gym.simulate(gym.sim)
         gym.gym.fetch_results(gym.sim, True)
         gym.gym.step_graphics(gym.sim)
         gym.gym.draw_viewer(gym.viewer, gym.sim, True)
         gym.gym.sync_frame_time(gym.sim)
+
+        # Every second, set the target effort for each joint to the reverse.
+        effort = 1.0 if flag else -1.0
+        flag = not flag
+        for joint in joints:
+            gym.gym.set_dof_force_target(gym.sim, joint, effort)
 
     gym.gym.destroy_viewer(gym.viewer)
     gym.gym.destroy_sim(gym.sim)
@@ -156,5 +166,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    # python -m sim.stompy
+    # python -m sim.scripts.drop_urdf
     main()

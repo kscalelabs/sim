@@ -19,6 +19,22 @@ class Node(ABC):
             if isinstance(attr, (Node, str))
         ]
 
+    @classmethod
+    def joints(cls) -> List[str]:
+        return [
+            attr
+            for attr in (getattr(cls, attr) for attr in dir(cls) if not attr.startswith("__"))
+            if isinstance(attr, str)
+        ]
+
+    @classmethod
+    def all_joints(cls) -> List[str]:
+        leaves = cls.joints()
+        for child in cls.children():
+            if isinstance(child, Node):
+                leaves.extend(child.all_joints())
+        return leaves
+
     def __str__(self) -> str:
         parts = [str(child) for child in self.children()]
         parts_str = textwrap.indent("\n" + "\n".join(parts), "  ")
