@@ -158,6 +158,10 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
         gym.gym.draw_viewer(gym.viewer, gym.sim, True)
         gym.gym.sync_frame_time(gym.sim)
 
+        # Print the joint forces.
+        # print(gym.gym.get_actor_dof_forces(gym.env, gym.robot))
+        # print(gym.gym.get_env_rigid_contact_forces(gym.env))
+
         # Every second, set the target effort for each joint to the reverse.
         curr_time = time.time()
 
