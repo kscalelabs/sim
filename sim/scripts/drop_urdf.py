@@ -1,3 +1,4 @@
+# mypy: disable-error-code="valid-newtype"
 """Defines a simple demo script for dropping a URDF to observe the physics.
 
 This script demonstrates some good default physics parameters for the

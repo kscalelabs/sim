@@ -62,6 +62,7 @@ class LeftArm(Node):
     shoulder_pitch: str = "joint_left_arm_2_x8_2_dof_x8"
     shoulder_roll: str = "joint_left_arm_2_x6_1_dof_x6"
     elbow_yaw: str = "joint_left_arm_2_x6_2_dof_x6"
+    elbow_roll: str = "joint_left_arm_2_x4_1_dof_x4"
     hand: Node = LeftHand()
 
 
@@ -77,6 +78,7 @@ class RightArm(Node):
     shoulder_pitch: str = "joint_right_arm_1_x8_2_dof_x8"
     shoulder_roll: str = "joint_right_arm_1_x6_1_dof_x6"
     elbow_yaw: str = "joint_right_arm_1_x6_2_dof_x6"
+    elbow_roll: str = "joint_right_arm_1_x4_1_dof_x4"
     hand: Node = RightHand()
 
 

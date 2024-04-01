@@ -7,6 +7,9 @@ checkers and VSCode. I am just doing it this way to get something working
 quickly.
 """
 
+import isaacgym
+import torch
+
 from .humanoid_config import StompyCfg, StompyPPO
 from .humanoid_env import StompyFreeEnv
 

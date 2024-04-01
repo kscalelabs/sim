@@ -5,7 +5,7 @@ from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCf
 from sim.env import stompy_urdf_path
 from sim.stompy.joints import Stompy
 
-NUM_JOINTS = len(Stompy.all_joints())
+NUM_JOINTS = len(Stompy.all_joints())  # 37
 
 
 class StompyCfg(LeggedRobotCfg):
@@ -15,9 +15,9 @@ class StompyCfg(LeggedRobotCfg):
         # Change the observation dim
         frame_stack = 15  # Number of frames in an observation
         c_frame_stack = 3  # Number of frames in a critic observation
-        num_single_obs = 47  # Size of a single observation (for the actor policy)
+        num_single_obs = 121  # Size of a single observation (for the actor policy)
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 73  # Size of a single privileged observation (for the critic)
+        single_num_privileged_obs = 137  # Size of a single privileged observation (for the critic)
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = NUM_JOINTS  # Torque command for each joint.
         num_envs = 4096
@@ -33,14 +33,14 @@ class StompyCfg(LeggedRobotCfg):
         file = str(stompy_urdf_path())
 
         name = "stompy"
-        foot_name = "rubber"  # Something like "..._rubber_1"
+        foot_name = "ankle"  # Rubber / Foot get merged into ankle
         knee_name = "belt_knee"  # Something like ..._belt_knee_left...""
 
         # Terminate the episode upon contacting a delicate part.
         terminate_after_contacts_on = ["head", "gripper"]
 
-        # Penalize any non-foot contacts.
-        penalize_contacts_on = ["shoulder", "battery"]
+        # Penalize non-foot contacts.
+        penalize_contacts_on = ["torso"]
 
         self_collisions = 0  # 1 to disable, 0 to enable
         collapse_fixed_joints = True
@@ -131,25 +131,25 @@ class StompyCfg(LeggedRobotCfg):
 
         class scales:  # noqa: N801
             # Reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.0
-            feet_contact_number = 1.2
+            # joint_pos = 1.6
+            # feet_clearance = 1.0
+            # feet_contact_number = 1.2
 
             # Gait
-            feet_air_time = 1.0
+            # feet_air_time = 1.0
             foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
+            # feet_distance = 0.2
+            # knee_distance = 0.2
 
             # Contact
             feet_contact_forces = -0.01
 
             # Velocity tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5
+            # tracking_lin_vel = 1.2
+            # tracking_ang_vel = 1.1
+            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            # low_speed = 0.2
+            # track_vel_hard = 0.5
 
             # Base position
             default_joint_pos = 0.5
