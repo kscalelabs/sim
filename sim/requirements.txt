@@ -1,2 +1,5 @@
 # requirements.txt
 
+torch
+kscale-onshape-library
+mlfab
