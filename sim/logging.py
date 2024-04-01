@@ -4,7 +4,7 @@ import datetime
 import logging
 import re
 import sys
-from typing import Literal
+from typing import Dict, List, Literal, Optional, Tuple, Union
 
 # Show as a transient message.
 LOG_PING: int = logging.INFO + 2
@@ -35,7 +35,7 @@ Color = Literal[
     "light-cyan",
 ]
 
-COLOR_INDEX: dict[Color, int] = {
+COLOR_INDEX: Dict[Color, int] = {
     "black": 30,
     "red": 31,
     "green": 32,
@@ -54,7 +54,7 @@ COLOR_INDEX: dict[Color, int] = {
 }
 
 
-def color_parts(color: Color, bold: bool = False) -> tuple[str, str]:
+def color_parts(color: Color, bold: bool = False) -> Tuple[str, str]:
     if bold:
         return BOLD_COLOR_SEQ % COLOR_INDEX[color], RESET_SEQ
     return REG_COLOR_SEQ % COLOR_INDEX[color], RESET_SEQ
@@ -64,7 +64,7 @@ def uncolored(s: str) -> str:
     return re.sub(r"\033\[[\d;]+m", "", s)
 
 
-def colored(s: str, color: Color | None = None, bold: bool = False) -> str:
+def colored(s: str, color: Optional[Color] = None, bold: bool = False) -> str:
     if color is None:
         return s
     start, end = color_parts(color, bold=bold)
@@ -73,12 +73,12 @@ def colored(s: str, color: Color | None = None, bold: bool = False) -> str:
 
 def wrapped(
     s: str,
-    length: int | None = None,
+    length: Optional[int] = None,
     space: str = " ",
-    spaces: str | re.Pattern = r" ",
-    newlines: str | re.Pattern = r"[\n\r]",
+    spaces: Union[str, re.Pattern] = r" ",
+    newlines: Union[str, re.Pattern] = r"[\n\r]",
     too_long_suffix: str = "...",
-) -> list[str]:
+) -> List[str]:
     strings = []
     lines = re.split(newlines, s.strip(), flags=re.MULTILINE | re.UNICODE)
     for line in lines:
@@ -105,13 +105,13 @@ def wrapped(
 
 def outlined(
     s: str,
-    inner: Color | None = None,
-    side: Color | None = None,
+    inner: Optional[Color] = None,
+    side: Optional[Color] = None,
     bold: bool = False,
-    max_length: int | None = None,
+    max_length: Optional[int] = None,
     space: str = " ",
-    spaces: str | re.Pattern = r" ",
-    newlines: str | re.Pattern = r"[\n\r]",
+    spaces: Union[str, re.Pattern] = r" ",
+    newlines: Union[str, re.Pattern] = r"[\n\r]",
 ) -> str:
     strs = wrapped(uncolored(s), max_length, space, spaces, newlines)
     max_len = max(len(s) for s in strs)
@@ -234,7 +234,7 @@ class ColoredFormatter(logging.Formatter):
     COLOR_SEQ = "\033[1;%dm"
     BOLD_SEQ = "\033[1m"
 
-    COLORS: dict[str, Color] = {
+    COLORS: Dict[str, Color] = {
         "WARNING": "yellow",
         "INFO": "cyan",
         "DEBUG": "grey",
@@ -248,7 +248,7 @@ class ColoredFormatter(logging.Formatter):
     def __init__(
         self,
         *,
-        prefix: str | None = None,
+        prefix: Optional[str] = None,
         use_color: bool = True,
     ) -> None:
         asc_start, asc_end = color_parts("grey")
@@ -283,7 +283,7 @@ class ColoredFormatter(logging.Formatter):
         return logging.Formatter.format(self, record)
 
 
-def configure_logging(prefix: str | None = None, level: int = logging.INFO) -> None:
+def configure_logging(prefix: Optional[str] = None, level: int = logging.INFO) -> None:
     """Instantiates logging.
 
     This captures logs and reroutes them to the Toasts module, which is

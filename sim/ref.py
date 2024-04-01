@@ -1,191 +1,407 @@
-"""DOF control methods example
----------------------------
-An example that demonstrates various DOF control methods:
-- Load cartpole asset from an urdf
-- Get/set DOF properties
-- Set DOF position and velocity targets
-- Get DOF positions
-- Apply DOF efforts
+# API references.
 
-Copyright KScale Labs.
-"""
+dir_gymapi = [
+    "AXIS_ALL",
+    "AXIS_NONE",
+    "AXIS_ROTATION",
+    "AXIS_SWING_1",
+    "AXIS_SWING_2",
+    "AXIS_TRANSLATION",
+    "AXIS_TWIST",
+    "AXIS_X",
+    "AXIS_Y",
+    "AXIS_Z",
+    "ActionEvent",
+    "ActuatorProperties",
+    "Asset",
+    "AssetOptions",
+    "AttractorProperties",
+    "CC_ALL_SUBSTEPS",
+    "CC_LAST_SUBSTEP",
+    "CC_NEVER",
+    "COMPUTE_PER_FACE",
+    "COMPUTE_PER_VERTEX",
+    "CameraFollowMode",
+    "CameraProperties",
+    "ContactCollection",
+    "CoordinateSpace",
+    "DEFAULT_VIEWER_HEIGHT",
+    "DEFAULT_VIEWER_WIDTH",
+    "DOF_INVALID",
+    "DOF_MODE_EFFORT",
+    "DOF_MODE_NONE",
+    "DOF_MODE_POS",
+    "DOF_MODE_VEL",
+    "DOF_ROTATION",
+    "DOF_TRANSLATION",
+    "DOMAIN_ACTOR",
+    "DOMAIN_ENV",
+    "DOMAIN_SIM",
+    "DTYPE_FLOAT32",
+    "DTYPE_INT16",
+    "DTYPE_UINT32",
+    "DTYPE_UINT64",
+    "DTYPE_UINT8",
+    "DofDriveMode",
+    "DofFrame",
+    "DofState",
+    "DofType",
+    "ENV_SPACE",
+    "Env",
+    "FOLLOW_POSITION",
+    "FOLLOW_TRANSFORM",
+    "FROM_ASSET",
+    "FlexParams",
+    "ForceSensor",
+    "ForceSensorProperties",
+    "GLOBAL_SPACE",
+    "Gym",
+    "HeightFieldParams",
+    "IMAGE_COLOR",
+    "IMAGE_DEPTH",
+    "IMAGE_OPTICAL_FLOW",
+    "IMAGE_SEGMENTATION",
+    "INVALID_HANDLE",
+    "ImageType",
+    "IndexDomain",
+    "IndexRange",
+    "Int2",
+    "Int3",
+    "JOINT_BALL",
+    "JOINT_FIXED",
+    "JOINT_FLOATING",
+    "JOINT_INVALID",
+    "JOINT_PLANAR",
+    "JOINT_PRISMATIC",
+    "JOINT_REVOLUTE",
+    "JointType",
+    "KEY_0",
+    "KEY_1",
+    "KEY_2",
+    "KEY_3",
+    "KEY_4",
+    "KEY_5",
+    "KEY_6",
+    "KEY_7",
+    "KEY_8",
+    "KEY_9",
+    "KEY_A",
+    "KEY_APOSTROPHE",
+    "KEY_B",
+    "KEY_BACKSLASH",
+    "KEY_BACKSPACE",
+    "KEY_C",
+    "KEY_CAPS_LOCK",
+    "KEY_COMMA",
+    "KEY_D",
+    "KEY_DEL",
+    "KEY_DOWN",
+    "KEY_E",
+    "KEY_END",
+    "KEY_ENTER",
+    "KEY_EQUAL",
+    "KEY_ESCAPE",
+    "KEY_F",
+    "KEY_F1",
+    "KEY_F10",
+    "KEY_F11",
+    "KEY_F12",
+    "KEY_F2",
+    "KEY_F3",
+    "KEY_F4",
+    "KEY_F5",
+    "KEY_F6",
+    "KEY_F7",
+    "KEY_F8",
+    "KEY_F9",
+    "KEY_G",
+    "KEY_GRAVE_ACCENT",
+    "KEY_H",
+    "KEY_HOME",
+    "KEY_I",
+    "KEY_INSERT",
+    "KEY_J",
+    "KEY_K",
+    "KEY_L",
+    "KEY_LEFT",
+    "KEY_LEFT_ALT",
+    "KEY_LEFT_BRACKET",
+    "KEY_LEFT_CONTROL",
+    "KEY_LEFT_SHIFT",
+    "KEY_LEFT_SUPER",
+    "KEY_M",
+    "KEY_MENU",
+    "KEY_MINUS",
+    "KEY_N",
+    "KEY_NUMPAD_0",
+    "KEY_NUMPAD_1",
+    "KEY_NUMPAD_2",
+    "KEY_NUMPAD_3",
+    "KEY_NUMPAD_4",
+    "KEY_NUMPAD_5",
+    "KEY_NUMPAD_6",
+    "KEY_NUMPAD_7",
+    "KEY_NUMPAD_8",
+    "KEY_NUMPAD_9",
+    "KEY_NUMPAD_ADD",
+    "KEY_NUMPAD_DEL",
+    "KEY_NUMPAD_DIVIDE",
+    "KEY_NUMPAD_ENTER",
+    "KEY_NUMPAD_EQUAL",
+    "KEY_NUMPAD_MULTIPLY",
+    "KEY_NUMPAD_SUBTRACT",
+    "KEY_NUM_LOCK",
+    "KEY_O",
+    "KEY_P",
+    "KEY_PAGE_DOWN",
+    "KEY_PAGE_UP",
+    "KEY_PAUSE",
+    "KEY_PERIOD",
+    "KEY_PRINT_SCREEN",
+    "KEY_Q",
+    "KEY_R",
+    "KEY_RIGHT",
+    "KEY_RIGHT_ALT",
+    "KEY_RIGHT_BRACKET",
+    "KEY_RIGHT_CONTROL",
+    "KEY_RIGHT_SHIFT",
+    "KEY_RIGHT_SUPER",
+    "KEY_S",
+    "KEY_SCROLL_LOCK",
+    "KEY_SEMICOLON",
+    "KEY_SLASH",
+    "KEY_SPACE",
+    "KEY_T",
+    "KEY_TAB",
+    "KEY_U",
+    "KEY_UP",
+    "KEY_V",
+    "KEY_W",
+    "KEY_X",
+    "KEY_Y",
+    "KEY_Z",
+    "KeyboardInput",
+    "LOCAL_SPACE",
+    "MAT_COROTATIONAL",
+    "MAT_NEOHOOKEAN",
+    "MESH_COLLISION",
+    "MESH_NONE",
+    "MESH_VISUAL",
+    "MESH_VISUAL_AND_COLLISION",
+    "MOUSE_BACK_BUTTON",
+    "MOUSE_FORWARD_BUTTON",
+    "MOUSE_LEFT_BUTTON",
+    "MOUSE_MIDDLE_BUTTON",
+    "MOUSE_MOVE_DOWN",
+    "MOUSE_MOVE_LEFT",
+    "MOUSE_MOVE_RIGHT",
+    "MOUSE_MOVE_UP",
+    "MOUSE_RIGHT_BUTTON",
+    "MOUSE_SCROLL_DOWN",
+    "MOUSE_SCROLL_LEFT",
+    "MOUSE_SCROLL_RIGHT",
+    "MOUSE_SCROLL_UP",
+    "Mat33",
+    "Mat44",
+    "MeshNormalMode",
+    "MeshType",
+    "MouseInput",
+    "OmniConnectionParams",
+    "ParticleState",
+    "PerformanceTimers",
+    "PhysXParams",
+    "PlaneParams",
+    "Quat",
+    "RIGID_BODY_DISABLE_GRAVITY",
+    "RIGID_BODY_DISABLE_SIMULATION",
+    "RIGID_BODY_ENABLE_GYROSCOPIC_FORCES",
+    "RIGID_BODY_NONE",
+    "RigidBodyProperties",
+    "RigidBodyState",
+    "RigidContact",
+    "RigidShapeProperties",
+    "SIM_FLEX",
+    "SIM_PHYSX",
+    "STATE_ALL",
+    "STATE_NONE",
+    "STATE_POS",
+    "STATE_VEL",
+    "Sim",
+    "SimParams",
+    "SimType",
+    "SoftContact",
+    "SoftMaterial",
+    "SoftMaterialType",
+    "SpatialForce",
+    "TENDON_FIXED",
+    "TENDON_SPATIAL",
+    "TendonProperties",
+    "TendonType",
+    "Tensor",
+    "TensorDataType",
+    "Transform",
+    "TriangleMeshParams",
+    "UP_AXIS_Y",
+    "UP_AXIS_Z",
+    "USD_MATERIAL_DISPLAY_COLOR",
+    "USD_MATERIAL_MDL",
+    "USD_MATERIAL_PREVIEW_SURFACE",
+    "UpAxis",
+    "UsdExportOptions",
+    "UsdExporter",
+    "UsdMaterialMode",
+    "Vec2",
+    "Vec3",
+    "Velocity",
+    "Version",
+    "VhacdParams",
+    "Viewer",
+    "__builtins__",
+    "__cached__",
+    "__doc__",
+    "__file__",
+    "__loader__",
+    "__name__",
+    "__package__",
+    "__spec__",
+    "_format_path",
+    "_import_active_version",
+    "absolute_import",
+    "acquire_gym",
+    "carb_init",
+    "cross",
+    "division",
+    "dot",
+    "eulers_to_quats_zyx",
+    "gymdeps",
+    "importlib",
+    "json",
+    "os",
+    "print_function",
+    "quats_to_eulers_zyx",
+    "rotate",
+    "rotate_inverse",
+    "sys",
+    "transform",
+    "transform_inverse",
+]
 
-import torch
-from isaacgym import gymapi, gymutil
+dir_simparams = [
+    "__class__",
+    "__delattr__",
+    "__dir__",
+    "__doc__",
+    "__eq__",
+    "__format__",
+    "__ge__",
+    "__getattribute__",
+    "__getstate__",
+    "__gt__",
+    "__hash__",
+    "__init__",
+    "__init_subclass__",
+    "__le__",
+    "__lt__",
+    "__module__",
+    "__ne__",
+    "__new__",
+    "__reduce__",
+    "__reduce_ex__",
+    "__repr__",
+    "__setattr__",
+    "__setstate__",
+    "__sizeof__",
+    "__str__",
+    "__subclasshook__",
+    "dt",
+    "enable_actor_creation_warning",
+    "flex",
+    "gravity",
+    "num_client_threads",
+    "physx",
+    "stress_visualization",
+    "stress_visualization_max",
+    "stress_visualization_min",
+    "substeps",
+    "up_axis",
+    "use_gpu_pipeline",
+]
 
-# initialize gym
-gym = gymapi.acquire_gym()
+dir_gymapi_contactcollection = [
+    "CC_ALL_SUBSTEPS",
+    "CC_LAST_SUBSTEP",
+    "CC_NEVER",
+    "__class__",
+    "__delattr__",
+    "__dir__",
+    "__doc__",
+    "__entries",
+    "__eq__",
+    "__format__",
+    "__ge__",
+    "__getattribute__",
+    "__getstate__",
+    "__gt__",
+    "__hash__",
+    "__init__",
+    "__init_subclass__",
+    "__int__",
+    "__le__",
+    "__lt__",
+    "__members__",
+    "__module__",
+    "__ne__",
+    "__new__",
+    "__reduce__",
+    "__reduce_ex__",
+    "__repr__",
+    "__setattr__",
+    "__setstate__",
+    "__sizeof__",
+    "__str__",
+    "__subclasshook__",
+    "name",
+]
 
-# parse arguments
-args = gymutil.parse_arguments(description="Joint control Methods Example")
-
-# create a simulator
-sim_params = gymapi.SimParams()
-sim_params.substeps = 2
-sim_params.dt = 1.0 / 60.0
-
-sim_params.physx.solver_type = 1
-sim_params.physx.num_position_iterations = 4
-sim_params.physx.num_velocity_iterations = 1
-
-sim_params.physx.num_threads = args.num_threads
-sim_params.physx.use_gpu = args.use_gpu
-
-sim_params.use_gpu_pipeline = False
-if args.use_gpu_pipeline:
-    print("WARNING: Forcing CPU pipeline.")
-
-# pfb30
-# sim_params.gravity = gymapi.Vec3(0.0, -10.0, 0.0)
-
-sim = gym.create_sim(args.compute_device_id, args.graphics_device_id, args.physics_engine, sim_params)
-
-if sim is None:
-    print("*** Failed to create sim")
-    quit()
-
-# create viewer using the default camera properties
-viewer = gym.create_viewer(sim, gymapi.CameraProperties())
-if viewer is None:
-    raise ValueError("*** Failed to create viewer")
-
-# add ground plane
-plane_params = gymapi.PlaneParams()
-gym.add_ground(sim, gymapi.PlaneParams())
-
-# set up the env grid
-num_envs = 1
-spacing = 1.5
-env_lower = gymapi.Vec3(-spacing, 0.0, -spacing)
-env_upper = gymapi.Vec3(spacing, 0.0, spacing)
-
-
-# add cartpole urdf asset
-asset_root = "../sim-integration/humanoid-gym/resources/robots/XBot/"
-asset_file = "urdf_whole_body/XBot-L_example.urdf"
-# asset_file = "urdf/XBot-L.urdf"
-
-asset_root = "../sim-integration/humanoid-gym/resources/robot_new4/"
-asset_file = "legs.urdf"
-
-asset_root = "../sim-integration/humanoid-gym/resources/test_onshape/"
-asset_file = "test.urdf"
-print(asset_file)
-
-# Load asset with default control type of position for all joints
-asset_options = gymapi.AssetOptions()
-# pfb30 - set mode pose
-asset_options.default_dof_drive_mode = gymapi.DOF_MODE_POS
-print("Loading asset '%s' from '%s'" % (asset_file, asset_root))
-robot_asset = gym.load_asset(sim, asset_root, asset_file, asset_options)
-
-
-# initial root pose for cartpole actors
-initial_pose = gymapi.Transform()
-initial_pose.p = gymapi.Vec3(0.0, 9.8, 0.0)
-# initial_pose.r = gymapi.Quat(-0.717107, 0.0, 0.0, 0.717107)
-# initial_pose.r = gymapi.Quat(0.7109, 0.7033, 0,0 )
-# [0.0000, 0.7033, 0.0000, 0.7109]
-# Create environment 1
-env1 = gym.create_env(sim, env_lower, env_upper, 1)
-
-robot1 = gym.create_actor(env1, robot_asset, initial_pose, "robot1")
-
-
-# gym.set_asset_rigid_shape_properties(robot_asset, rigid_shape_props)
-body_props = gym.get_actor_rigid_body_properties(env1, robot1)
-
-# print(f"First", body_props[0].mass)
-# mass = 0
-# for ii, body in enumerate(body_props):
-#     body.mass = abs(body.mass)*0.01
-#     mass += body.mass
-#     print(ii, body.mass)
-# print(f"First again", body_props[0].mass)
-# print("total mass", mass)
-# breakpoint()
-
-# Configure DOF properties
-props = gym.get_actor_dof_properties(env1, robot1)
-
-# props["driveMode"] = (gymapi.DOF_MODE_EFFORT)
-# # Required to work with dof effort
-# props["damping"].fill(0.0)
-# props["stiffness"].fill(0.0)
-
-# for pos control stiffness high low damping
-props["driveMode"] = gymapi.DOF_MODE_POS
-props["stiffness"].fill(200.0)
-props["damping"].fill(10.0)
-props["armature"].fill(0.0001)
-gym.set_actor_dof_properties(env1, robot1, props)
-
-
-# # I. test the default position
-# for ii in range(props.shape[0]):
-#     gym.set_dof_target_position(env1, ii, 0)
-
-# # II. test setting the position
-left_knee_joint = gym.find_actor_dof_handle(env1, robot1, "left_knee_joint")
-right_knee_joint = gym.find_actor_dof_handle(env1, robot1, "right_knee_joint")
-right_shoulder_pitch_joint = gym.find_actor_dof_handle(env1, robot1, "right_shoulder_pitch_joint")
-left_shoulder_pitch_joint = gym.find_actor_dof_handle(env1, robot1, "left_shoulder_pitch_joint")
-right_elbow_pitch_joint = gym.find_actor_dof_handle(env1, robot1, "right_elbow_pitch_joint")
-left_elbow_pitch_joint = gym.find_actor_dof_handle(env1, robot1, "left_elbow_pitch_joint")
-
-# gym.set_dof_target_position(env1, left_knee_joint, 1.1)
-# gym.set_dof_target_position(env1, right_knee_joint, -1.1)
-# gym.set_dof_target_position(env1, right_shoulder_pitch_joint, -1.4)
-# gym.set_dof_target_position(env1, left_shoulder_pitch_joint, 1.4)
-# gym.set_dof_target_position(env1, right_elbow_pitch_joint, -2.)
-# gym.set_dof_target_position(env1, left_elbow_pitch_joint, 2.)
-
-# Look at the first env
-cam_pos = gymapi.Vec3(8, 4, 1.5)
-cam_target = gymapi.Vec3(0, 2, 1.5)
-gym.viewer_camera_look_at(viewer, None, cam_pos, cam_target)
-
-
-# Simulate
-while not gym.query_viewer_has_closed(viewer):
-
-    # step the physics
-    gym.simulate(sim)
-    gym.fetch_results(sim, True)
-
-    # update the viewer
-    gym.step_graphics(sim)
-    gym.draw_viewer(viewer, sim, True)
-
-    # # Update env 1: make the robot always bend the knees
-    # Set DOF drive targets
-    # breakpoint()
-    # torques = torch.zeros(props["damping"].shape)
-    # gym.set_dof_actuation_force_tensor(env1, torques)
-
-    # Apply dof effort
-    # gym.apply_dof_effort(env1, right_knee_joint, 20)
-    # gym.apply_dof_effort(env1, left_knee_joint, -20)
-
-    # Set position
-
-    # Position 1 elbows:
-    states = torch.zeros(props.shape[0])
-
-    # gym.set_dof_state_tensor(env1, states)
-
-    # gym.set_actor_dof_position_targets(env1, right_elbow_pitch_joint, 2.1)
-    # gym.set_actor_dof_position_targets(env1, left_elbow_pitch_joint, -2.1)
-    # Get positions
-    pos = gym.get_dof_position(env1, right_shoulder_pitch_joint)
-    pos2 = gym.get_dof_position(env1, left_shoulder_pitch_joint)
-    # print(pos, pos2)
-
-    # Wait for dt to elapse in real time.
-    # This synchronizes the physics simulation with the rendering rate.
-    gym.sync_frame_time(sim)
-
-print("Done")
-
-gym.destroy_viewer(viewer)
-gym.destroy_sim(sim)
+dir_simparams_physx = [
+    "__class__",
+    "__delattr__",
+    "__dir__",
+    "__doc__",
+    "__eq__",
+    "__format__",
+    "__ge__",
+    "__getattribute__",
+    "__gt__",
+    "__hash__",
+    "__init__",
+    "__init_subclass__",
+    "__le__",
+    "__lt__",
+    "__module__",
+    "__ne__",
+    "__new__",
+    "__reduce__",
+    "__reduce_ex__",
+    "__repr__",
+    "__setattr__",
+    "__sizeof__",
+    "__str__",
+    "__subclasshook__",
+    "always_use_articulations",
+    "bounce_threshold_velocity",
+    "contact_collection",
+    "contact_offset",
+    "default_buffer_size_multiplier",
+    "friction_correlation_distance",
+    "friction_offset_threshold",
+    "max_depenetration_velocity",
+    "max_gpu_contact_pairs",
+    "num_position_iterations",
+    "num_subscenes",
+    "num_threads",
+    "num_velocity_iterations",
+    "rest_offset",
+    "solver_type",
+    "use_gpu",
+]
