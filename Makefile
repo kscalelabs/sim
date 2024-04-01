@@ -34,6 +34,11 @@ install-dev:
 	@pip install --verbose -e '.[dev]'
 .PHONY: install
 
+install-third-party:
+	@git submodule update --init --recursive
+	@cd third_party/isaacgym/python/ && pip install --verbose -e .
+	@cd third_party/humanoid-gym && pip install --verbose -e .
+
 build-ext:
 	@python setup.py build_ext --inplace
 .PHONY: build-ext
