@@ -219,81 +219,19 @@ class StompyFreeEnv(LeggedRobot):
         for i in range(self.critic_history.maxlen):
             self.critic_history[i][env_ids] *= 0
 
-    def _reward_foot_slip(self) -> Tensor:
-        """Calculates the reward for minimizing foot slip.
-
-        The reward is based on the contact forces and the speed of the feet.
-        A contact threshold is used to determine if the foot is in contact with
-        the ground. The speed of the foot is calculated and scaled by the
-        contact condition.
-
-        Returns:
-            The reward for minimizing foot slip.
-        """
-        contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
-        foot_speed_norm = torch.norm(self.rigid_state[:, self.feet_indices, 10:12], dim=2)
-        rew = torch.sqrt(foot_speed_norm)
-        rew *= contact
-        return torch.sum(rew, dim=1)
-
-    def _reward_feet_contact_forces(self) -> Tensor:
-        """Calculates the reward for keeping contact forces within a range.
-
-        Penalizes high contact forces on the feet.
-
-        Returns:
-            The reward for keeping contact forces within a specified range.
-        """
-        return torch.sum(
-            (
-                torch.norm(self.contact_forces[:, self.feet_indices, :], dim=-1) - self.cfg.rewards.max_contact_force
-            ).clip(0, 400),
-            dim=1,
-        )
-
-    def _reward_default_joint_pos(self) -> Tensor:
-        """Calculates the reward for matching the target position.
-
-        Calculates the reward for keeping joint positions close to default
-        positions, with a focus on penalizing deviation in yaw and roll
-        directions. Excludes yaw and roll from the main penalty.
-
-        Returns:
-            The reward for matching the target joint position.
-        """
-        joint_diff = self.dof_pos - self.default_joint_pd_target
-        left_yaw_roll = joint_diff[:, :2]
-        right_yaw_roll = joint_diff[:, 6:8]
-        yaw_roll = torch.norm(left_yaw_roll, dim=1) + torch.norm(right_yaw_roll, dim=1)
-        yaw_roll = torch.clamp(yaw_roll - 0.1, 0, 50)
-        return torch.exp(-yaw_roll * 100) - 0.01 * torch.norm(joint_diff, dim=1)
-
-    def _reward_orientation(self) -> Tensor:
-        """Calculates the reward for maintaining a flat base orientation.
-
-        It penalizes deviation from the desired base orientation using the
-        base euler angles and the projected gravity vector.
-
-        Returns:
-            The reward for maintaining a flat base orientation.
-        """
-        quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
-        orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
-        return (quat_mismatch + orientation) / 2.0
-
     def _reward_base_height(self) -> Tensor:
         """Calculates the reward based on the robot's base height.
 
-        Penalizes deviation from a target base height. The reward is computed
-        based on the height difference between the robot's base and the average
-        height of its feet when they are in contact with the ground.
+        This rewards the robot for being close to the target height without
+        going over (we actually penalise it for going over).
 
         Returns:
-            The reward for maintaining the robot's base height.
+            The reward for maximizing the base height.
         """
-        measured_heights = torch.sum(self.rigid_state[:, self.feet_indices, 2], dim=1)
-        base_height = self.root_states[:, 2] - (measured_heights - 0.05)
-        return torch.exp(-torch.abs(base_height - self.cfg.rewards.base_height_target) * 100)
+        base_height = self.root_states[:, 2]
+        reward = base_height / self.cfg.rewards.base_height_target
+        reward[reward > 1.0] = 0.0
+        return reward
 
     def _reward_base_acc(self) -> Tensor:
         """Computes the reward based on the base's acceleration.
@@ -354,16 +292,3 @@ class StompyFreeEnv(LeggedRobot):
         return torch.sum(
             1.0 * (torch.norm(self.contact_forces[:, self.penalised_contact_indices, :], dim=-1) > 0.1), dim=1
         )
-
-    def _reward_action_smoothness(self) -> Tensor:
-        """Penalizes large differences between consecutive actions.
-
-        This is important for achieving fluid motion and reducing mechanical stress.
-
-        Returns:
-            The reward for minimizing differences between consecutive actions.
-        """
-        term_1 = torch.sum(torch.square(self.last_actions - self.actions), dim=1)
-        term_2 = torch.sum(torch.square(self.actions + self.last_last_actions - 2 * self.last_actions), dim=1)
-        term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
-        return term_1 + term_2 + term_3

@@ -82,17 +82,17 @@ class StompyCfg(LeggedRobotCfg):
 
     class sim(LeggedRobotCfg.sim):  # noqa: N801
         dt = 0.005
-        substeps = 1
+        substeps = 2
 
         class physx(LeggedRobotCfg.sim.physx):  # noqa: N801
             num_threads = 10
             solver_type = 1
             num_position_iterations = 4
-            num_velocity_iterations = 0
-            contact_offset = 0.02
-            rest_offset = 0.01
-            bounce_threshold_velocity = 1.0
-            max_depenetration_velocity = 0.5
+            num_velocity_iterations = 1
+            contact_offset = 0.01
+            rest_offset = -0.02
+            bounce_threshold_velocity = 0.5
+            max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**24
             default_buffer_size_multiplier = 5
             contact_collection = 2  # gymapi.CC_ALL_SUBSTEPS
@@ -113,7 +113,7 @@ class StompyCfg(LeggedRobotCfg):
         resampling_time = 8.0
 
     class rewards:  # noqa: N801
-        base_height_target = 0.89
+        base_height_target = 1.1
         min_dist = 0.2
         max_dist = 0.5
 
@@ -127,7 +127,7 @@ class StompyCfg(LeggedRobotCfg):
 
         # Max contact force should be a bit above the weight of the robot. In
         # our case the robot weighs 62 Kg, so we set it to 700.
-        max_contact_force = 700
+        # max_contact_force = 700
 
         class scales:  # noqa: N801
             # Reference motion tracking
@@ -137,12 +137,12 @@ class StompyCfg(LeggedRobotCfg):
 
             # Gait
             # feet_air_time = 1.0
-            foot_slip = -0.05
+            # foot_slip = -0.05
             # feet_distance = 0.2
             # knee_distance = 0.2
 
             # Contact
-            feet_contact_forces = -0.01
+            # feet_contact_forces = -0.01
 
             # Velocity tracking
             # tracking_lin_vel = 1.2
@@ -152,17 +152,14 @@ class StompyCfg(LeggedRobotCfg):
             # track_vel_hard = 0.5
 
             # Base position
-            default_joint_pos = 0.5
-            orientation = 1.0
-            base_height = 0.2
-            base_acc = 0.2
+            base_height = 1.0
+            base_acc = 0.1
 
             # Energy
-            action_smoothness = -0.002
             torques = -1e-5
             dof_vel = -5e-4
             dof_acc = -1e-7
-            collision = -1.0
+            collision = -1e-2
 
     class normalization:  # noqa: N801
         class obs_scales:  # noqa: N801

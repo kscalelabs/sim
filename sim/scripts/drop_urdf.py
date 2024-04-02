@@ -10,9 +10,9 @@ the simulation, and how to configure the DOF properties of the robot.
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Literal, NewType
+from typing import Any, Dict, List, Literal, NewType
 
-from isaacgym import gymapi, gymutil
+from isaacgym import gymapi, gymtorch, gymutil
 
 from sim.env import stompy_urdf_path
 from sim.logging import configure_logging
@@ -67,10 +67,10 @@ def load_gym() -> GymParams:
     sim_params.physx.solver_type = 1
     sim_params.physx.num_position_iterations = 4
     sim_params.physx.num_velocity_iterations = 0
-    sim_params.physx.contact_offset = 0.02
-    sim_params.physx.rest_offset = 0.01
-    sim_params.physx.bounce_threshold_velocity = 1.0
-    sim_params.physx.max_depenetration_velocity = 0.5
+    sim_params.physx.contact_offset = 0.01
+    sim_params.physx.rest_offset = -0.02
+    sim_params.physx.bounce_threshold_velocity = 0.5
+    sim_params.physx.max_depenetration_velocity = 1.0
     sim_params.physx.max_gpu_contact_pairs = 2**24
     sim_params.physx.default_buffer_size_multiplier = 5
     sim_params.physx.contact_collection = gymapi.CC_ALL_SUBSTEPS
@@ -147,7 +147,9 @@ def load_gym() -> GymParams:
 def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all_at_once") -> None:
     joints = Stompy.all_joints()
     last_time = time.time()
-    dof_ids = gym.gym.get_actor_dof_dict(gym.env, gym.robot)
+
+    dof_ids: Dict[str, int] = gym.gym.get_actor_dof_dict(gym.env, gym.robot)
+    body_ids: List[str] = gym.gym.get_actor_rigid_body_names(gym.env, gym.robot)
 
     joint_id = 0
     effort = 10.0
@@ -162,6 +164,15 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
         # Print the joint forces.
         # print(gym.gym.get_actor_dof_forces(gym.env, gym.robot))
         # print(gym.gym.get_env_rigid_contact_forces(gym.env))
+
+        # Prints the contact forces.
+        net_contact_forces = gym.gym.acquire_net_contact_force_tensor(gym.sim)
+        net_contact_forces_tensor = gymtorch.wrap_tensor(net_contact_forces).norm(2, dim=-1)  # (38, 3)
+        if net_contact_forces_tensor.size(0) != len(body_ids):
+            raise ValueError("Mismatch between body IDs and contact forces.")
+        for body_id, contact_force in zip(body_ids, net_contact_forces_tensor):
+            contact_force = contact_force.item()
+            logger.info("Body %s: %.3g", body_id, contact_force)
 
         # Every second, set the target effort for each joint to the reverse.
         curr_time = time.time()

@@ -30,7 +30,13 @@ train-one:
 	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 1
 
 train:
-	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 1024 --headless
+	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 1024
+
+train-full:
+	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 2048 --headless
+
+play:
+	@python -m sim.humanoid_gym.play --task humanoid_ppo --run_name v1
 
 # ------------------------ #
 #          Build           #
