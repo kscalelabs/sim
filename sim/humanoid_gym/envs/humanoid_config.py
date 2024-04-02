@@ -82,18 +82,20 @@ class StompyCfg(LeggedRobotCfg):
 
     class sim(LeggedRobotCfg.sim):  # noqa: N801
         dt = 0.005
-        substeps = 1
+        substeps = 2
 
         class physx(LeggedRobotCfg.sim.physx):  # noqa: N801
             num_threads = 10
             solver_type = 1
             num_position_iterations = 4
             num_velocity_iterations = 1
-            contact_offset = -0.01
+            # contact_offset = -0.01
+            # rest_offset = -0.015
+            contact_offset = 0.01
             rest_offset = -0.015
             bounce_threshold_velocity = 0.5
-            max_depenetration_velocity = 10.0
-            max_gpu_contact_pairs = 2**23
+            max_depenetration_velocity = 1.0
+            max_gpu_contact_pairs = 2**24
             default_buffer_size_multiplier = 5
             contact_collection = 2  # gymapi.CC_ALL_SUBSTEPS
 
@@ -157,14 +159,10 @@ class StompyCfg(LeggedRobotCfg):
             base_acc = 0.0
 
             # Energy
-            # torques = -1e-6
-            # dof_vel = -5e-5
-            # dof_acc = -1e-8
-            # collision = -1e-2
-            torques = 0.0
-            dof_vel = 0.0
-            dof_acc = 0.0
-            collision = 0.0
+            torques = -1e-6
+            dof_vel = -5e-5
+            dof_acc = -1e-8
+            collision = -1e-2
 
     class normalization:  # noqa: N801
         class obs_scales:  # noqa: N801

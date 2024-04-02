@@ -211,7 +211,8 @@ class StompyFreeEnv(LeggedRobot):
     def _compute_torques(self, actions: Tensor) -> Tensor:
         # Need to override this so we can just use the motor torques directly.
         # return torch.clip(actions * self.cfg.control.action_scale, -self.torque_limits, self.torque_limits)
-        return torch.tanh(actions * self.cfg.control.action_scale) * self.torque_limits
+        torques = torch.tanh(actions * self.cfg.control.action_scale) * self.torque_limits
+        return torques
 
     def check_termination(self) -> None:
         self.reset_buf = self.episode_length_buf > self.max_episode_length
