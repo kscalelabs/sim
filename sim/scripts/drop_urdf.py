@@ -66,11 +66,11 @@ def load_gym() -> GymParams:
 
     sim_params.physx.solver_type = 1
     sim_params.physx.num_position_iterations = 4
-    sim_params.physx.num_velocity_iterations = 0
-    sim_params.physx.contact_offset = 0.01
-    sim_params.physx.rest_offset = -0.02
+    sim_params.physx.num_velocity_iterations = 1
+    sim_params.physx.contact_offset = -0.01
+    sim_params.physx.rest_offset = -0.015
     sim_params.physx.bounce_threshold_velocity = 0.5
-    sim_params.physx.max_depenetration_velocity = 1.0
+    sim_params.physx.max_depenetration_velocity = 10.0
     sim_params.physx.max_gpu_contact_pairs = 2**24
     sim_params.physx.default_buffer_size_multiplier = 5
     sim_params.physx.contact_collection = gymapi.CC_ALL_SUBSTEPS
@@ -99,6 +99,7 @@ def load_gym() -> GymParams:
 
     # Add ground plane.
     plane_params = gymapi.PlaneParams()
+    plane_params.restitution = 1.0
     gym.add_ground(sim, plane_params)
 
     # Set up the environment grid.
@@ -152,7 +153,7 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
     body_ids: List[str] = gym.gym.get_actor_rigid_body_names(gym.env, gym.robot)
 
     joint_id = 0
-    effort = 10.0
+    effort = 5.0
 
     while not gym.gym.query_viewer_has_closed(gym.viewer):
         gym.gym.simulate(gym.sim)

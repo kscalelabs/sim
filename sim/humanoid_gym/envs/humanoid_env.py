@@ -6,6 +6,7 @@ from typing import Any, NewType
 import torch
 from humanoid.envs import LeggedRobot
 from humanoid.utils.terrain import HumanoidTerrain
+from isaacgym import gymtorch
 from torch import Tensor
 
 from sim.humanoid_gym.envs.humanoid_config import StompyCfg
@@ -78,31 +79,19 @@ class StompyFreeEnv(LeggedRobot):
         self.compute_observations()
 
     def _push_robots(self) -> None:
-        # """Random pushes the robots. Emulates an impulse by setting a randomized base velocity."""
-        # max_vel = self.cfg.domain_rand.max_push_vel_xy
-        # max_push_angular = self.cfg.domain_rand.max_push_ang_vel
+        """Random pushes the robots. Emulates an impulse by setting a randomized base velocity."""
+        max_vel = self.cfg.domain_rand.max_push_vel_xy
+        max_push_angular = self.cfg.domain_rand.max_push_ang_vel
 
-        # # Linear velocity in the X / Y axes.
-        # self.rand_push_force[:, :2] = torch_rand_float(
-        #     -max_vel,
-        #     max_vel,
-        #     (self.num_envs, 2),
-        #     device=self.device,
-        # )
-        # self.root_states[:, 7:9] = self.rand_push_force[:, :2]
+        # Random forces in the X and Y axes.
+        self.rand_push_force[:, :2] = (torch.rand((self.num_envs, 2), device=self.device) * 2 - 1) * max_vel
+        self.root_states[:, 7:9] = self.rand_push_force[:, :2]
 
-        # # Random torques in all three axes.
-        # self.rand_push_torque = torch_rand_float(
-        #     -max_push_angular,
-        #     max_push_angular,
-        #     (self.num_envs, 3),
-        #     device=self.device,
-        # )
-        # self.root_states[:, 10:13] = self.rand_push_torque
+        # Random torques in all three axes.
+        self.rand_push_torque = (torch.rand((self.num_envs, 3), device=self.device) * 2 - 1) * max_push_angular
+        self.root_states[:, 10:13] = self.rand_push_torque
 
-        # self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
-
-        pass
+        self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
 
     def create_sim(self) -> None:
         """Creates simulation, terrain and evironments."""
@@ -219,19 +208,42 @@ class StompyFreeEnv(LeggedRobot):
         for i in range(self.critic_history.maxlen):
             self.critic_history[i][env_ids] *= 0
 
+    def _compute_torques(self, actions: Tensor) -> Tensor:
+        # Need to override this so we can just use the motor torques directly.
+        # return torch.clip(actions * self.cfg.control.action_scale, -self.torque_limits, self.torque_limits)
+        return torch.tanh(actions * self.cfg.control.action_scale) * self.torque_limits
+
+    def check_termination(self) -> None:
+        self.reset_buf = self.episode_length_buf > self.max_episode_length
+
+    def _reset_dofs(self, env_ids: Tensor) -> Tensor:
+        # Resets the DOF positions to random positions within their limits.
+        min_pos, max_pos = self.dof_pos_limits.unbind(1)
+        rand_pos = torch.rand((len(env_ids), self.num_dof), device=self.device)
+        self.dof_pos[env_ids] = min_pos[None, :] + rand_pos * (max_pos - min_pos)[None, :]
+
+        self.dof_vel[env_ids] = 0.0
+
+        env_ids_int32 = env_ids.to(dtype=torch.int32)
+        self.gym.set_dof_state_tensor_indexed(
+            self.sim,
+            gymtorch.unwrap_tensor(self.dof_state),
+            gymtorch.unwrap_tensor(env_ids_int32),
+            len(env_ids_int32),
+        )
+
     def _reward_base_height(self) -> Tensor:
         """Calculates the reward based on the robot's base height.
 
-        This rewards the robot for being close to the target height without
-        going over (we actually penalise it for going over).
+        This rewards the robot for keeping the feet as far below the base as
+        possible.
 
         Returns:
             The reward for maximizing the base height.
         """
         base_height = self.root_states[:, 2]
-        reward = base_height / self.cfg.rewards.base_height_target
-        reward[reward > 1.0] = 0.0
-        return reward
+        max_foot_height = self.rigid_state[:, self.feet_indices, 2].max(dim=1).values
+        return base_height - max_foot_height
 
     def _reward_base_acc(self) -> Tensor:
         """Computes the reward based on the base's acceleration.

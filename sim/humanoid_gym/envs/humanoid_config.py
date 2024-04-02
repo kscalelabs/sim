@@ -21,7 +21,7 @@ class StompyCfg(LeggedRobotCfg):
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = NUM_JOINTS  # Torque command for each joint.
         num_envs = 4096
-        episode_length_s = 24  # Maximum episode length
+        episode_length_s = 8  # Maximum episode length
         use_ref_actions = False
 
     class safety:  # noqa: N801
@@ -53,8 +53,8 @@ class StompyCfg(LeggedRobotCfg):
         curriculum = False
         # For rough terrain only:
         measure_heights = False
-        static_friction = 0.6
-        dynamic_friction = 0.6
+        static_friction = 1.0
+        dynamic_friction = 1.0
         terrain_length = 8.0
         terrain_width = 8.0
         num_rows = 20  # Number of terrain rows (levels)
@@ -62,11 +62,11 @@ class StompyCfg(LeggedRobotCfg):
         max_init_terrain_level = 10  # Starting curriculum state
         # plane; obstacles; uniform; slope_up; slope_down, stair_up, stair_down
         terrain_proportions = [0.2, 0.2, 0.4, 0.1, 0.1, 0, 0]
-        restitution = 0.0
+        restitution = 1.0
 
     class noise:  # noqa: N801
         add_noise = True
-        noise_level = 0.6  # Scales other values
+        noise_level = 0.1  # Scales other values
 
         class noise_scales:  # noqa: N801
             dof_pos = 0.05
@@ -82,18 +82,18 @@ class StompyCfg(LeggedRobotCfg):
 
     class sim(LeggedRobotCfg.sim):  # noqa: N801
         dt = 0.005
-        substeps = 2
+        substeps = 1
 
         class physx(LeggedRobotCfg.sim.physx):  # noqa: N801
             num_threads = 10
             solver_type = 1
             num_position_iterations = 4
             num_velocity_iterations = 1
-            contact_offset = 0.01
-            rest_offset = -0.02
+            contact_offset = -0.01
+            rest_offset = -0.015
             bounce_threshold_velocity = 0.5
-            max_depenetration_velocity = 1.0
-            max_gpu_contact_pairs = 2**24
+            max_depenetration_velocity = 10.0
+            max_gpu_contact_pairs = 2**23
             default_buffer_size_multiplier = 5
             contact_collection = 2  # gymapi.CC_ALL_SUBSTEPS
 
@@ -113,7 +113,7 @@ class StompyCfg(LeggedRobotCfg):
         resampling_time = 8.0
 
     class rewards:  # noqa: N801
-        base_height_target = 1.1
+        # base_height_target = 1.1
         min_dist = 0.2
         max_dist = 0.5
 
@@ -122,8 +122,8 @@ class StompyCfg(LeggedRobotCfg):
         target_feet_height = 0.06  # m
         cycle_time = 0.64  # sec
 
-        # If truem negative total rewards are clipped at zero.
-        only_positive_rewards = True
+        # If true, negative total rewards are clipped at zero.
+        only_positive_rewards = False
 
         # Max contact force should be a bit above the weight of the robot. In
         # our case the robot weighs 62 Kg, so we set it to 700.
@@ -153,13 +153,18 @@ class StompyCfg(LeggedRobotCfg):
 
             # Base position
             base_height = 1.0
-            base_acc = 0.1
+            # base_acc = 0.1
+            base_acc = 0.0
 
             # Energy
-            torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
-            collision = -1e-2
+            # torques = -1e-6
+            # dof_vel = -5e-5
+            # dof_acc = -1e-8
+            # collision = -1e-2
+            torques = 0.0
+            dof_vel = 0.0
+            dof_acc = 0.0
+            collision = 0.0
 
     class normalization:  # noqa: N801
         class obs_scales:  # noqa: N801
@@ -170,8 +175,8 @@ class StompyCfg(LeggedRobotCfg):
             quat = 1.0
             height_measurements = 5.0
 
-        clip_observations = 18.0
-        clip_actions = 18.0
+        clip_observations = 100.0
+        clip_actions = 100.0
 
 
 class StompyPPO(LeggedRobotCfgPPO):
@@ -180,16 +185,17 @@ class StompyPPO(LeggedRobotCfgPPO):
 
     class policy:  # noqa: N801
         init_noise_std = 1.0
-        actor_hidden_dims = [512, 256, 128]
-        critic_hidden_dims = [768, 256, 128]
+        actor_hidden_dims = [512, 512, 256]
+        critic_hidden_dims = [1024, 512, 256]
 
     class algorithm(LeggedRobotCfgPPO.algorithm):  # noqa: N801
-        entropy_coef = 0.001
-        learning_rate = 1e-5
+        entropy_coef = 0.01
+        learning_rate = 3e-4
         num_learning_epochs = 2
-        gamma = 0.994
-        lam = 0.9
+        gamma = 0.99
+        lam = 0.95
         num_mini_batches = 4
+        max_grad_norm = 0.5
 
     class runner:  # noqa: N801
         policy_class_name = "ActorCritic"

@@ -26,13 +26,13 @@ all:
 #          Train           #
 # ------------------------ #
 
-train-one:
+train-one-vis:
 	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 1
 
-train:
-	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 1024
+train-many-vis:
+	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 16
 
-train-full:
+train:
 	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 2048 --headless
 
 play:
