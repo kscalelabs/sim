@@ -159,10 +159,14 @@ class StompyCfg(LeggedRobotCfg):
             base_acc = 0.0
 
             # Energy
-            torques = -1e-6
-            dof_vel = -5e-5
-            dof_acc = -1e-8
-            collision = -1e-2
+            # torques = -1e-6
+            # dof_vel = -5e-5
+            # dof_acc = -1e-8
+            # collision = -1e-2
+            torques = 0.0
+            dof_vel = 0.0
+            dof_acc = 0.0
+            collision = 0.0
 
     class normalization:  # noqa: N801
         class obs_scales:  # noqa: N801

@@ -251,7 +251,9 @@ class StompyFreeEnv(LeggedRobot):
         """
         base_height = self.root_states[:, 2]
         max_foot_height = self.rigid_state[:, self.feet_indices, 2].max(dim=1).values
-        return base_height - max_foot_height
+        height_diff = base_height - max_foot_height
+        height_diff[height_diff < 0.3] = 0.0  # No cheating.
+        return height_diff
 
     def _reward_base_acc(self) -> Tensor:
         """Computes the reward based on the base's acceleration.
