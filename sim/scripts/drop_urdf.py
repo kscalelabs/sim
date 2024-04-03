@@ -27,15 +27,18 @@ Robot = NewType("Robot", Any)
 Viewer = NewType("Viewer", Any)
 Args = NewType("Args", Any)
 
-DRIVE_MODE = gymapi.DOF_MODE_EFFORT
-# DRIVE_MODE = gymapi.DOF_MODE_POS
+# Importing torch down here to avoid gymtorch issues.
+import torch  # noqa: E402
+
+# DRIVE_MODE = gymapi.DOF_MODE_EFFORT
+DRIVE_MODE = gymapi.DOF_MODE_POS
 
 # Stiffness and damping are Kp and Kd parameters for the PD controller
 # that drives the joints to the desired position.
-# STIFFNESS = 80.0
-# DAMPING = 5.0
-STIFFNESS = 0.0
-DAMPING = 0.0
+STIFFNESS = 80.0
+DAMPING = 5.0
+# STIFFNESS = 0.0
+# DAMPING = 0.0
 
 # Armature is a parameter that can be used to model the inertia of the joint.
 # We set it to zero because the URDF already models the inertia of the joints.
@@ -114,12 +117,15 @@ def load_gym() -> GymParams:
     asset_options = gymapi.AssetOptions()
     asset_options.default_dof_drive_mode = DRIVE_MODE
     asset_options.collapse_fixed_joints = True
+    asset_options.disable_gravity = True
+    asset_options.fix_base_link = True
     asset_path = stompy_urdf_path()
     robot_asset = gym.load_urdf(sim, str(asset_path.parent), str(asset_path.name), asset_options)
 
     # Adds the robot to the environment.
     initial_pose = gymapi.Transform()
     initial_pose.p = gymapi.Vec3(0.0, 5.0, 0.0)
+    initial_pose.r = gymapi.Quat(0.0, 0.0, 0.0, 1.0)
     robot = gym.create_actor(env, robot_asset, initial_pose, "robot")
 
     # Configure DOF properties.
@@ -134,6 +140,28 @@ def load_gym() -> GymParams:
     cam_pos = gymapi.Vec3(8, 4, 1.5)
     cam_target = gymapi.Vec3(0, 2, 1.5)
     gym.viewer_camera_look_at(viewer, None, cam_pos, cam_target)
+
+    # Gets tensors for the DOF states.
+    dof_state_tensor = gym.acquire_dof_state_tensor(sim)
+    gym.refresh_dof_state_tensor(sim)
+    dof_state = gymtorch.wrap_tensor(dof_state_tensor)
+    num_dof = len(Stompy.all_joints())
+    dof_pos = dof_state.view(1, num_dof, 2)[..., 0]
+    # dof_vel = dof_state.view(1, num_dof, 2)[..., 1]
+
+    # Resets the DOF positions to the starting positions.
+    # dof_vel[:] = 0.0
+    starting_positions = Stompy.default_positions()
+    dof_ids: Dict[str, int] = gym.get_actor_dof_dict(env, robot)
+    for joint_name, joint_position in starting_positions.items():
+        dof_pos[0, dof_ids[joint_name]] = joint_position
+    env_ids_int32 = torch.zeros(1, dtype=torch.int32)
+    gym.set_dof_state_tensor_indexed(
+        sim,
+        gymtorch.unwrap_tensor(dof_state),
+        gymtorch.unwrap_tensor(env_ids_int32),
+        1,
+    )
 
     return GymParams(
         gym=gym,
@@ -167,36 +195,41 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
         # print(gym.gym.get_env_rigid_contact_forces(gym.env))
 
         # Prints the contact forces.
-        net_contact_forces = gym.gym.acquire_net_contact_force_tensor(gym.sim)
-        net_contact_forces_tensor = gymtorch.wrap_tensor(net_contact_forces).norm(2, dim=-1)  # (38, 3)
-        if net_contact_forces_tensor.size(0) != len(body_ids):
-            raise ValueError("Mismatch between body IDs and contact forces.")
-        for body_id, contact_force in zip(body_ids, net_contact_forces_tensor):
-            contact_force = contact_force.item()
-            logger.info("Body %s: %.3g", body_id, contact_force)
+        # net_contact_forces = gym.gym.acquire_net_contact_force_tensor(gym.sim)
+        # net_contact_forces_tensor = gymtorch.wrap_tensor(net_contact_forces).norm(2, dim=-1)  # (38, 3)
+        # if net_contact_forces_tensor.size(0) != len(body_ids):
+        #     raise ValueError("Mismatch between body IDs and contact forces.")
+        # for body_id, contact_force in zip(body_ids, net_contact_forces_tensor):
+        #     contact_force = contact_force.item()
+        #     logger.info("Body %s: %.3g", body_id, contact_force)
+
+        # Prints the joint angles.
+        # joint_positions = gym.gym.get_actor_dof_states(gym.env, gym.robot, gymapi.STATE_ALL)
+        # for joint_name, (joint_position, joint_velocity) in zip(joints, joint_positions):
+        #     logger.info("Joint %s: %.3g %.3g", joint_name, joint_position, joint_velocity)
 
         # Every second, set the target effort for each joint to the reverse.
-        curr_time = time.time()
+        # curr_time = time.time()
 
-        if mode == "one_at_a_time":
-            if curr_time - last_time > 0.25:
-                last_time = curr_time
-                gym.gym.apply_dof_effort(gym.env, joint_id, 0.0)
-                joint_id += 1
-                if joint_id >= len(joints):
-                    effort = -effort
-                    joint_id = 0
-                gym.gym.apply_dof_effort(gym.env, joint_id, effort)
+        # if mode == "one_at_a_time":
+        #     if curr_time - last_time > 0.25:
+        #         last_time = curr_time
+        #         gym.gym.apply_dof_effort(gym.env, joint_id, 0.0)
+        #         joint_id += 1
+        #         if joint_id >= len(joints):
+        #             effort = -effort
+        #             joint_id = 0
+        #         gym.gym.apply_dof_effort(gym.env, joint_id, effort)
 
-        elif mode == "all_at_once":
-            if curr_time - last_time > 1.0:
-                last_time = curr_time
-                effort = -effort
-                for joint_name in joints:
-                    gym.gym.apply_dof_effort(gym.env, dof_ids[joint_name], effort)
+        # elif mode == "all_at_once":
+        #     if curr_time - last_time > 1.0:
+        #         last_time = curr_time
+        #         effort = -effort
+        #         for joint_name in joints:
+        #             gym.gym.apply_dof_effort(gym.env, dof_ids[joint_name], effort)
 
-        else:
-            raise ValueError(f"Invalid mode: {mode}")
+        # else:
+        #     raise ValueError(f"Invalid mode: {mode}")
 
     gym.gym.destroy_viewer(gym.viewer)
     gym.gym.destroy_sim(gym.sim)

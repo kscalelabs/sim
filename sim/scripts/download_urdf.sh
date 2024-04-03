@@ -17,4 +17,5 @@ kol urdf ${url} \
         dof_x10=12 \
         knee_revolute=13.9 \
         ankle_revolute=6 \
-    --output-dir ${output_dir}
+    --output-dir ${output_dir} \
+    --disable-mimics
