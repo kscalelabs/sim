@@ -5,7 +5,7 @@ kscale-sim-library
 
 # Installing
 
-1. Create a new Conda environment: `conda create --name kscale-sim-library python=3.11`
+1. Create a new Conda environment: `conda create --name kscale-sim-library python=3.8.19`
 2. Activate the environment: `conda activate kscale-sim-library`
 3. Install the package: `make install-dev`
 

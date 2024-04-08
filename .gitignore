@@ -1,5 +1,7 @@
 # .gitignore
 
+# Local files
+.env
 # Python
 *.py[oc]
 __pycache__/

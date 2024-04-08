@@ -1,48 +1,78 @@
 # K-Scale Sim Library
+A library for simulating Stompy in Isaac Gym. This library is built on top of
+the Isaac Gym library and Humanoid-gym and provides a simple interface for
+running experiments with Stompy. For a start, we have defined two tasks:
+getting up and walking.
+
+We will be adding more tasks and simulator environments in upcoming weeks.
+
+The walking task works reliably with upper body being fixed.
+The getting up task is still an open challenge!
+
 
 ## Getting Started
 
 1. Clone this repository:
-
 ```bash
 git clone git@github.com:kscalelabs/sim.git
 cd sim
 ```
 
-2. Install the Isaac Docker image:
-
+2. Create a new conda environment and install the package:
 ```bash
-./sim/scripts/install_isaac_dependencies.sh
+conda create --name kscale-sim-library python=3.8.19
+conda activate kscale-sim-library
+make install-dev
 ```
 
-3. Start the Isaac Docker image in Headless mode (assuming you're working in a server environment):
-
+3. Install third-party dependencies:
 ```bash
-./sim/scripts/install_isaac_dependencies.sh
-# Inside the Docker container
-./runheadless.native.sh -v
+make install-third-party
 ```
 
-### Notes
+### Running Stompy experiments
+1. Download our model from
+```bash
+wget https://media.kscale.dev/stompy.tar.gz & tar -xzvf stompy.tar.gz
+python sim/scripts/create_fixed_stompy.py
+export MODEL_DIR=stompy
+```
 
-- After cloning Isaac Gym, sometimes the bindings mysteriously disappear. To fix this, update the submodule:
+2. Run training with the following command:
+```bash
+python sim/humanoid_gym/train.py --task=legs_ppo --num_envs=4096 --headless
+```
+or for full body:
+```bash
+python sim/humanoid_gym/train.py --task=stompy_ppo --num_envs=4096 --headless
+```
 
+3. Run evaluation with the following command:
+```bash
+python sim/humanoid_gym/play.py --task legs_ppo --sim_device cpu
+```
+
+### Errors
+After cloning Isaac Gym, sometimes the bindings mysteriously disappear.
+To fix this, update the submodule:
 ```bash
 git submodule update --init --recursive
 ```
 
-- After generating the URDF, for some reason, Isaac Gym has a weird issue with the knee joints. To fix this, you should change the axis of the knee joints from:
-
-```xml
-<axis xyz="0 0 1" />
+If you observe errors with libpython3.8.so.1.0, you can try the following:
+```bash
+export LD_LIBRARY_PATH=PATH_TO_YOUR_ENV/lib:$LD_LIBRARY_PATH
 ```
 
-to
-
-```xml
-<axis xyz="0 0 -1" />
+If you still see segmentation faults, you can try the following:
+```bash
+sudo apt-get vulkan1
 ```
 
-For some reason this doesn't seem to happen for any other joints like the ankle, and also doesn't happen in other simulators like PyBullet.
+### Appreciation
+- [Humanoid-gym](https://sites.google.com/view/humanoid-gym/)
+- [Isaac Gym](https://github.com/NVIDIA-Omniverse/IsaacGymEnvs)
+- KScale Labs community for bugspotting and feedback
 
-It might also be a good idea to remove the `mimic` joints between the motors and the ankles / knees.
+### Discord
+- [Discord](https://discord.com/invite/rhCy6UdBRD)
