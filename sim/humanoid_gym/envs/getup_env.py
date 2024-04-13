@@ -1,24 +1,20 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
 
+import torch
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
-import torch
-
 from sim.stompy.joints import Stompy
 
 default_feet_height = 0.0
 
 
-class GetupFreeEnv(
-    LeggedRobot,
-):
-    """
-    GetupFreeEnv is a class that represents getting up env requirments.
+class GetupFreeEnv(LeggedRobot):
+    """GetupFreeEnv is a class that represents getting up env requirments.
 
     Note that the underlying XBot training code has some interesting
     conventions to be aware of:
@@ -88,12 +84,18 @@ class GetupFreeEnv(
         max_vel = self.cfg.domain_rand.max_push_vel_xy
         max_push_angular = self.cfg.domain_rand.max_push_ang_vel
         self.rand_push_force[:, :2] = torch_rand_float(
-            -max_vel, max_vel, (self.num_envs, 2), device=self.device
+            -max_vel,
+            max_vel,
+            (self.num_envs, 2),
+            device=self.device,
         )  # lin vel x/y
         self.root_states[:, 7:9] = self.rand_push_force[:, :2]
 
         self.rand_push_torque = torch_rand_float(
-            -max_push_angular, max_push_angular, (self.num_envs, 3), device=self.device
+            -max_push_angular,
+            max_push_angular,
+            (self.num_envs, 3),
+            device=self.device,
         )
 
         self.root_states[:, 10:13] = self.rand_push_torque
@@ -227,9 +229,7 @@ class GetupFreeEnv(
 
     # ================================================ Rewards ================================================== #
     def _reward_joint_pos(self):
-        """
-        Calculates the reward based on the difference between the current joint positions and the target joint positions.
-        """
+        """Calculates the reward based on the difference between the current joint positions and the target joint positions."""
         joint_pos = self.dof_pos.clone()
         pos_target = self.ref_dof_pos.clone()
         diff = joint_pos - pos_target
@@ -237,8 +237,7 @@ class GetupFreeEnv(
         return r
 
     def _reward_orientation(self):
-        """
-        Calculates the reward for maintaining a flat base orientation. It penalizes deviation
+        """Calculates the reward for maintaining a flat base orientation. It penalizes deviation
         from the desired base orientation using the base euler angles and the projected gravity vector.
         """
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
@@ -247,8 +246,7 @@ class GetupFreeEnv(
         return (quat_mismatch + orientation) / 2.0
 
     def _reward_default_joint_pos(self):
-        """
-        Calculates the reward for keeping joint positions close to default positions, with a focus
+        """Calculates the reward for keeping joint positions close to default positions, with a focus
         on penalizing deviation in yaw and roll directions. Excludes yaw and roll from the main penalty.
         """
         joint_diff = self.dof_pos - self.default_joint_pd_target
@@ -280,8 +278,7 @@ class GetupFreeEnv(
         self.reset_buf = self.time_out_buf
 
     def _reward_base_height(self):
-        """
-        Calculates the reward based on the robot's base height. Penalizes deviation from a target base height.
+        """Calculates the reward based on the robot's base height. Penalizes deviation from a target base height.
         The reward is computed based on the height difference between the robot's base and the average height
         of its feet when they are in contact with the ground.
         """
@@ -290,8 +287,7 @@ class GetupFreeEnv(
         return base_height
 
     def _reward_base_acc(self):
-        """
-        Computes the reward based on the base's acceleration. Penalizes high accelerations of the robot's base,
+        """Computes the reward based on the base's acceleration. Penalizes high accelerations of the robot's base,
         encouraging smoother motion.
         """
         root_acc = self.last_root_vel - self.root_states[:, 7:13]
@@ -299,8 +295,7 @@ class GetupFreeEnv(
         return rew
 
     def _reward_vel_mismatch_exp(self):
-        """
-        Computes a reward based on the mismatch in the robot's linear and angular velocities.
+        """Computes a reward based on the mismatch in the robot's linear and angular velocities.
         Encourages the robot to maintain a stable velocity by penalizing large deviations.
         """
         lin_mismatch = torch.exp(-torch.square(self.base_lin_vel[:, 2]) * 10)
@@ -311,29 +306,25 @@ class GetupFreeEnv(
         return c_update
 
     def _reward_torques(self):
-        """
-        Penalizes the use of high torques in the robot's joints. Encourages efficient movement by minimizing
+        """Penalizes the use of high torques in the robot's joints. Encourages efficient movement by minimizing
         the necessary force exerted by the motors.
         """
         return torch.sum(torch.square(self.torques), dim=1)
 
     def _reward_dof_vel(self):
-        """
-        Penalizes high velocities at the degrees of freedom (DOF) of the robot. This encourages smoother and
+        """Penalizes high velocities at the degrees of freedom (DOF) of the robot. This encourages smoother and
         more controlled movements.
         """
         return torch.sum(torch.square(self.dof_vel), dim=1)
 
     def _reward_dof_acc(self):
-        """
-        Penalizes high accelerations at the robot's degrees of freedom (DOF). This is important for ensuring
+        """Penalizes high accelerations at the robot's degrees of freedom (DOF). This is important for ensuring
         smooth and stable motion, reducing wear on the robot's mechanical parts.
         """
         return torch.sum(torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1)
 
     def _reward_collision(self):
-        """
-        Penalizes collisions of the robot with the environment, specifically focusing on selected body parts.
+        """Penalizes collisions of the robot with the environment, specifically focusing on selected body parts.
         This encourages the robot to avoid undesired contact with objects or surfaces.
         """
         return torch.sum(
@@ -342,8 +333,7 @@ class GetupFreeEnv(
         )
 
     def _reward_action_smoothness(self):
-        """
-        Encourages smoothness in the robot's actions by penalizing large differences between consecutive actions.
+        """Encourages smoothness in the robot's actions by penalizing large differences between consecutive actions.
         This is important for achieving fluid motion and reducing mechanical stress.
         """
         term_1 = torch.sum(torch.square(self.last_actions - self.actions), dim=1)
