@@ -55,17 +55,13 @@ def play(args: argparse.Namespace) -> None:
         camera_properties.height = 1080
         h1 = env.gym.create_camera_sensor(env.envs[0], camera_properties)
         camera_offset = gymapi.Vec3(3, -3, 1)
-        camera_rotation = gymapi.Quat.from_axis_angle(
-            gymapi.Vec3(-0.3, 0.2, 1), np.deg2rad(135))
+        camera_rotation = gymapi.Quat.from_axis_angle(gymapi.Vec3(-0.3, 0.2, 1), np.deg2rad(135))
         actor_handle = env.gym.get_actor_handle(env.envs[0], 0)
-        body_handle = env.gym.get_actor_rigid_body_handle(
-            env.envs[0], actor_handle, 0)
+        body_handle = env.gym.get_actor_rigid_body_handle(env.envs[0], actor_handle, 0)
         print(body_handle)
         print(actor_handle)
         env.gym.attach_camera_to_body(
-            h1, env.envs[0], body_handle,
-            gymapi.Transform(camera_offset, camera_rotation),
-            gymapi.FOLLOW_POSITION
+            h1, env.envs[0], body_handle, gymapi.Transform(camera_offset, camera_rotation), gymapi.FOLLOW_POSITION
         )
 
         fourcc = cv2.VideoWriter_fourcc(*"MJPG")
@@ -75,23 +71,19 @@ def play(args: argparse.Namespace) -> None:
         experiment_dir = video_dir / train_cfg.runner.experiment_name
         experiment_dir.mkdir(parents=True, exist_ok=True)
 
-        dir = os.path.join(
-            experiment_dir,
-            datetime.now().strftime("%b%d_%H-%M-%S") + args.run_name + ".mp4"
-        )
+        dir = os.path.join(experiment_dir, datetime.now().strftime("%b%d_%H-%M-%S") + args.run_name + ".mp4")
         if not os.path.exists(video_dir):
             os.mkdir(video_dir)
         if not os.path.exists(experiment_dir):
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
-
     for _ in tqdm(range(stop_state_log)):
         actions = policy(obs.detach())
 
         if FIX_COMMAND:
             env.commands[:, 0] = 0.0
-            env.commands[:, 1] = -0.5 # negative left, positive right
+            env.commands[:, 1] = -0.5  # negative left, positive right
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
 
@@ -101,12 +93,11 @@ def play(args: argparse.Namespace) -> None:
             env.gym.fetch_results(env.sim, True)
             env.gym.step_graphics(env.sim)
             env.gym.render_all_camera_sensors(env.sim)
-            img = env.gym.get_camera_image(
-                env.sim, env.envs[0], h1, gymapi.IMAGE_COLOR)
+            img = env.gym.get_camera_image(env.sim, env.envs[0], h1, gymapi.IMAGE_COLOR)
             img = np.reshape(img, (1080, 1920, 4))
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
 
-            video.write(img[..., :3]) # Write only the RGB channels
+            video.write(img[..., :3])  # Write only the RGB channels
 
         logger.log_states(
             {
@@ -121,8 +112,7 @@ def play(args: argparse.Namespace) -> None:
                 "base_vel_y": env.base_lin_vel[robot_index, 1].item(),
                 "base_vel_z": env.base_lin_vel[robot_index, 2].item(),
                 "base_vel_yaw": env.base_ang_vel[robot_index, 2].item(),
-                "contact_forces_z": env.contact_forces[
-                    robot_index, env.feet_indices, 2].cpu().numpy(),
+                "contact_forces_z": env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy(),
             }
         )
         # ====================== Log states ======================

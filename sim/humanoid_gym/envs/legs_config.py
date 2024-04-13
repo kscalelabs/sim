@@ -1,8 +1,6 @@
 """Defines the environment configuration for the Getting up task"""
 
-from humanoid.envs.base.legged_robot_config import (
-    LeggedRobotCfg, LeggedRobotCfgPPO
-)
+from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 from sim.env import stompy_urdf_path
 from sim.stompy.joints import StompyFixed

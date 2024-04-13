@@ -14,7 +14,9 @@ from sim.stompy.joints import Stompy
 default_feet_height = 0.0
 
 
-class GetupFreeEnv(LeggedRobot,):
+class GetupFreeEnv(
+    LeggedRobot,
+):
     """
     GetupFreeEnv is a class that represents getting up env requirments.
 
@@ -61,9 +63,7 @@ class GetupFreeEnv(LeggedRobot,):
         reset_idx(env_ids): Resets the environment for the specified environment IDs.
     """
 
-    def __init__(
-        self, cfg: LeggedRobotCfg, sim_params, physics_engine, sim_device, headless
-    ):
+    def __init__(self, cfg: LeggedRobotCfg, sim_params, physics_engine, sim_device, headless):
         super().__init__(cfg, sim_params, physics_engine, sim_device, headless)
         self.last_feet_z = default_feet_height
         self.feet_height = torch.zeros((self.num_envs, 2), device=self.device)
@@ -76,16 +76,12 @@ class GetupFreeEnv(LeggedRobot,):
         for joint in Stompy.all_joints():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             if joint in Stompy.default_sitting():
-                self.ref_dof_pos[:, joint_handle] = torch.tensor(
-                    Stompy.default_sitting()[joint])
+                self.ref_dof_pos[:, joint_handle] = torch.tensor(Stompy.default_sitting()[joint])
 
         self.compute_observations()
 
-        self.height_history = torch.zeros(
-            (self.num_envs, int(self.max_episode_length.item())),
-            device=self.device
-        )
-        self.window_size =int(self.max_episode_length.item()* 0.2)
+        self.height_history = torch.zeros((self.num_envs, int(self.max_episode_length.item())), device=self.device)
+        self.window_size = int(self.max_episode_length.item() * 0.2)
 
     def _push_robots(self):
         """Random pushes the robots. Emulates an impulse by setting a randomized base velocity."""
@@ -102,9 +98,7 @@ class GetupFreeEnv(LeggedRobot,):
 
         self.root_states[:, 10:13] = self.rand_push_torque
 
-        self.gym.set_actor_root_state_tensor(
-            self.sim, gymtorch.unwrap_tensor(self.root_states)
-        )
+        self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
 
     def create_sim(self):
         """Creates simulation, terrain and evironments"""
@@ -125,9 +119,7 @@ class GetupFreeEnv(LeggedRobot,):
         elif mesh_type == "trimesh":
             self._create_trimesh()
         elif mesh_type is not None:
-            raise ValueError(
-                "Terrain mesh type not recognised. Allowed types are [None, plane, heightfield, trimesh]"
-            )
+            raise ValueError("Terrain mesh type not recognised. Allowed types are [None, plane, heightfield, trimesh]")
         self._create_envs()
 
     def _get_noise_scale_vec(self, cfg):
@@ -145,15 +137,9 @@ class GetupFreeEnv(LeggedRobot,):
         self.add_noise = self.cfg.noise.add_noise
         noise_scales = self.cfg.noise.noise_scales
         noise_vec[0:5] = 0.0  # commands
-        noise_vec[5 : (num_actions + 5)] = (
-            noise_scales.dof_pos * self.obs_scales.dof_pos
-        )
-        noise_vec[(num_actions + 5) : (2 * num_actions + 5)] = (
-            noise_scales.dof_vel * self.obs_scales.dof_vel
-        )
-        noise_vec[(2 * num_actions + 5) : (3 * num_actions + 5)] = (
-            0.0  # previous actions
-        )
+        noise_vec[5 : (num_actions + 5)] = noise_scales.dof_pos * self.obs_scales.dof_pos
+        noise_vec[(num_actions + 5) : (2 * num_actions + 5)] = noise_scales.dof_vel * self.obs_scales.dof_vel
+        noise_vec[(2 * num_actions + 5) : (3 * num_actions + 5)] = 0.0  # previous actions
         noise_vec[(3 * num_actions + 5) : (3 * num_actions + 5) + 3] = (
             noise_scales.ang_vel * self.obs_scales.ang_vel
         )  # ang vel
@@ -168,11 +154,7 @@ class GetupFreeEnv(LeggedRobot,):
         # dynamic randomization
         delay = torch.rand((self.num_envs, 1), device=self.device)
         actions = (1 - delay) * actions + delay * self.actions
-        actions += (
-            self.cfg.domain_rand.dynamic_randomization
-            * torch.randn_like(actions)
-            * actions
-        )
+        actions += self.cfg.domain_rand.dynamic_randomization * torch.randn_like(actions) * actions
         return super().step(actions)
 
     def compute_observations(self):
@@ -184,8 +166,7 @@ class GetupFreeEnv(LeggedRobot,):
         self.privileged_obs_buf = torch.cat(
             (
                 self.command_input,  # 2 + 3
-                (self.dof_pos - self.default_joint_pd_target)
-                * self.obs_scales.dof_pos,  # 12
+                (self.dof_pos - self.default_joint_pd_target) * self.obs_scales.dof_pos,  # 12
                 self.dof_vel * self.obs_scales.dof_vel,  # 12
                 self.actions,  # 12
                 torch.zeros([self.num_envs, self.num_dof], device=self.device),  # 12
@@ -196,8 +177,8 @@ class GetupFreeEnv(LeggedRobot,):
                 self.rand_push_torque,  # 3
                 self.env_frictions,  # 1
                 self.body_mass / 30.0,  # 1
-                torch.zeros([self.num_envs, 2], device=self.device), # 2
-                torch.zeros([self.num_envs, 2], device=self.device), # 2
+                torch.zeros([self.num_envs, 2], device=self.device),  # 2
+                torch.zeros([self.num_envs, 2], device=self.device),  # 2
             ),
             dim=-1,
         )
@@ -226,25 +207,16 @@ class GetupFreeEnv(LeggedRobot,):
             self.privileged_obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
 
         if self.add_noise:
-            obs_now = (
-                obs_buf.clone()
-                + torch.randn_like(obs_buf)
-                * self.noise_scale_vec
-                * self.cfg.noise.noise_level
-            )
+            obs_now = obs_buf.clone() + torch.randn_like(obs_buf) * self.noise_scale_vec * self.cfg.noise.noise_level
         else:
             obs_now = obs_buf.clone()
         self.obs_history.append(obs_now)
         self.critic_history.append(self.privileged_obs_buf)
 
-        obs_buf_all = torch.stack(
-            [self.obs_history[i] for i in range(self.obs_history.maxlen)], dim=1
-        )  # N,T,K
+        obs_buf_all = torch.stack([self.obs_history[i] for i in range(self.obs_history.maxlen)], dim=1)  # N,T,K
 
         self.obs_buf = obs_buf_all.reshape(self.num_envs, -1)  # N, T*K
-        self.privileged_obs_buf = torch.cat(
-            [self.critic_history[i] for i in range(self.cfg.env.c_frame_stack)], dim=1
-        )
+        self.privileged_obs_buf = torch.cat([self.critic_history[i] for i in range(self.cfg.env.c_frame_stack)], dim=1)
 
     def reset_idx(self, env_ids):
         super().reset_idx(env_ids)
@@ -261,9 +233,7 @@ class GetupFreeEnv(LeggedRobot,):
         joint_pos = self.dof_pos.clone()
         pos_target = self.ref_dof_pos.clone()
         diff = joint_pos - pos_target
-        r = torch.exp(-2 * torch.norm(diff, dim=1)) - 0.2 * torch.norm(
-            diff, dim=1
-        )
+        r = torch.exp(-2 * torch.norm(diff, dim=1)) - 0.2 * torch.norm(diff, dim=1)
         return r
 
     def _reward_orientation(self):
@@ -271,9 +241,7 @@ class GetupFreeEnv(LeggedRobot,):
         Calculates the reward for maintaining a flat base orientation. It penalizes deviation
         from the desired base orientation using the base euler angles and the projected gravity vector.
         """
-        quat_mismatch = torch.exp(
-            -torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10
-        )
+        quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
 
         return (quat_mismatch + orientation) / 2.0
@@ -308,9 +276,7 @@ class GetupFreeEnv(LeggedRobot,):
                 dim=1,
             )
         """
-        self.time_out_buf = (
-            self.episode_length_buf > self.max_episode_length
-        )  # no terminal reward for time-outs
+        self.time_out_buf = self.episode_length_buf > self.max_episode_length  # no terminal reward for time-outs
         self.reset_buf = self.time_out_buf
 
     def _reward_base_height(self):
@@ -363,9 +329,7 @@ class GetupFreeEnv(LeggedRobot,):
         Penalizes high accelerations at the robot's degrees of freedom (DOF). This is important for ensuring
         smooth and stable motion, reducing wear on the robot's mechanical parts.
         """
-        return torch.sum(
-            torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1
-        )
+        return torch.sum(torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1)
 
     def _reward_collision(self):
         """
@@ -373,13 +337,7 @@ class GetupFreeEnv(LeggedRobot,):
         This encourages the robot to avoid undesired contact with objects or surfaces.
         """
         return torch.sum(
-            1.0
-            * (
-                torch.norm(
-                    self.contact_forces[:, self.penalised_contact_indices, :], dim=-1
-                )
-                > 0.1
-            ),
+            1.0 * (torch.norm(self.contact_forces[:, self.penalised_contact_indices, :], dim=-1) > 0.1),
             dim=1,
         )
 

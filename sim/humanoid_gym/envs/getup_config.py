@@ -4,9 +4,8 @@ python sim/humanoid_gym/play.py --task getup_ppo \
      --load_run Apr08_00-02-41_ --run_name v1
 
 """
-from humanoid.envs.base.legged_robot_config import (
-    LeggedRobotCfg, LeggedRobotCfgPPO
-)
+
+from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 from sim.env import stompy_urdf_path
 from sim.stompy.joints import Stompy
@@ -18,6 +17,7 @@ class GetupCfg(LeggedRobotCfg):
     """
     Configuration class for the Legs humanoid robot.
     """
+
     class env(LeggedRobotCfg.env):
         # change the observation dim
         frame_stack = 15
@@ -28,7 +28,7 @@ class GetupCfg(LeggedRobotCfg):
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = NUM_JOINTS
         num_envs = 4096
-        episode_length_s = 10 # episode length in seconds
+        episode_length_s = 10  # episode length in seconds
         use_ref_actions = False
 
     class safety:
@@ -94,7 +94,6 @@ class GetupCfg(LeggedRobotCfg):
         default_positions = Stompy.default_standing()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
-
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:

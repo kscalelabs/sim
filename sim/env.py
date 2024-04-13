@@ -1,4 +1,5 @@
 """Defines common environment parameters."""
+
 import os
 from pathlib import Path
 

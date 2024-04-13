@@ -1,6 +1,6 @@
 # mypy: disable-error-code="valid-newtype"
-"""Defines the environment for training the humanoid.
-"""
+"""Defines the environment for training the humanoid."""
+
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
@@ -46,9 +46,8 @@ class StompyFreeEnv(LeggedRobot):
         compute_observations(): Computes the observations.
         reset_idx(env_ids): Resets the environment for the specified environment IDs.
     """
-    def __init__(
-        self, cfg: LeggedRobotCfg, sim_params, physics_engine, sim_device, headless
-    ):
+
+    def __init__(self, cfg: LeggedRobotCfg, sim_params, physics_engine, sim_device, headless):
         super().__init__(cfg, sim_params, physics_engine, sim_device, headless)
         self.last_feet_z = self.cfg.asset.default_feet_height
         self.feet_height = torch.zeros((self.num_envs, 2), device=self.device)
@@ -59,15 +58,11 @@ class StompyFreeEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Stompy.legs.left.joints_motors():
-            joint_handle = self.gym.find_actor_dof_handle(
-                env_handle, actor_handle, joint
-            )
+            joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
         for name, joint in Stompy.legs.right.joints_motors():
-            joint_handle = self.gym.find_actor_dof_handle(
-                env_handle, actor_handle, joint
-            )
+            joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
 
         self.compute_observations()
@@ -87,9 +82,7 @@ class StompyFreeEnv(LeggedRobot):
 
         self.root_states[:, 10:13] = self.rand_push_torque
 
-        self.gym.set_actor_root_state_tensor(
-            self.sim, gymtorch.unwrap_tensor(self.root_states)
-        )
+        self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
 
     def _get_phase(self):
         cycle_time = self.cfg.rewards.cycle_time
@@ -114,16 +107,11 @@ class StompyFreeEnv(LeggedRobot):
     def check_termination(self):
         """Check if environments need to be reset"""
         self.reset_buf = torch.any(
-            torch.norm(
-                self.contact_forces[:, self.termination_contact_indices, :], dim=-1
-            )
-            > 1.0,
+            torch.norm(self.contact_forces[:, self.termination_contact_indices, :], dim=-1) > 1.0,
             dim=1,
         )
         self.reset_buf |= self.root_states[:, 2] < self.cfg.asset.termination_height
-        self.time_out_buf = (
-            self.episode_length_buf > self.max_episode_length
-        )  # no terminal reward for time-outs
+        self.time_out_buf = self.episode_length_buf > self.max_episode_length  # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
 
     def compute_ref_state(self):
@@ -172,9 +160,7 @@ class StompyFreeEnv(LeggedRobot):
         elif mesh_type == "trimesh":
             self._create_trimesh()
         elif mesh_type is not None:
-            raise ValueError(
-                "Terrain mesh type not recognised. Allowed types are [None, plane, heightfield, trimesh]"
-            )
+            raise ValueError("Terrain mesh type not recognised. Allowed types are [None, plane, heightfield, trimesh]")
         self._create_envs()
 
     def _get_noise_scale_vec(self, cfg):
@@ -192,15 +178,9 @@ class StompyFreeEnv(LeggedRobot):
         self.add_noise = self.cfg.noise.add_noise
         noise_scales = self.cfg.noise.noise_scales
         noise_vec[0:5] = 0.0  # commands
-        noise_vec[5 : (num_actions + 5)] = (
-            noise_scales.dof_pos * self.obs_scales.dof_pos
-        )
-        noise_vec[(num_actions + 5) : (2 * num_actions + 5)] = (
-            noise_scales.dof_vel * self.obs_scales.dof_vel
-        )
-        noise_vec[(2 * num_actions + 5) : (3 * num_actions + 5)] = (
-            0.0  # previous actions
-        )
+        noise_vec[5 : (num_actions + 5)] = noise_scales.dof_pos * self.obs_scales.dof_pos
+        noise_vec[(num_actions + 5) : (2 * num_actions + 5)] = noise_scales.dof_vel * self.obs_scales.dof_vel
+        noise_vec[(2 * num_actions + 5) : (3 * num_actions + 5)] = 0.0  # previous actions
         noise_vec[(3 * num_actions + 5) : (3 * num_actions + 5) + 3] = (
             noise_scales.ang_vel * self.obs_scales.ang_vel
         )  # ang vel
@@ -215,11 +195,7 @@ class StompyFreeEnv(LeggedRobot):
         # dynamic randomization
         delay = torch.rand((self.num_envs, 1), device=self.device)
         actions = (1 - delay) * actions + delay * self.actions
-        actions += (
-            self.cfg.domain_rand.dynamic_randomization
-            * torch.randn_like(actions)
-            * actions
-        )
+        actions += self.cfg.domain_rand.dynamic_randomization * torch.randn_like(actions) * actions
         return super().step(actions)
 
     def compute_observations(self):
@@ -232,9 +208,7 @@ class StompyFreeEnv(LeggedRobot):
         stance_mask = self._get_gait_phase()
         contact_mask = self.contact_forces[:, self.feet_indices, 2] > 5.0
 
-        self.command_input = torch.cat(
-            (sin_pos, cos_pos, self.commands[:, :3] * self.commands_scale), dim=1
-        )
+        self.command_input = torch.cat((sin_pos, cos_pos, self.commands[:, :3] * self.commands_scale), dim=1)
         breakpoint()
         q = (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos
         dq = self.dof_vel * self.obs_scales.dof_vel
@@ -244,8 +218,7 @@ class StompyFreeEnv(LeggedRobot):
         self.privileged_obs_buf = torch.cat(
             (
                 self.command_input,  # 2 + 3
-                (self.dof_pos - self.default_joint_pd_target)
-                * self.obs_scales.dof_pos,  # 12
+                (self.dof_pos - self.default_joint_pd_target) * self.obs_scales.dof_pos,  # 12
                 self.dof_vel * self.obs_scales.dof_vel,  # 12
                 self.actions,  # 12
                 diff,  # 12
@@ -286,25 +259,16 @@ class StompyFreeEnv(LeggedRobot):
             self.privileged_obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
 
         if self.add_noise:
-            obs_now = (
-                obs_buf.clone()
-                + torch.randn_like(obs_buf)
-                * self.noise_scale_vec
-                * self.cfg.noise.noise_level
-            )
+            obs_now = obs_buf.clone() + torch.randn_like(obs_buf) * self.noise_scale_vec * self.cfg.noise.noise_level
         else:
             obs_now = obs_buf.clone()
         self.obs_history.append(obs_now)
         self.critic_history.append(self.privileged_obs_buf)
 
-        obs_buf_all = torch.stack(
-            [self.obs_history[i] for i in range(self.obs_history.maxlen)], dim=1
-        )  # N,T,K
+        obs_buf_all = torch.stack([self.obs_history[i] for i in range(self.obs_history.maxlen)], dim=1)  # N,T,K
 
         self.obs_buf = obs_buf_all.reshape(self.num_envs, -1)  # N, T*K
-        self.privileged_obs_buf = torch.cat(
-            [self.critic_history[i] for i in range(self.cfg.env.c_frame_stack)], dim=1
-        )
+        self.privileged_obs_buf = torch.cat([self.critic_history[i] for i in range(self.cfg.env.c_frame_stack)], dim=1)
 
     def reset_idx(self, env_ids):
         super().reset_idx(env_ids)
@@ -321,9 +285,7 @@ class StompyFreeEnv(LeggedRobot):
         joint_pos = self.dof_pos.clone()
         pos_target = self.ref_dof_pos.clone()
         diff = joint_pos - pos_target
-        r = torch.exp(-2 * torch.norm(diff, dim=1)) - 0.2 * torch.norm(
-            diff, dim=1
-        ).clamp(0, 0.5)
+        r = torch.exp(-2 * torch.norm(diff, dim=1)) - 0.2 * torch.norm(diff, dim=1).clamp(0, 0.5)
 
         return r
 
@@ -337,9 +299,7 @@ class StompyFreeEnv(LeggedRobot):
         max_df = self.cfg.rewards.max_dist
         d_min = torch.clamp(foot_dist - fd, -0.5, 0.0)
         d_max = torch.clamp(foot_dist - max_df, 0, 0.5)
-        return (
-            torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)
-        ) / 2
+        return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
     def _reward_knee_distance(self):
         """
@@ -351,9 +311,7 @@ class StompyFreeEnv(LeggedRobot):
         max_df = self.cfg.rewards.max_dist / 2
         d_min = torch.clamp(foot_dist - fd, -0.5, 0.0)
         d_max = torch.clamp(foot_dist - max_df, 0, 0.5)
-        return (
-            torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)
-        ) / 2
+        return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
     def _reward_foot_slip(self):
         """
@@ -362,9 +320,7 @@ class StompyFreeEnv(LeggedRobot):
         with the ground. The speed of the foot is calculated and scaled by the contact condition.
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
-        foot_speed_norm = torch.norm(
-            self.rigid_state[:, self.feet_indices, 10:12], dim=2
-        )
+        foot_speed_norm = torch.norm(self.rigid_state[:, self.feet_indices, 10:12], dim=2)
         rew = torch.sqrt(foot_speed_norm)
         rew *= contact
         return torch.sum(rew, dim=1)
@@ -377,9 +333,7 @@ class StompyFreeEnv(LeggedRobot):
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
         stance_mask = self._get_gait_phase()
-        self.contact_filt = torch.logical_or(
-            torch.logical_or(contact, stance_mask), self.last_contacts
-        )
+        self.contact_filt = torch.logical_or(torch.logical_or(contact, stance_mask), self.last_contacts)
         self.last_contacts = contact
         first_contact = (self.feet_air_time > 0.0) * self.contact_filt
         self.feet_air_time += self.dt
@@ -402,9 +356,7 @@ class StompyFreeEnv(LeggedRobot):
         Calculates the reward for maintaining a flat base orientation. It penalizes deviation
         from the desired base orientation using the base euler angles and the projected gravity vector.
         """
-        quat_mismatch = torch.exp(
-            -torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10
-        )
+        quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
 
         return (quat_mismatch + orientation) / 2.0
@@ -416,8 +368,7 @@ class StompyFreeEnv(LeggedRobot):
         """
         return torch.sum(
             (
-                torch.norm(self.contact_forces[:, self.feet_indices, :], dim=-1)
-                - self.cfg.rewards.max_contact_force
+                torch.norm(self.contact_forces[:, self.feet_indices, :], dim=-1) - self.cfg.rewards.max_contact_force
             ).clip(0, 400),
             dim=1,
         )
@@ -441,14 +392,11 @@ class StompyFreeEnv(LeggedRobot):
         of its feet when they are in contact with the ground.
         """
         stance_mask = self._get_gait_phase()
-        measured_heights = torch.sum(
-            self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1
-        ) / torch.sum(stance_mask, dim=1)
-        base_height = self.root_states[:, 2] - (
-            measured_heights - self.cfg.asset.default_feet_height)
-        reward = torch.exp(
-            -torch.abs(base_height - self.cfg.rewards.base_height_target) * 100
+        measured_heights = torch.sum(self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1) / torch.sum(
+            stance_mask, dim=1
         )
+        base_height = self.root_states[:, 2] - (measured_heights - self.cfg.asset.default_feet_height)
+        reward = torch.exp(-torch.abs(base_height - self.cfg.rewards.base_height_target) * 100)
         return reward
 
     def _reward_base_acc(self):
@@ -478,9 +426,7 @@ class StompyFreeEnv(LeggedRobot):
         Penalizes deviations from specified linear and angular velocity targets.
         """
         # Tracking of linear velocity commands (xy axes)
-        lin_vel_error = torch.norm(
-            self.commands[:, :2] - self.base_lin_vel[:, :2], dim=1
-        )
+        lin_vel_error = torch.norm(self.commands[:, :2] - self.base_lin_vel[:, :2], dim=1)
         lin_vel_error_exp = torch.exp(-lin_vel_error * 10)
 
         # Tracking of angular velocity commands (yaw)
@@ -496,9 +442,7 @@ class StompyFreeEnv(LeggedRobot):
         Tracks linear velocity commands along the xy axes.
         Calculates a reward based on how closely the robot's linear velocity matches the commanded values.
         """
-        lin_vel_error = torch.sum(
-            torch.square(self.commands[:, :2] - self.base_lin_vel[:, :2]), dim=1
-        )
+        lin_vel_error = torch.sum(torch.square(self.commands[:, :2] - self.base_lin_vel[:, :2]), dim=1)
         return torch.exp(-lin_vel_error * self.cfg.rewards.tracking_sigma)
 
     def _reward_tracking_ang_vel(self):
@@ -529,9 +473,7 @@ class StompyFreeEnv(LeggedRobot):
         swing_mask = 1 - self._get_gait_phase()
 
         # feet height should be closed to target feet height at the peak
-        rew_pos = (
-            torch.abs(self.feet_height - self.cfg.rewards.target_feet_height) < 0.02
-        )
+        rew_pos = torch.abs(self.feet_height - self.cfg.rewards.target_feet_height) < 0.02
         rew_pos = torch.sum(rew_pos * swing_mask, dim=1)
         self.feet_height *= ~contact
 
@@ -553,9 +495,7 @@ class StompyFreeEnv(LeggedRobot):
         speed_desired = ~(speed_too_low | speed_too_high)
 
         # Check if the speed and command directions are mismatched
-        sign_mismatch = torch.sign(self.base_lin_vel[:, 0]) != torch.sign(
-            self.commands[:, 0]
-        )
+        sign_mismatch = torch.sign(self.base_lin_vel[:, 0]) != torch.sign(self.commands[:, 0])
 
         # Initialize reward tensor
         reward = torch.zeros_like(self.base_lin_vel[:, 0])
@@ -590,9 +530,7 @@ class StompyFreeEnv(LeggedRobot):
         Penalizes high accelerations at the robot's degrees of freedom (DOF). This is important for ensuring
         smooth and stable motion, reducing wear on the robot's mechanical parts.
         """
-        return torch.sum(
-            torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1
-        )
+        return torch.sum(torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1)
 
     def _reward_collision(self):
         """
@@ -600,13 +538,7 @@ class StompyFreeEnv(LeggedRobot):
         This encourages the robot to avoid undesired contact with objects or surfaces.
         """
         return torch.sum(
-            1.0
-            * (
-                torch.norm(
-                    self.contact_forces[:, self.penalised_contact_indices, :], dim=-1
-                )
-                > 0.1
-            ),
+            1.0 * (torch.norm(self.contact_forces[:, self.penalised_contact_indices, :], dim=-1) > 0.1),
             dim=1,
         )
 
