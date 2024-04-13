@@ -27,16 +27,16 @@ all:
 # ------------------------ #
 
 train-one-vis:
-	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 1
+	@python -m sim.humanoid_gym.train --task stompy_ppo --run_name v1 --num_envs 1
 
 train-many-vis:
-	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 16
+	@python -m sim.humanoid_gym.train --task stompy_ppo --run_name v1 --num_envs 16
 
 train:
-	@python -m sim.humanoid_gym.train --task humanoid_ppo --run_name v1 --num_envs 6144 --headless
+	@python -m sim.humanoid_gym.train --task stompy_ppo --run_name v1 --num_envs 4096 --headless
 
 play:
-	@python -m sim.humanoid_gym.play --task humanoid_ppo --run_name v1
+	@python -m sim.humanoid_gym.play --task stompy_ppo --run_name v1
 
 # ------------------------ #
 #          Build           #
