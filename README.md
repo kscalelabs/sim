@@ -27,12 +27,7 @@ make install-dev
 
 3. Install third-party dependencies:
 
-If you work at kscale and have access to https://github.com/kscalelabs/isaacgym, run:
-```bash
-make install-third-party
-```
-
-Otherwise manually download `IsaacGym_Preview_4_Package.tar.gz` from https://developer.nvidia.com/isaac-gym, and run:
+Manually download `IsaacGym_Preview_4_Package.tar.gz` from https://developer.nvidia.com/isaac-gym, and run:
 ```bash
 tar -xvf IsaacGym_Preview_4_Package.tar.gz
 conda env config vars set ISAACGYM_PATH=`pwd`/isaacgym
