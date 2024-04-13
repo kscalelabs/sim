@@ -55,6 +55,12 @@ install-third-party:
 	@cd third_party/isaacgym/python/ && pip install --verbose -e .
 	@cd third_party/humanoid-gym && pip install --verbose -e .
 
+install-third-party-external:
+	@git submodule update --init third_party/humanoid-gym
+	@cd ${ISAACGYM_PATH}/python/ && pip install --verbose -e .
+	@cd third_party/humanoid-gym && pip install --verbose -e .
+
+
 build-ext:
 	@python setup.py build_ext --inplace
 .PHONY: build-ext
