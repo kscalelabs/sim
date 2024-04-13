@@ -1,7 +1,2 @@
 # requirements.txt
-
-# Requires Python==3.11
-# kscale-onshape-library
-# mlfab
-
 torch
