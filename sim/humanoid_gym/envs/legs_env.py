@@ -69,7 +69,6 @@ class LegsFreeEnv(LeggedRobot):
                 env_handle, actor_handle, joint
             )
             self.legs_joints["right_" + name] = joint_handle
-        breakpoint()
         self.compute_observations()
 
     def _push_robots(self):

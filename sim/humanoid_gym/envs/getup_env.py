@@ -319,13 +319,8 @@ class GetupFreeEnv(LeggedRobot,):
         The reward is computed based on the height difference between the robot's base and the average height
         of its feet when they are in contact with the ground.
         """
-        # TODO pfb30 - adjust that based on the body
         base_height = self.root_states[:, 2] - default_feet_height
-        reward = torch.exp(
-            -torch.abs(base_height - self.cfg.rewards.base_height_target) * 100
-        )
-        # print(reward, base_height - self.cfg.rewards.base_height_target, base_height)
-        # print(base_height)
+
         return base_height
 
     def _reward_base_acc(self):
