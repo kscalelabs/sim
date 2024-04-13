@@ -29,7 +29,7 @@ setup(
     name="kscale-sim-library",
     version=version,
     description="Training models in simulation",
-    author="Benjamin Bolte",
+    author="Benjamin Bolte, Pawel Budzianowski",
     url="https://github.com/kscalelabs/sim",
     long_description=long_description,
     long_description_content_type="text/markdown",

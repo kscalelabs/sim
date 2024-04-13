@@ -10,8 +10,14 @@ quickly.
 import isaacgym
 import torch
 
-from .humanoid_config import StompyCfg, StompyPPO
-from .humanoid_env import StompyFreeEnv
+from .getup_config import GetupCfg, GetupCfgPPO
+from .getup_env import GetupFreeEnv
+
+from .legs_config import LegsCfg, LegsCfgPPO
+from .legs_env import LegsFreeEnv
+
+from .stompy_config import StompyCfg, StompyCfgPPO
+from .stompy_env import StompyFreeEnv
 
 
 def register_tasks() -> None:
@@ -22,7 +28,9 @@ def register_tasks() -> None:
     """
     from humanoid.utils.task_registry import task_registry
 
-    task_registry.register("humanoid_ppo", StompyFreeEnv, StompyCfg(), StompyPPO())
+    task_registry.register("stompy_ppo", StompyFreeEnv, StompyCfg(), StompyCfgPPO())
+    task_registry.register("getup_ppo", GetupFreeEnv, GetupCfg(), GetupCfgPPO())
+    task_registry.register("legs_ppo", LegsFreeEnv, LegsCfg(), LegsCfgPPO())
 
 
 register_tasks()
