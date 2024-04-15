@@ -26,15 +26,21 @@ make install-dev
 ```
 
 3. Install third-party dependencies:
+
+Manually download `IsaacGym_Preview_4_Package.tar.gz` from https://developer.nvidia.com/isaac-gym, and run:
 ```bash
-make install-third-party
+tar -xvf IsaacGym_Preview_4_Package.tar.gz
+conda env config vars set ISAACGYM_PATH=`pwd`/isaacgym
+conda deactivate
+conda activate kscale-sim-library
+make install-third-party-external
 ```
 
 ### Running Stompy experiments
 1. Download our model from
 ```bash
-wget https://media.kscale.dev/stompy.tar.gz & tar -xzvf stompy.tar.gz
-python sim/scripts/create_fixed_stompy.py
+wget https://media.kscale.dev/stompy.tar.gz && tar -xzvf stompy.tar.gz
+python sim/scripts/create_fixed_urdf.py
 export MODEL_DIR=stompy
 ```
 
