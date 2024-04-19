@@ -14,7 +14,7 @@ The getting up task is still an open challenge!
 
 1. Clone this repository:
 ```bash
-git clone git@github.com:kscalelabs/sim.git
+git clone https://github.com/kscalelabs/sim.git
 cd sim
 ```
 
