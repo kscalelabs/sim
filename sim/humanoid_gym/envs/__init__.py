@@ -12,10 +12,8 @@ import torch
 
 from .getup_config import GetupCfg, GetupCfgPPO
 from .getup_env import GetupFreeEnv
-
 from .legs_config import LegsCfg, LegsCfgPPO
 from .legs_env import LegsFreeEnv
-
 from .stompy_config import StompyCfg, StompyCfgPPO
 from .stompy_env import StompyFreeEnv
 

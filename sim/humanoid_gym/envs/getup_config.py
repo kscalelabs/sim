@@ -1,8 +1,8 @@
-"""Defines the environment configuration for getting up task
+"""Defines the environment configuration for getting up task.
 
-python sim/humanoid_gym/play.py --task getup_ppo \
-     --load_run Apr08_00-02-41_ --run_name v1
+Command to run:
 
+    python sim/humanoid_gym/play.py --task getup_ppo --load_run Apr08_00-02-41_ --run_name v1
 """
 
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
@@ -14,11 +14,9 @@ NUM_JOINTS = len(Stompy.all_joints())  # 37
 
 
 class GetupCfg(LeggedRobotCfg):
-    """
-    Configuration class for the Legs humanoid robot.
-    """
+    """Configuration class for the Legs humanoid robot."""
 
-    class env(LeggedRobotCfg.env):
+    class env(LeggedRobotCfg.env):  # noqa: N801
         # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
@@ -31,28 +29,26 @@ class GetupCfg(LeggedRobotCfg):
         episode_length_s = 10  # episode length in seconds
         use_ref_actions = False
 
-    class safety:
+    class safety:  # noqa: N801
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
         torque_limit = 1.0
 
-    class asset(LeggedRobotCfg.asset):
+    class asset(LeggedRobotCfg.asset):  # noqa: N801
         file = str(stompy_urdf_path())
 
         name = "stompy"
         foot_name = "_leg_1_x4_1_outer_1"  # "foot"
         knee_name = "belt_knee"  # "knee"
-
-        terminate_after_contacts_on = []  # "link_torso_1_top_torso_1"]
-
-        penalize_contacts_on = []
+        terminate_after_contacts_on: list[str] = []  # "link_torso_1_top_torso_1"]
+        penalize_contacts_on: list[str] = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
 
-    class terrain(LeggedRobotCfg.terrain):
+    class terrain(LeggedRobotCfg.terrain):  # noqa: N801
         mesh_type = "plane"
         # mesh_type = 'trimesh'
         curriculum = False
@@ -69,11 +65,11 @@ class GetupCfg(LeggedRobotCfg):
         terrain_proportions = [0.2, 0.2, 0.4, 0.1, 0.1, 0, 0]
         restitution = 0.0
 
-    class noise:
+    class noise:  # noqa: N801
         add_noise = True
         noise_level = 0.6  # scales other values
 
-        class noise_scales:
+        class noise_scales:  # noqa: N801
             dof_pos = 0.05
             dof_vel = 0.5
             ang_vel = 0.1
@@ -81,7 +77,7 @@ class GetupCfg(LeggedRobotCfg):
             quat = 0.03
             height_measurements = 0.1
 
-    class init_state(LeggedRobotCfg.init_state):
+    class init_state(LeggedRobotCfg.init_state):  # noqa: N801
         pos = [0.0, 0.0, 0.2]
 
         # Face up
@@ -95,7 +91,7 @@ class GetupCfg(LeggedRobotCfg):
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
 
-    class control(LeggedRobotCfg.control):
+    class control(LeggedRobotCfg.control):  # noqa: N801
         # PD Drive parameters:
         stiffness = {
             "x10": 200,
@@ -123,12 +119,12 @@ class GetupCfg(LeggedRobotCfg):
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 10  # 100hz
 
-    class sim(LeggedRobotCfg.sim):
+    class sim(LeggedRobotCfg.sim):  # noqa: N801
         dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
 
-        class physx(LeggedRobotCfg.sim.physx):
+        class physx(LeggedRobotCfg.sim.physx):  # noqa: N801
             num_threads = 12
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
@@ -142,7 +138,7 @@ class GetupCfg(LeggedRobotCfg):
             # 0: never, 1: last sub-step, 2: all sub-steps (default=2)
             contact_collection = 2
 
-    class domain_rand:
+    class domain_rand:  # noqa: N801
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -154,19 +150,19 @@ class GetupCfg(LeggedRobotCfg):
         max_push_ang_vel = 0.4
         dynamic_randomization = 0.02
 
-    class commands(LeggedRobotCfg.commands):
+    class commands(LeggedRobotCfg.commands):  # noqa: N801
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
         num_commands = 4
         resampling_time = 8.0  # time before command are changed[s]
         heading_command = True  # if true: compute ang vel command from heading error
 
-        class ranges:
+        class ranges:  # noqa: N801
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
             lin_vel_y = [-0.3, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
-    class rewards:
+    class rewards:  # noqa: N801
         # quite important to keep it right
         base_height_target = 0.97
         min_dist = 0.2
@@ -181,7 +177,7 @@ class GetupCfg(LeggedRobotCfg):
         tracking_sigma = 5
         max_contact_force = 700  # forces above this value are penalized
 
-        class scales:
+        class scales:  # noqa: N801
             # force the model to learn specific position?
             # joint_pos = 2.
             # height reward
@@ -194,8 +190,8 @@ class GetupCfg(LeggedRobotCfg):
             # dof_acc = -1e-7
             # collision = -1.0
 
-    class normalization:
-        class obs_scales:
+    class normalization:  # noqa: N801
+        class obs_scales:  # noqa: N801
             lin_vel = 2.0
             ang_vel = 1.0
             dof_pos = 1.0
@@ -206,28 +202,28 @@ class GetupCfg(LeggedRobotCfg):
         clip_observations = 18.0
         clip_actions = 18.0
 
-    class viewer:
+    class viewer:  # noqa: N801
         ref_env = 0
         pos = [4, -4, 2]
         lookat = [0, -2, 0]
 
 
 class GetupCfgPPO(LeggedRobotCfgPPO):
-    """inherited from LeggedRobotCfgPPO"""
+    """inherited from LeggedRobotCfgPPO."""
 
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
-    class policy:
+    class policy:  # noqa: N801
         init_noise_std = 1.0
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [768, 256, 128]
 
-    class algorithm(LeggedRobotCfgPPO.algorithm):
+    class algorithm(LeggedRobotCfgPPO.algorithm):  # noqa: N801
         entropy_coef = 0.01
         learning_rate = 1e-5
 
-    class runner:
+    class runner:  # noqa: N801
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration

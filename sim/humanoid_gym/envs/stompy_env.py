@@ -13,8 +13,7 @@ from sim.stompy.joints import Stompy
 
 
 class StompyFreeEnv(LeggedRobot):
-    """
-    StompyFreeEnv is a class that represents a custom environment for a legged robot.
+    """StompyFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg (LeggedRobotCfg): Configuration object for the legged robot.

@@ -12,7 +12,7 @@ def run_dir() -> Path:
     return Path(os.environ.get("RUN_DIR", "runs"))
 
 
-def stompy_urdf_path(legs_only=False) -> Path:
+def stompy_urdf_path(legs_only: bool = False) -> Path:
     if legs_only:
         stompy_path = model_dir() / "robot_fixed.urdf"
     else:
