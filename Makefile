@@ -54,12 +54,14 @@ install-third-party:
 	@git submodule update --init --recursive
 	@cd third_party/isaacgym/python/ && pip install --verbose -e .
 	@cd third_party/humanoid-gym && pip install --verbose -e .
+	@cd third_party/IsaacGymEnvs && pip install --verbose -e .
 
 install-third-party-external:
 	@git submodule update --init third_party/humanoid-gym
+	@git submodule update --init third_party/IsaacGymEnvs
 	@cd ${ISAACGYM_PATH}/python/ && pip install --verbose -e .
 	@cd third_party/humanoid-gym && pip install --verbose -e .
-
+	@cd third_party/IsaacGymEnvs && pip install --verbose -e .
 
 build-ext:
 	@python setup.py build_ext --inplace
