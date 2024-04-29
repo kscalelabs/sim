@@ -71,7 +71,7 @@ def play(args: argparse.Namespace) -> None:
         experiment_dir = video_dir / train_cfg.runner.experiment_name
         experiment_dir.mkdir(parents=True, exist_ok=True)
 
-        dir = os.path.join(experiment_dir, datetime.now().strftime("%b%d_%H-%M-%S") + args.run_name + ".mp4")
+        dir = os.path.join(experiment_dir, datetime.now().strftime("%b%d_%H-%M-%S") + str(args.run_name) + ".mp4")
         if not os.path.exists(video_dir):
             os.mkdir(video_dir)
         if not os.path.exists(experiment_dir):
