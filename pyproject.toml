@@ -35,6 +35,7 @@ namespace_packages = false
 module = [
     "isaacgym.*",
     "humanoid.*",
+    "IsaacGymEnvs.*",
 ]
 
 ignore_missing_imports = true
