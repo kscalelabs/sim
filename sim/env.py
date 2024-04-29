@@ -22,3 +22,12 @@ def stompy_urdf_path(legs_only: bool = False) -> Path:
         raise FileNotFoundError(f"URDF file not found: {stompy_path}")
 
     return stompy_path.resolve()
+
+
+def stompy_mjcf_path() -> Path:
+    stompy_path = model_dir() / "robot.xml"
+
+    if not stompy_path.exists():
+        raise FileNotFoundError(f"MJCF file not found: {stompy_path}")
+
+    return stompy_path.resolve()

@@ -37,10 +37,10 @@ make install-third-party-external
 ```
 
 ### Running Stompy experiments
-1. Download our model from
+1. Download our URDF model from
 ```bash
 wget https://media.kscale.dev/stompy.tar.gz && tar -xzvf stompy.tar.gz
-python sim/scripts/create_fixed_urdf.py
+python sim/scripts/create_fixed_torso.py
 export MODEL_DIR=stompy
 ```
 
