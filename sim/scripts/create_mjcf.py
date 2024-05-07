@@ -1,15 +1,17 @@
 # mypy: disable-error-code="valid-newtype"
-"""This script updates the MJCF version for proper rendering.
-
-The mcf format can be created by loading URDF file to the viewer and saving as xml.
-"""
+"""This script updates the MJCF version for proper rendering."""
+import os
 import xml.etree.ElementTree as ET
 
-STOMPY_MJCF = "stompy/robot.xml"
+import mujoco
 
 
-def update_mjcf():
-    tree = ET.parse(STOMPY_MJCF)
+def create_mjcf():
+    model_xml = mujoco.MjModel.from_xml_path(os.path.join(os.getenv("MODEL_DIR"), "robot.urdf"))
+    mujoco.mj_saveLastXML(os.path.join(os.getenv("MODEL_DIR"), "robot.xml"), model_xml)
+
+    # Add light and floor to the xml file and move all elements to a new root body
+    tree = ET.parse(os.path.join(os.getenv("MODEL_DIR"), "robot.xml"))
     root = tree.getroot()
     # Create light element
     light = ET.Element(
@@ -36,7 +38,7 @@ def update_mjcf():
             "rgba": "0.8 0.9 0.8 1",
             "size": "40 40 40",
             "type": "plane",
-            "material": "MatPlane",
+            # "material": "MatPlane",
         },
     )
     # Access the <worldbody> element
@@ -68,10 +70,9 @@ def update_mjcf():
     root.insert(index, worldbody2)
     modified_xml = ET.tostring(root, encoding="unicode")
 
-    with open(STOMPY_MJCF, "w") as f:
+    with open(os.path.join(os.getenv("MODEL_DIR"), "robot.xml"), "w") as f:
         f.write(modified_xml)
 
 
 if __name__ == "__main__":
-    # update_urdf()
-    update_mjcf()
+    create_mjcf()
