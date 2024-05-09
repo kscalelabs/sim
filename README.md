@@ -1,4 +1,19 @@
+<p align="center">
+  <picture>
+    <img alt="K-Scale Open Source Robotics" src="assets/kscale-logo.png" style="max-width: 100%;">
+  </picture>
+</p>
+
+<div align="center">
+
+[![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/kscalelabs/onshape/blob/main/LICENSE)
+[![Discord](https://dcbadge.limes.pink/api/server/k5mSvCkYQh?style=flat)](https://discord.gg/k5mSvCkYQh)
+
+</div>
+
+
 # K-Scale Sim Library
+
 A library for simulating Stompy in Isaac Gym. This library is built on top of
 the Isaac Gym library and Humanoid-gym and provides a simple interface for
 running experiments with Stompy. For a start, we have defined two tasks:
