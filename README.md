@@ -1,6 +1,6 @@
 <p align="center">
   <picture>
-    <img alt="K-Scale Open Source Robotics" src="assets/kscale-logo.png" style="max-width: 100%;">
+    <img alt="K-Scale Open Source Robotics" src="https://media.kscale.dev/kscale-open-source-header.png" style="max-width: 100%;">
   </picture>
 </p>
 
@@ -8,6 +8,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/kscalelabs/onshape/blob/main/LICENSE)
 [![Discord](https://dcbadge.limes.pink/api/server/k5mSvCkYQh?style=flat)](https://discord.gg/k5mSvCkYQh)
+[![Wiki](https://img.shields.io/badge/wiki-humanoids-black)](https://humanoids.wiki)
 
 </div>
 
