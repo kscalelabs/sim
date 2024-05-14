@@ -87,7 +87,7 @@ class Joint:
             joint.set("range", " ".join(map(str, self.range)))
         else:
             self.limited = False
-        joint.set("limited", str(self.limited))
+        joint.set("limited", str(self.limited).lower())
         if self.damping is not None:
             joint.set("damping", str(self.damping))
         if self.stiffness is not None:
@@ -166,8 +166,20 @@ class Body:
 
 @dataclass
 class Flag:
-    sensornoise: str | None = None
+    # removed at 3.1.4
+    # sensornoise: str | None = None
     frictionloss: str | None = None
+
+    def to_xml(self, root: ET.Element | None = None) -> ET.Element:
+        if root is None:
+            flag = ET.Element("flag")
+        else:
+            flag = ET.SubElement(root, "flag")
+        # if self.sensornoise is not None:
+        #     flag.set("sensornoise", self.sensornoise)
+        if self.frictionloss is not None:
+            flag.set("frictionloss", self.frictionloss)
+        return flag
 
 # @dataclass
 # class Visual:
@@ -177,7 +189,7 @@ class Flag:
 class Option:
     timestep: float | None = None
     viscosity: float | None = None
-    iteration: int | None = None
+    iterations: int | None = None
     solver: Literal["PGS", "CG", "Newton"] | None = None
     gravity: tuple[float, float, float] | None = None
     flag: Flag | None = None
@@ -187,8 +199,8 @@ class Option:
             option = ET.Element("option")
         else:
             option = ET.SubElement(root, "option")
-        if self.iteration is not None:
-            option.set("iteration", str(self.iteration))
+        if self.iterations is not None:
+            option.set("iterations", str(self.iterations))
         if self.timestep is not None:
             option.set("timestep", str(self.timestep))
         if self.viscosity is not None:
@@ -220,7 +232,7 @@ class Motor:
         if self.joint is not None:
             motor.set("joint", self.joint)
         if self.ctrllimited is not None:
-            motor.set("ctrllimited", str(self.ctrllimited))
+            motor.set("ctrllimited", str(self.ctrllimited).lower())
         if self.ctrlrange is not None:
             motor.set("ctrlrange", " ".join(map(str, self.ctrlrange)))
         if self.gear is not None:
@@ -242,7 +254,8 @@ class Light:
             light = ET.Element("light")
         else:
             light = ET.SubElement(root, "light")
-        light.set("directional", str(self.directional))
+        if self.directional is not None:
+            light.set("directional", str(self.directional).lower())
         if self.diffuse is not None:
             light.set("diffuse", " ".join(map(str, self.diffuse)))
         if self.specular is not None:
@@ -252,7 +265,7 @@ class Light:
         if self.dir is not None:
             light.set("dir", " ".join(map(str, self.dir)))
         if self.castshadow is not None:
-            light.set("castshadow", str(self.castshadow))
+            light.set("castshadow", str(self.castshadow).lower())
         return light
 
 
@@ -447,14 +460,16 @@ class Robot:
         tree.write(self.output_dir / f"{self.robot_name}.urdf", encoding="utf-8", xml_declaration=True)
         model = mujoco.MjModel.from_xml_path((self.output_dir / f"{self.robot_name}.urdf").as_posix())
         mujoco.mj_saveLastXML((self.output_dir / f"{self.robot_name}.xml").as_posix(), model)
+        
         # remove all the files
-        _remove_stl_files(self.output_dir)
+        # _remove_stl_files(self.output_dir)
 
     def adapt_world(self) -> None:
         root = self.tree.getroot()
 
         root.append(Option(
-            timestep=0.001, viscosity=1e-6, iteration=50, solver="PGS", gravity=(0, 0, -9.81)
+            timestep=0.001, viscosity=1e-6, iterations=50, solver="PGS", gravity=(0, 0, -9.81),
+            flag=Flag(frictionloss="enable")
         ).to_xml())
 
         # TODO - check that
@@ -534,9 +549,9 @@ class Robot:
                     )
                 )
                 sensors.extend([
-                        Actuatorpos(name=joint, actuator=joint, user="true"),
-                        Actuatorvel(name=joint, actuator=joint, user="true"),
-                        Actuatorfrc(name=joint, actuator=joint, user="true", noise=0.001)
+                        Actuatorpos(name=joint + "_p", actuator=joint, user="13"),
+                        Actuatorvel(name=joint + "_v", actuator=joint, user="13"),
+                        Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001)
                     ]
                 )
 
@@ -544,10 +559,16 @@ class Robot:
         root.append(Actuator(motors).to_xml())
         root.append(Sensor(sensors).to_xml())
 
+        # <framequat     name='orientation' objtype='site' noise='0.001' objname='imu'/>
+        # <framepos     name='position' objtype='site' noise='0.001' objname='imu'/>
+        # <gyro          name='angular-velocity'    site='imu' noise='0.005' cutoff='34.9'/>
+        # <velocimeter   name='linear-velocity'     site='imu' noise='0.001' cutoff='30'/>
+        # <accelerometer name='linear-acceleration' site='imu' noise='0.005' cutoff='157'/>
+        # <magnetometer  name='magnetometer'        site='imu'/>
+
 
         # TODO pfb30 add visual
         # TODO add imu to the base
-
         self.tree = ET.ElementTree(root)
         rough_string = ET.tostring(self.tree.getroot(), 'utf-8')
 
