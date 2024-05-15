@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 import mujoco
 
 
-def create_mjcf():
+def create_mjcf() -> None:
     model_xml = mujoco.MjModel.from_xml_path(os.path.join(os.getenv("MODEL_DIR"), "robot.urdf"))
     mujoco.mj_saveLastXML(os.path.join(os.getenv("MODEL_DIR"), "robot.xml"), model_xml)
 

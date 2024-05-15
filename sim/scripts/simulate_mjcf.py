@@ -4,12 +4,13 @@
 Run with mjpython:
     mjpython mjpython sim/scripts/simulate_mjcf.py
 """
+
 import time
+
 import mujoco
 import mujoco.viewer
 
 from sim.env import stompy_mjcf_path
-
 
 model = mujoco.MjModel.from_xml_path(stompy_mjcf_path())
 data = mujoco.MjData(model)
