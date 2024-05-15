@@ -226,6 +226,7 @@ class StompyFixed(Stompy):
             Stompy.legs.right.foot_roll: np.deg2rad(0),  # 0
         }
 
+    @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
             Stompy.head.left_right: {
