@@ -27,7 +27,7 @@ def main() -> None:
 
     # Makes a "tree" of the joints using common prefixes.
     joint_names.sort()
-    joint_tree = {}
+    joint_tree: Dict = {}
     for joint_name in joint_names:
         parts = joint_name.split("_")
         current_tree = joint_tree

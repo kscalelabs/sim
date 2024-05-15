@@ -1,0 +1,61 @@
+name: Update Stompy S3 Model
+
+on:
+  release:
+    types: [created]
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: "stompy-s3-model"
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    timeout-minutes: 10
+    name: Update Stompy S3 Model
+
+    # We don't need to run on all platforms since this package is
+    # platform-agnostic. The output wheel is something like
+    # "monotonic_attention-<version>-py3-none-any.whl".
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install kscale-onshape-library '.'
+
+      - name: Build package
+        env:
+          ONSHAPE_ACCESS_KEY: ${{ secrets.ONSHAPE_ACCESS_KEY }}
+          ONSHAPE_SECRET_KEY: ${{ secrets.ONSHAPE_SECRET_KEY }}
+          ONSHAPE_API: ${{ secrets.ONSHAPE_API }}
+        run: python -m sim.scripts.update_stompy_s3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Upload to S3
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        run: |
+          for file in stompy/*.tar.gz; do
+            aws s3 cp "$file" s3://${AWS_S3_BUCKET}/$(basename "$file")
+          done
