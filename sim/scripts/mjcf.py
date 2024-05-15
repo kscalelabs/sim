@@ -501,7 +501,7 @@ class Robot:
                 equality=Equality(solref=(0.001, 2)),
                 geom=Geom(
 
-                    solref=(0.001, 2), friction=(0.9, 0.2, 0.2), condim=4, contype=0, conaffinity=0,
+                    solref=(0.001, 2), friction=(0.9, 0.2, 0.2), condim=4, contype=1, conaffinity=15,
                     # density=0
                 ) 
                 # visualgem?
@@ -524,6 +524,19 @@ class Robot:
 
         BODY_HEIGHT = 1.2
         new_root_body = Body(name="root", pos=(0, 0, BODY_HEIGHT), quat=(1, 0, 0, 0)).to_xml()
+
+        # 1. Add the imu and others
+        # <joint type='slide' axis='1 0 0' limited='false' />
+        # <joint type='slide' axis='0 1 0' limited='false' />
+        # <joint type='slide' axis='0 0 1' limited='false' />
+        # <joint type='ball' limited='false' />
+        # <site name='imu' size='0.01' pos='0.0 0 0.0'/>
+
+
+        # 2. Add to all geoms
+        # contype="0" conaffinity="0" group="1"
+        # test condim because 3 and 4 give different results
+        
         # Move gathered elements to the new root body
         for item in items_to_move:
             worldbody.remove(item)
