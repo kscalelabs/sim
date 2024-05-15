@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   publish:
-    timeout-minutes: 10
+    timeout-minutes: 30
     name: Update Stompy S3 Model
 
     # We don't need to run on all platforms since this package is
