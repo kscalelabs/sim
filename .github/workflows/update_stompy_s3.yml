@@ -17,13 +17,9 @@ concurrency:
 
 jobs:
   publish:
-    timeout-minutes: 30
     name: Update Stompy S3 Model
-
-    # We don't need to run on all platforms since this package is
-    # platform-agnostic. The output wheel is something like
-    # "monotonic_attention-<version>-py3-none-any.whl".
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
@@ -36,7 +32,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install kscale-onshape-library
+          pip install 'kscale-onshape-library @ git+https://github.com/kscalelabs/onshape.git@master'  # Bleeding edge
 
       - name: Build package
         env:
