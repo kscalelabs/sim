@@ -1,6 +1,7 @@
 """Script to replay a trained policy in the environment."""
 
 import argparse
+import logging
 import os
 from datetime import datetime
 
@@ -9,11 +10,17 @@ import numpy as np
 from isaacgym import gymapi
 from tqdm import tqdm
 
+from sim.logging import configure_logging
+
+logger = logging.getLogger(__name__)
+
 from sim.env import run_dir
 from sim.humanoid_gym.envs import *  # noqa: F403
 
 
 def play(args: argparse.Namespace) -> None:
+    configure_logging()
+
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
@@ -31,7 +38,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.noise.noise_level = 0.5
 
     train_cfg.seed = 123145
-    print("train_cfg.runner_class_name:", train_cfg.runner_class_name)
+    logger.info("train_cfg.runner_class_name: %s", train_cfg.runner_class_name)
 
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
@@ -44,7 +51,7 @@ def play(args: argparse.Namespace) -> None:
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
 
-    logger = Logger(env.dt)
+    env_logger = Logger(env.dt)
     robot_index = 0  # which robot is used for logging
     joint_index = 1  # which joint is used for logging
     stop_state_log = 1200  # number of steps before plotting states
@@ -58,8 +65,8 @@ def play(args: argparse.Namespace) -> None:
         camera_rotation = gymapi.Quat.from_axis_angle(gymapi.Vec3(-0.3, 0.2, 1), np.deg2rad(135))
         actor_handle = env.gym.get_actor_handle(env.envs[0], 0)
         body_handle = env.gym.get_actor_rigid_body_handle(env.envs[0], actor_handle, 0)
-        print(body_handle)
-        print(actor_handle)
+        logger.info("body_handle: %s", body_handle)
+        logger.info("actor_handle: %s", actor_handle)
         env.gym.attach_camera_to_body(
             h1, env.envs[0], body_handle, gymapi.Transform(camera_offset, camera_rotation), gymapi.FOLLOW_POSITION
         )
@@ -99,7 +106,7 @@ def play(args: argparse.Namespace) -> None:
 
             video.write(img[..., :3])  # Write only the RGB channels
 
-        logger.log_states(
+        env_logger.log_states(
             {
                 "dof_pos_target": actions[robot_index, joint_index].item() * env.cfg.control.action_scale,
                 "dof_pos": env.dof_pos[robot_index, joint_index].item(),
@@ -119,10 +126,10 @@ def play(args: argparse.Namespace) -> None:
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
             if num_episodes > 0:
-                logger.log_rewards(infos["episode"], num_episodes)
+                env_logger.log_rewards(infos["episode"], num_episodes)
 
-    logger.print_rewards()
-    logger.plot_states()
+    env_logger.print_rewards()
+    env_logger.plot_states()
 
     if RENDER:
         video.release()

@@ -187,6 +187,3 @@ class Sim2SimRobot(mjcf.Robot):
         rough_string = ET.tostring(self.tree.getroot(), "utf-8")
         # Pretty print the XML
         formatted_xml = _pretty_print_xml(rough_string)
-
-        with open(path, "w") as f:
-            f.write(formatted_xml)

@@ -2,12 +2,13 @@
 """This script updates the URDF file to fix the joints of the robot."""
 
 import xml.etree.ElementTree as ET
+
 from sim.stompy.joints import StompyFixed
 
 STOMPY_URDF = "stompy/robot.urdf"
 
 
-def update_urdf():
+def update_urdf() -> None:
     tree = ET.parse(STOMPY_URDF)
     root = tree.getroot()
     stompy = StompyFixed()
