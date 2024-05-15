@@ -9,6 +9,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/kscalelabs/onshape/blob/main/LICENSE)
 [![Discord](https://dcbadge.limes.pink/api/server/k5mSvCkYQh?style=flat)](https://discord.gg/k5mSvCkYQh)
 [![Wiki](https://img.shields.io/badge/wiki-humanoids-black)](https://humanoids.wiki)
+[![Update Stompy S3 Model](https://github.com/kscalelabs/sim/actions/workflows/update_stompy_s3.yml/badge.svg?branch=master)](https://github.com/kscalelabs/sim/actions/workflows/update_stompy_s3.yml)
 
 </div>
 
