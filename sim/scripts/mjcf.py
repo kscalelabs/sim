@@ -26,6 +26,7 @@ class Compiler:
     angle: Literal["radian", "degree"] = "radian"
     meshdir: str | None = None
     eulerseq: Literal["xyz", "zxy", "zyx", "yxz", "yzx", "xzy"] | None = None
+    autolimits: bool | None = None
 
     def to_xml(self, compiler: ET.Element | None = None) -> ET.Element:
         if compiler is None:
@@ -37,6 +38,8 @@ class Compiler:
             compiler.set("meshdir", self.meshdir)
         if self.eulerseq is not None:
             compiler.set("eulerseq", self.eulerseq)
+        if self.autolimits is not None:
+            compiler.set("autolimits", str(self.autolimits).lower())
         return compiler
 
 
@@ -68,6 +71,8 @@ class Joint:
     range: tuple[float, float] | None = None
     damping: float | None = None
     stiffness: float | None = None
+    armature: float | None = None
+    frictionloss: float | None = None
 
     def to_xml(self, root: ET.Element | None = None) -> ET.Element:
         if root is None:
@@ -83,23 +88,25 @@ class Joint:
         if self.axis is not None:
             joint.set("axis", " ".join(map(str, self.axis)))
         if self.range is not None:
-            self.limited = True
             joint.set("range", " ".join(map(str, self.range)))
-        else:
-            self.limited = False
-        joint.set("limited", str(self.limited).lower())
+        if self.limited is not None:
+            joint.set("limited", str(self.limited).lower())
         if self.damping is not None:
             joint.set("damping", str(self.damping))
         if self.stiffness is not None:
             joint.set("stiffness", str(self.stiffness))
+        if self.armature is not None:
+            joint.set("armature", str(self.armature))
+        if self.frictionloss is not None:
+            joint.set("frictionloss", str(self.frictionloss))
         return joint
 
 
 @dataclass
 class Geom:
-    mesh: str | None = None
+    name: str | None = None
     type: Literal["plane", "sphere", "cylinder", "box", "capsule", "ellipsoid", "mesh"] | None = None
-    # size: float
+    plane: str | None = None
     rgba: tuple[float, float, float, float] | None = None
     pos: tuple[float, float, float] | None = None
     quat: tuple[float, float, float, float] | None = None
@@ -108,14 +115,18 @@ class Geom:
     condim: int | None = None
     contype: int | None = None
     conaffinity: int | None = None
+    size: tuple[float, float, float] | None = None
+    friction: tuple[float, float, float] | None = None
+    solref: tuple[float, float] | None = None
+    density: float | None = None
 
     def to_xml(self, root: ET.Element | None = None) -> ET.Element:
         if root is None:
             geom = ET.Element("geom")
         else:
             geom = ET.SubElement(root, "geom")
-        if self.mesh is not None:
-            geom.set("mesh", self.mesh)
+        if self.name is not None:
+            geom.set("name", self.name)
         if self.type is not None:
             geom.set("type", self.type)
         if self.rgba is not None:
@@ -134,6 +145,16 @@ class Geom:
             geom.set("contype", str(self.contype))
         if self.conaffinity is not None:
             geom.set("conaffinity", str(self.conaffinity))
+        if self.plane is not None:
+            geom.set("plane", self.plane)
+        if self.size is not None:
+            geom.set("size", " ".join(map(str, self.size)))
+        if self.friction is not None:
+            geom.set("friction", " ".join(map(str, self.friction)))
+        if self.solref is not None:
+            geom.set("solref", " ".join(map(str, self.solref)))
+        if self.density is not None:
+            geom.set("density", str(self.density))
         return geom
 
 
@@ -451,10 +472,10 @@ class Robot:
         # remove inertia tags
         urdf_tree = ET.parse(self.output_dir / f"{self.robot_name}.urdf")
         root = urdf_tree.getroot()
-        for link in root.findall(".//link"):
-            inertial = link.find("inertial")
-            if inertial is not None:
-                link.remove(inertial)
+        # for link in root.findall(".//link"):
+        #     inertial = link.find("inertial")
+        #     if inertial is not None:
+        #         link.remove(inertial)
 
         tree = ET.ElementTree(root)
         tree.write(self.output_dir / f"{self.robot_name}.urdf", encoding="utf-8", xml_declaration=True)
@@ -475,16 +496,21 @@ class Robot:
         # TODO - check that
         root.append(
             Default(
-                joint=Joint(limited=True),
+                joint=Joint(armature=0.01, damping=.1, limited=True, frictionloss=0.01),
                 motor=Motor(ctrllimited=True),
-                # TODO
-                #geom=
-                equality=Equality(solref=(0.001, 2))
+                equality=Equality(solref=(0.001, 2)),
+                geom=Geom(
+
+                    solref=(0.001, 2), friction=(0.9, 0.2, 0.2), condim=4, contype=0, conaffinity=0,
+                    # density=0
+                ) 
                 # visualgem?
                 # joint param damping
             ).to_xml()
         )
-
+        asset = root.find("asset")
+        asset.append(ET.Element("texture", name="texplane", type="2d", builtin="checker", rgb1=".0 .0 .0", rgb2=".8 .8 .8", width="100", height="108"))
+        asset.append(ET.Element("material", name="matplane", reflectance="0.", texture="texplane", texrepeat="1 1", texuniform="true"))
         compiler = root.find("compiler")
         if self.compiler is not None:
             compiler = self.compiler.to_xml(compiler)
@@ -496,7 +522,8 @@ class Robot:
         for element in worldbody:
             items_to_move.append(element)
 
-        new_root_body = Body(name="root", pos=(0, 0, 0), quat=(1, 0, 0, 0)).to_xml()
+        BODY_HEIGHT = 1.2
+        new_root_body = Body(name="root", pos=(0, 0, BODY_HEIGHT), quat=(1, 0, 0, 0)).to_xml()
         # Move gathered elements to the new root body
         for item in items_to_move:
             worldbody.remove(item)
@@ -521,7 +548,7 @@ class Robot:
         )
         worldbody.insert(
             0,
-            Geom(mesh="ground", type="plane", pos=(0.001, 0, 0), quat=(1, 0, 0, 0),
+            Geom(name="ground", type="plane", size=(0, 0, 1), pos=(0.001, 0, 0), quat=(1, 0, 0, 0),
                 material="matplane", condim=1, conaffinity=15
             ).to_xml()
         )
@@ -598,7 +625,7 @@ if __name__ == "__main__":
     robot = Robot(
         robot_name, Path("/Users/pfb30/sim-integration/13052024"), 
         # pfb30 test eulerseq
-        Compiler(angle="radian", meshdir="meshes", eulerseq="xyz"))
+        Compiler(angle="radian", meshdir="meshes", autolimits=True)) #, eulerseq="xyz"))
     robot.adapt_world()
     # robot.save(f"/Users/pfb30/sim-integration/13052024/{robot_name}.xml")
 
