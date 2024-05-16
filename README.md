@@ -29,6 +29,8 @@ The getting up task is still an open challenge!
 
 ## Getting Started
 
+This repository requires Python 3.8 due to compatibility issues with underlying libraries. We hope to support more recent Python versions in the future.
+
 1. Clone this repository:
 ```bash
 git clone https://github.com/kscalelabs/sim.git
