@@ -9,6 +9,7 @@ import argparse
 import logging
 import time
 from pathlib import Path
+from typing import List, Union
 
 import mediapy as media
 import mujoco
@@ -21,8 +22,8 @@ from sim.logging import configure_logging
 logger = logging.getLogger(__name__)
 
 
-def simulate(model_path: str | Path, duration: float, framerate: float, record_video: bool) -> None:
-    frames: list[np.ndarray] = []
+def simulate(model_path: Union[str, Path], duration: float, framerate: float, record_video: bool) -> None:
+    frames: List[np.ndarray] = []
     model = mujoco.MjModel.from_xml_path(model_path)
     data = mujoco.MjData(model)
     renderer = mujoco.Renderer(model)
