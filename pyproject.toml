@@ -30,12 +30,15 @@ warn_redundant_casts = true
 incremental = true
 namespace_packages = false
 
+exclude = "sim/humanoid_gym/"
+
 [[tool.mypy.overrides]]
 
 module = [
-    "isaacgym.*",
     "humanoid.*",
+    "isaacgym.*",
     "IsaacGymEnvs.*",
+    "mujoco.*",
 ]
 
 ignore_missing_imports = true
@@ -48,6 +51,8 @@ profile = "black"
 
 line-length = 120
 target-version = "py310"
+
+exclude = ["sim/humanoid_gym"]
 
 [tool.ruff.lint]
 

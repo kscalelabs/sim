@@ -11,18 +11,21 @@ Todo:
     3. Condim 3 and 4 and difference in results
 """
 
+import logging
+import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
-import xml.dom.minidom
 
 from kol.formats import mjcf
+
 from sim.stompy.joints import StompyFixed
 
+logger = logging.getLogger(__name__)
 
 STOMPY_HEIGHT = 1.2
 
 
-def _pretty_print_xml(xml_string):
+def _pretty_print_xml(xml_string: str) -> str:
     """Formats the provided XML string into a pretty-printed version."""
     parsed_xml = xml.dom.minidom.parseString(xml_string)
     return parsed_xml.toprettyxml(indent="  ")
@@ -32,26 +35,26 @@ class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
     def adapt_world(self) -> None:
-        root = self.tree.getroot()
+        root: ET.Element = self.tree.getroot()
 
         root.append(
-            mjcf.Option(
+            mjcf.Option(  # type: ignore[call-arg]
                 timestep=0.001,
                 viscosity=1e-6,
                 iterations=50,
                 solver="PGS",
                 gravity=(0, 0, -9.81),
-                flag=mjcf.Flag(frictionloss="enable"),
+                flag=mjcf.Flag(frictionloss="enable"),  # type: ignore[attr-defined]
             ).to_xml()
         )
 
         # TODO - test the physical parameters
         root.append(
-            mjcf.Default(
-                joint=mjcf.Joint(armature=0.01, damping=0.1, limited=True, frictionloss=0.01),
-                motor=mjcf.Motor(ctrllimited=True),
-                equality=mjcf.Equality(solref=(0.001, 2)),
-                geom=mjcf.Geom(
+            mjcf.Default(  # type: ignore[attr-defined]
+                joint=mjcf.Joint(armature=0.01, damping=0.1, limited=True, frictionloss=0.01),  # type: ignore[call-arg]
+                motor=mjcf.Motor(ctrllimited=True),  # type: ignore[attr-defined]
+                equality=mjcf.Equality(solref=(0.001, 2)),  # type: ignore[attr-defined]
+                geom=mjcf.Geom(  # type: ignore[call-arg]
                     solref=(0.001, 2),
                     friction=(0.9, 0.2, 0.2),
                     condim=4,
@@ -97,16 +100,16 @@ class Sim2SimRobot(mjcf.Robot):
         # Add joints to all the movement of the base
         new_root_body.extend(
             [
-                mjcf.Joint(name="root_x", type="slide", axis=(1, 0, 0), limited=False).to_xml(),
-                mjcf.Joint(name="root_y", type="slide", axis=(0, 1, 0), limited=False).to_xml(),
-                mjcf.Joint(name="root_z", type="slide", axis=(0, 0, 1), limited=False).to_xml(),
-                mjcf.Joint(name="root_ball", type="ball", limited=False).to_xml(),
+                mjcf.Joint(name="root_x", type="slide", axis=(1, 0, 0), limited=False).to_xml(),  # type: ignore[call-arg]
+                mjcf.Joint(name="root_y", type="slide", axis=(0, 1, 0), limited=False).to_xml(),  # type: ignore[call-arg]
+                mjcf.Joint(name="root_z", type="slide", axis=(0, 0, 1), limited=False).to_xml(),  # type: ignore[call-arg]
+                mjcf.Joint(name="root_ball", type="ball", limited=False).to_xml(),  # type: ignore[call-arg]
             ]
         )
 
         # Add imu site to the body - relative position to the body
         # check at what stage we use this
-        new_root_body.append(mjcf.Site(name="imu", size=0.01, pos=(0, 0, 0)).to_xml())
+        new_root_body.append(mjcf.Site(name="imu", size=0.01, pos=(0, 0, 0)).to_xml())  # type: ignore[attr-defined]
 
         # Move gathered elements to the new root body
         for item in items_to_move:
@@ -118,7 +121,7 @@ class Sim2SimRobot(mjcf.Robot):
 
         worldbody.insert(
             0,
-            mjcf.Light(
+            mjcf.Light(  # type: ignore[attr-defined]
                 directional=True,
                 diffuse=(0.4, 0.4, 0.4),
                 specular=(0.1, 0.1, 0.1),
@@ -129,13 +132,13 @@ class Sim2SimRobot(mjcf.Robot):
         )
         worldbody.insert(
             0,
-            mjcf.Light(
+            mjcf.Light(  # type: ignore[attr-defined]
                 directional=True, diffuse=(0.6, 0.6, 0.6), specular=(0.2, 0.2, 0.2), pos=(0, 0, 4), dir=(0, 0, -1)
             ).to_xml(),
         )
         worldbody.insert(
             0,
-            mjcf.Geom(
+            mjcf.Geom(  # type: ignore[call-arg]
                 name="ground",
                 type="plane",
                 size=(0, 0, 1),
@@ -152,21 +155,21 @@ class Sim2SimRobot(mjcf.Robot):
         for joint, limits in StompyFixed.default_limits().items():
             if joint in StompyFixed.legs.all_joints():
                 motors.append(
-                    mjcf.Motor(
+                    mjcf.Motor(  # type: ignore[attr-defined]
                         name=joint, joint=joint, gear=1, ctrlrange=(limits["lower"], limits["upper"]), ctrllimited=True
                     )
                 )
                 sensors.extend(
                     [
-                        mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"),
-                        mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"),
-                        mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001),
+                        mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"),  # type: ignore[attr-defined]
+                        mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"),  # type: ignore[attr-defined]
+                        mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001),  # type: ignore[attr-defined]
                     ]
                 )
 
         # Add motors and sensors
-        root.append(mjcf.Actuator(motors).to_xml())
-        root.append(mjcf.Sensor(sensors).to_xml())
+        root.append(mjcf.Actuator(motors).to_xml())  # type: ignore[arg-type, call-arg]
+        root.append(mjcf.Sensor(sensors).to_xml())  # type: ignore[attr-defined]
 
         # Add imus
         sensors = root.find("sensor")
@@ -187,3 +190,4 @@ class Sim2SimRobot(mjcf.Robot):
         rough_string = ET.tostring(self.tree.getroot(), "utf-8")
         # Pretty print the XML
         formatted_xml = _pretty_print_xml(rough_string)
+        logger.info("XML:\n%s", formatted_xml)

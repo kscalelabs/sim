@@ -1,3 +1,4 @@
 # requirements.txt
 
+mediapy
 torch

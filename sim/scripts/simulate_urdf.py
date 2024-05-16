@@ -8,9 +8,8 @@ the simulation, and how to configure the DOF properties of the robot.
 """
 
 import logging
-import time
 from dataclasses import dataclass
-from typing import Any, Dict, List, Literal, NewType
+from typing import Any, Dict, Literal, NewType
 
 from isaacgym import gymapi, gymtorch, gymutil
 
@@ -174,14 +173,14 @@ def load_gym() -> GymParams:
 
 
 def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all_at_once") -> None:
-    joints = Stompy.all_joints()
-    last_time = time.time()
+    # joints = Stompy.all_joints()
+    # last_time = time.time()
 
-    dof_ids: Dict[str, int] = gym.gym.get_actor_dof_dict(gym.env, gym.robot)
-    body_ids: List[str] = gym.gym.get_actor_rigid_body_names(gym.env, gym.robot)
+    # dof_ids: Dict[str, int] = gym.gym.get_actor_dof_dict(gym.env, gym.robot)
+    # body_ids: List[str] = gym.gym.get_actor_rigid_body_names(gym.env, gym.robot)
 
-    joint_id = 0
-    effort = 5.0
+    # joint_id = 0
+    # effort = 5.0
 
     while not gym.gym.query_viewer_has_closed(gym.viewer):
         gym.gym.simulate(gym.sim)

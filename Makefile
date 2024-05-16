@@ -75,11 +75,9 @@ clean:
 #       Static Checks      #
 # ------------------------ #
 
-py-files := $(shell find . -name '*.py')
-
 format:
-	@black $(py-files)
-	@ruff format $(py-files)
+	@black sim
+	@ruff format sim
 .PHONY: format
 
 format-cpp:
@@ -88,14 +86,10 @@ format-cpp:
 .PHONY: format-cpp
 
 static-checks:
-	@black --diff --check $(py-files)
-	@ruff check $(py-files)
-	@mypy --install-types --non-interactive $(py-files)
+	@black --diff --check sim
+	@ruff check sim
+	@mypy --install-types --non-interactive sim
 .PHONY: lint
-
-mypy-daemon:
-	@dmypy run -- $(py-files)
-.PHONY: mypy-daemon
 
 # ------------------------ #
 #        Unit tests        #
