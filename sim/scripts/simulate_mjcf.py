@@ -5,17 +5,25 @@ Run with mjpython:
     mjpython sim/scripts/simulate_mjcf.py --record
 """
 
+import argparse
+import logging
 import time
+from pathlib import Path
+from typing import List, Union
+
+import mediapy as media
 import mujoco
 import mujoco.viewer
-import mediapy as media
-import argparse
+import numpy as np
 
 from sim.env import stompy_mjcf_path
+from sim.logging import configure_logging
+
+logger = logging.getLogger(__name__)
 
 
-def simulate(model_path, duration, framerate, record_video):
-    frames = []
+def simulate(model_path: Union[str, Path], duration: float, framerate: float, record_video: bool) -> None:
+    frames: List[np.ndarray] = []
     model = mujoco.MjModel.from_xml_path(model_path)
     data = mujoco.MjData(model)
     renderer = mujoco.Renderer(model)
@@ -37,18 +45,18 @@ def simulate(model_path, duration, framerate, record_video):
         if record_video:
             video_path = "mjcf_simulation.mp4"
             media.write_video(video_path, frames, fps=framerate)
-            print(f"Video saved to {video_path}")
+            # print(f"Video saved to {video_path}")
+            logger.info("Video saved to %s", video_path)
 
 
 if __name__ == "__main__":
+    configure_logging()
+
     parser = argparse.ArgumentParser(description="MuJoCo Simulation")
-    parser.add_argument(
-        "--model_path", type=str, default=str(stompy_mjcf_path()), help="Path to the MuJoCo XML model file"
-    )
+    parser.add_argument("--model_path", type=str, default=str(stompy_mjcf_path()), help="Path to the MuJoCo XML file")
     parser.add_argument("--duration", type=int, default=3, help="Duration of the simulation in seconds")
     parser.add_argument("--framerate", type=int, default=30, help="Frame rate for video recording")
     parser.add_argument("--record", action="store_true", help="Flag to record video")
-
     args = parser.parse_args()
 
     simulate(args.model_path, args.duration, args.framerate, args.record)

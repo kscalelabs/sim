@@ -10,19 +10,23 @@ TODO:
     2. Condim 3 and 4 and difference in results
 """
 
+import logging
+import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
-import xml.dom.minidom
+from typing import List, Union
 
 from kol.formats import mjcf
+
 from sim.stompy.joints import StompyFixed
 from sim.env import stompy_mjcf_path
 
+logger = logging.getLogger(__name__)
 
 STOMPY_HEIGHT = 1.0
 
 
-def _pretty_print_xml(xml_string):
+def _pretty_print_xml(xml_string: str) -> str:
     """Formats the provided XML string into a pretty-printed version."""
     parsed_xml = xml.dom.minidom.parseString(xml_string)
     return parsed_xml.toprettyxml(indent="  ")
@@ -32,7 +36,8 @@ class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
     def adapt_world(self) -> None:
-        root = self.tree.getroot()
+        root: ET.Element = self.tree.getroot()
+
         asset = root.find("asset")
         asset.append(
             ET.Element(
@@ -116,8 +121,10 @@ class Sim2SimRobot(mjcf.Robot):
             ).to_xml(),
         )
 
-        motors = []
-        sensors = []
+        motors: List[mjcf.Motor] = []
+        sensor_pos: List[mjcf.Actuatorpos] = []
+        sensor_vel: List[mjcf.Actuatorvel] = []
+        sensor_frc: List[mjcf.Actuatorfrc] = []
         for joint, limits in StompyFixed.default_limits().items():
             if joint in StompyFixed.default_standing().keys():
                 motors.append(
@@ -125,17 +132,13 @@ class Sim2SimRobot(mjcf.Robot):
                         name=joint, joint=joint, gear=1, ctrlrange=(limits["lower"], limits["upper"]), ctrllimited=True
                     )
                 )
-                sensors.extend(
-                    [
-                        mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"),
-                        mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"),
-                        mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001),
-                    ]
-                )
+                sensor_pos.append(mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"))
+                sensor_vel.append(mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"))
+                sensor_frc.append(mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001))
 
         # Add motors and sensors
         root.append(mjcf.Actuator(motors).to_xml())
-        root.append(mjcf.Sensor(sensors).to_xml())
+        root.append(mjcf.Sensor(sensor_pos, sensor_vel, sensor_frc).to_xml())
 
         # Add imus
         sensors = root.find("sensor")
@@ -182,11 +185,11 @@ class Sim2SimRobot(mjcf.Robot):
         )
         self.tree = ET.ElementTree(root)
 
-    def save(self, path: str | Path) -> None:
+    def save(self, path: Union[str, Path]) -> None:
         rough_string = ET.tostring(self.tree.getroot(), "utf-8")
         # Pretty print the XML
         formatted_xml = _pretty_print_xml(rough_string)
-
+        logger.info("XML:\n%s", formatted_xml)
         with open(path, "w") as f:
             f.write(formatted_xml)
 

@@ -1,10 +1,8 @@
+# mypy: disable-error-code="import-not-found"
 """Updates the Stompy model."""
 
 import tarfile
 from pathlib import Path
-
-from kol.logging import configure_logging
-from kol.onshape.converter import Converter
 
 STOMPY_MODEL = (
     "https://cad.onshape.com/documents/71f793a23ab7562fb9dec82d/"
@@ -23,6 +21,12 @@ SUFFIX_TO_JOINT_EFFORT = {
 
 
 def main() -> None:
+    try:
+        from kol.logging import configure_logging
+        from kol.onshape.converter import Converter
+    except ImportError:
+        raise ImportError("Please install the `kscale-onshape-library` package to run this script.")
+
     configure_logging()
 
     output_dir = Path("stompy")

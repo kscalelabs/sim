@@ -7,7 +7,7 @@ tree of the various joint names in the robot.
 
 import textwrap
 from abc import ABC
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 
 import numpy as np
 
@@ -30,8 +30,8 @@ class Node(ABC):
         ]
 
     @classmethod
-    def joints_motors(cls) -> List[str]:
-        joint_names = []
+    def joints_motors(cls) -> List[Tuple[str, str]]:
+        joint_names: List[Tuple[str, str]] = []
         for attr in dir(cls):
             if not attr.startswith("__"):
                 attr2 = getattr(cls, attr)
