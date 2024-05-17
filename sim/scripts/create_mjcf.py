@@ -7,10 +7,13 @@ https://github.com/google-deepmind/mujoco/blob/main/src/xml/xml_native_writer.cc
 python sim.scripts/create_mjcf.py
 
 Todo:
+    -1. Inertial information
+    0. IMU right position - base
     1. Add to all geoms
-    3. Condim 3 and 4 and difference in results
-"""
+    2. Condim 3 and 4 and difference in results
+    3.
 
+"""
 import xml.etree.ElementTree as ET
 from pathlib import Path
 import xml.dom.minidom
@@ -19,7 +22,7 @@ from kol.formats import mjcf
 from sim.stompy.joints import StompyFixed
 
 
-STOMPY_HEIGHT = 1.2
+STOMPY_HEIGHT = 1.0
 
 
 def _pretty_print_xml(xml_string):
@@ -33,35 +36,6 @@ class Sim2SimRobot(mjcf.Robot):
 
     def adapt_world(self) -> None:
         root = self.tree.getroot()
-
-        root.append(
-            mjcf.Option(
-                timestep=0.001,
-                viscosity=1e-6,
-                iterations=50,
-                solver="PGS",
-                gravity=(0, 0, -9.81),
-                flag=mjcf.Flag(frictionloss="enable"),
-            ).to_xml()
-        )
-
-        # TODO - test the physical parameters
-        root.append(
-            mjcf.Default(
-                joint=mjcf.Joint(armature=0.01, damping=0.1, limited=True, frictionloss=0.01),
-                motor=mjcf.Motor(ctrllimited=True),
-                equality=mjcf.Equality(solref=(0.001, 2)),
-                geom=mjcf.Geom(
-                    solref=(0.001, 2),
-                    friction=(0.9, 0.2, 0.2),
-                    condim=4,
-                    contype=1,
-                    conaffinity=15,
-                ),
-                # visualgem?
-                # joint param damping
-            ).to_xml()
-        )
         asset = root.find("asset")
         asset.append(
             ET.Element(
@@ -93,7 +67,6 @@ class Sim2SimRobot(mjcf.Robot):
             items_to_move.append(element)
 
         new_root_body = mjcf.Body(name="root", pos=(0, 0, STOMPY_HEIGHT), quat=(1, 0, 0, 0)).to_xml()
-
         # Add joints to all the movement of the base
         new_root_body.extend(
             [
@@ -115,7 +88,6 @@ class Sim2SimRobot(mjcf.Robot):
 
         # Add the new root body to the worldbody
         worldbody.append(new_root_body)
-
         worldbody.insert(
             0,
             mjcf.Light(
@@ -150,7 +122,7 @@ class Sim2SimRobot(mjcf.Robot):
         motors = []
         sensors = []
         for joint, limits in StompyFixed.default_limits().items():
-            if joint in StompyFixed.legs.all_joints():
+            if joint in StompyFixed.default_standing().keys():
                 motors.append(
                     mjcf.Motor(
                         name=joint, joint=joint, gear=1, ctrlrange=(limits["lower"], limits["upper"]), ctrllimited=True
@@ -173,13 +145,42 @@ class Sim2SimRobot(mjcf.Robot):
         sensors.extend(
             [
                 # TODO - pfb30 test that
-                # ET.Element("framequat", name="orientation", objtype="site", noise="0.001", objname="imu"),
-                # ET.Element("framepos", name="position", objtype="site", noise="0.001", objname="imu"),
+                ET.Element("framequat", name="orientation", objtype="site", noise="0.001", objname="imu"),
                 ET.Element("gyro", name="angular-velocity", site="imu", noise="0.005", cutoff="34.9"),
-                ET.Element("velocimeter", name="linear-velocity", site="imu", noise="0.001", cutoff="30"),
-                ET.Element("accelerometer", name="linear-acceleration", site="imu", noise="0.005", cutoff="157"),
-                ET.Element("magnetometer", name="magnetometer", site="imu"),
+                # ET.Element("framepos", name="position", objtype="site", noise="0.001", objname="imu"),
+                # ET.Element("velocimeter", name="linear-velocity", site="imu", noise="0.001", cutoff="30"),
+                # ET.Element("accelerometer", name="linear-acceleration", site="imu", noise="0.005", cutoff="157"),
+                # ET.Element("magnetometer", name="magnetometer", site="imu"),
             ]
+        )
+
+        root.insert(1,
+            mjcf.Option(
+                timestep=0.001,
+                viscosity=1e-6,
+                iterations=50,
+                solver="PGS",
+                gravity=(0, 0, -9.81),
+                flag=mjcf.Flag(frictionloss="enable"),
+            ).to_xml()
+        )
+
+        # TODO - test the physical parameters
+        root.insert(1,
+            mjcf.Default(
+                joint=mjcf.Joint(armature=0.01, damping=0.1, limited=True, frictionloss=0.01),
+                motor=mjcf.Motor(ctrllimited=True),
+                equality=mjcf.Equality(solref=(0.001, 2)),
+                geom=mjcf.Geom(
+                    solref=(0.001, 2),
+                    friction=(0.9, 0.2, 0.2),
+                    condim=4,
+                    contype=1,
+                    conaffinity=15,
+                ),
+                # visualgem?
+                # joint param damping
+            ).to_xml()
         )
         self.tree = ET.ElementTree(root)
 
@@ -187,3 +188,20 @@ class Sim2SimRobot(mjcf.Robot):
         rough_string = ET.tostring(self.tree.getroot(), "utf-8")
         # Pretty print the XML
         formatted_xml = _pretty_print_xml(rough_string)
+
+        with open(path, "w") as f:
+            f.write(formatted_xml)
+
+
+if __name__ == "__main__":
+    robot_name = "robot_fixed"
+    robot = Sim2SimRobot(
+        robot_name,
+        Path("/Users/pfb30/sim/stompy"),
+        mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True),
+        remove_inertia=False,
+    )
+    # TODO - test eulerseq setup
+    # , eulerseq="xyz"))
+    robot.adapt_world()
+    robot.save(f"/Users/pfb30/sim/stompy/robot_new.xml")
