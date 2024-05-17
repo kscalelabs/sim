@@ -3,6 +3,7 @@
 Run example:
     mjpython sim/deploy/run.py --load_model sim/deploy/tests/walking_policy.pt --world MUJOCO
 """
+
 import argparse
 from abc import ABC, abstractmethod
 from enum import Enum
@@ -13,11 +14,12 @@ import mujoco.viewer
 import numpy as np
 from tqdm import tqdm
 from sim.env import stompy_mjcf_path
+from sim.stompy.joints import StompyFixed
 
-# from humanoid.envs import *
-# from humanoid.utils import Logger, task_registry
-# from isaacgym.torch_utils import *
-# from isaacgym import gymapi
+from humanoid.envs import *
+from humanoid.utils import task_registry
+from isaacgym.torch_utils import *
+from isaacgym import gymapi
 
 from policy import SimPolicy
 
@@ -96,15 +98,15 @@ class MujocoWorld(World):
             - ang_vel: The angular velocity of the robot.
         """
         # test this
-        dof_pos = self.data.qpos.astype(np.double) # dofx1
-        dof_vel = self.data.qvel.astype(np.double) # dofx1
+        dof_pos = self.data.qpos.astype(np.double)  # dofx1
+        dof_vel = self.data.qvel.astype(np.double)  # dofx1
         # change to quaternion with w at the end
-        orientation = self.data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double) # 4x1
-        ang_vel = self.data.sensor("angular-velocity").data.astype(np.double) # 3x1
+        orientation = self.data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double)  # 4x1
+        ang_vel = self.data.sensor("angular-velocity").data.astype(np.double)  # 3x1
 
         # Extract only dof
-        dof_pos = dof_pos[-self.cfg.num_actions:]
-        dof_vel = dof_vel[-self.cfg.num_actions:]
+        dof_pos = dof_pos[-self.cfg.num_actions :]
+        dof_vel = dof_vel[-self.cfg.num_actions :]
 
         return dof_pos, dof_vel, orientation, ang_vel
 
@@ -113,19 +115,131 @@ class MujocoWorld(World):
             for step in tqdm(range(int(cfg.duration / cfg.dt)), desc="Simulating..."):
                 # Get the world state
                 dof_pos, dof_vel, orientation, ang_vel = self.get_observation()
-    
+
                 # We update the policy at a lower frequency
                 # The simulation runs at 1000hz, but the policy is updated at 100hz
                 if step % cfg.decimation == 0:
                     action = policy.next_action(dof_pos, dof_vel, orientation, ang_vel, step)
                     target_dof_pos = action * cfg.action_scale
-            
+
                 tau = policy.pd_control(target_dof_pos, dof_pos, cfg.kps, dof_vel, cfg.kds)
 
                 self.step(tau=tau)
                 viewer.sync()
-        
+
         viewer.close()
+
+
+class IsaacWorld(World):
+    """Simulated world using Isaac.
+
+    Attributes:
+        cfg: The robot configuration.
+    """
+
+    def __init__(self, cfg: RobotConfig):
+        # Arguments are overwritten
+        delattr(args, "world")
+        delattr(args, "load_model")
+
+        # adapt
+        args.task = "legs_ppo"
+        args.device = "cpu"
+        args.physics_engine = gymapi.SIM_PHYSX
+        args.num_envs = 1
+        args.subscenes = 0
+        args.use_gpu = False
+        args.use_gpu_pipeline = False
+        args.num_threads = 1
+        args.sim_device = "cpu"
+        args.headless = False
+        args.seed = None
+        args.resume = False
+        args.max_iterations = None
+        args.experiment_name = None
+        args.run_name = "v1"
+        args.load_run = None
+        args.checkpoint = None  # "300"
+        args.rl_device = "cpu"
+
+        args.load_run = "Apr04_17-35-43_height_right3"
+        args.run_name = "height_right3"
+
+        env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
+        # override some parameters for testing
+        env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
+        env_cfg.sim.max_gpu_contact_pairs = 2**10
+        # env_cfg.terrain.mesh_type = 'trimesh'
+        env_cfg.terrain.mesh_type = "plane"
+        env_cfg.terrain.num_rows = 5
+        env_cfg.terrain.num_cols = 5
+        env_cfg.terrain.curriculum = False
+        env_cfg.terrain.max_init_terrain_level = 5
+        env_cfg.noise.add_noise = True  # True
+        env_cfg.domain_rand.push_robots = False
+        env_cfg.domain_rand.joint_angle_noise = 0.0
+        env_cfg.noise.curriculum = False
+        env_cfg.noise.noise_level = 0.5
+
+        train_cfg.seed = 123145
+        print("train_cfg.runner_class_name:", train_cfg.runner_class_name)
+
+        env, _ = task_registry.make_env(name=args.task, env_cfg=env_cfg, args=args)
+        env.set_camera(env_cfg.viewer.pos, env_cfg.viewer.lookat)
+        self.env = env
+
+        # load policy
+        train_cfg.runner.resume = True
+        ppo_runner, train_cfg = task_registry.make_alg_runner(
+            env=env,
+            name=args.task,
+            train_cfg=train_cfg,
+            args=args,
+        )
+        # Load it from the jit
+        self.policy = ppo_runner.get_inference_policy(device=args.device)
+
+        # Load it up
+        env.commands[:, 0] = 0.0  # y axis + down - up
+        env.commands[:, 1] = 0.5  # x axis - left + right
+        env.commands[:, 2] = 0.0
+        env.commands[:, 3] = 0.0
+
+    def step(
+        self,
+        target_dof_pos: np.ndarray,
+        dof_pos: np.ndarray,
+        dof_vel: np.ndarray,
+        target_dof_vel: np.ndarray = None,
+    ) -> None:
+        """Performs a simulation step in the MuJoCo world.
+
+        Args:
+            target_dof_pos: The target joint positions.
+            q: The current joint positions.
+            dq: The current joint velocities.
+            target_dq: The target joint velocities (optional).
+        """
+        if target_dof_vel is None:
+            target_dof_vel = np.zeros((self.cfg.num_actions), dtype=np.double)
+
+        # Generate PD control
+        tau = self.pd_control(
+            target_dof_pos, dof_pos, self.cfg.kps, target_dof_vel, dof_vel, self.cfg.kds
+        )  # Calc torques
+        tau = np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)  # Clamp torques
+        self.data.ctrl = tau
+        mujoco.mj_step(self.model, self.data)
+        self.viewer.render()
+
+    def get_observation(self, actions) -> np.ndarray:
+        obs, _, _, _, _ = self.env.step(actions.detach())
+        return obs
+
+    def simulate(self, policy: SimPolicy) -> None:
+        for step in tqdm(range(int(cfg.duration / cfg.dt)), desc="Simulating..."):
+            actions = policy(obs.detach())  # * 0.
+            obs = self.get_observation(actions)
 
 
 def main(args: argparse.Namespace, cfg: RobotConfig) -> None:
@@ -153,34 +267,15 @@ if __name__ == "__main__":
     parser.add_argument("--world", type=str, default="MUJOCO", help="Type of deployment.")
     args = parser.parse_args()
 
-    if "xbot" in args.load_model:
-        robot_path = f"/Users/pfb30/sim/third_party/humanoid-gym/resources/robots/XBot/mjcf/XBot-L.xml"
-        dof: int = 12
-        kps: np.ndarray = np.array(
-            [200, 200, 350, 350, 15, 15, 200, 200, 350, 350, 15, 15], dtype=np.double)
-        kds: np.ndarray = np.array(
-            [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10], dtype=np.double)
-        tau_limit: np.ndarray = 200. * np.ones(dof, dtype=np.double)
-        num_single_obs = dof * 3 + 11
-    else:
-        dof=17
-        robot_path = stompy_mjcf_path()
-        num_single_obs = dof * 3 + 11
+    dof = len(StompyFixed.default_standing())
+    robot_path = stompy_mjcf_path(legs_only=True)
+    num_single_obs = dof * 3 + 11
 
-        kps = np.ones((dof), dtype=np.double) * 200
-        kds = np.ones((dof), dtype=np.double) * 10
-        tau_limit = np.ones((dof), dtype=np.double) * 200
+    kps = np.ones((dof), dtype=np.double) * 200
+    kds = np.ones((dof), dtype=np.double) * 10
+    tau_limit = np.ones((dof), dtype=np.double) * 200
 
-    # # TODO - this should be read from the config
-    # robot_path = f"/Users/pfb30/sim/stompy/robot_new.xml"
-    # num_single_obs = dof * 3 + 11
-    # dof = 
-    # kps = np.ones((dof), dtype=np.double) * 200
-    # kds = np.ones((dof), dtype=np.double) * 10
-    # tau_limit = np.ones((dof), dtype=np.double) * 200
     cfg = RobotConfig(
-        robot_model_path=robot_path,
-        dof=dof, kps=kps, kds=kds, tau_limit=tau_limit, 
-        num_single_obs=num_single_obs
+        robot_model_path=robot_path, dof=dof, kps=kps, kds=kds, tau_limit=tau_limit, num_single_obs=num_single_obs
     )
     main(args, cfg)

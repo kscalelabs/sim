@@ -23,6 +23,7 @@ class Policy(ABC):
         model: Loaded PyTorch model.
         action: Current action.
     """
+
     cmd: cmd
 
     def __init__(
@@ -51,7 +52,9 @@ class Policy(ABC):
         pass
 
     @abstractmethod
-    def pd_control(self, target_dof_pos: np.ndarray, dof_pos: np.ndarray, kp: float, dof_vel: np.ndarray, kd: float) -> np.ndarray:
+    def pd_control(
+        self, target_dof_pos: np.ndarray, dof_pos: np.ndarray, kp: float, dof_vel: np.ndarray, kd: float
+    ) -> np.ndarray:
         """Calculates torques from position commands using PD control.
 
         Args:
@@ -103,7 +106,6 @@ class SimPolicy(Policy):
         """
         target_dof_vel = np.zeros(self.cfg.num_actions, dtype=np.double)
         return (target_dof_pos - dof_pos) * kp + (target_dof_vel - dof_vel) * kd
-
 
     def parse_action(
         self, dof_pos: np.ndarray, dof_vel: np.ndarray, eu_ang: np.ndarray, ang_vel: np.ndarray, count_lowlevel: int
@@ -174,4 +176,5 @@ class SimPolicy(Policy):
 
 class RealPolicy(Policy):
     """Policy for real-world deployment."""
+
     pass

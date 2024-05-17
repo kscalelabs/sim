@@ -1,25 +1,22 @@
 # mypy: disable-error-code="operator,union-attr"
 """Defines common types and functions for exporting MJCF files.
 
-API reference:
-https://github.com/google-deepmind/mujoco/blob/main/src/xml/xml_native_writer.cc#L780
+Run:
+    python sim.scripts/create_mjcf.py
 
-python sim.scripts/create_mjcf.py
-
-Todo:
-    -1. Inertial information
-    0. IMU right position - base
-    1. Add to all geoms
+TODO:
+    0. Add IMU right position - base
+    1. Add all geoms
     2. Condim 3 and 4 and difference in results
-    3.
-
 """
+
 import xml.etree.ElementTree as ET
 from pathlib import Path
 import xml.dom.minidom
 
 from kol.formats import mjcf
 from sim.stompy.joints import StompyFixed
+from sim.env import stompy_mjcf_path
 
 
 STOMPY_HEIGHT = 1.0
@@ -154,7 +151,8 @@ class Sim2SimRobot(mjcf.Robot):
             ]
         )
 
-        root.insert(1,
+        root.insert(
+            1,
             mjcf.Option(
                 timestep=0.001,
                 viscosity=1e-6,
@@ -162,11 +160,12 @@ class Sim2SimRobot(mjcf.Robot):
                 solver="PGS",
                 gravity=(0, 0, -9.81),
                 flag=mjcf.Flag(frictionloss="enable"),
-            ).to_xml()
+            ).to_xml(),
         )
 
         # TODO - test the physical parameters
-        root.insert(1,
+        root.insert(
+            1,
             mjcf.Default(
                 joint=mjcf.Joint(armature=0.01, damping=0.1, limited=True, frictionloss=0.01),
                 motor=mjcf.Motor(ctrllimited=True),
@@ -178,9 +177,8 @@ class Sim2SimRobot(mjcf.Robot):
                     contype=1,
                     conaffinity=15,
                 ),
-                # visualgem?
-                # joint param damping
-            ).to_xml()
+                # TODO - visualgem and joint param damping
+            ).to_xml(),
         )
         self.tree = ET.ElementTree(root)
 
@@ -197,11 +195,10 @@ if __name__ == "__main__":
     robot_name = "robot_fixed"
     robot = Sim2SimRobot(
         robot_name,
-        Path("/Users/pfb30/sim/stompy"),
+        Path("stompy"),
         mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True),
         remove_inertia=False,
     )
-    # TODO - test eulerseq setup
-    # , eulerseq="xyz"))
+
     robot.adapt_world()
-    robot.save(f"/Users/pfb30/sim/stompy/robot_new.xml")
+    robot.save(stompy_mjcf_path(legs_only=True))

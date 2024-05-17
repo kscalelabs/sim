@@ -1,6 +1,8 @@
 """This module contains the configuration dataclasses for the robot."""
+
 import numpy as np
 from dataclasses import dataclass, field
+
 
 # Default velocity command
 @dataclass
@@ -48,6 +50,7 @@ class RobotConfig:
         num_observations: The total number of observations (frame_stack * num_single_obs).
         normalization: The normalization constants for observations and actions.
     """
+
     dof: int
     kps: np.ndarray
     kds: np.ndarray
