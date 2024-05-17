@@ -30,7 +30,7 @@ warn_redundant_casts = true
 incremental = true
 namespace_packages = false
 
-exclude = ["sim/humanoid_gym/", "sim/deploy"]
+exclude = ["sim/humanoid_gym/", "sim/deploy", "sim/scripts/create_mjcf.py"]
 
 
 
