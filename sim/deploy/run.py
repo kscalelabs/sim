@@ -207,38 +207,25 @@ class IsaacWorld(World):
 
     def step(
         self,
-        target_dof_pos: np.ndarray,
-        dof_pos: np.ndarray,
-        dof_vel: np.ndarray,
-        target_dof_vel: np.ndarray = None,
+        obs: np.ndarray,
+        policy: SimPolicy,
     ) -> None:
-        """Performs a simulation step in the MuJoCo world.
+        """Performs a simulation step in the Isaac world.
 
         Args:
-            target_dof_pos: The target joint positions.
-            q: The current joint positions.
-            dq: The current joint velocities.
-            target_dq: The target joint velocities (optional).
+            obs: The observation.
+            policy: The policy to use.
         """
-        if target_dof_vel is None:
-            target_dof_vel = np.zeros((self.cfg.num_actions), dtype=np.double)
-
-        # Generate PD control
-        tau = self.pd_control(
-            target_dof_pos, dof_pos, self.cfg.kps, target_dof_vel, dof_vel, self.cfg.kds
-        )  # Calc torques
-        tau = np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)  # Clamp torques
-        self.data.ctrl = tau
-        mujoco.mj_step(self.model, self.data)
-        self.viewer.render()
+        actions = policy(obs.detach())  # * 0.
+        return actions
 
     def get_observation(self, actions) -> np.ndarray:
         obs, _, _, _, _ = self.env.step(actions.detach())
         return obs
 
-    def simulate(self, policy: SimPolicy) -> None:
+    def simulate(self, policy=None) -> None:
         for step in tqdm(range(int(cfg.duration / cfg.dt)), desc="Simulating..."):
-            actions = policy(obs.detach())  # * 0.
+            actions = self.step(obs)
             obs = self.get_observation(actions)
 
 
@@ -254,7 +241,7 @@ def main(args: argparse.Namespace, cfg: RobotConfig) -> None:
         policy = SimPolicy(args.load_model, cfg)
     elif args.world == Worlds.ISAAC.name:
         world = IsaacWorld(cfg)
-        policy = SimPolicy(args.load_model, cfg)
+        policy = None
     else:
         raise ValueError("Invalid world type.")
 
