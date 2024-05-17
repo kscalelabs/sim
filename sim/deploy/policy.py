@@ -166,7 +166,7 @@ class SimPolicy(Policy):
         policy_input = np.zeros([1, self.cfg.num_observations], dtype=np.float32)
 
         for i in range(self.cfg.frame_stack):
-            policy_input[0, i * self.cfg.num_single_obs : (i + 1) * self.cfg.num_single_obs] = self.hist_obs[i][0, :]  # noqa
+            policy_input[0, i * self.cfg.num_single_obs : (i + 1) * self.cfg.num_single_obs] = self.hist_obs[i][0, :]
 
         self.action[:] = self.model(torch.tensor(policy_input))[0].detach().numpy()
 

@@ -198,6 +198,7 @@ if __name__ == "__main__":
     robot_name = "robot_fixed"
     robot = Sim2SimRobot(
         robot_name,
+        # TODO - fix that
         Path("stompy"),
         mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True),
         remove_inertia=False,

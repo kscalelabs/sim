@@ -30,7 +30,11 @@ warn_redundant_casts = true
 incremental = true
 namespace_packages = false
 
-exclude = "sim/humanoid_gym/"
+exclude = """
+sim/humanoid_gym/
+^sim/deploy/
+"""
+
 
 [[tool.mypy.overrides]]
 
