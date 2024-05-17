@@ -3,15 +3,14 @@
 import math
 from abc import ABC, abstractmethod
 from collections import deque
-
 from pathlib import Path
 from typing import Union
 
 import numpy as np
 import torch
-
 import utils
-from sim.deploy.config import cmd, RobotConfig
+
+from sim.deploy.config import RobotConfig, cmd
 
 
 class Policy(ABC):

@@ -12,18 +12,16 @@ from typing import Tuple
 import mujoco
 import mujoco.viewer
 import numpy as np
-from tqdm import tqdm
-from sim.env import stompy_mjcf_path
-from sim.stompy.joints import StompyFixed
-
 from humanoid.envs import *
 from humanoid.utils import task_registry
-from isaacgym.torch_utils import *
 from isaacgym import gymapi
-
+from isaacgym.torch_utils import *
 from policy import SimPolicy
+from tqdm import tqdm
 
 from sim.deploy.config import RobotConfig
+from sim.env import stompy_mjcf_path
+from sim.stompy.joints import StompyFixed
 
 
 class Worlds(Enum):

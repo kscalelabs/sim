@@ -2,9 +2,9 @@
 """Defines common types and functions for exporting MJCF files.
 
 Run:
-    python sim.scripts/create_mjcf.py
+    python sim/scripts/create_mjcf.py
 
-TODO:
+Todo:
     0. Add IMU right position - base
     1. Add all geoms
     2. Condim 3 and 4 and difference in results
@@ -18,8 +18,8 @@ from typing import List, Union
 
 from kol.formats import mjcf
 
-from sim.stompy.joints import StompyFixed
 from sim.env import stompy_mjcf_path
+from sim.stompy.joints import StompyFixed
 
 logger = logging.getLogger(__name__)
 
