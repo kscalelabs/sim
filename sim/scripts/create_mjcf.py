@@ -5,9 +5,10 @@ Run:
     python sim/scripts/create_mjcf.py
 
 Todo:
-    0. Add IMU right position - base
-    1. Add all geoms
-    2. Condim 3 and 4 and difference in results
+    0. Add IMU to the right position
+    1. Armature damping setup for different parts of body
+    2. Test control range limits?
+    3. Add inertia in the first part of the body
 """
 
 import logging
@@ -18,7 +19,7 @@ from typing import List, Union
 
 from kol.formats import mjcf
 
-from sim.env import stompy_mjcf_path
+from sim.env import model_dir, stompy_mjcf_path
 from sim.stompy.joints import StompyFixed
 
 logger = logging.getLogger(__name__)
@@ -56,6 +57,7 @@ class Sim2SimRobot(mjcf.Robot):
                 "material", name="matplane", reflectance="0.", texture="texplane", texrepeat="1 1", texuniform="true"
             )
         )
+        asset.append(ET.Element("material", name="visualgeom", rgba="0.5 0.9 0.2 1"))
 
         compiler = root.find("compiler")
         if self.compiler is not None:
@@ -82,11 +84,6 @@ class Sim2SimRobot(mjcf.Robot):
         # Add imu site to the body - relative position to the body
         # check at what stage we use this
         new_root_body.append(mjcf.Site(name="imu", size=0.01, pos=(0, 0, 0)).to_xml())
-
-        # Move gathered elements to the new root body
-        for item in items_to_move:
-            worldbody.remove(item)
-            new_root_body.append(item)
 
         # Add the new root body to the worldbody
         worldbody.append(new_root_body)
@@ -116,8 +113,9 @@ class Sim2SimRobot(mjcf.Robot):
                 pos=(0.001, 0, 0),
                 quat=(1, 0, 0, 0),
                 material="matplane",
-                condim=1,
-                conaffinity=15,
+                condim=3,
+                conaffinity=1,
+                contype=0,
             ).to_xml(),
         )
 
@@ -129,7 +127,11 @@ class Sim2SimRobot(mjcf.Robot):
             if joint in StompyFixed.default_standing().keys():
                 motors.append(
                     mjcf.Motor(
-                        name=joint, joint=joint, gear=1, ctrlrange=(limits["lower"], limits["upper"]), ctrllimited=True
+                        name=joint,
+                        joint=joint,
+                        gear=1,
+                        ctrlrange=(-200, 200),
+                        ctrllimited=True,
                     )
                 )
                 sensor_pos.append(mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"))
@@ -144,7 +146,6 @@ class Sim2SimRobot(mjcf.Robot):
         sensors = root.find("sensor")
         sensors.extend(
             [
-                # TODO - pfb30 test that
                 ET.Element("framequat", name="orientation", objtype="site", noise="0.001", objname="imu"),
                 ET.Element("gyro", name="angular-velocity", site="imu", noise="0.005", cutoff="34.9"),
                 # ET.Element("framepos", name="position", objtype="site", noise="0.001", objname="imu"),
@@ -166,7 +167,10 @@ class Sim2SimRobot(mjcf.Robot):
             ).to_xml(),
         )
 
-        # TODO - test the physical parameters
+        visual_geom = ET.Element("default", {"class": "visualgeom"})
+        geom_attributes = {"material": "visualgeom", "condim": "1", "contype": "1", "conaffinity": "0"}
+        ET.SubElement(visual_geom, "geom", geom_attributes)
+
         root.insert(
             1,
             mjcf.Default(
@@ -176,14 +180,48 @@ class Sim2SimRobot(mjcf.Robot):
                 geom=mjcf.Geom(
                     solref=(0.001, 2),
                     friction=(0.9, 0.2, 0.2),
-                    condim=4,
+                    condim=3,
                     contype=1,
-                    conaffinity=15,
+                    conaffinity=0,
                 ),
-                # TODO - visualgem and joint param damping
+                visual_geom=visual_geom,
             ).to_xml(),
         )
-        self.tree = ET.ElementTree(root)
+
+        # Move gathered elements to the new root body
+        for item in items_to_move:
+            worldbody.remove(item)
+            new_root_body.append(item)
+
+        # add visual geom logic
+        for body in root.findall(".//body"):
+            original_geoms = list(body.findall("geom"))
+            for geom in original_geoms:
+                geom.set("class", "visualgeom")
+                # Create a new geom element
+                new_geom = ET.Element("geom")
+                new_geom.set("type", geom.get("type"))
+                new_geom.set("rgba", geom.get("rgba"))
+                new_geom.set("mesh", geom.get("mesh"))
+                if geom.get("pos"):
+                    new_geom.set("pos", geom.get("pos"))
+                if geom.get("quat"):
+                    new_geom.set("quat", geom.get("quat"))
+                new_geom.set("contype", "0")
+                new_geom.set("conaffinity", "0")
+                new_geom.set("group", "1")
+                new_geom.set("density", "0")
+
+                # Append the new geom to the body
+                index = list(body).index(geom)
+                body.insert(index + 1, new_geom)
+
+        # # Remove frc ranges?
+        # for body in root.findall(".//body"):
+        #     joints = list(body.findall("joint"))
+        #     for join in joints:
+        #         if "actuatorfrcrange" in join.attrib:
+        #             join.attrib.pop("actuatorfrcrange")
 
     def save(self, path: Union[str, Path]) -> None:
         rough_string = ET.tostring(self.tree.getroot(), "utf-8")
@@ -198,11 +236,9 @@ if __name__ == "__main__":
     robot_name = "robot_fixed"
     robot = Sim2SimRobot(
         robot_name,
-        # TODO - fix that
-        Path("stompy"),
+        model_dir(),
         mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True),
         remove_inertia=False,
     )
-
     robot.adapt_world()
     robot.save(stompy_mjcf_path(legs_only=True))
