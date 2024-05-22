@@ -6,13 +6,10 @@ Run:
 
 Todo:
     0. Add IMU right position - base
-    1. Add all geoms
-    2. Condim 3 and 4 and difference in results
-
-
-    3. Armature damping setup for different parts of body
-    4. contype="0" conaffinity="0" group="1" density="0"
-    why each setup has two things copied
+    1. Armature damping setup for different parts of body
+    2. Control range limits? check
+    3. NO inertia in the first part of the body
+    4. torso_1_top_torso_1 - no inertia there!
 """
 
 import logging
@@ -61,6 +58,11 @@ class Sim2SimRobot(mjcf.Robot):
                 "material", name="matplane", reflectance="0.", texture="texplane", texrepeat="1 1", texuniform="true"
             )
         )
+        asset.append(
+            ET.Element(
+                "material", name="visualgeom", rgba="0.5 0.9 0.2 1"
+            )
+        )
 
         compiler = root.find("compiler")
         if self.compiler is not None:
@@ -83,40 +85,11 @@ class Sim2SimRobot(mjcf.Robot):
                 mjcf.Joint(name="root_ball", type="ball", limited=False).to_xml(),
             ]
         )
+        
 
         # Add imu site to the body - relative position to the body
         # check at what stage we use this
         new_root_body.append(mjcf.Site(name="imu", size=0.01, pos=(0, 0, 0)).to_xml())
-
-        for body in worldbody.findall(".//body"):
-            original_geoms = list(body.findall("geom"))
-            for geom in original_geoms:
-                geom.set("class", "visualgeom")
-                # Create a new geom element
-                new_geom = ET.Element("geom")
-                new_geom.set("type", geom.get("type"))
-                new_geom.set("rgba", geom.get("rgba"))
-                new_geom.set("mesh", geom.get("mesh"))
-                if geom.get("pos"):
-                    new_geom.set("pos", geom.get("pos"))
-                else:
-                    print(geom)
-                if geom.get("quat"):
-                    new_geom.set("quat", geom.get("quat"))
-                new_geom.set("contype", "0")
-                new_geom.set("conaffinity", "0")
-                new_geom.set("group", "1")
-                new_geom.set("density", "0")
-                
-                # Append the new geom to the body
-                index = list(body).index(geom)
-                body.insert(index + 1, new_geom)
-        
-
-        # Move gathered elements to the new root body
-        for item in items_to_move:
-            worldbody.remove(item)
-            new_root_body.append(item)
 
         # Add the new root body to the worldbody
         worldbody.append(new_root_body)
@@ -159,7 +132,8 @@ class Sim2SimRobot(mjcf.Robot):
             if joint in StompyFixed.default_standing().keys():
                 motors.append(
                     mjcf.Motor(
-                        name=joint, joint=joint, gear=1, ctrlrange=(limits["lower"], limits["upper"]), ctrllimited=True
+                        # name=joint, joint=joint, gear=1, ctrlrange=(limits["lower"], limits["upper"]), ctrllimited=True
+                        name=joint, joint=joint, gear=1, ctrlrange=(-200, 200), ctrllimited=True
                     )
                 )
                 sensor_pos.append(mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"))
@@ -223,7 +197,41 @@ class Sim2SimRobot(mjcf.Robot):
             ).to_xml(),
         )
 
+
+        # Move gathered elements to the new root body
+        for item in items_to_move:
+            worldbody.remove(item)
+            new_root_body.append(item)
+    
         self.tree = ET.ElementTree(root)
+
+        root = self.tree.getroot()
+
+        # add visual geom logic
+        for body in root.findall(".//body"):
+            original_geoms = list(body.findall("geom"))
+            for geom in original_geoms:
+                geom.set("class", "visualgeom")
+                # Create a new geom element
+                new_geom = ET.Element("geom")
+                new_geom.set("type", geom.get("type"))
+                new_geom.set("rgba", geom.get("rgba"))
+                new_geom.set("mesh", geom.get("mesh"))
+                if geom.get("pos"):
+                    new_geom.set("pos", geom.get("pos"))
+                else:
+                    print(geom)
+                if geom.get("quat"):
+                    new_geom.set("quat", geom.get("quat"))
+                new_geom.set("contype", "0")
+                new_geom.set("conaffinity", "0")
+                new_geom.set("group", "1")
+                new_geom.set("density", "0")
+                
+                # Append the new geom to the body
+                index = list(body).index(geom)
+                body.insert(index + 1, new_geom)
+        
 
     def save(self, path: Union[str, Path]) -> None:
         rough_string = ET.tostring(self.tree.getroot(), "utf-8")
