@@ -37,7 +37,7 @@ def simulate(model_path: Union[str, Path], duration: float, framerate: float, re
             if time_until_next_step > 0:
                 time.sleep(time_until_next_step)
 
-            if record_video and len(frames) < data.time * framerate:
+            if record_video and (len(frames) < data.time * framerate):
                 renderer.update_scene(data)
                 pixels = renderer.render()
                 frames.append(pixels)
@@ -53,7 +53,9 @@ if __name__ == "__main__":
     configure_logging()
 
     parser = argparse.ArgumentParser(description="MuJoCo Simulation")
-    parser.add_argument("--model_path", type=str, default=str(stompy_mjcf_path()), help="Path to the MuJoCo XML file")
+    parser.add_argument(
+        "--model_path", type=str, default=str(stompy_mjcf_path(legs_only=True)), help="Path to the MuJoCo XML file"
+    )
     parser.add_argument("--duration", type=int, default=3, help="Duration of the simulation in seconds")
     parser.add_argument("--framerate", type=int, default=30, help="Frame rate for video recording")
     parser.add_argument("--record", action="store_true", help="Flag to record video")
