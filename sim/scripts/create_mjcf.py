@@ -8,6 +8,11 @@ Todo:
     0. Add IMU right position - base
     1. Add all geoms
     2. Condim 3 and 4 and difference in results
+
+
+    3. Armature damping setup for different parts of body
+    4. contype="0" conaffinity="0" group="1" density="0"
+    why each setup has two things copied
 """
 
 import logging
@@ -16,7 +21,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Union
 
-from kol.formats import mjcf
+from sim.scripts import mjcf
 
 from sim.env import stompy_mjcf_path
 from sim.stompy.joints import StompyFixed
@@ -82,6 +87,31 @@ class Sim2SimRobot(mjcf.Robot):
         # Add imu site to the body - relative position to the body
         # check at what stage we use this
         new_root_body.append(mjcf.Site(name="imu", size=0.01, pos=(0, 0, 0)).to_xml())
+
+        for body in worldbody.findall(".//body"):
+            original_geoms = list(body.findall("geom"))
+            for geom in original_geoms:
+                geom.set("class", "visualgeom")
+                # Create a new geom element
+                new_geom = ET.Element("geom")
+                new_geom.set("type", geom.get("type"))
+                new_geom.set("rgba", geom.get("rgba"))
+                new_geom.set("mesh", geom.get("mesh"))
+                if geom.get("pos"):
+                    new_geom.set("pos", geom.get("pos"))
+                else:
+                    print(geom)
+                if geom.get("quat"):
+                    new_geom.set("quat", geom.get("quat"))
+                new_geom.set("contype", "0")
+                new_geom.set("conaffinity", "0")
+                new_geom.set("group", "1")
+                new_geom.set("density", "0")
+                
+                # Append the new geom to the body
+                index = list(body).index(geom)
+                body.insert(index + 1, new_geom)
+        
 
         # Move gathered elements to the new root body
         for item in items_to_move:
@@ -166,7 +196,15 @@ class Sim2SimRobot(mjcf.Robot):
             ).to_xml(),
         )
 
-        # TODO - test the physical parameters
+        visual_geom = ET.Element("default", {"class":"visualgeom"})
+        geom_attributes = {
+                'material': 'visualgeom',
+                'condim': '1',
+                'contype': '0',
+                'conaffinity': '0'
+            }
+        ET.SubElement(visual_geom, 'geom', geom_attributes)
+
         root.insert(
             1,
             mjcf.Default(
@@ -180,9 +218,11 @@ class Sim2SimRobot(mjcf.Robot):
                     contype=1,
                     conaffinity=15,
                 ),
-                # TODO - visualgem and joint param damping
+                visual_geom=visual_geom
+                # TODO and joint param damping
             ).to_xml(),
         )
+
         self.tree = ET.ElementTree(root)
 
     def save(self, path: Union[str, Path]) -> None:
