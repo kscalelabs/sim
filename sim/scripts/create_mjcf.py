@@ -19,7 +19,7 @@ from typing import List, Union
 
 from kol.formats import mjcf
 
-from sim.env import stompy_mjcf_path, model_dir
+from sim.env import model_dir, stompy_mjcf_path
 from sim.stompy.joints import StompyFixed
 
 logger = logging.getLogger(__name__)
@@ -127,7 +127,6 @@ class Sim2SimRobot(mjcf.Robot):
             if joint in StompyFixed.default_standing().keys():
                 motors.append(
                     mjcf.Motor(
-                        # name=joint, joint=joint, gear=1, ctrlrange=(limits["lower"], limits["upper"]), ctrllimited=True
                         name=joint,
                         joint=joint,
                         gear=1,
