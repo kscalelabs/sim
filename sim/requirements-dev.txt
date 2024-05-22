@@ -5,3 +5,6 @@ darglint
 mypy
 pytest
 ruff
+mujoco
+mujoco_mjx
+brax
