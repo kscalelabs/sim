@@ -54,8 +54,6 @@ profile = "black"
 line-length = 120
 target-version = "py310"
 
-exclude = ["sim/humanoid_gym", "sim/deploy/"]
-
 [tool.ruff.lint]
 
 select = ["ANN", "D", "E", "F", "I", "N", "PGH", "PLC", "PLE", "PLR", "PLW", "W"]
