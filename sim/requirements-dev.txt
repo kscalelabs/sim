@@ -6,5 +6,8 @@ mypy
 pytest
 ruff
 mujoco
-mujoco_mjx
+mujoco-mjx
 brax
+tqdm
+moviepy 
+imageio
