@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<robot name="simple_humanoid">
+  <!-- Torso -->
+  <link name="torso">
+    <visual>
+      <geometry>
+        <box size="0.2 0.1 0.4"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0.3 0.3 0.8 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Left Leg -->
+  <joint name="left_hip" type="revolute">
+    <parent link="torso"/>
+    <child link="left_thigh"/>
+    <origin xyz="-0.1 0 -0.2" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.0" upper="1.0" effort="100.0" velocity="1.0"/>
+  </joint>
+
+  <link name="left_thigh">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.4"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.3 0.8 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="left_knee" type="revolute">
+    <parent link="left_thigh"/>
+    <child link="left_shin"/>
+    <origin xyz="0 0 -0.4" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="2.0" effort="100.0" velocity="1.0"/>
+  </joint>
+
+  <link name="left_shin">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.4"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.3 0.8 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Right Leg (similar structure to left leg) -->
+  <joint name="right_hip" type="revolute">
+    <parent link="torso"/>
+    <child link="right_thigh"/>
+    <origin xyz="0.1 0 -0.2" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.0" upper="1.0" effort="100.0" velocity="1.0"/>
+  </joint>
+
+  <link name="right_thigh">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.4"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.3 0.8 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="right_knee" type="revolute">
+    <parent link="right_thigh"/>
+    <child link="right_shin"/>
+    <origin xyz="0 0 -0.4" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="2.0" effort="100.0" velocity="1.0"/>
+  </joint>
+
+  <link name="right_shin">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.4"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.3 0.8 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Left Arm -->
+  <joint name="left_shoulder" type="revolute">
+    <parent link="torso"/>
+    <child link="left_upper_arm"/>
+    <origin xyz="-0.2 0 0.1" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.5" upper="1.5" effort="50.0" velocity="1.0"/>
+  </joint>
+
+  <link name="left_upper_arm">
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.3"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0.8 0.3 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="left_elbow" type="revolute">
+    <parent link="left_upper_arm"/>
+    <child link="left_forearm"/>
+    <origin xyz="0 0 -0.3" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="2.0" effort="50.0" velocity="1.0"/>
+  </joint>
+
+  <link name="left_forearm">
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.3"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0.8 0.3 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Right Arm (similar structure to left arm) -->
+  <joint name="right_shoulder" type="revolute">
+    <parent link="torso"/>
+    <child link="right_upper_arm"/>
+    <origin xyz="0.2 0 0.1" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.5" upper="1.5" effort="50.0" velocity="1.0"/>
+  </joint>
+
+  <link name="right_upper_arm">
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.3"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0.8 0.3 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="right_elbow" type="revolute">
+    <parent link="right_upper_arm"/>
+    <child link="right_forearm"/>
+    <origin xyz="0 0 -0.3" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="2.0" effort="50.0" velocity="1.0"/>
+  </joint>
+
+  <link name="right_forearm">
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.3"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0.8 0.3 0.3 1"/>
+      </material>
+    </visual>
+  </link>
+</robot>
