@@ -3,9 +3,8 @@
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 from sim.env import stompy_urdf_path
-from sim.stompy.joints import StompyFixed
 from sim.humanoid_gym.envs.stompy_config import StompyCfg
-
+from sim.stompy.joints import StompyFixed
 
 NUM_JOINTS = len(StompyFixed.default_standing())  # 17
 
