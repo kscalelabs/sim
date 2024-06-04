@@ -76,6 +76,7 @@ clean:
 # ------------------------ #
 
 format:
+	@isort --profile black sim
 	@black sim
 	@ruff format sim
 .PHONY: format
@@ -86,6 +87,7 @@ format-cpp:
 .PHONY: format-cpp
 
 static-checks:
+	@isort --profile black --check --diff sim
 	@black --diff --check sim
 	@ruff check sim
 	@mypy --install-types --non-interactive sim

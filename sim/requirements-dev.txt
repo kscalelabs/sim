@@ -5,3 +5,4 @@ darglint
 mypy
 pytest
 ruff
+isort
