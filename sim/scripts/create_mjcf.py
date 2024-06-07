@@ -17,10 +17,9 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Union
 
-from kol.formats import mjcf
-
 from sim.env import model_dir, stompy_mjcf_path
-from sim.stompy.joints import StompyFixed
+from sim.scripts import mjcf
+from sim.stompy.joints import MjcfStompy, StompyFixed
 
 logger = logging.getLogger(__name__)
 
@@ -36,28 +35,36 @@ def _pretty_print_xml(xml_string: str) -> str:
 class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
-    def adapt_world(self) -> None:
+    def adapt_world(
+        self, add_floor: bool = True, add_reference_position: bool = False, remove_frc_range: bool = False
+    ) -> None:
         root: ET.Element = self.tree.getroot()
 
-        asset = root.find("asset")
-        asset.append(
-            ET.Element(
-                "texture",
-                name="texplane",
-                type="2d",
-                builtin="checker",
-                rgb1=".0 .0 .0",
-                rgb2=".8 .8 .8",
-                width="100",
-                height="108",
+        if add_floor:
+            asset = root.find("asset")
+            asset.append(
+                ET.Element(
+                    "texture",
+                    name="texplane",
+                    type="2d",
+                    builtin="checker",
+                    rgb1=".0 .0 .0",
+                    rgb2=".8 .8 .8",
+                    width="100",
+                    height="108",
+                )
             )
-        )
-        asset.append(
-            ET.Element(
-                "material", name="matplane", reflectance="0.", texture="texplane", texrepeat="1 1", texuniform="true"
+            asset.append(
+                ET.Element(
+                    "material",
+                    name="matplane",
+                    reflectance="0.",
+                    texture="texplane",
+                    texrepeat="1 1",
+                    texuniform="true",
+                )
             )
-        )
-        asset.append(ET.Element("material", name="visualgeom", rgba="0.5 0.9 0.2 1"))
+            asset.append(ET.Element("material", name="visualgeom", rgba="0.5 0.9 0.2 1"))
 
         compiler = root.find("compiler")
         if self.compiler is not None:
@@ -104,20 +111,21 @@ class Sim2SimRobot(mjcf.Robot):
                 directional=True, diffuse=(0.6, 0.6, 0.6), specular=(0.2, 0.2, 0.2), pos=(0, 0, 4), dir=(0, 0, -1)
             ).to_xml(),
         )
-        worldbody.insert(
-            0,
-            mjcf.Geom(
-                name="ground",
-                type="plane",
-                size=(0, 0, 1),
-                pos=(0.001, 0, 0),
-                quat=(1, 0, 0, 0),
-                material="matplane",
-                condim=3,
-                conaffinity=1,
-                contype=0,
-            ).to_xml(),
-        )
+        if add_floor:
+            worldbody.insert(
+                0,
+                mjcf.Geom(
+                    name="ground",
+                    type="plane",
+                    size=(0, 0, 1),
+                    pos=(0.001, 0, 0),
+                    quat=(1, 0, 0, 0),
+                    material="matplane",
+                    condim=3,
+                    conaffinity=1,
+                    contype=0,
+                ).to_xml(),
+            )
 
         motors: List[mjcf.Motor] = []
         sensor_pos: List[mjcf.Actuatorpos] = []
@@ -137,6 +145,8 @@ class Sim2SimRobot(mjcf.Robot):
                 sensor_pos.append(mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"))
                 sensor_vel.append(mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"))
                 sensor_frc.append(mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001))
+
+        root = self.add_joint_limits(root, fixed=False)
 
         # Add motors and sensors
         root.append(mjcf.Actuator(motors).to_xml())
@@ -188,6 +198,9 @@ class Sim2SimRobot(mjcf.Robot):
             ).to_xml(),
         )
 
+        if add_reference_position:
+            root = self.add_reference_position(root)
+
         # Move gathered elements to the new root body
         for item in items_to_move:
             worldbody.remove(item)
@@ -216,12 +229,36 @@ class Sim2SimRobot(mjcf.Robot):
                 index = list(body).index(geom)
                 body.insert(index + 1, new_geom)
 
-        # # Remove frc ranges?
-        # for body in root.findall(".//body"):
-        #     joints = list(body.findall("joint"))
-        #     for join in joints:
-        #         if "actuatorfrcrange" in join.attrib:
-        #             join.attrib.pop("actuatorfrcrange")
+        if remove_frc_range:
+            for body in root.findall(".//body"):
+                joints = list(body.findall("joint"))
+                for join in joints:
+                    if "actuatorfrcrange" in join.attrib:
+                        join.attrib.pop("actuatorfrcrange")
+
+    def add_reference_position(self, root: ET.Element) -> None:
+        # Find all 'joint' elements
+        joints = root.findall(".//joint")
+
+        default_standing = MjcfStompy.default_standing()
+        for joint in joints:
+            if joint.get("name") in default_standing.keys():
+                joint.set("ref", str(default_standing[joint.get("name")]))
+
+        return root
+
+    def add_joint_limits(self, root: ET.Element, fixed: bool = False) -> None:
+        joint_limits = MjcfStompy.default_limits()
+
+        for joint in root.findall(".//joint"):
+            joint_name = joint.get("name")
+            if joint_name in joint_limits:
+                limits = joint_limits.get(joint_name)
+                lower = str(limits.get("lower", 0.0))
+                upper = str(limits.get("upper", 0.0))
+                joint.set("range", f"{lower} {upper}")
+
+        return root
 
     def save(self, path: Union[str, Path]) -> None:
         rough_string = ET.tostring(self.tree.getroot(), "utf-8")
@@ -233,12 +270,12 @@ class Sim2SimRobot(mjcf.Robot):
 
 
 if __name__ == "__main__":
-    robot_name = "robot_fixed"
+    robot_name = "robot"
     robot = Sim2SimRobot(
         robot_name,
         model_dir(),
         mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True),
-        remove_inertia=False,
+        remove_inertia=True,
     )
-    robot.adapt_world()
-    robot.save(stompy_mjcf_path(legs_only=True))
+    robot.adapt_world(add_reference_position=True)
+    robot.save(stompy_mjcf_path(legs_only=False))
