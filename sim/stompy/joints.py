@@ -292,6 +292,131 @@ class StompyFixed(Stompy):
             Stompy.legs.right.foot_roll: {"lower": -0.3, "upper": 0.3},
             Stompy.legs.left.foot_roll: {"lower": -0.3, "upper": 0.3},
         }
+    
+
+class ImuTorso(Torso):
+    pitch = "torso_1_x8_1_dof_x8"
+    pelvis_tx = "pelvis_tx"
+    pelvis_tz = "pelvis_tz"
+    pelvis_ty = "pelvis_ty"
+    tilt = "pelvis_tilt"
+    list = "pelvis_list"
+    rotation = "pelvis_rotation"
+
+
+class MjcfStompy(Stompy):
+    head = Head()
+    torso = ImuTorso()
+    left_arm = LeftArm()
+    right_arm = RightArm()
+    legs = Legs()
+
+    # test the model
+    @classmethod
+    def default_standing(cls) -> Dict[str, float]:
+        return {
+            MjcfStompy.head.left_right: 0.8526,
+            # arms
+            MjcfStompy.left_arm.shoulder_yaw: 1.57,
+            MjcfStompy.left_arm.shoulder_pitch: 1.59,
+            MjcfStompy.left_arm.elbow_roll: 0.0,
+            MjcfStompy.left_arm.elbow_yaw: 0.0,
+
+            MjcfStompy.right_arm.elbow_roll: 2.48,
+            MjcfStompy.right_arm.elbow_yaw: -0.09,
+
+            MjcfStompy.right_arm.shoulder_yaw: -1.6,
+            MjcfStompy.right_arm.shoulder_pitch: -1.64,
+
+            # left hand
+            MjcfStompy.left_arm.hand.hand_roll: 0.9,
+
+            # right hand
+            MjcfStompy.right_arm.hand.hand_roll: 0.64,
+
+            # left leg
+            MjcfStompy.legs.left.hip_roll: -0.52,
+            MjcfStompy.legs.left.hip_yaw: 0.6,
+            MjcfStompy.legs.left.hip_pitch: -0.8,
+            MjcfStompy.legs.right.hip_roll: 0.59,
+            MjcfStompy.legs.right.hip_yaw: 0.7,
+            MjcfStompy.legs.right.hip_pitch: 1.0,
+
+            # right leg
+            MjcfStompy.legs.left.knee: 0.2,
+            MjcfStompy.legs.right.knee: 0.0,  
+            MjcfStompy.legs.left.ankle: 0.0,
+            MjcfStompy.legs.right.ankle: 0.0,
+            MjcfStompy.legs.left.foot_roll: 0.0,
+            MjcfStompy.legs.right.foot_roll: 0.0,
+        }
+
+    @classmethod
+    def default_limits(cls) -> Dict[str, Dict[str, float]]:
+        return {
+            MjcfStompy.head.left_right: {
+                "lower": -3.14,
+                "upper": 3.14,
+            },
+            MjcfStompy.right_arm.shoulder_yaw: {
+                "lower": -2.09,
+                "upper": 2.09,
+            },
+            MjcfStompy.left_arm.shoulder_yaw: {
+                "lower": -2.09,
+                "upper": 2.09,
+            },
+            MjcfStompy.right_arm.shoulder_pitch: {
+                "lower": -1.91,
+                "upper": 1.91,
+            },
+            MjcfStompy.left_arm.shoulder_pitch: {
+                "lower": -1.91,
+                "upper": 1.91,
+            },
+            MjcfStompy.legs.right.hip_roll: {
+                "lower": -1.04,
+                "upper": 1.04,
+            },
+            MjcfStompy.legs.left.hip_roll: {
+                "lower": -1.04,
+                "upper": 1.04,
+            },
+            MjcfStompy.legs.right.hip_yaw: {
+                "lower": -1.57,
+                "upper": 1.06,
+            },
+            MjcfStompy.legs.left.hip_yaw: {
+                "lower": -1.57,
+                "upper": 1.06,
+            },
+            MjcfStompy.legs.right.hip_pitch: {
+                "lower": -1.78,
+                "upper": 2.35,
+            },
+            MjcfStompy.legs.left.hip_pitch: {
+                "lower": -1.78,
+                "upper": 2.35,
+            },
+            MjcfStompy.legs.right.knee: {
+                "lower": 0,
+                "upper": 1.2,
+            },
+            MjcfStompy.legs.left.knee: {
+                "lower": -1.2,
+                "upper": 0,
+            },
+            MjcfStompy.legs.right.ankle: {
+                "lower": -0.3,
+                "upper": 0.3,
+            },
+            MjcfStompy.legs.left.ankle: {
+                "lower": -0.3,
+                "upper": 0.3,
+            },
+            MjcfStompy.legs.right.foot_roll: {"lower": -0.3, "upper": 0.3},
+            MjcfStompy.legs.left.foot_roll: {"lower": -0.3, "upper": 0.3},
+        }
 
 
 def print_joints() -> None:
