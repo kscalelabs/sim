@@ -17,8 +17,9 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Union
 
+from kol.formats import mjcf
+
 from sim.env import model_dir, stompy_mjcf_path
-from sim.scripts import mjcf
 from sim.stompy.joints import MjcfStompy, StompyFixed
 
 logger = logging.getLogger(__name__)
