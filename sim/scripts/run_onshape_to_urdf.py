@@ -3,6 +3,7 @@
 
 import tarfile
 from pathlib import Path
+from typing import Union
 
 from kol.logging import configure_logging as configure_kol_logging
 from kol.onshape.converter import Converter
@@ -79,7 +80,9 @@ OVERRIDE = [
 ]
 
 
-def run_onshape_to_urdf(model_url: str, output_dir: str | Path, override_central_node: str | None = None) -> None:
+def run_onshape_to_urdf(
+    model_url: str, output_dir: Union[str, Path], override_central_node: Union[str, None] = None
+) -> None:
     configure_kol_logging()
 
     output_dir = Path(output_dir)
