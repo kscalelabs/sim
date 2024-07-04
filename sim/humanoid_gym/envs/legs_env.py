@@ -8,7 +8,7 @@ from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
-from sim.stompy.joints import StompyFixed
+from sim.stompy2.joints import StompyFixed
 
 
 class LegsFreeEnv(LeggedRobot):
@@ -124,14 +124,14 @@ class LegsFreeEnv(LeggedRobot):
         sin_pos_l[sin_pos_l > 0] = 0
 
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] = sin_pos_l * scale_1
-        self.ref_dof_pos[:, self.legs_joints["left_knee"]] = sin_pos_l * scale_2
-        self.ref_dof_pos[:, self.legs_joints["left_ankle"]] = sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] = sin_pos_l * scale_2
+        self.ref_dof_pos[:, self.legs_joints["left_ankle_roll"]] = sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
         self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] = sin_pos_r * scale_1
-        self.ref_dof_pos[:, self.legs_joints["right_knee"]] = sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle"]] = sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] = sin_pos_r * scale_2
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_roll"]] = sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -302,6 +302,7 @@ class LegsFreeEnv(LeggedRobot):
         """
         Calculates the reward based on the distance between the knee of the humanoid.
         """
+        # breakpoint()
         foot_pos = self.rigid_state[:, self.knee_indices, :2]
         foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist

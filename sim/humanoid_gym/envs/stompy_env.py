@@ -8,7 +8,7 @@ from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
-from sim.stompy.joints import Stompy
+from sim.stompy2.joints import Stompy
 
 
 class StompyFreeEnv(LeggedRobot):
@@ -56,6 +56,7 @@ class StompyFreeEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Stompy.legs.left.joints_motors():
+            print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
@@ -125,14 +126,14 @@ class StompyFreeEnv(LeggedRobot):
         sin_pos_l[sin_pos_l > 0] = 0
 
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] = sin_pos_l * scale_1
-        self.ref_dof_pos[:, self.legs_joints["left_knee"]] = sin_pos_l * scale_2
-        self.ref_dof_pos[:, self.legs_joints["left_ankle"]] = sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] = sin_pos_l * scale_2
+        self.ref_dof_pos[:, self.legs_joints["left_ankle_roll"]] = sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
         self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] = sin_pos_r * scale_1
-        self.ref_dof_pos[:, self.legs_joints["right_knee"]] = sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle"]] = sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] = sin_pos_r * scale_2
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_roll"]] = sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -207,7 +208,6 @@ class StompyFreeEnv(LeggedRobot):
         contact_mask = self.contact_forces[:, self.feet_indices, 2] > 5.0
 
         self.command_input = torch.cat((sin_pos, cos_pos, self.commands[:, :3] * self.commands_scale), dim=1)
-        breakpoint()
         q = (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos
         dq = self.dof_vel * self.obs_scales.dof_vel
 
@@ -389,6 +389,7 @@ class StompyFreeEnv(LeggedRobot):
         The reward is computed based on the height difference between the robot's base and the average height
         of its feet when they are in contact with the ground.
         """
+        # breakpoint()
         stance_mask = self._get_gait_phase()
         measured_heights = torch.sum(self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1) / torch.sum(
             stance_mask, dim=1

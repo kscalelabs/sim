@@ -3,7 +3,7 @@
 
 import xml.etree.ElementTree as ET
 
-from sim.stompy.joints import StompyFixed
+from sim.stompy2.joints import StompyFixed
 
 STOMPY_URDF = "stompy/robot.urdf"
 

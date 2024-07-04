@@ -21,7 +21,7 @@ from tqdm import tqdm
 
 from sim.deploy.config import RobotConfig
 from sim.env import stompy_mjcf_path
-from sim.stompy.joints import StompyFixed
+from sim.stompy2.joints import StompyFixed
 
 
 class Worlds(Enum):

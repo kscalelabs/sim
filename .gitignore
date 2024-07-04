@@ -1,5 +1,8 @@
 # .gitignore
-
+# Robot Parts
+*.stl
+*.dae
+*.urdf
 # Local files
 .env
 # Python
