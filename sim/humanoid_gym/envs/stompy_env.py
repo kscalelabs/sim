@@ -5,9 +5,9 @@ import torch
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
-from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
+from isaacgym import gymtorch
 from sim.stompy2.joints import Stompy
 
 
@@ -78,7 +78,6 @@ class StompyFreeEnv(LeggedRobot):
         self.rand_push_torque = torch_rand_float(
             -max_push_angular, max_push_angular, (self.num_envs, 3), device=self.device
         )
-
         self.root_states[:, 10:13] = self.rand_push_torque
 
         self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
@@ -175,6 +174,7 @@ class StompyFreeEnv(LeggedRobot):
         num_actions = self.num_actions
         noise_vec = torch.zeros(self.cfg.env.num_single_obs, device=self.device)
         self.add_noise = self.cfg.noise.add_noise
+        # breakpoint()
         noise_scales = self.cfg.noise.noise_scales
         noise_vec[0:5] = 0.0  # commands
         noise_vec[5 : (num_actions + 5)] = noise_scales.dof_pos * self.obs_scales.dof_pos
@@ -212,7 +212,7 @@ class StompyFreeEnv(LeggedRobot):
         dq = self.dof_vel * self.obs_scales.dof_vel
 
         diff = self.dof_pos - self.ref_dof_pos
-
+        # breakpoint()
         self.privileged_obs_buf = torch.cat(
             (
                 self.command_input,  # 2 + 3

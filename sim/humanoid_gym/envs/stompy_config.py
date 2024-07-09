@@ -41,14 +41,9 @@ class StompyCfg(LeggedRobotCfg):
         foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
         knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
-        # old
-        # foot_name = "_leg_1_x4_1_outer_1"  # "foot"
-        # knee_name = "belt_knee"
-
         termination_height = 0.23
         default_feet_height = 0.0
         terminate_after_contacts_on = ["link_upper_limb_assembly_7_dof_1_torso_1_top_skeleton_2"]
-        # terminate_after_contacts_on = ["link_torso_1_top_torso_1"]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -74,7 +69,7 @@ class StompyCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = False
+        add_noise = True
         noise_level = 0.6  # scales other values
 
         class noise_scales:
@@ -86,7 +81,7 @@ class StompyCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 1.15] # THIS
+        pos = [0.0, 0.0, 1.15]  # THIS
 
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
@@ -96,6 +91,7 @@ class StompyCfg(LeggedRobotCfg):
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters: THIS
+        # NOTE: these names are outdated, must be manually set in third party legged_robot.py
         stiffness = {
             "x10": 200,
             "x8": 200,
@@ -130,15 +126,12 @@ class StompyCfg(LeggedRobotCfg):
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 12
             solver_type = 1  # 0: pgs, 1: tgs THIS
-            # num_position_iterations = 4  # THIS
-            # num_velocity_iterations = 1 # THIS
             num_position_iterations = 4  # THIS
-            num_velocity_iterations = 0 # THIS
+            num_velocity_iterations = 1  # THIS
             contact_offset = 0.01  # [m] THIS
             rest_offset = -0.02  # [m] THIS
             bounce_threshold_velocity = 0.1  # [m/s]
-            # max_depenetration_velocity = 1.0
-            mx_depenetration_velocity = 0.0
+            max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
             default_buffer_size_multiplier = 5
             # 0: never, 1: last sub-step, 2: all sub-steps (default=2)
@@ -150,7 +143,7 @@ class StompyCfg(LeggedRobotCfg):
 
         randomize_base_mass = False
         added_mass_range = [-1.0, 1.0]
-        push_robots = False
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
