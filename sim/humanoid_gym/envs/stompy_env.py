@@ -1,7 +1,7 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
 
-import torch
+import torch  # type: ignore[import]
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
