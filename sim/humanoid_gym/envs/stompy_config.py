@@ -130,8 +130,10 @@ class StompyCfg(LeggedRobotCfg):
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 12
             solver_type = 1  # 0: pgs, 1: tgs THIS
+            # num_position_iterations = 4  # THIS
+            # num_velocity_iterations = 1 # THIS
             num_position_iterations = 4  # THIS
-            num_velocity_iterations = 1 # THIS
+            num_velocity_iterations = 0 # THIS
             contact_offset = 0.01  # [m] THIS
             rest_offset = -0.02  # [m] THIS
             bounce_threshold_velocity = 0.1  # [m/s]
