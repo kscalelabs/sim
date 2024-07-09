@@ -1,9 +1,9 @@
 """Defines the environment configuration for the Getting up task"""
 
-from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
+from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO # type: ignore
 
 from sim.env import stompy_urdf_path
-from sim.stompy2.joints import Stompy
+from sim.stompy2.joints import Stompy # type: ignore[import]
 
 NUM_JOINTS = len(Stompy.all_joints())  # 33
 
@@ -45,7 +45,7 @@ class StompyCfg(LeggedRobotCfg):
         default_feet_height = 0.0
         terminate_after_contacts_on = ["link_upper_limb_assembly_7_dof_1_torso_1_top_skeleton_2"]
 
-        penalize_contacts_on = []
+        penalize_contacts_on = ["place_holder"]
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
