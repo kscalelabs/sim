@@ -35,10 +35,3 @@ def update_urdf() -> None:
 
 if __name__ == "__main__":
     update_urdf()
-
-
-# adjust default limits to be very constrained arouynd default standing pose
-# run create fixed torso
-# adjust  legs_ppo.py to use the fixed torso
-#  python train.py --task=legs_ppo --num_envs=1
-# adjust torque valu third_party/humanoid-gym/humanoid/envs/base/legged_robot.py

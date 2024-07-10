@@ -79,8 +79,7 @@ class GetupCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):  # noqa: N801
-        pos = [0.0, 0.0, 5.2]
-        # pos = [0.0, 0.0, 0.2]
+        pos = [0.0, 0.0, 0.2]
 
         # Face up
         # rot = [-0.717107, 0.0, 0.0, 0.717107]

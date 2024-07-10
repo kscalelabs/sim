@@ -8,7 +8,7 @@ from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym.torch_utils import *
 
 from isaacgym import gymtorch
-from sim.old_stompy.joints import StompyFixed
+from sim.stompy.joints import StompyFixed
 
 
 class LegsFreeEnv(LeggedRobot):

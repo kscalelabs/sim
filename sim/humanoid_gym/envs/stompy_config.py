@@ -94,7 +94,6 @@ class StompyCfg(LeggedRobotCfg):
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
-        # NOTE: these names are outdated, must be manually set in third party legged_robot.py
         stiffness = {
             "shoulder": 200,
             "elbow": 200,

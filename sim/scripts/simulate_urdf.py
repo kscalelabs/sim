@@ -14,7 +14,7 @@ from typing import Any, Dict, Literal, NewType
 from isaacgym import gymapi, gymtorch, gymutil
 from sim.env import stompy_urdf_path
 from sim.logging import configure_logging
-from sim.old_stompy.joints import Stompy
+from sim.stompy.joints import Stompy
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +151,6 @@ def load_gym() -> GymParams:
     # dof_vel[:] = 0.0
     starting_positions = Stompy.default_standing()
     dof_ids: Dict[str, int] = gym.get_actor_dof_dict(env, robot)
-    print(starting_positions)
     for joint_name, joint_position in starting_positions.items():
         dof_pos[0, dof_ids[joint_name]] = joint_position
     env_ids_int32 = torch.zeros(1, dtype=torch.int32)
@@ -161,7 +160,6 @@ def load_gym() -> GymParams:
         gymtorch.unwrap_tensor(env_ids_int32),
         1,
     )
-    print(dof_pos)
 
     return GymParams(
         gym=gym,

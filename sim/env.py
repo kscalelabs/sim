@@ -3,10 +3,6 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 def model_dir() -> Path:
     return Path(os.environ.get("MODEL_DIR", "models"))
