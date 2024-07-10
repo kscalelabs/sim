@@ -1,7 +1,11 @@
 # .gitignore
-
+# Robot Parts
+*.stl
+*.dae
+*.urdf
 # Local files
 .env
+*.DS_Store
 # Python
 *.py[oc]
 __pycache__/
@@ -12,7 +16,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .dmypy.json
-
 # Databases
 *.db
 

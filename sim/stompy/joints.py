@@ -54,67 +54,58 @@ class Node(ABC):
         return f"[{self.__class__.__name__}]{parts_str}"
 
 
-class Head(Node):
-    left_right = "joint_head_1_x4_1_dof_x4"
-    up_down = "joint_head_1_x4_2_dof_x4"
-
-
 class Torso(Node):
-    pitch = "joint_torso_1_x8_1_dof_x8"
+    roll = "torso roll"
 
 
 class LeftHand(Node):
-    hand_roll = "joint_left_arm_2_hand_1_x4_1_dof_x4"
-    hand_grip = "joint_left_arm_2_hand_1_x4_2_dof_x4"
-    slider_a = "joint_left_arm_2_hand_1_slider_1"
-    slider_b = "joint_left_arm_2_hand_1_slider_2"
+    wrist_roll = "wrist roll"
+    wrist_pitch = "wrist pitch"
+    wrist_yaw = "wrist yaw"
+    left_finger = "left hand left finger"
+    right_finger = "left hand right finger"
 
 
 class LeftArm(Node):
-    shoulder_yaw = "joint_left_arm_2_x8_1_dof_x8"
-    shoulder_pitch = "joint_left_arm_2_x8_2_dof_x8"
-    shoulder_roll = "joint_left_arm_2_x6_1_dof_x6"
-    elbow_yaw = "joint_left_arm_2_x6_2_dof_x6"
-    elbow_roll = "joint_left_arm_2_x4_1_dof_x4"
+    shoulder_yaw = "shoulder yaw"
+    shoulder_pitch = "shoulder pitch"
+    shoulder_roll = "shoulder roll"
+    elbow_pitch = "elbow pitch"
     hand = LeftHand()
 
 
 class RightHand(Node):
-    hand_roll = "joint_right_arm_1_hand_1_x4_1_dof_x4"
-    hand_grip = "joint_right_arm_1_hand_1_x4_2_dof_x4"
-    slider_a = "joint_right_arm_1_hand_1_slider_1"
-    slider_b = "joint_right_arm_1_hand_1_slider_2"
+    wrist_roll = "right wrist roll"
+    wrist_pitch = "right wrist pitch"
+    wrist_yaw = "right wrist yaw"
+    left_finger = "right hand left finger"
+    right_finger = "right hand right finger"
 
 
 class RightArm(Node):
-    shoulder_yaw = "joint_right_arm_1_x8_1_dof_x8"
-    shoulder_pitch = "joint_right_arm_1_x8_2_dof_x8"
-    shoulder_roll = "joint_right_arm_1_x6_1_dof_x6"
-    elbow_yaw = "joint_right_arm_1_x6_2_dof_x6"
-    elbow_roll = "joint_right_arm_1_x4_1_dof_x4"
+    shoulder_yaw = "right shoulder yaw"
+    shoulder_pitch = "right shoulder pitch"
+    shoulder_roll = "right shoulder roll"
+    elbow_pitch = "right elbow pitch"
     hand = RightHand()
 
 
 class LeftLeg(Node):
-    hip_roll = "joint_legs_1_x8_2_dof_x8"
-    hip_yaw = "joint_legs_1_left_leg_1_x8_1_dof_x8"
-    hip_pitch = "joint_legs_1_left_leg_1_x10_1_dof_x10"
-    knee_motor = "joint_legs_1_left_leg_1_x10_2_dof_x10"
-    knee = "joint_legs_1_left_leg_1_knee_revolute"
-    ankle_motor = "joint_legs_1_left_leg_1_x6_1_dof_x6"
-    ankle = "joint_legs_1_left_leg_1_ankle_revolute"
-    foot_roll = "joint_legs_1_left_leg_1_x4_1_dof_x4"
+    hip_roll = "left hip roll"
+    hip_yaw = "left hip yaw"
+    hip_pitch = "left hip pitch"
+    knee_pitch = "left knee pitch"
+    ankle_pitch = "left ankle pitch"
+    ankle_roll = "left ankle roll"
 
 
 class RightLeg(Node):
-    hip_roll = "joint_legs_1_x8_1_dof_x8"
-    hip_yaw = "joint_legs_1_right_leg_1_x8_1_dof_x8"
-    hip_pitch = "joint_legs_1_right_leg_1_x10_2_dof_x10"
-    knee_motor = "joint_legs_1_right_leg_1_x10_1_dof_x10"
-    knee = "joint_legs_1_right_leg_1_knee_revolute"
-    ankle_motor = "joint_legs_1_right_leg_1_x6_1_dof_x6"
-    ankle = "joint_legs_1_right_leg_1_ankle_revolute"
-    foot_roll = "joint_legs_1_right_leg_1_x4_1_dof_x4"
+    hip_roll = "right hip roll"
+    hip_yaw = "right hip yaw"
+    hip_pitch = "right hip pitch"
+    knee_pitch = "right knee pitch"
+    ankle_pitch = "right ankle pitch"
+    ankle_roll = "right ankle roll"
 
 
 class Legs(Node):
@@ -123,7 +114,6 @@ class Legs(Node):
 
 
 class Stompy(Node):
-    head = Head()
     torso = Torso()
     left_arm = LeftArm()
     right_arm = RightArm()
@@ -132,9 +122,7 @@ class Stompy(Node):
     @classmethod
     def default_positions(cls) -> Dict[str, float]:
         return {
-            Stompy.head.left_right: np.deg2rad(-54),
-            Stompy.head.up_down: 0.0,
-            Stompy.torso.pitch: 0.0,
+            Stompy.torso.roll: 0.0,
             Stompy.left_arm.shoulder_yaw: np.deg2rad(60),
             Stompy.left_arm.shoulder_pitch: np.deg2rad(60),
             Stompy.right_arm.shoulder_yaw: np.deg2rad(-60),
@@ -143,60 +131,212 @@ class Stompy(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            Stompy.head.left_right: np.deg2rad(-2),  # -0.03
+            Stompy.torso.roll: 2.58,
             # arms
-            Stompy.left_arm.shoulder_yaw: np.deg2rad(-69.5),  # -1.21
-            Stompy.left_arm.shoulder_pitch: np.deg2rad(-93),  # 1.61
-            Stompy.right_arm.shoulder_yaw: np.deg2rad(85),  # 1.48
-            Stompy.right_arm.shoulder_pitch: np.deg2rad(104),  # 1.81
+            Stompy.left_arm.shoulder_pitch: -0.534,
+            Stompy.left_arm.shoulder_yaw: 2.54,
+            Stompy.left_arm.shoulder_roll: -0.0314,
+            Stompy.right_arm.shoulder_pitch: 2.45,
+            Stompy.right_arm.shoulder_yaw: 3.77,
+            Stompy.right_arm.shoulder_roll: -0.0314,
+            Stompy.left_arm.elbow_pitch: 2.35,
+            Stompy.right_arm.elbow_pitch: 2.65,
+            # hands
+            Stompy.left_arm.hand.left_finger: 0.0,
+            Stompy.left_arm.hand.right_finger: 0.0,
+            Stompy.right_arm.hand.left_finger: 0.0,
+            Stompy.right_arm.hand.right_finger: 0.0,
+            Stompy.left_arm.hand.wrist_roll: 1.79,
+            Stompy.left_arm.hand.wrist_pitch: 1.35,
+            Stompy.left_arm.hand.wrist_yaw: 1.07,
+            Stompy.right_arm.hand.wrist_roll: -2.13,
+            Stompy.right_arm.hand.wrist_pitch: 1.79,
+            Stompy.right_arm.hand.wrist_yaw: -0.251,
             # legs
-            Stompy.legs.left.hip_roll: np.deg2rad(29),  # 0.5
-            Stompy.legs.left.hip_yaw: np.deg2rad(-29),  # -0.5
-            Stompy.legs.left.hip_pitch: np.deg2rad(56),  # 0.97
-            Stompy.legs.right.hip_roll: np.deg2rad(-29),  # -0.5
-            Stompy.legs.right.hip_yaw: np.deg2rad(-29),  # -0.5
-            Stompy.legs.right.hip_pitch: np.deg2rad(-56),  # -0.97
-            Stompy.legs.left.knee: np.deg2rad(-6),  # -0.1
-            Stompy.legs.right.knee: np.deg2rad(6),  # 0.1
-            Stompy.legs.left.ankle: np.deg2rad(0),  # 0
-            Stompy.legs.right.ankle: np.deg2rad(0),  # 0
-            Stompy.legs.left.foot_roll: np.deg2rad(0),  # 0
-            Stompy.legs.right.foot_roll: np.deg2rad(0),  # 0
+            Stompy.legs.left.hip_pitch: -1.6,
+            Stompy.legs.left.hip_roll: 1.41,
+            Stompy.legs.left.hip_yaw: -2.12,
+            Stompy.legs.left.knee_pitch: 2.01,
+            Stompy.legs.left.ankle_pitch: 0.238,
+            Stompy.legs.left.ankle_roll: 1.85,
+            Stompy.legs.right.hip_pitch: 1.76,
+            Stompy.legs.right.hip_roll: -1.54,
+            Stompy.legs.right.hip_yaw: 0.967,
+            Stompy.legs.right.knee_pitch: 2.07,
+            Stompy.legs.right.ankle_pitch: 0.377,
+            Stompy.legs.right.ankle_roll: 1.92,
         }
 
     @classmethod
     def default_sitting(cls) -> Dict[str, float]:
         return {
-            Stompy.head.left_right: np.deg2rad(-3),
-            Stompy.head.up_down: 0.0,
-            Stompy.torso.pitch: 0.0,
+            Stompy.torso.roll: 0.0,
             # arms
-            Stompy.left_arm.shoulder_yaw: np.deg2rad(-88),
-            Stompy.left_arm.shoulder_pitch: np.deg2rad(-30),
-            Stompy.left_arm.shoulder_roll: np.deg2rad(-190),
-            Stompy.left_arm.elbow_yaw: np.deg2rad(-88),
-            Stompy.right_arm.shoulder_yaw: np.deg2rad(88),
-            Stompy.right_arm.shoulder_pitch: np.deg2rad(30),
-            Stompy.right_arm.shoulder_roll: np.deg2rad(190),
-            Stompy.right_arm.elbow_yaw: np.deg2rad(88),
+            Stompy.left_arm.shoulder_pitch: -0.126,
+            Stompy.left_arm.shoulder_yaw: 2.12,
+            Stompy.left_arm.shoulder_roll: 1.89,
+            Stompy.right_arm.shoulder_pitch: -1.13,
+            Stompy.right_arm.shoulder_yaw: 2.1,
+            Stompy.right_arm.shoulder_roll: -1.23,
+            Stompy.left_arm.elbow_pitch: 3.0,
+            Stompy.right_arm.elbow_pitch: 3.0,
             # hands
-            Stompy.left_arm.hand.hand_roll: np.deg2rad(-60),
-            Stompy.right_arm.hand.hand_roll: np.deg2rad(-60),
+            Stompy.left_arm.hand.left_finger: 0.0,
+            Stompy.left_arm.hand.right_finger: 0.0,
+            Stompy.right_arm.hand.left_finger: 0.0,
+            Stompy.right_arm.hand.right_finger: 0.0,
+            Stompy.left_arm.hand.wrist_roll: -0.346,
+            Stompy.left_arm.hand.wrist_pitch: -0.251,
+            Stompy.left_arm.hand.wrist_yaw: 0.377,
+            Stompy.right_arm.hand.wrist_roll: -3.14,
+            Stompy.right_arm.hand.wrist_pitch: -0.437,
+            Stompy.right_arm.hand.wrist_yaw: 0.911,
             # legs
-            Stompy.legs.left.hip_roll: np.deg2rad(29),
-            Stompy.legs.left.hip_yaw: np.deg2rad(-29),
-            Stompy.legs.left.hip_pitch: np.deg2rad(56),
-            Stompy.legs.right.hip_roll: np.deg2rad(-29),
-            Stompy.legs.right.hip_yaw: np.deg2rad(-29),
-            # check this
-            Stompy.legs.right.hip_pitch: np.deg2rad(-56),
-            Stompy.legs.left.knee: np.deg2rad(-6),
-            Stompy.legs.right.knee: np.deg2rad(6),
+            Stompy.legs.left.hip_pitch: -1.55,
+            Stompy.legs.left.hip_roll: 1.46,
+            Stompy.legs.left.hip_yaw: 1.45,
+            Stompy.legs.left.knee_pitch: 2.17,
+            Stompy.legs.left.ankle_pitch: 0.238,
+            Stompy.legs.left.ankle_roll: 1.79,
+            Stompy.legs.right.hip_pitch: -1.55,
+            Stompy.legs.right.hip_roll: -1.67,
+            Stompy.legs.right.hip_yaw: 1.04,
+            Stompy.legs.right.knee_pitch: 2.01,
+            Stompy.legs.right.ankle_pitch: 0.44,
+            Stompy.legs.right.ankle_roll: 1.79,
+        }
+
+    @classmethod
+    def default_limits(cls) -> Dict[str, Dict[str, float]]:
+        return {
+            Stompy.torso.roll: {
+                "lower": -4.36332,
+                "upper": 4.36332,
+            },
+            Stompy.left_arm.shoulder_pitch: {
+                "lower": -0.0,
+                "upper": 0.2,
+            },
+            Stompy.left_arm.shoulder_yaw: {
+                "lower": 0.97738438,
+                "upper": 5.3058009,
+            },
+            Stompy.left_arm.shoulder_roll: {
+                "lower": -4.71239,
+                "upper": 4.71239,
+            },
+            Stompy.right_arm.shoulder_pitch: {
+                "lower": -4.71239,
+                "upper": 4.71239,
+            },
+            Stompy.right_arm.shoulder_yaw: {
+                "lower": 0.97738438,
+                "upper": 5.3058009,
+            },
+            Stompy.right_arm.shoulder_roll: {
+                "lower": -4.71239,
+                "upper": 4.71239,
+            },
+            Stompy.left_arm.hand.wrist_roll: {
+                "lower": -4.71239,
+                "upper": 4.71239,
+            },
+            Stompy.left_arm.hand.wrist_pitch: {
+                "lower": -3.66519,
+                "upper": -1.39626,
+            },
+            Stompy.left_arm.hand.wrist_yaw: {
+                "lower": 0,
+                "upper": 1.5708,
+            },
+            Stompy.right_arm.hand.wrist_roll: {
+                "lower": -4.71239,
+                "upper": 4.71239,
+            },
+            Stompy.right_arm.hand.wrist_pitch: {
+                "lower": -1.5708,
+                "upper": 0.523599,
+            },
+            Stompy.right_arm.hand.wrist_yaw: {
+                "lower": -1.5708,
+                "upper": 0,
+            },
+            Stompy.legs.left.hip_pitch: {
+                "lower": -4.712389,
+                "upper": 4.712389,
+            },
+            Stompy.legs.left.hip_roll: {
+                "lower": -3.14159,
+                "upper": 0,
+            },
+            Stompy.legs.left.hip_yaw: {
+                "lower": -1.0472,
+                "upper": 2.0944,
+            },
+            Stompy.legs.left.knee_pitch: {
+                "lower": -4.18879,
+                "upper": 0,
+            },
+            Stompy.legs.left.ankle_pitch: {
+                "lower": -1.5708,
+                "upper": 2.18166,
+            },
+            Stompy.legs.left.ankle_roll: {
+                "lower": -2.26893,
+                "upper": -1.22173,
+            },
+            Stompy.legs.right.hip_pitch: {
+                "lower": -4.712389,
+                "upper": 4.712389,
+            },
+            Stompy.legs.right.hip_roll: {
+                "lower": 0,
+                "upper": 3.14159,
+            },
+            Stompy.legs.right.hip_yaw: {
+                "lower": -1.0472,
+                "upper": 2.0944,
+            },
+            Stompy.legs.right.knee_pitch: {
+                "lower": -4.18879,
+                "upper": 0,
+            },
+            Stompy.legs.right.ankle_pitch: {
+                "lower": -1.5708,
+                "upper": 2.18166,
+            },
+            Stompy.legs.right.ankle_roll: {
+                "lower": -2.26893,
+                "upper": -1.22173,
+            },
+            Stompy.left_arm.elbow_pitch: {
+                "lower": 1.4486233,
+                "higher": 5.4454273,
+            },
+            Stompy.right_arm.elbow_pitch: {
+                "lower": 1.4486233,
+                "higher": 5.4454273,
+            },
+            Stompy.left_arm.hand.left_finger: {
+                "lower": -0.051,
+                "upper": 0.0,
+            },
+            Stompy.left_arm.hand.right_finger: {
+                "lower": 0,
+                "upper": 0.051,
+            },
+            Stompy.right_arm.hand.left_finger: {
+                "lower": -0.051,
+                "upper": 0.0,
+            },
+            Stompy.right_arm.hand.right_finger: {
+                "lower": 0,
+                "upper": 0.051,
+            },
         }
 
 
 class StompyFixed(Stompy):
-    head = Head()
     torso = Torso()
     left_arm = LeftArm()
     right_arm = RightArm()
@@ -205,94 +345,171 @@ class StompyFixed(Stompy):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            Stompy.head.left_right: np.deg2rad(-2),  # -0.03
+            Stompy.torso.roll: 2.58,
             # arms
-            Stompy.left_arm.shoulder_yaw: np.deg2rad(-69.5),  # -1.21
-            Stompy.left_arm.shoulder_pitch: np.deg2rad(-93),  # 1.61
-            Stompy.right_arm.shoulder_yaw: np.deg2rad(85),  # 1.48
-            Stompy.right_arm.shoulder_pitch: np.deg2rad(104),  # 1.81
+            Stompy.left_arm.shoulder_pitch: -0.534,
+            Stompy.left_arm.shoulder_yaw: 2.54,
+            Stompy.left_arm.shoulder_roll: -0.0314,
+            Stompy.right_arm.shoulder_pitch: 2.45,
+            Stompy.right_arm.shoulder_yaw: 3.77,
+            Stompy.right_arm.shoulder_roll: -0.0314,
+            Stompy.left_arm.elbow_pitch: 2.35,
+            Stompy.right_arm.elbow_pitch: 2.65,
+            # hands
+            Stompy.left_arm.hand.left_finger: 0.0,
+            Stompy.left_arm.hand.right_finger: 0.0,
+            Stompy.right_arm.hand.left_finger: 0.0,
+            Stompy.right_arm.hand.right_finger: 0.0,
+            Stompy.left_arm.hand.wrist_roll: 1.79,
+            Stompy.left_arm.hand.wrist_pitch: 1.35,
+            Stompy.left_arm.hand.wrist_yaw: 1.07,
+            Stompy.right_arm.hand.wrist_roll: -2.13,
+            Stompy.right_arm.hand.wrist_pitch: 1.79,
+            Stompy.right_arm.hand.wrist_yaw: -0.251,
             # legs
-            Stompy.legs.left.hip_roll: np.deg2rad(29),  # 0.5
-            Stompy.legs.left.hip_yaw: np.deg2rad(-29),  # -0.5
-            Stompy.legs.left.hip_pitch: np.deg2rad(56),  # 0.97
-            Stompy.legs.right.hip_roll: np.deg2rad(-29),  # -0.5
-            Stompy.legs.right.hip_yaw: np.deg2rad(-29),  # -0.5
-            Stompy.legs.right.hip_pitch: np.deg2rad(-56),  # -0.97
-            Stompy.legs.left.knee: np.deg2rad(-6),  # -0.1
-            Stompy.legs.right.knee: np.deg2rad(6),  # 0.1
-            Stompy.legs.left.ankle: np.deg2rad(0),  # 0
-            Stompy.legs.right.ankle: np.deg2rad(0),  # 0
-            Stompy.legs.left.foot_roll: np.deg2rad(0),  # 0
-            Stompy.legs.right.foot_roll: np.deg2rad(0),  # 0
+            Stompy.legs.left.hip_pitch: -1.6,
+            Stompy.legs.left.hip_roll: 1.41,
+            Stompy.legs.left.hip_yaw: -2.12,
+            Stompy.legs.left.knee_pitch: 2.01,
+            Stompy.legs.left.ankle_pitch: 0.238,
+            Stompy.legs.left.ankle_roll: 1.85,
+            Stompy.legs.right.hip_pitch: 1.76,
+            Stompy.legs.right.hip_roll: -1.54,
+            Stompy.legs.right.hip_yaw: 0.967,
+            Stompy.legs.right.knee_pitch: 2.07,
+            Stompy.legs.right.ankle_pitch: 0.377,
+            Stompy.legs.right.ankle_roll: 1.92,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            Stompy.head.left_right: {
-                "lower": -0.1,
-                "upper": 0.0,
-            },
-            Stompy.right_arm.shoulder_yaw: {
-                "lower": 1.47,
-                "upper": 1.50,
-            },
-            Stompy.left_arm.shoulder_yaw: {
-                "lower": -1.23,
-                "upper": -1.20,
-            },
-            Stompy.right_arm.shoulder_pitch: {
-                "lower": 1.8,
-                "upper": 1.83,
+            Stompy.torso.roll: {
+                "lower": 2.53,
+                "upper": 2.63,
             },
             Stompy.left_arm.shoulder_pitch: {
-                "lower": -1.63,
-                "upper": -1.60,
+                "lower": -0.584,
+                "upper": -0.484,
             },
-            Stompy.legs.right.hip_roll: {
-                "lower": -0.75,
-                "upper": -0.15,
+            Stompy.left_arm.shoulder_yaw: {
+                "lower": 2.49,
+                "upper": 2.59,
             },
-            Stompy.legs.left.hip_roll: {
-                "lower": 0.2,
-                "upper": 0.75,
+            Stompy.left_arm.shoulder_roll: {
+                "lower": -0.0814,
+                "upper": 0.0186,
             },
-            Stompy.legs.right.hip_yaw: {
-                "lower": -1,
-                "upper": 0.0,
+            Stompy.right_arm.shoulder_pitch: {
+                "lower": 2.40,
+                "upper": 2.50,
             },
-            Stompy.legs.left.hip_yaw: {
-                "lower": -0.71,
-                "upper": -0.3,
+            Stompy.right_arm.shoulder_yaw: {
+                "lower": 3.72,
+                "upper": 3.82,
             },
-            Stompy.legs.right.hip_pitch: {
-                "lower": -1.1,
-                "upper": -0.4,
+            Stompy.right_arm.shoulder_roll: {
+                "lower": -0.0814,
+                "upper": 0.0186,
+            },
+            Stompy.left_arm.elbow_pitch: {
+                "lower": 2.30,
+                "upper": 2.40,
+            },
+            Stompy.right_arm.elbow_pitch: {
+                "lower": 2.60,
+                "upper": 2.70,
+            },
+            Stompy.left_arm.hand.left_finger: {
+                "lower": -0.05,
+                "upper": 0.05,
+            },
+            Stompy.left_arm.hand.right_finger: {
+                "lower": -0.05,
+                "upper": 0.05,
+            },
+            Stompy.right_arm.hand.left_finger: {
+                "lower": -0.05,
+                "upper": 0.05,
+            },
+            Stompy.right_arm.hand.right_finger: {
+                "lower": -0.05,
+                "upper": 0.05,
+            },
+            Stompy.left_arm.hand.wrist_roll: {
+                "lower": 1.74,
+                "upper": 1.84,
+            },
+            Stompy.left_arm.hand.wrist_pitch: {
+                "lower": 1.30,
+                "upper": 1.40,
+            },
+            Stompy.left_arm.hand.wrist_yaw: {
+                "lower": 1.02,
+                "upper": 1.12,
+            },
+            Stompy.right_arm.hand.wrist_roll: {
+                "lower": -2.18,
+                "upper": -2.08,
+            },
+            Stompy.right_arm.hand.wrist_pitch: {
+                "lower": 1.74,
+                "upper": 1.84,
+            },
+            Stompy.right_arm.hand.wrist_yaw: {
+                "lower": -0.301,
+                "upper": -0.201,
             },
             Stompy.legs.left.hip_pitch: {
-                "lower": -0.1,
-                "upper": 1.2,
+                "lower": -1.65,
+                "upper": -1.55,
             },
-            Stompy.legs.right.knee: {
-                "lower": 0,
-                "upper": 1.2,
+            Stompy.legs.left.hip_roll: {
+                "lower": 1.36,
+                "upper": 1.46,
             },
-            Stompy.legs.left.knee: {
-                "lower": -1.2,
-                "upper": 0,
+            Stompy.legs.left.hip_yaw: {
+                "lower": -2.17,
+                "upper": -2.07,
             },
-            Stompy.legs.right.ankle: {
-                "lower": -0.3,
-                "upper": 0.3,
+            Stompy.legs.left.knee_pitch: {
+                "lower": 1.96,
+                "upper": 2.06,
             },
-            Stompy.legs.left.ankle: {
-                "lower": -0.3,
-                "upper": 0.3,
+            Stompy.legs.left.ankle_pitch: {
+                "lower": 0.188,
+                "upper": 0.288,
             },
-            Stompy.legs.right.foot_roll: {"lower": -0.3, "upper": 0.3},
-            Stompy.legs.left.foot_roll: {"lower": -0.3, "upper": 0.3},
+            Stompy.legs.left.ankle_roll: {
+                "lower": 1.80,
+                "upper": 1.90,
+            },
+            Stompy.legs.right.hip_pitch: {
+                "lower": 1.71,
+                "upper": 1.81,
+            },
+            Stompy.legs.right.hip_roll: {
+                "lower": -1.59,
+                "upper": -1.49,
+            },
+            Stompy.legs.right.hip_yaw: {
+                "lower": 0.917,
+                "upper": 1.017,
+            },
+            Stompy.legs.right.knee_pitch: {
+                "lower": 2.02,
+                "upper": 2.12,
+            },
+            Stompy.legs.right.ankle_pitch: {
+                "lower": 0.327,
+                "upper": 0.427,
+            },
+            Stompy.legs.right.ankle_roll: {
+                "lower": 1.87,
+                "upper": 1.97,
+            },
         }
-    
+
 
 class ImuTorso(Torso):
     pitch = "torso_1_x8_1_dof_x8"
@@ -305,7 +522,6 @@ class ImuTorso(Torso):
 
 
 class MjcfStompy(Stompy):
-    head = Head()
     torso = ImuTorso()
     left_arm = LeftArm()
     right_arm = RightArm()
@@ -315,107 +531,169 @@ class MjcfStompy(Stompy):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            MjcfStompy.head.left_right: 0.8526,
+            Stompy.torso.roll: 2.58,
             # arms
-            MjcfStompy.left_arm.shoulder_yaw: 1.57,
-            MjcfStompy.left_arm.shoulder_pitch: 1.59,
-            MjcfStompy.left_arm.elbow_roll: 0.0,
-            MjcfStompy.left_arm.elbow_yaw: 0.0,
-
-            MjcfStompy.right_arm.elbow_roll: 2.48,
-            MjcfStompy.right_arm.elbow_yaw: -0.09,
-
-            MjcfStompy.right_arm.shoulder_yaw: -1.6,
-            MjcfStompy.right_arm.shoulder_pitch: -1.64,
-
-            # left hand
-            MjcfStompy.left_arm.hand.hand_roll: 0.9,
-
-            # right hand
-            MjcfStompy.right_arm.hand.hand_roll: 0.64,
-
-            # left leg
-            MjcfStompy.legs.left.hip_roll: -0.52,
-            MjcfStompy.legs.left.hip_yaw: 0.6,
-            MjcfStompy.legs.left.hip_pitch: -0.8,
-            MjcfStompy.legs.right.hip_roll: 0.59,
-            MjcfStompy.legs.right.hip_yaw: 0.7,
-            MjcfStompy.legs.right.hip_pitch: 1.0,
-
-            # right leg
-            MjcfStompy.legs.left.knee: 0.2,
-            MjcfStompy.legs.right.knee: 0.0,  
-            MjcfStompy.legs.left.ankle: 0.0,
-            MjcfStompy.legs.right.ankle: 0.0,
-            MjcfStompy.legs.left.foot_roll: 0.0,
-            MjcfStompy.legs.right.foot_roll: 0.0,
+            Stompy.left_arm.shoulder_pitch: -0.534,
+            Stompy.left_arm.shoulder_yaw: 2.54,
+            Stompy.left_arm.shoulder_roll: -0.0314,
+            Stompy.right_arm.shoulder_pitch: 2.45,
+            Stompy.right_arm.shoulder_yaw: 3.77,
+            Stompy.right_arm.shoulder_roll: -0.0314,
+            Stompy.left_arm.elbow_pitch: 2.35,
+            Stompy.right_arm.elbow_pitch: 2.65,
+            # hands
+            Stompy.left_arm.hand.left_finger: 0.0,
+            Stompy.left_arm.hand.right_finger: 0.0,
+            Stompy.right_arm.hand.left_finger: 0.0,
+            Stompy.right_arm.hand.right_finger: 0.0,
+            Stompy.left_arm.hand.wrist_roll: 1.79,
+            Stompy.left_arm.hand.wrist_pitch: 1.35,
+            Stompy.left_arm.hand.wrist_yaw: 1.07,
+            Stompy.right_arm.hand.wrist_roll: -2.13,
+            Stompy.right_arm.hand.wrist_pitch: 1.79,
+            Stompy.right_arm.hand.wrist_yaw: -0.251,
+            # legs
+            Stompy.legs.left.hip_pitch: -1.6,
+            Stompy.legs.left.hip_roll: 1.41,
+            Stompy.legs.left.hip_yaw: -2.12,
+            Stompy.legs.left.knee_pitch: 2.01,
+            Stompy.legs.left.ankle_pitch: 0.238,
+            Stompy.legs.left.ankle_roll: 1.85,
+            Stompy.legs.right.hip_pitch: 1.76,
+            Stompy.legs.right.hip_roll: -1.54,
+            Stompy.legs.right.hip_yaw: 0.967,
+            Stompy.legs.right.knee_pitch: 2.07,
+            Stompy.legs.right.ankle_pitch: 0.377,
+            Stompy.legs.right.ankle_roll: 1.92,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            MjcfStompy.head.left_right: {
-                "lower": -3.14,
-                "upper": 3.14,
+            Stompy.torso.roll: {
+                "lower": 2.53,
+                "upper": 2.63,
             },
-            MjcfStompy.right_arm.shoulder_yaw: {
-                "lower": -2.09,
-                "upper": 2.09,
+            Stompy.left_arm.shoulder_pitch: {
+                "lower": -0.584,
+                "upper": -0.484,
             },
-            MjcfStompy.left_arm.shoulder_yaw: {
-                "lower": -2.09,
-                "upper": 2.09,
+            Stompy.left_arm.shoulder_yaw: {
+                "lower": 2.49,
+                "upper": 2.59,
             },
-            MjcfStompy.right_arm.shoulder_pitch: {
-                "lower": -1.91,
-                "upper": 1.91,
+            Stompy.left_arm.shoulder_roll: {
+                "lower": -0.0814,
+                "upper": 0.0186,
             },
-            MjcfStompy.left_arm.shoulder_pitch: {
-                "lower": -1.91,
-                "upper": 1.91,
+            Stompy.right_arm.shoulder_pitch: {
+                "lower": 2.40,
+                "upper": 2.50,
             },
-            MjcfStompy.legs.right.hip_roll: {
-                "lower": -1.04,
-                "upper": 1.04,
+            Stompy.right_arm.shoulder_yaw: {
+                "lower": 3.72,
+                "upper": 3.82,
             },
-            MjcfStompy.legs.left.hip_roll: {
-                "lower": -1.04,
-                "upper": 1.04,
+            Stompy.right_arm.shoulder_roll: {
+                "lower": -0.0814,
+                "upper": 0.0186,
             },
-            MjcfStompy.legs.right.hip_yaw: {
-                "lower": -1.57,
-                "upper": 1.06,
+            Stompy.left_arm.elbow_pitch: {
+                "lower": 2.30,
+                "upper": 2.40,
             },
-            MjcfStompy.legs.left.hip_yaw: {
-                "lower": -1.57,
-                "upper": 1.06,
+            Stompy.right_arm.elbow_pitch: {
+                "lower": 2.60,
+                "upper": 2.70,
             },
-            MjcfStompy.legs.right.hip_pitch: {
-                "lower": -1.78,
-                "upper": 2.35,
+            Stompy.left_arm.hand.left_finger: {
+                "lower": -0.05,
+                "upper": 0.05,
             },
-            MjcfStompy.legs.left.hip_pitch: {
-                "lower": -1.78,
-                "upper": 2.35,
+            Stompy.left_arm.hand.right_finger: {
+                "lower": -0.05,
+                "upper": 0.05,
             },
-            MjcfStompy.legs.right.knee: {
-                "lower": 0,
-                "upper": 1.2,
+            Stompy.right_arm.hand.left_finger: {
+                "lower": -0.05,
+                "upper": 0.05,
             },
-            MjcfStompy.legs.left.knee: {
-                "lower": -1.2,
-                "upper": 0,
+            Stompy.right_arm.hand.right_finger: {
+                "lower": -0.05,
+                "upper": 0.05,
             },
-            MjcfStompy.legs.right.ankle: {
-                "lower": -0.3,
-                "upper": 0.3,
+            Stompy.left_arm.hand.wrist_roll: {
+                "lower": 1.74,
+                "upper": 1.84,
             },
-            MjcfStompy.legs.left.ankle: {
-                "lower": -0.3,
-                "upper": 0.3,
+            Stompy.left_arm.hand.wrist_pitch: {
+                "lower": 1.30,
+                "upper": 1.40,
             },
-            MjcfStompy.legs.right.foot_roll: {"lower": -0.3, "upper": 0.3},
-            MjcfStompy.legs.left.foot_roll: {"lower": -0.3, "upper": 0.3},
+            Stompy.left_arm.hand.wrist_yaw: {
+                "lower": 1.02,
+                "upper": 1.12,
+            },
+            Stompy.right_arm.hand.wrist_roll: {
+                "lower": -2.18,
+                "upper": -2.08,
+            },
+            Stompy.right_arm.hand.wrist_pitch: {
+                "lower": 1.74,
+                "upper": 1.84,
+            },
+            Stompy.right_arm.hand.wrist_yaw: {
+                "lower": -0.301,
+                "upper": -0.201,
+            },
+            Stompy.legs.left.hip_pitch: {
+                "lower": -1.65,
+                "upper": -1.55,
+            },
+            Stompy.legs.left.hip_roll: {
+                "lower": 1.36,
+                "upper": 1.46,
+            },
+            Stompy.legs.left.hip_yaw: {
+                "lower": -2.17,
+                "upper": -2.07,
+            },
+            Stompy.legs.left.knee_pitch: {
+                "lower": 1.96,
+                "upper": 2.06,
+            },
+            Stompy.legs.left.ankle_pitch: {
+                "lower": 0.188,
+                "upper": 0.288,
+            },
+            Stompy.legs.left.ankle_roll: {
+                "lower": 1.80,
+                "upper": 1.90,
+            },
+            Stompy.legs.right.hip_pitch: {
+                "lower": 1.71,
+                "upper": 1.81,
+            },
+            Stompy.legs.right.hip_roll: {
+                "lower": -1.59,
+                "upper": -1.49,
+            },
+            Stompy.legs.right.hip_yaw: {
+                "lower": 0.917,
+                "upper": 1.017,
+            },
+            Stompy.legs.right.knee_pitch: {
+                "lower": 2.02,
+                "upper": 2.12,
+            },
+            Stompy.legs.right.ankle_pitch: {
+                "lower": 0.327,
+                "upper": 0.427,
+            },
+            Stompy.legs.right.ankle_roll: {
+                "lower": 1.87,
+                "upper": 1.97,
+            },
         }
 
 

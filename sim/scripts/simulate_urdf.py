@@ -27,7 +27,7 @@ Viewer = NewType("Viewer", Any)
 Args = NewType("Args", Any)
 
 # Importing torch down here to avoid gymtorch issues.
-import torch  # noqa: E402
+import torch  # noqa: E402 #  type: ignore[import]
 
 # DRIVE_MODE = gymapi.DOF_MODE_EFFORT
 DRIVE_MODE = gymapi.DOF_MODE_POS
@@ -80,7 +80,7 @@ def load_gym() -> GymParams:
     sim_params.physx.num_threads = args.num_threads
     sim_params.physx.use_gpu = args.use_gpu
 
-    # sim_params.use_gpu_pipeline = False
+    sim_params.use_gpu_pipeline = False
     # if args.use_gpu_pipeline:
     #     warnings.warn("Forcing CPU pipeline.")
 
@@ -116,14 +116,14 @@ def load_gym() -> GymParams:
     asset_options = gymapi.AssetOptions()
     asset_options.default_dof_drive_mode = DRIVE_MODE
     asset_options.collapse_fixed_joints = True
-    asset_options.disable_gravity = True
-    asset_options.fix_base_link = True
+    asset_options.disable_gravity = False
+    asset_options.fix_base_link = False
     asset_path = stompy_urdf_path()
     robot_asset = gym.load_urdf(sim, str(asset_path.parent), str(asset_path.name), asset_options)
 
     # Adds the robot to the environment.
     initial_pose = gymapi.Transform()
-    initial_pose.p = gymapi.Vec3(0.0, 5.0, 0.0)
+    initial_pose.p = gymapi.Vec3(0.0, 2.0, 0.0)
     initial_pose.r = gymapi.Quat(0.0, 0.0, 0.0, 1.0)
     robot = gym.create_actor(env, robot_asset, initial_pose, "robot")
 
@@ -150,7 +150,7 @@ def load_gym() -> GymParams:
 
     # Resets the DOF positions to the starting positions.
     # dof_vel[:] = 0.0
-    starting_positions = Stompy.default_positions()
+    starting_positions = Stompy.default_standing()
     dof_ids: Dict[str, int] = gym.get_actor_dof_dict(env, robot)
     for joint_name, joint_position in starting_positions.items():
         dof_pos[0, dof_ids[joint_name]] = joint_position
@@ -188,7 +188,6 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
         gym.gym.step_graphics(gym.sim)
         gym.gym.draw_viewer(gym.viewer, gym.sim, True)
         gym.gym.sync_frame_time(gym.sim)
-
         # Print the joint forces.
         # print(gym.gym.get_actor_dof_forces(gym.env, gym.robot))
         # print(gym.gym.get_env_rigid_contact_forces(gym.env))

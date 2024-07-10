@@ -33,13 +33,13 @@ class LegsCfg(StompyCfg):
 
         name = "stompy"
 
-        foot_name = "_leg_1_x4_1_outer_1"  # "foot"
-        knee_name = "belt_knee"
+        foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
+        knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
         termination_height = 0.23
         default_feet_height = 0.0
 
-        terminate_after_contacts_on = ["link_torso_1_top_torso_1"]
+        terminate_after_contacts_on = ["link_upper_limb_assembly_7_dof_1_torso_1_top_skeleton_2"]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter

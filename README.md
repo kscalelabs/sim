@@ -80,6 +80,7 @@ python sim/humanoid_gym/train.py --task=stompy_ppo --num_envs=4096 --headless
 3. Run evaluation with the following command:
 ```bash
 python sim/humanoid_gym/play.py --task legs_ppo --sim_device cpu
+
 ```
 See [this doc](https://docs.google.com/document/d/1YZzBqIXO7oq7vIKu-BZr5ssNsi3nKtxpRPnfSnTXojA/edit?usp=sharing) for more beginner tips.
 

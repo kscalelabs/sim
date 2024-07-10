@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 
 from sim.stompy.joints import StompyFixed
 
-STOMPY_URDF = "stompy/robot.urdf"
+STOMPY_URDF = "sim/stompy/robot.urdf"
 
 
 def update_urdf() -> None:
@@ -30,7 +30,7 @@ def update_urdf() -> None:
                 limit.set("upper", upper)
 
     # Save the modified URDF to a new file
-    tree.write("stompy/robot_fixed.urdf")
+    tree.write("sim/stompy/robot_fixed.urdf")
 
 
 if __name__ == "__main__":

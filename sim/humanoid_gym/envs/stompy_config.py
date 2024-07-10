@@ -1,11 +1,14 @@
 """Defines the environment configuration for the Getting up task"""
 
-from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
+from humanoid.envs.base.legged_robot_config import (  # type: ignore
+    LeggedRobotCfg,
+    LeggedRobotCfgPPO,
+)
 
 from sim.env import stompy_urdf_path
 from sim.stompy.joints import Stompy
 
-NUM_JOINTS = len(Stompy.all_joints())  # 37
+NUM_JOINTS = len(Stompy.all_joints())  # 33
 
 
 class StompyCfg(LeggedRobotCfg):
@@ -38,13 +41,12 @@ class StompyCfg(LeggedRobotCfg):
 
         name = "stompy"
 
-        foot_name = "_leg_1_x4_1_outer_1"  # "foot"
-        knee_name = "belt_knee"
+        foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
+        knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
         termination_height = 0.23
         default_feet_height = 0.0
-
-        terminate_after_contacts_on = ["link_torso_1_top_torso_1"]
+        terminate_after_contacts_on = ["link_upper_limb_assembly_7_dof_1_torso_1_top_skeleton_2"]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -82,7 +84,7 @@ class StompyCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 1.05]
+        pos = [0.0, 0.0, 1.15]
 
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
@@ -93,26 +95,25 @@ class StompyCfg(LeggedRobotCfg):
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
         stiffness = {
-            "x10": 200,
-            "x8": 200,
-            "x6": 200,
-            "x4": 200,
-            "foot": 200,
-            "forward": 200,
-            "knee": 200,
+            "shoulder": 200,
+            "elbow": 200,
+            "wrist": 200,
+            "hand": 200,
+            "torso": 200,
+            "hip": 200,
             "ankle": 200,
+            "knee": 200,
         }
         damping = {
-            "x10": 10,
-            "x8": 10,
-            "x6": 10,
-            "x4": 10,
-            "foot": 10,
-            "forward": 10,
-            "knee": 10,
+            "shoulder": 10,
+            "elbow": 10,
+            "wrist": 10,
+            "hand": 10,
+            "torso": 10,
+            "hip": 10,
             "ankle": 10,
+            "knee": 10,
         }
-
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT

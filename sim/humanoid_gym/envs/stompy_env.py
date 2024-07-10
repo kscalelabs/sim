@@ -1,7 +1,7 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
 
-import torch
+import torch  # type: ignore[import]
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
@@ -77,7 +77,6 @@ class StompyFreeEnv(LeggedRobot):
         self.rand_push_torque = torch_rand_float(
             -max_push_angular, max_push_angular, (self.num_envs, 3), device=self.device
         )
-
         self.root_states[:, 10:13] = self.rand_push_torque
 
         self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
@@ -123,16 +122,15 @@ class StompyFreeEnv(LeggedRobot):
         scale_2 = 2 * scale_1
         # left foot stance phase set to default joint pos
         sin_pos_l[sin_pos_l > 0] = 0
-
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] = sin_pos_l * scale_1
-        self.ref_dof_pos[:, self.legs_joints["left_knee"]] = sin_pos_l * scale_2
-        self.ref_dof_pos[:, self.legs_joints["left_ankle"]] = sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] = sin_pos_l * scale_2
+        self.ref_dof_pos[:, self.legs_joints["left_ankle_roll"]] = sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
         self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] = sin_pos_r * scale_1
-        self.ref_dof_pos[:, self.legs_joints["right_knee"]] = sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle"]] = sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] = sin_pos_r * scale_2
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_roll"]] = sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -207,12 +205,10 @@ class StompyFreeEnv(LeggedRobot):
         contact_mask = self.contact_forces[:, self.feet_indices, 2] > 5.0
 
         self.command_input = torch.cat((sin_pos, cos_pos, self.commands[:, :3] * self.commands_scale), dim=1)
-        breakpoint()
         q = (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos
         dq = self.dof_vel * self.obs_scales.dof_vel
 
         diff = self.dof_pos - self.ref_dof_pos
-
         self.privileged_obs_buf = torch.cat(
             (
                 self.command_input,  # 2 + 3
