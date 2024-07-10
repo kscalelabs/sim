@@ -8,7 +8,7 @@ from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym.torch_utils import *
 
 from isaacgym import gymtorch
-from sim.stompy2.joints import Stompy
+from sim.old_stompy.joints import Stompy
 
 
 class StompyFreeEnv(LeggedRobot):
@@ -56,7 +56,6 @@ class StompyFreeEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Stompy.legs.left.joints_motors():
-            print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
@@ -174,7 +173,6 @@ class StompyFreeEnv(LeggedRobot):
         num_actions = self.num_actions
         noise_vec = torch.zeros(self.cfg.env.num_single_obs, device=self.device)
         self.add_noise = self.cfg.noise.add_noise
-        # breakpoint()
         noise_scales = self.cfg.noise.noise_scales
         noise_vec[0:5] = 0.0  # commands
         noise_vec[5 : (num_actions + 5)] = noise_scales.dof_pos * self.obs_scales.dof_pos
@@ -212,7 +210,6 @@ class StompyFreeEnv(LeggedRobot):
         dq = self.dof_vel * self.obs_scales.dof_vel
 
         diff = self.dof_pos - self.ref_dof_pos
-        # breakpoint()
         self.privileged_obs_buf = torch.cat(
             (
                 self.command_input,  # 2 + 3
@@ -389,7 +386,6 @@ class StompyFreeEnv(LeggedRobot):
         The reward is computed based on the height difference between the robot's base and the average height
         of its feet when they are in contact with the ground.
         """
-        # breakpoint()
         stance_mask = self._get_gait_phase()
         measured_heights = torch.sum(self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1) / torch.sum(
             stance_mask, dim=1

@@ -14,7 +14,7 @@ from typing import Any, Dict, Literal, NewType
 from isaacgym import gymapi, gymtorch, gymutil
 from sim.env import stompy_urdf_path
 from sim.logging import configure_logging
-from sim.stompy2.joints import Stompy
+from sim.old_stompy.joints import Stompy
 
 logger = logging.getLogger(__name__)
 
@@ -77,9 +77,7 @@ def load_gym() -> GymParams:
     sim_params.physx.contact_collection = gymapi.CC_ALL_SUBSTEPS
 
     sim_params.physx.num_threads = args.num_threads
-    # sim_params.physx.use_gpu = args.use_gpu
-    # is2ac2 - disable GPU for now
-    sim_params.physx.use_gpu = False
+    sim_params.physx.use_gpu = args.use_gpu
 
     sim_params.use_gpu_pipeline = False
     # if args.use_gpu_pipeline:
@@ -117,8 +115,6 @@ def load_gym() -> GymParams:
     asset_options = gymapi.AssetOptions()
     asset_options.default_dof_drive_mode = DRIVE_MODE
     asset_options.collapse_fixed_joints = True
-    # is2ac2: disable gravity for now
-    # asset_options.disable_gravity = False
     asset_options.disable_gravity = False
     asset_options.fix_base_link = False
     asset_path = stompy_urdf_path()
@@ -193,7 +189,6 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
         gym.gym.step_graphics(gym.sim)
         gym.gym.draw_viewer(gym.viewer, gym.sim, True)
         gym.gym.sync_frame_time(gym.sim)
-        # breakpoint()
         # Print the joint forces.
         # print(gym.gym.get_actor_dof_forces(gym.env, gym.robot))
         # print(gym.gym.get_env_rigid_contact_forces(gym.env))
