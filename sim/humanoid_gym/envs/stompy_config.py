@@ -6,7 +6,7 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
 )
 
 from sim.env import stompy_urdf_path
-from sim.old_stompy.joints import Stompy
+from sim.stompy.joints import Stompy
 
 NUM_JOINTS = len(Stompy.all_joints())  # 33
 
@@ -48,7 +48,7 @@ class StompyCfg(LeggedRobotCfg):
         default_feet_height = 0.0
         terminate_after_contacts_on = ["link_upper_limb_assembly_7_dof_1_torso_1_top_skeleton_2"]
 
-        penalize_contacts_on = ["place_holder"]
+        penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
@@ -84,7 +84,7 @@ class StompyCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 1.15]  # THIS
+        pos = [0.0, 0.0, 1.15]
 
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
@@ -93,29 +93,33 @@ class StompyCfg(LeggedRobotCfg):
             default_joint_angles[joint] = default_positions[joint]
 
     class control(LeggedRobotCfg.control):
-        # PD Drive parameters: THIS
+        # PD Drive parameters:
         # NOTE: these names are outdated, must be manually set in third party legged_robot.py
         stiffness = {
-            "x10": 200,
-            "x8": 200,
-            "x6": 200,
-            "x4": 200,
-            "foot": 200,
-            "forward": 200,
-            "knee": 200,
+            "shoulder": 200,
+            "elbow": 200,
+            "wrist": 200,
+            "hand": 200,
+            "torso": 200,
+            "hip": 200,
             "ankle": 200,
+            "knee": 200,
         }
         damping = {
-            "x10": 10,
-            "x8": 10,
-            "x6": 10,
-            "x4": 10,
-            "foot": 10,
-            "forward": 10,
-            "knee": 10,
+            "shoulder": 10,
+            "elbow": 10,
+            "wrist": 10,
+            "hand": 10,
+            "torso": 10,
+            "hip": 10,
             "ankle": 10,
+            "knee": 10,
         }
-
+        # ['right shoulder pitch', 'right shoulder yaw', 'right shoulder roll', 'right elbow pitch', 'right wrist roll', 'right wrist pitch', 'right wrist yaw',
+        #  'right hand left finger', 'right hand right finger', 'shoulder pitch', 'shoulder yaw', 'shoulder roll', 'elbow pitch', 'wrist roll', 'wrist pitch', 'wrist yaw',
+        #  'left hand left finger', 'left hand right finger', 'torso roll', 'left hip pitch', 'left hip yaw', 'left hip roll',
+        #  'left knee pitch', 'left ankle pitch', 'left ankle roll', 'right hip pitch', 'right hip yaw', 'right hip roll', 'right knee pitch',
+        #  'right ankle pitch', 'right ankle roll']
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -128,11 +132,11 @@ class StompyCfg(LeggedRobotCfg):
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 12
-            solver_type = 1  # 0: pgs, 1: tgs THIS
-            num_position_iterations = 4  # THIS
-            num_velocity_iterations = 1  # THIS
-            contact_offset = 0.01  # [m] THIS
-            rest_offset = -0.02  # [m] THIS
+            solver_type = 1  # 0: pgs, 1: tgs
+            num_position_iterations = 4
+            num_velocity_iterations = 1
+            contact_offset = 0.01  # [m]
+            rest_offset = -0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
@@ -141,7 +145,7 @@ class StompyCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand:
-        randomize_friction = False
+        randomize_friction = True
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = False
