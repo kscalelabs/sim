@@ -8,7 +8,7 @@ Command to run:
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 from sim.env import stompy_urdf_path
-from sim.stompy2.joints import Stompy
+from sim.stompy.joints import Stompy
 
 NUM_JOINTS = len(Stompy.all_joints())  # 37
 
@@ -42,9 +42,6 @@ class GetupCfg(LeggedRobotCfg):
         foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
         knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
-        # old
-        # foot_name = "_leg_1_x4_1_outer_1"  # "foot"
-        # knee_name = "belt_knee"
         terminate_after_contacts_on = []  # "link_torso_1_top_torso_1"]
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -82,7 +79,8 @@ class GetupCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):  # noqa: N801
-        pos = [0.0, 0.0, 0.2]
+        pos = [0.0, 0.0, 5.2]
+        # pos = [0.0, 0.0, 0.2]
 
         # Face up
         # rot = [-0.717107, 0.0, 0.0, 0.717107]

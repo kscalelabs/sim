@@ -3,9 +3,9 @@
 
 import xml.etree.ElementTree as ET
 
-from sim.stompy2.joints import StompyFixed
+from sim.stompy.joints import StompyFixed
 
-STOMPY_URDF = "stompy/robot.urdf"
+STOMPY_URDF = "sim/stompy/robot.urdf"
 
 
 def update_urdf() -> None:
@@ -30,8 +30,15 @@ def update_urdf() -> None:
                 limit.set("upper", upper)
 
     # Save the modified URDF to a new file
-    tree.write("stompy/robot_fixed.urdf")
+    tree.write("sim/stompy/robot_fixed.urdf")
 
 
 if __name__ == "__main__":
     update_urdf()
+
+
+# adjust default limits to be very constrained arouynd default standing pose
+# run create fixed torso
+# adjust  legs_ppo.py to use the fixed torso
+#  python train.py --task=legs_ppo --num_envs=1
+# adjust torque valu third_party/humanoid-gym/humanoid/envs/base/legged_robot.py

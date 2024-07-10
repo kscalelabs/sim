@@ -5,10 +5,10 @@ import torch
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
-from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
-from sim.stompy2.joints import Stompy
+from isaacgym import gymtorch
+from sim.stompy.joints import Stompy
 
 default_feet_height = 0.0
 

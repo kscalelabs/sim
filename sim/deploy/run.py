@@ -14,14 +14,14 @@ import mujoco.viewer
 import numpy as np
 from humanoid.envs import *
 from humanoid.utils import task_registry
-from isaacgym import gymapi
 from isaacgym.torch_utils import *
 from policy import SimPolicy
 from tqdm import tqdm
 
+from isaacgym import gymapi
 from sim.deploy.config import RobotConfig
 from sim.env import stompy_mjcf_path
-from sim.stompy2.joints import StompyFixed
+from sim.stompy.joints import StompyFixed
 
 
 class Worlds(Enum):

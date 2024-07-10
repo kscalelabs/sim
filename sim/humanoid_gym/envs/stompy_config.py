@@ -115,11 +115,6 @@ class StompyCfg(LeggedRobotCfg):
             "ankle": 10,
             "knee": 10,
         }
-        # ['right shoulder pitch', 'right shoulder yaw', 'right shoulder roll', 'right elbow pitch', 'right wrist roll', 'right wrist pitch', 'right wrist yaw',
-        #  'right hand left finger', 'right hand right finger', 'shoulder pitch', 'shoulder yaw', 'shoulder roll', 'elbow pitch', 'wrist roll', 'wrist pitch', 'wrist yaw',
-        #  'left hand left finger', 'left hand right finger', 'torso roll', 'left hip pitch', 'left hip yaw', 'left hip roll',
-        #  'left knee pitch', 'left ankle pitch', 'left ankle roll', 'right hip pitch', 'right hip yaw', 'right hip roll', 'right knee pitch',
-        #  'right ankle pitch', 'right ankle roll']
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -134,7 +129,7 @@ class StompyCfg(LeggedRobotCfg):
             num_threads = 12
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 1
+            num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
             rest_offset = -0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
@@ -148,7 +143,7 @@ class StompyCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False
+        randomize_base_mass = True
         added_mass_range = [-1.0, 1.0]
         push_robots = True
         push_interval_s = 4
