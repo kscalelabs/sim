@@ -7,9 +7,10 @@ checkers and VSCode. I am just doing it this way to get something working
 quickly.
 """
 
-import isaacgym
-import torch
-
+# fmt: off
+import isaacgym # isort:skip
+import torch #isort:skip
+# fmt: on
 from .getup_config import GetupCfg, GetupCfgPPO
 from .getup_env import GetupFreeEnv
 from .legs_config import LegsCfg, LegsCfgPPO
