@@ -6,12 +6,12 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
 )
 
 from sim.env import stompy_urdf_path
-from sim.stompy.joints import Stompy
+from sim.stompy_legs.joints import Stompy
 
 NUM_JOINTS = len(Stompy.all_joints())  # 33
 
 
-class StompyCfg(LeggedRobotCfg):
+class OnlyLegsCfg(LeggedRobotCfg):
     """
     Configuration class for the Legs humanoid robot.
     """
@@ -227,7 +227,7 @@ class StompyCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class StompyCfgPPO(LeggedRobotCfgPPO):
+class OnlyLegsCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
