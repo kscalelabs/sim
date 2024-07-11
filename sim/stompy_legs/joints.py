@@ -86,70 +86,70 @@ class Stompy(Node):
     def default_standing(cls) -> Dict[str, float]:
         return {
             # legs
-            Stompy.legs.left.hip_pitch: -0.12,
-            Stompy.legs.left.hip_roll: 1.44,
-            Stompy.legs.left.hip_yaw: -1.19,
-            Stompy.legs.left.knee_pitch: -2.32,
-            Stompy.legs.left.ankle_pitch: 0.56,
-            Stompy.legs.left.ankle_roll: -2.64,
-            Stompy.legs.right.hip_pitch: -4.33,
-            Stompy.legs.right.hip_roll: 3.14,
-            Stompy.legs.right.hip_yaw: -1.13,
-            Stompy.legs.right.knee_pitch: -1.95,
-            Stompy.legs.right.ankle_pitch: 0.62,
-            Stompy.legs.right.ankle_roll: -2.64,
+            Stompy.legs.left.hip_pitch: 1.61,
+            Stompy.legs.left.hip_roll: 0,
+            Stompy.legs.left.hip_yaw: 1,
+            Stompy.legs.left.knee_pitch: 2.05,
+            Stompy.legs.left.ankle_pitch: 0.33,
+            Stompy.legs.left.ankle_roll: 1.73,
+            Stompy.legs.right.hip_pitch: 0,
+            Stompy.legs.right.hip_roll: -1.6,
+            Stompy.legs.right.hip_yaw: -2.15,
+            Stompy.legs.right.knee_pitch: 2.16,
+            Stompy.legs.right.ankle_pitch: 0.5,
+            Stompy.legs.right.ankle_roll: 1.72,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
             Stompy.legs.left.hip_pitch: {
-                "lower": -1.32,
-                "upper": 0.69,
+                "lower": 0.5,
+                "upper": 2.69,
             },
             Stompy.legs.left.hip_roll: {
-                "lower": 1.13,
-                "upper": 2.14,
+                "lower": -0.5,
+                "upper": 0.5,
             },
             Stompy.legs.left.hip_yaw: {
-                "lower": -2.2,
-                "upper": -1.19,
+                "lower": 0.5,
+                "upper": 1.19,
             },
             Stompy.legs.left.knee_pitch: {
-                "lower": -3.14,
-                "upper": -2.2,
+                "lower": 0.5,
+                "upper": 2.1,
             },
             Stompy.legs.left.ankle_pitch: {
-                "lower": 0.44,
+                "lower": 0.0,
                 "upper": 1.13,
             },
             Stompy.legs.left.ankle_roll: {
-                "lower": -3.08,
-                "upper": -2.26,
+                "lower": 1.3,
+                "upper": 2,
             },
             Stompy.legs.right.hip_pitch: {
-                "lower": -5.00,
-                "upper": -3.83,
+                "lower": -1,
+                "upper": 1,
             },
             Stompy.legs.right.hip_roll: {
-                "lower": 2.39,
-                "upper": 3.33,
+                "lower": -2.39,
+                "upper": -1,
             },
             Stompy.legs.right.hip_yaw: {
-                "lower": -1.13,
-                "upper": -0.69,
+                "lower": -2.2,
+                "upper": -1,
             },
             Stompy.legs.right.knee_pitch: {
-                "lower": -1.95,
-                "upper": -1.00,
+                "lower": 1.84,
+                "upper": 3,
             },
             Stompy.legs.right.ankle_pitch: {
-                "lower": 0.00,
+                "lower": -0.5,
                 "upper": 0.94,
             },
             Stompy.legs.right.ankle_roll: {
-                "lower": -3.00,
-                "upper": -2.14,
+                "lower": 1,
+                "upper": 2,
             },
         }
 

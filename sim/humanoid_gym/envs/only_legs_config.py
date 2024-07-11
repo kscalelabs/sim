@@ -32,24 +32,24 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class safety:
         # safety factors
-        pos_limit = 1.0
-        vel_limit = 1.0
-        torque_limit = 1.0
+        pos_limit = .9
+        vel_limit = .9
+        torque_limit = .9
 
     class asset(LeggedRobotCfg.asset):
-        file = str(stompy_urdf_path())
+        file = str(stompy_urdf_path(legs_only=True))
 
         name = "stompy"
 
         foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
         knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
-        termination_height = 0.23
+        termination_height = 0.23  # TODO: find a suitable value
         default_feet_height = 0.0
-        terminate_after_contacts_on = ["link_upper_limb_assembly_7_dof_1_torso_1_top_skeleton_2"]
+        terminate_after_contacts_on = []  # TODO: find a part for this
 
         penalize_contacts_on = []
-        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -72,7 +72,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = True
+        add_noise = False
         noise_level = 0.6  # scales other values
 
         class noise_scales:
@@ -84,7 +84,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 1.15]
+        pos = [0.0, 0.0, .72]
 
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
@@ -95,14 +95,14 @@ class OnlyLegsCfg(LeggedRobotCfg):
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
         stiffness = {
-            "shoulder": 200,
-            "elbow": 200,
-            "wrist": 200,
-            "hand": 200,
-            "torso": 200,
-            "hip": 200,
-            "ankle": 200,
-            "knee": 200,
+            "shoulder": 100,
+            "elbow": 100,
+            "wrist": 100,
+            "hand": 100,
+            "torso": 100,
+            "hip": 100,
+            "ankle": 100,
+            "knee": 100,
         }
         damping = {
             "shoulder": 10,
@@ -126,11 +126,11 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 12
-            solver_type = 1  # 0: pgs, 1: tgs
+            solver_type = 0  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 0
-            contact_offset = 0.01  # [m]
-            rest_offset = -0.02  # [m]
+            num_velocity_iterations = 1
+            contact_offset = 0.0  # [m]
+            rest_offset = 0 #-0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
@@ -139,12 +139,12 @@ class OnlyLegsCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand:
-        randomize_friction = True
+        randomize_friction = False
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = True
+        randomize_base_mass = False
         added_mass_range = [-1.0, 1.0]
-        push_robots = True
+        push_robots = False
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -178,23 +178,23 @@ class OnlyLegsCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
-            # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.0
-            feet_contact_number = 1.2
-            # gait
-            feet_air_time = 1.0
-            foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
-            # contact
-            feet_contact_forces = -0.01
-            # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5
+            # # reference motion tracking
+            # joint_pos = 1.6
+            # feet_clearance = 1.0
+            # feet_contact_number = 1.2
+            # # gait
+            # feet_air_time = 1.0
+            # foot_slip = -0.05
+            # feet_distance = 0.2
+            # knee_distance = 0.2
+            # # contact
+            # feet_contact_forces = -0.01
+            # # vel tracking
+            # tracking_lin_vel = 1.2
+            # tracking_ang_vel = 1.1
+            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            # low_speed = 0.2
+            # track_vel_hard = 0.5
 
             # above this was removed
             # base pos
