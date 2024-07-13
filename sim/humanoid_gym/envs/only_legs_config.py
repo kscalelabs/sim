@@ -44,12 +44,18 @@ class OnlyLegsCfg(LeggedRobotCfg):
         foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
         knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
-        termination_height = 0.23  # TODO: find a suitable value
+        # 0.23
+        termination_height = 0.23
         default_feet_height = 0.0
-        terminate_after_contacts_on = []  # TODO: find a part for this
+        terminate_after_contacts_on = ["link_leg_assembly_left_1_leg_part_1_2", "link_leg_assembly_right_1_leg_part_1_2"]
 
         penalize_contacts_on = []
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
+        # self_collisions = 1
+
+        # is2ac
+        collapse_fixed_joints = True
+
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -95,14 +101,14 @@ class OnlyLegsCfg(LeggedRobotCfg):
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
         stiffness = {
-            "shoulder": 100,
-            "elbow": 100,
-            "wrist": 100,
-            "hand": 100,
-            "torso": 100,
-            "hip": 100,
-            "ankle": 100,
-            "knee": 100,
+            "shoulder": 200,
+            "elbow": 200,
+            "wrist": 200,
+            "hand": 200,
+            "torso": 200,
+            "hip": 250,
+            "ankle": 15,
+            "knee": 350,
         }
         damping = {
             "shoulder": 10,
@@ -114,8 +120,15 @@ class OnlyLegsCfg(LeggedRobotCfg):
             "ankle": 10,
             "knee": 10,
         }
+        # set all to a certain default value for now
+        for k in stiffness:
+            stiffness[k]*= .01
+            damping[k] *= .01
+        # print(stiffness)
+        # print(damping)
         # action scale: target angle = actionScale * action + defaultAngle
-        action_scale = 0.25
+        # action_scale = 0.25
+        action_scale = 0.5
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 10  # 100hz
 
@@ -129,8 +142,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
             solver_type = 0  # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
-            contact_offset = 0.0  # [m]
-            rest_offset = 0 #-0.02  # [m]
+            contact_offset = 0.01  # [m]
+            rest_offset = 0.0 #-0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
@@ -164,7 +177,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.97
+        base_height_target = 0.72
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
@@ -201,16 +214,18 @@ class OnlyLegsCfg(LeggedRobotCfg):
             default_joint_pos = 0.5
             orientation = 1
             base_height = 0.2
-            base_acc = 0.2
+
             # energy
             action_smoothness = -0.002
             torques = -1e-5
             dof_vel = -5e-4
             dof_acc = -1e-7
+            base_acc = 0.2
             collision = -1.0
 
     class normalization:
         class obs_scales:
+            #is2ac
             lin_vel = 2.0
             ang_vel = 1.0
             dof_pos = 1.0
