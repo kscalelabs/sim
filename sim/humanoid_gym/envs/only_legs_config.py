@@ -44,16 +44,13 @@ class OnlyLegsCfg(LeggedRobotCfg):
         foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
         knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
-        # 0.23
         termination_height = 0.23
         default_feet_height = 0.0
         terminate_after_contacts_on = ["link_leg_assembly_left_1_leg_part_1_2", "link_leg_assembly_right_1_leg_part_1_2"]
 
         penalize_contacts_on = []
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
-        # self_collisions = 1
 
-        # is2ac
         collapse_fixed_joints = True
 
         flip_visual_attachments = False
@@ -120,14 +117,9 @@ class OnlyLegsCfg(LeggedRobotCfg):
             "ankle": 10,
             "knee": 10,
         }
-        # set all to a certain default value for now
         for k in stiffness:
             stiffness[k]*= .01
             damping[k] *= .01
-        # print(stiffness)
-        # print(damping)
-        # action scale: target angle = actionScale * action + defaultAngle
-        # action_scale = 0.25
         action_scale = 0.5
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 10  # 100hz
@@ -209,7 +201,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
             # low_speed = 0.2
             # track_vel_hard = 0.5
 
-            # above this was removed
+            # above this was removed for standing policy
             # base pos
             default_joint_pos = 0.5
             orientation = 1
