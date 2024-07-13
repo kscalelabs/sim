@@ -3,9 +3,9 @@
 
 import xml.etree.ElementTree as ET
 
-from sim.stompy_legs.joints import Stompy
+from sim.hexmove.joints import Stompy
 
-STOMPY_URDF = "sim/stompy_legs/robot.urdf"
+STOMPY_URDF = "sim/hexmove/robot.urdf"
 
 
 def update_urdf() -> None:
@@ -15,7 +15,6 @@ def update_urdf() -> None:
     print(stompy.default_standing())
     revolute_joints = set(stompy.default_standing().keys())
     joint_limits = stompy.default_limits()
-
     for joint in root.findall("joint"):
         joint_name = joint.get("name")
         if joint_name not in revolute_joints:
@@ -28,9 +27,8 @@ def update_urdf() -> None:
                 upper = str(limits.get("upper", 0.0))
                 limit.set("lower", lower)
                 limit.set("upper", upper)
-
     # Save the modified URDF to a new file
-    tree.write("sim/stompy_legs/robot_fixed.urdf")
+    tree.write("sim/hexmove/robot_fixed.urdf")
 
 
 if __name__ == "__main__":

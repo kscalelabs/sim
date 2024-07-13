@@ -19,6 +19,8 @@ from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO
 from .only_legs_env import OnlyLegsFreeEnv
 from .stompy_config import StompyCfg, StompyCfgPPO
 from .stompy_env import StompyFreeEnv
+from .hexmove_config import HexmoveCfg, HexmoveCfgPPO
+from .hexmove_env import HexmoveFreeEnv
 
 
 def register_tasks() -> None:
@@ -33,6 +35,7 @@ def register_tasks() -> None:
     task_registry.register("getup_ppo", GetupFreeEnv, GetupCfg(), GetupCfgPPO())
     task_registry.register("legs_ppo", LegsFreeEnv, LegsCfg(), LegsCfgPPO())
     task_registry.register("only_legs_ppo", OnlyLegsFreeEnv, OnlyLegsCfg(), OnlyLegsCfgPPO())
+    task_registry.register("hexmove_ppo", HexmoveFreeEnv, HexmoveCfg(), HexmoveCfgPPO())
 
 
 register_tasks()
