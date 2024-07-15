@@ -57,7 +57,7 @@ class RobotConfig:
     kds: np.ndarray
     tau_limit: np.ndarray
     robot_model_path: str
-    dt: float = 0.001
+    dt: float = 0.0001#0.001
     phase_duration: float = 0.64
     duration: float = 10.0
     decimation: int = 10

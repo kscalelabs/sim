@@ -62,7 +62,6 @@ class OnlyLegsFreeEnv(LeggedRobot):
         for name, joint in Stompy.legs.right.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
-
         self.compute_observations()
 
     def _push_robots(self):

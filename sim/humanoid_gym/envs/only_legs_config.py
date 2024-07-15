@@ -46,7 +46,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         termination_height = 0.23
         default_feet_height = 0.0
-        terminate_after_contacts_on = ["link_leg_assembly_left_1_leg_part_1_2", "link_leg_assembly_right_1_leg_part_1_2"]
+        # terminate_after_contacts_on = ["link_leg_assembly_left_1_leg_part_1_2", "link_leg_assembly_right_1_leg_part_1_2"]
 
         penalize_contacts_on = []
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
@@ -104,7 +104,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
             "hand": 200,
             "torso": 200,
             "hip": 250,
-            "ankle": 15,
+            "ankle": 200,
             "knee": 350,
         }
         damping = {
@@ -118,9 +118,9 @@ class OnlyLegsCfg(LeggedRobotCfg):
             "knee": 10,
         }
         for k in stiffness:
-            stiffness[k]*= .01
-            damping[k] *= .01
-        action_scale = 0.5
+            stiffness[k]*= .00001
+            damping[k] *= .1
+        action_scale = 2500
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 10  # 100hz
 
@@ -144,12 +144,13 @@ class OnlyLegsCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand:
-        randomize_friction = False
+        randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False
-        added_mass_range = [-1.0, 1.0]
-        push_robots = False
+        randomize_base_mass = True
+        # added_mass_range = [-1.0, 1.0]
+        added_mass_range = [-0.2, 0.2]
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4

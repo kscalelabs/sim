@@ -1,4 +1,5 @@
 """Basic sim2sim and sim2real deployment script.
+          <joint name="lfemurrx" pos="0 0 0" axis="1 0 0" range="-0.349066 2.79253" class="stiff_medium"/>
 
 Run example:
     mjpython sim/deploy/run.py --load_model sim/deploy/tests/walking_policy.pt --world MUJOCO
@@ -21,7 +22,7 @@ from tqdm import tqdm
 from isaacgym import gymapi
 from sim.deploy.config import RobotConfig
 from sim.env import stompy_mjcf_path
-from sim.stompy.joints import StompyFixed
+from sim.stompy_legs.joints import Stompy as StompyFixed
 
 
 class Worlds(Enum):
@@ -62,10 +63,18 @@ class MujocoWorld(World):
     def __init__(self, cfg: RobotConfig):
         self.cfg = cfg
         self.model = mujoco.MjModel.from_xml_path(str(self.cfg.robot_model_path))
+
         self.model.opt.timestep = self.cfg.dt
+
         # First step
         self.data = mujoco.MjData(self.model)
+        self.data.qpos = self.model.keyframe("default").qpos
+
         mujoco.mj_step(self.model, self.data)
+
+        #Set self.data initial state to the default standing position
+        #self.data.qpos = StompyFixed.default_standing()
+
 
     def step(
         self,
@@ -109,6 +118,7 @@ class MujocoWorld(World):
         return dof_pos, dof_vel, orientation, ang_vel
 
     def simulate(self, policy: SimPolicy) -> None:
+
         with mujoco.viewer.launch_passive(self.model, self.data) as viewer:
             for step in tqdm(range(int(cfg.duration / cfg.dt)), desc="Simulating..."):
                 # Get the world state
@@ -141,7 +151,7 @@ class IsaacWorld(World):
         delattr(args, "load_model")
 
         # adapt
-        args.task = "legs_ppo"
+        args.task = "only_legs_ppo"
         args.device = "cpu"
         args.physics_engine = gymapi.SIM_PHYSX
         args.num_envs = 1
