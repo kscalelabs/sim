@@ -26,7 +26,7 @@ from sim.env import stompy_mjcf_path
 from sim.stompy.joints import StompyFixed
 
 import time
-from firmware.cpp.imu.imu import IMU 
+from firmware.imu.imu import IMUInterface
 from firmware.scripts.robot_controller import Robot # TODO:(ved) move this to a more appropriate location
 import torch
 
@@ -62,13 +62,15 @@ class Real(World):
         self.robot = Robot("legs")
         self.robot.zero_out()  # TODO: (Ved - zero out the legs)
         self.model = torch.load(cfg.robot_model_path) # TODO: (Allen/Isaac - load the model)
-        self.imu = IMU(1) # TODO: (Weasley -load the imu)
+        self.imu = IMUInterface(1) # Bus = 1
         self.state = None
 
     def step(self, observation: np.ndarray) -> None:
         """Performs a simulation in the real world."""
         tau = self.model(observation) # TODO: (Allen/Isaac - run the model)
         self.robot.set_position(tau) # TODO: (Ved - set the position of the robot)
+        self.imu.step(0.01) # Replace with actual dt
+
 
     def get_observation(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Extracts an observation from the world state.
@@ -80,7 +82,7 @@ class Real(World):
             - orientation: The orientation of the robot.
             - ang_vel: The angular velocity of the robot.
         """
-        ang_vel, orientation = self.imu.step()
+        ang_vel, orientation = self.imu.state
         dof_pos = self.robot.get_position()
         dof_vel = self.robot.get_velocity()
         return (dof_pos, dof_vel, orientation, ang_vel)
