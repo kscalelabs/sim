@@ -15,11 +15,11 @@ import mujoco.viewer
 import numpy as np
 from humanoid.envs import *
 from humanoid.utils import task_registry
+from isaacgym import gymapi
 from isaacgym.torch_utils import *
 from policy import SimPolicy
 from tqdm import tqdm
 
-from isaacgym import gymapi
 from sim.deploy.config import RobotConfig
 from sim.env import stompy_mjcf_path
 from sim.stompy_legs.joints import Stompy as StompyFixed
@@ -72,9 +72,8 @@ class MujocoWorld(World):
 
         mujoco.mj_step(self.model, self.data)
 
-        #Set self.data initial state to the default standing position
-        #self.data.qpos = StompyFixed.default_standing()
-
+        # Set self.data initial state to the default standing position
+        # self.data.qpos = StompyFixed.default_standing()
 
     def step(
         self,

@@ -5,9 +5,9 @@ import torch  # type: ignore[import]
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
+from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
-from isaacgym import gymtorch
 from sim.stompy.joints import StompyFixed
 
 

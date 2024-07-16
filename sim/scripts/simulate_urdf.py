@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Literal, NewType
 
 from isaacgym import gymapi, gymtorch, gymutil
+
 from sim.env import stompy_urdf_path
 from sim.logging import configure_logging
 from sim.stompy.joints import Stompy

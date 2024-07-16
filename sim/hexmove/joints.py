@@ -187,15 +187,6 @@ class Stompy(Node):
                 "lower": -2.9754,  # -2.19 - 0.7854
                 "upper": -1.4046,  # -2.19 + 0.7854
             },
-            # hands
-            Stompy.left_arm.hand: {
-                "lower": -0.7854,  # 0 - 0.7854
-                "upper": 0.7854,  # 0 + 0.7854
-            },
-            Stompy.right_arm.hand: {
-                "lower": -0.7854,  # 0 - 0.7854
-                "upper": 0.7854,  # 0 + 0.7854
-            },
             # legs
             Stompy.legs.left.hip_pitch: {
                 "lower": 2.2146,  # 3.0 - 0.7854
@@ -249,7 +240,6 @@ class StompyFixed(Stompy):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            Stompy.torso.roll: 2.58,
             # arms
             Stompy.left_arm.shoulder_pitch: -0.534,
             Stompy.left_arm.shoulder_yaw: 2.54,
@@ -260,38 +250,24 @@ class StompyFixed(Stompy):
             Stompy.left_arm.elbow_pitch: 2.35,
             Stompy.right_arm.elbow_pitch: 2.65,
             # hands
-            Stompy.left_arm.hand.left_finger: 0.0,
-            Stompy.left_arm.hand.right_finger: 0.0,
-            Stompy.right_arm.hand.left_finger: 0.0,
-            Stompy.right_arm.hand.right_finger: 0.0,
             Stompy.left_arm.hand.wrist_roll: 1.79,
-            Stompy.left_arm.hand.wrist_pitch: 1.35,
-            Stompy.left_arm.hand.wrist_yaw: 1.07,
             Stompy.right_arm.hand.wrist_roll: -2.13,
-            Stompy.right_arm.hand.wrist_pitch: 1.79,
-            Stompy.right_arm.hand.wrist_yaw: -0.251,
             # legs
             Stompy.legs.left.hip_pitch: -1.6,
             Stompy.legs.left.hip_roll: 1.41,
             Stompy.legs.left.hip_yaw: -2.12,
             Stompy.legs.left.knee_pitch: 2.01,
             Stompy.legs.left.ankle_pitch: 0.238,
-            Stompy.legs.left.ankle_roll: 1.85,
             Stompy.legs.right.hip_pitch: 1.76,
             Stompy.legs.right.hip_roll: -1.54,
             Stompy.legs.right.hip_yaw: 0.967,
             Stompy.legs.right.knee_pitch: 2.07,
             Stompy.legs.right.ankle_pitch: 0.377,
-            Stompy.legs.right.ankle_roll: 1.92,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            Stompy.torso.roll: {
-                "lower": 2.53,
-                "upper": 2.63,
-            },
             Stompy.left_arm.shoulder_pitch: {
                 "lower": -0.584,
                 "upper": -0.484,
@@ -324,45 +300,13 @@ class StompyFixed(Stompy):
                 "lower": 2.60,
                 "upper": 2.70,
             },
-            Stompy.left_arm.hand.left_finger: {
-                "lower": -0.05,
-                "upper": 0.05,
-            },
-            Stompy.left_arm.hand.right_finger: {
-                "lower": -0.05,
-                "upper": 0.05,
-            },
-            Stompy.right_arm.hand.left_finger: {
-                "lower": -0.05,
-                "upper": 0.05,
-            },
-            Stompy.right_arm.hand.right_finger: {
-                "lower": -0.05,
-                "upper": 0.05,
-            },
             Stompy.left_arm.hand.wrist_roll: {
                 "lower": 1.74,
                 "upper": 1.84,
             },
-            Stompy.left_arm.hand.wrist_pitch: {
-                "lower": 1.30,
-                "upper": 1.40,
-            },
-            Stompy.left_arm.hand.wrist_yaw: {
-                "lower": 1.02,
-                "upper": 1.12,
-            },
             Stompy.right_arm.hand.wrist_roll: {
                 "lower": -2.18,
                 "upper": -2.08,
-            },
-            Stompy.right_arm.hand.wrist_pitch: {
-                "lower": 1.74,
-                "upper": 1.84,
-            },
-            Stompy.right_arm.hand.wrist_yaw: {
-                "lower": -0.301,
-                "upper": -0.201,
             },
             Stompy.legs.left.hip_pitch: {
                 "lower": -1.65,
@@ -384,10 +328,6 @@ class StompyFixed(Stompy):
                 "lower": 0.188,
                 "upper": 0.288,
             },
-            Stompy.legs.left.ankle_roll: {
-                "lower": 1.80,
-                "upper": 1.90,
-            },
             Stompy.legs.right.hip_pitch: {
                 "lower": 1.71,
                 "upper": 1.81,
@@ -407,10 +347,6 @@ class StompyFixed(Stompy):
             Stompy.legs.right.ankle_pitch: {
                 "lower": 0.327,
                 "upper": 0.427,
-            },
-            Stompy.legs.right.ankle_roll: {
-                "lower": 1.87,
-                "upper": 1.97,
             },
         }
 

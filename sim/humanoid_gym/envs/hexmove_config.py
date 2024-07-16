@@ -41,13 +41,13 @@ class HexmoveCfg(LeggedRobotCfg):
 
         name = "stompy"
         # link_foot_lower_half_assembly_1_part_1_2
-        foot_name = "_foot" #TODO
+        foot_name = "_foot"
         # link_knee_lower_half_assembly_1_part_2_13
-        knee_name = "_knee" #TODO
+        knee_name = "_knee"
 
         termination_height = 0.23
         default_feet_height = 0.0
-        terminate_after_contacts_on = ["link_lower_half_assembly_1_part_1_1"] #TODO
+        terminate_after_contacts_on = ["link_lower_half_assembly_1_part_1_1"]
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
@@ -87,7 +87,7 @@ class HexmoveCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, .45]
+        pos = [0.0, 0.0, 0.45]
         rot = [0.0, 0.0, 1.0, 0.0]
 
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
@@ -119,13 +119,13 @@ class HexmoveCfg(LeggedRobotCfg):
             "knee": 10,
         }
         # action scale: target angle = actionScale * action + defaultAngle
-        action_scale = .5
+        action_scale = 0.5
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 10  # 100hz
 
         for k in stiffness:
-            stiffness[k]*= .1
-            damping[k] *= .1
+            stiffness[k] *= 0.1
+            damping[k] *= 0.1
         print(stiffness)
         print(damping)
 
