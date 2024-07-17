@@ -35,7 +35,12 @@ class Policy(ABC):
         self.hist_obs = deque()
         for _ in range(frame_stack):
             self.hist_obs.append(np.zeros([1, obs_size], dtype=np.double))
-        self.model = torch.jit.load(model_path)
+        # Load the model.
+        # Changed to load onto same device as other tensors
+        # TODO: bring back jit when ready
+        # self.model = torch.jit.load(model_path)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = torch.load(model_path, map_location=self.device)
         self.action = np.zeros((num_actions), dtype=np.double)
 
     @abstractmethod
@@ -167,7 +172,7 @@ class SimPolicy(Policy):
         for i in range(self.cfg.frame_stack):
             policy_input[0, i * self.cfg.num_single_obs : (i + 1) * self.cfg.num_single_obs] = self.hist_obs[i][0, :]
 
-        self.action[:] = self.model(torch.tensor(policy_input))[0].detach().numpy()
+        self.action[:] = self.model(torch.tensor(policy_input).to(self.device))[0].detach().cpu().numpy()
 
         self.action = np.clip(self.action, -self.cfg.normalization.clip_actions, self.cfg.normalization.clip_actions)
         return self.action

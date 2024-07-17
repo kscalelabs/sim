@@ -14,7 +14,7 @@ from typing import Any, Dict, Literal, NewType
 from isaacgym import gymapi, gymtorch, gymutil
 from sim.env import stompy_urdf_path
 from sim.logging import configure_logging
-from sim.stompy2.joints import Stompy
+from sim.stompy_legs.joints import Stompy
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ Viewer = NewType("Viewer", Any)
 Args = NewType("Args", Any)
 
 # Importing torch down here to avoid gymtorch issues.
-import torch  # noqa: E402
+import torch  # noqa: E402 #  type: ignore[import]
 
 # DRIVE_MODE = gymapi.DOF_MODE_EFFORT
 DRIVE_MODE = gymapi.DOF_MODE_POS
@@ -79,7 +79,7 @@ def load_gym() -> GymParams:
     sim_params.physx.num_threads = args.num_threads
     sim_params.physx.use_gpu = args.use_gpu
 
-    # sim_params.use_gpu_pipeline = False
+    sim_params.use_gpu_pipeline = False
     # if args.use_gpu_pipeline:
     #     warnings.warn("Forcing CPU pipeline.")
 
@@ -115,15 +115,15 @@ def load_gym() -> GymParams:
     asset_options = gymapi.AssetOptions()
     asset_options.default_dof_drive_mode = DRIVE_MODE
     asset_options.collapse_fixed_joints = True
-    asset_options.disable_gravity = True
+    asset_options.disable_gravity = False
     asset_options.fix_base_link = True
-    asset_path = stompy_urdf_path()
+    asset_path = stompy_urdf_path(legs_only=True)
     robot_asset = gym.load_urdf(sim, str(asset_path.parent), str(asset_path.name), asset_options)
 
     # Adds the robot to the environment.
     initial_pose = gymapi.Transform()
-    initial_pose.p = gymapi.Vec3(0.0, 5.0, 0.0)
-    initial_pose.r = gymapi.Quat(0.0, 0.0, 0.0, 1.0)
+    initial_pose.p = gymapi.Vec3(0.0, 1.0, 0.0)
+    initial_pose.r = gymapi.Quat(-1.0, 0.0, 0.0, 1.0)
     robot = gym.create_actor(env, robot_asset, initial_pose, "robot")
 
     # Configure DOF properties.
@@ -135,7 +135,7 @@ def load_gym() -> GymParams:
     gym.set_actor_dof_properties(env, robot, props)
 
     # Look at the first environment.
-    cam_pos = gymapi.Vec3(8, 4, 1.5)
+    cam_pos = gymapi.Vec3(1, 2, 1.5)
     cam_target = gymapi.Vec3(0, 2, 1.5)
     gym.viewer_camera_look_at(viewer, None, cam_pos, cam_target)
 
@@ -189,7 +189,6 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
         gym.gym.step_graphics(gym.sim)
         gym.gym.draw_viewer(gym.viewer, gym.sim, True)
         gym.gym.sync_frame_time(gym.sim)
-
         # Print the joint forces.
         # print(gym.gym.get_actor_dof_forces(gym.env, gym.robot))
         # print(gym.gym.get_env_rigid_contact_forces(gym.env))
@@ -242,5 +241,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    # python -m sim.scripts.drop_urdf
+    # python -m sim.scripts.simulate_urdf
     main()

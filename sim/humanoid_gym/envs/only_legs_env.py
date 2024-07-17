@@ -1,5 +1,5 @@
 # mypy: disable-error-code="valid-newtype"
-"""Defines the environment for training the Stompy with fixed torso."""
+"""Defines the environment for training the humanoid."""
 
 import torch  # type: ignore[import]
 from humanoid.envs import LeggedRobot
@@ -8,11 +8,11 @@ from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
-from sim.stompy2.joints import StompyFixed
+from sim.stompy_legs.joints import Stompy
 
 
-class LegsFreeEnv(LeggedRobot):
-    """LegsFreeEnv is a class that represents a custom environment for a legged robot.
+class OnlyLegsFreeEnv(LeggedRobot):
+    """StompyFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg (LeggedRobotCfg): Configuration object for the legged robot.
@@ -55,11 +55,11 @@ class LegsFreeEnv(LeggedRobot):
         actor_handle = self.actor_handles[0]
 
         self.legs_joints = {}
-        for name, joint in StompyFixed.legs.left.joints_motors():
+        for name, joint in Stompy.legs.left.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
-        for name, joint in StompyFixed.legs.right.joints_motors():
+        for name, joint in Stompy.legs.right.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
         self.compute_observations()
@@ -76,7 +76,6 @@ class LegsFreeEnv(LeggedRobot):
         self.rand_push_torque = torch_rand_float(
             -max_push_angular, max_push_angular, (self.num_envs, 3), device=self.device
         )
-
         self.root_states[:, 10:13] = self.rand_push_torque
 
         self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
@@ -122,7 +121,6 @@ class LegsFreeEnv(LeggedRobot):
         scale_2 = 2 * scale_1
         # left foot stance phase set to default joint pos
         sin_pos_l[sin_pos_l > 0] = 0
-
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] = sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] = sin_pos_l * scale_2
         self.ref_dof_pos[:, self.legs_joints["left_ankle_roll"]] = sin_pos_l * scale_1
@@ -206,12 +204,10 @@ class LegsFreeEnv(LeggedRobot):
         contact_mask = self.contact_forces[:, self.feet_indices, 2] > 5.0
 
         self.command_input = torch.cat((sin_pos, cos_pos, self.commands[:, :3] * self.commands_scale), dim=1)
-
         q = (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos
         dq = self.dof_vel * self.obs_scales.dof_vel
 
         diff = self.dof_pos - self.ref_dof_pos
-
         self.privileged_obs_buf = torch.cat(
             (
                 self.command_input,  # 2 + 3
@@ -302,7 +298,6 @@ class LegsFreeEnv(LeggedRobot):
         """
         Calculates the reward based on the distance between the knee of the humanoid.
         """
-        # breakpoint()
         foot_pos = self.rigid_state[:, self.knee_indices, :2]
         foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist
