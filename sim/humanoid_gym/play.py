@@ -7,9 +7,9 @@ from datetime import datetime
 
 import cv2
 import numpy as np
+from isaacgym import gymapi
 from tqdm import tqdm
 
-from isaacgym import gymapi
 from sim.logging import configure_logging
 
 logger = logging.getLogger(__name__)
