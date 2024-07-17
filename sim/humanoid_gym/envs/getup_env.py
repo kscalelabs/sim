@@ -263,7 +263,7 @@ class GetupFreeEnv(LeggedRobot):
         t = len(self.reset_buf)
         self.height_history[:, t] = self.root_states[:, 2]
         self.window_size = 10
-        breakpoint()
+
         above_threshold = self.episode_length_buf > self.window_size:
 
             self.reset_buf = torch.any(
