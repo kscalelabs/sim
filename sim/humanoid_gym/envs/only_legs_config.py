@@ -6,7 +6,7 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
 )
 
 from sim.env import stompy_urdf_path
-from sim.stompy_legs.joints import Stompy
+from sim.new_test.joints import Stompy
 
 NUM_JOINTS = len(Stompy.all_joints())  # 33
 
@@ -32,9 +32,9 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class safety:
         # safety factors
-        pos_limit = .9
-        vel_limit = .9
-        torque_limit = .9
+        pos_limit = 0.9
+        vel_limit = 0.9
+        torque_limit = 0.9
 
     class asset(LeggedRobotCfg.asset):
         file = str(stompy_urdf_path(legs_only=True))
@@ -49,7 +49,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         # terminate_after_contacts_on = ["link_leg_assembly_left_1_leg_part_1_2", "link_leg_assembly_right_1_leg_part_1_2"]
 
         penalize_contacts_on = []
-        self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
 
         collapse_fixed_joints = True
 
@@ -87,7 +87,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, .72]
+        pos = [0.0, 0.0, 0.72]
 
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
@@ -118,8 +118,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
             "knee": 10,
         }
         for k in stiffness:
-            stiffness[k]*= .00001
-            damping[k] *= .1
+            stiffness[k] *= 0.00001
+            damping[k] *= 0.1
         action_scale = 2500
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 10  # 100hz
@@ -135,7 +135,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
             num_position_iterations = 4
             num_velocity_iterations = 1
             contact_offset = 0.01  # [m]
-            rest_offset = 0.0 #-0.02  # [m]
+            rest_offset = 0.0  # -0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
@@ -218,7 +218,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class normalization:
         class obs_scales:
-            #is2ac
+            # is2ac
             lin_vel = 2.0
             ang_vel = 1.0
             dof_pos = 1.0

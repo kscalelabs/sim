@@ -22,7 +22,7 @@ from tqdm import tqdm
 from isaacgym import gymapi
 from sim.deploy.config import RobotConfig
 from sim.env import stompy_mjcf_path
-from sim.stompy_legs.joints import Stompy as StompyFixed
+from sim.new_test.joints import Stompy as StompyFixed
 
 
 class Worlds(Enum):
@@ -72,9 +72,9 @@ class MujocoWorld(World):
 
         mujoco.mj_step(self.model, self.data)
 
-        #Set self.data initial state to the default standing position
-        #self.data.qpos = StompyFixed.default_standing()
-
+        # Set self.data initial state to the default standing position
+        # self.data.qpos = StompyFixed.default_standing()
+        # TODO: This line should produce same results soon
 
     def step(
         self,
@@ -124,14 +124,19 @@ class MujocoWorld(World):
                 # Get the world state
                 dof_pos, dof_vel, orientation, ang_vel = self.get_observation()
 
+                # Zero action
+                target_dof_pos = dof_pos
+
                 # We update the policy at a lower frequency
                 # The simulation runs at 1000hz, but the policy is updated at 100hz
-                if step % cfg.decimation == 0:
-                    action = policy.next_action(dof_pos, dof_vel, orientation, ang_vel, step)
-                    target_dof_pos = action * cfg.action_scale
+                # if step % cfg.decimation == 0:
+                #     action = policy.next_action(dof_pos, dof_vel, orientation, ang_vel, step)
+                #     target_dof_pos = action * cfg.action_scale
 
                 tau = policy.pd_control(target_dof_pos, dof_pos, cfg.kps, dof_vel, cfg.kds)
-
+                # breakpoint()
+                # set tau to zero for now
+                # tau = np.zeros_like(tau)
                 self.step(tau=tau)
                 viewer.sync()
 

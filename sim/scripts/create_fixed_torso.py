@@ -3,9 +3,9 @@
 
 import xml.etree.ElementTree as ET
 
-from sim.hexmove.joints import Stompy
+from sim.stompy_legs.joints import Stompy
 
-STOMPY_URDF = "sim/hexmove/robot.urdf"
+STOMPY_URDF = "sim/stompy_legs/robot.urdf"
 
 
 def update_urdf() -> None:
@@ -28,7 +28,7 @@ def update_urdf() -> None:
                 limit.set("lower", lower)
                 limit.set("upper", upper)
     # Save the modified URDF to a new file
-    tree.write("sim/hexmove/robot_fixed.urdf")
+    tree.write("sim/stompy_legs/robot_fixed.urdf")
 
 
 if __name__ == "__main__":

@@ -13,7 +13,8 @@
       <geom type="capsule" mass="0" density="0" condim="3" contype="1" conaffinity="1" group="3" />
     </default>
   </default>
-  <option iterations="20" timestep="0.005" viscosity="1e-06" solver="Newton" gravity="0 0 -9.81" noslip_iterations="5" integrator="RK4">
+  <option timestep='0.001' iterations='50' solver='PGS' gravity='0 0 -9.81'>
+  <!-- <option iterations="20" timestep="0.005" viscosity="1e-06" solver="Newton" gravity="0 0 -9.81" noslip_iterations="5" integrator="RK4"> -->
     <!-- <flag frictionloss="enable" eulerdamp="enable"/> -->
   </option>
   <asset>

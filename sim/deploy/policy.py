@@ -37,6 +37,8 @@ class Policy(ABC):
             self.hist_obs.append(np.zeros([1, obs_size], dtype=np.double))
         # Load the model.
         # Changed to load onto same device as other tensors
+        # TODO: bring back jit when ready
+        # self.model = torch.jit.load(model_path)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = torch.load(model_path, map_location=self.device)
         self.action = np.zeros((num_actions), dtype=np.double)
