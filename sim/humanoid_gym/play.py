@@ -36,6 +36,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.domain_rand.joint_angle_noise = 0.0
     env_cfg.noise.curriculum = False
     env_cfg.noise.noise_level = 0.5
+    env_cfg.sim.physx.solver_type = 0
 
     train_cfg.seed = 123145
     logger.info("train_cfg.runner_class_name: %s", train_cfg.runner_class_name)
@@ -90,7 +91,7 @@ def play(args: argparse.Namespace) -> None:
 
         if FIX_COMMAND:
             env.commands[:, 0] = 0.0
-            env.commands[:, 1] = -0.5  # negative left, positive right
+            env.commands[:, 1] = -0.2  # negative left, positive right
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
 
