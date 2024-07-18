@@ -13,8 +13,6 @@ import torch #isort:skip
 # fmt: on
 from .getup_config import GetupCfg, GetupCfgPPO
 from .getup_env import GetupFreeEnv
-from .hexmove_config import HexmoveCfg, HexmoveCfgPPO
-from .hexmove_env import HexmoveFreeEnv
 from .legs_config import LegsCfg, LegsCfgPPO
 from .legs_env import LegsFreeEnv
 from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO

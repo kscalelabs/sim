@@ -6,7 +6,7 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
 )
 
 from sim.env import stompy_urdf_path
-from sim.new_test.joints import Stompy
+from sim.stompy_legs.joints import Stompy
 
 NUM_JOINTS = len(Stompy.all_joints())  # 33
 
@@ -149,12 +149,12 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         randomize_base_mass = True
         # added_mass_range = [-1.0, 1.0]
-        added_mass_range = [-0.2, 0.2]
+        added_mass_range = [-0.5, 0.5]
         push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.02
+        dynamic_randomization = 0.05
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -171,8 +171,13 @@ class OnlyLegsCfg(LeggedRobotCfg):
     class rewards:
         # quite important to keep it right
         base_height_target = 0.72
+
+        #distance between the knees and feet is2ac
         min_dist = 0.2
         max_dist = 0.5
+        # min_dist = 0.4
+        # max_dist = 0.7
+
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.06  # m
@@ -184,7 +189,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
-            # # reference motion tracking
+            # reference motion tracking
             # joint_pos = 1.6
             # feet_clearance = 1.0
             # feet_contact_number = 1.2

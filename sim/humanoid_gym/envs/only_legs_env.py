@@ -298,12 +298,12 @@ class OnlyLegsFreeEnv(LeggedRobot):
         """
         Calculates the reward based on the distance between the knee of the humanoid.
         """
-        foot_pos = self.rigid_state[:, self.knee_indices, :2]
-        foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
+        knee_pos = self.rigid_state[:, self.knee_indices, :2]
+        knee_dist = torch.norm(knee_pos[:, 0, :] - knee_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist
         max_df = self.cfg.rewards.max_dist / 2
-        d_min = torch.clamp(foot_dist - fd, -0.5, 0.0)
-        d_max = torch.clamp(foot_dist - max_df, 0, 0.5)
+        d_min = torch.clamp(knee_dist - fd, -0.5, 0.0)
+        d_max = torch.clamp(knee_dist - max_df, 0, 0.5)
         return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
     def _reward_foot_slip(self):

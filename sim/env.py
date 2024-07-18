@@ -9,10 +9,7 @@ load_dotenv()
 
 
 def model_dir() -> Path:
-    # return Path(os.environ.get("MODEL_DIR", "models"))
-    # return Path(os.environ.get("MODEL_DIR", "stompytherobot"))
-    # return Path("/home/dpsh/isaacs_sim/sim/sim/stompy2")
-    return Path("/home/dpsh/isaacs_sim/sim/sim/stompy2")
+    return Path(os.environ.get("MODEL_DIR", "models"))
 
 
 def run_dir() -> Path:

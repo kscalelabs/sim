@@ -109,7 +109,10 @@ class SimPolicy(Policy):
             Calculated torques.
         """
         target_dof_vel = np.zeros(self.cfg.num_actions, dtype=np.double)
-        return (target_dof_pos - dof_pos) * kp + (target_dof_vel - dof_vel) * kd
+        # breakpoint()
+        res = ( (target_dof_pos - dof_pos) * kp + (target_dof_vel - dof_vel) * kd )
+        # breakpoint()
+        return res * 0.75
 
     def parse_action(
         self, dof_pos: np.ndarray, dof_vel: np.ndarray, eu_ang: np.ndarray, ang_vel: np.ndarray, count_lowlevel: int

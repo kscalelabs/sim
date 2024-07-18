@@ -22,7 +22,7 @@ from tqdm import tqdm
 
 from sim.deploy.config import RobotConfig
 from sim.env import stompy_mjcf_path
-from sim.new_test.joints import Stompy as StompyFixed
+from sim.stompy_legs.joints import Stompy as StompyFixed
 
 
 class Worlds(Enum):
@@ -88,7 +88,7 @@ class MujocoWorld(World):
             dq: The current joint velocities.
             target_dq: The target joint velocities (optional).
         """
-        tau = np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)
+        # tau = np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)
         self.data.ctrl = tau
         mujoco.mj_step(self.model, self.data)
 
@@ -125,14 +125,15 @@ class MujocoWorld(World):
                 dof_pos, dof_vel, orientation, ang_vel = self.get_observation()
 
                 # Zero action
-                target_dof_pos = dof_pos
+                # target_dof_pos = dof_pos
 
                 # We update the policy at a lower frequency
                 # The simulation runs at 1000hz, but the policy is updated at 100hz
-                # if step % cfg.decimation == 0:
-                #     action = policy.next_action(dof_pos, dof_vel, orientation, ang_vel, step)
-                #     target_dof_pos = action * cfg.action_scale
-
+                if step % cfg.decimation == 0:
+                    action = policy.next_action(dof_pos, dof_vel, orientation, ang_vel, step)
+                    target_dof_pos = action
+                # set target_dof_pos to 0s
+                # target_dof_pos = np.zeros_like(target_dof_pos)
                 tau = policy.pd_control(target_dof_pos, dof_pos, cfg.kps, dof_vel, cfg.kds)
                 # breakpoint()
                 # set tau to zero for now
@@ -271,9 +272,13 @@ if __name__ == "__main__":
     robot_path = stompy_mjcf_path(legs_only=True)
     num_single_obs = dof * 3 + 11
 
-    kps = np.ones((dof), dtype=np.double) * 200
-    kds = np.ones((dof), dtype=np.double) * 10
-    tau_limit = np.ones((dof), dtype=np.double) * 200
+    # is2ac, lets scale kps and kds to be the same as our stiffness and dmaping
+    kps = np.ones((dof), dtype=np.double) * 0.00001 * 25
+    kds = np.ones((dof), dtype=np.double) * 1
+    tau_limit = np.ones((dof), dtype=np.double) * 0.00001 * 25
+    # kps = np.ones((dof), dtype=np.double) * 200
+    # kds = np.ones((dof), dtype=np.double) * 10
+    # tau_limit = np.ones((dof), dtype=np.double) * 200
 
     cfg = RobotConfig(
         robot_model_path=robot_path, dof=dof, kps=kps, kds=kds, tau_limit=tau_limit, num_single_obs=num_single_obs
