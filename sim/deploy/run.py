@@ -88,7 +88,7 @@ class MujocoWorld(World):
             dq: The current joint velocities.
             target_dq: The target joint velocities (optional).
         """
-        # tau = np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)
+        tau = np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)
         self.data.ctrl = tau
         mujoco.mj_step(self.model, self.data)
 
@@ -136,6 +136,8 @@ class MujocoWorld(World):
                 # target_dof_pos = np.zeros_like(target_dof_pos)
                 tau = policy.pd_control(target_dof_pos, dof_pos, cfg.kps, dof_vel, cfg.kds)
                 # breakpoint()
+                if step % 1000 == 0:
+                    breakpoint()
                 # set tau to zero for now
                 # tau = np.zeros_like(tau)
                 self.step(tau=tau)
@@ -273,12 +275,12 @@ if __name__ == "__main__":
     num_single_obs = dof * 3 + 11
 
     # is2ac, lets scale kps and kds to be the same as our stiffness and dmaping
-    kps = np.ones((dof), dtype=np.double) * 0.00001 * 25
-    kds = np.ones((dof), dtype=np.double) * 1
-    tau_limit = np.ones((dof), dtype=np.double) * 0.00001 * 25
-    # kps = np.ones((dof), dtype=np.double) * 200
-    # kds = np.ones((dof), dtype=np.double) * 10
-    # tau_limit = np.ones((dof), dtype=np.double) * 200
+    # kps = np.ones((dof), dtype=np.double)
+    # kds = np.ones((dof), dtype=np.double) * 1
+    # tau_limit = np.ones((dof), dtype=np.double)
+    kps = np.ones((dof), dtype=np.double) * 200
+    kds = np.ones((dof), dtype=np.double) * 10
+    tau_limit = np.ones((dof), dtype=np.double) * 200
 
     cfg = RobotConfig(
         robot_model_path=robot_path, dof=dof, kps=kps, kds=kds, tau_limit=tau_limit, num_single_obs=num_single_obs

@@ -112,7 +112,7 @@ class SimPolicy(Policy):
         # breakpoint()
         res = ( (target_dof_pos - dof_pos) * kp + (target_dof_vel - dof_vel) * kd )
         # breakpoint()
-        return res * 0.75
+        return res * 0.0025
 
     def parse_action(
         self, dof_pos: np.ndarray, dof_vel: np.ndarray, eu_ang: np.ndarray, ang_vel: np.ndarray, count_lowlevel: int

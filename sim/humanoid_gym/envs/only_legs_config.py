@@ -117,10 +117,10 @@ class OnlyLegsCfg(LeggedRobotCfg):
             "ankle": 10,
             "knee": 10,
         }
-        for k in stiffness:
-            stiffness[k] *= 0.00001
-            damping[k] *= 0.1
-        action_scale = 2500
+        # for k in stiffness:
+        #     stiffness[k] *= 0.00001
+        #     damping[k] *= 0.1
+        action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 10  # 100hz
 
@@ -135,7 +135,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
             num_position_iterations = 4
             num_velocity_iterations = 1
             contact_offset = 0.01  # [m]
-            rest_offset = 0.0  # -0.02  # [m]
+            rest_offset = 0  # -0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
@@ -190,22 +190,22 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            # joint_pos = 1.6
-            # feet_clearance = 1.0
-            # feet_contact_number = 1.2
-            # # gait
-            # feet_air_time = 1.0
-            # foot_slip = -0.05
-            # feet_distance = 0.2
-            # knee_distance = 0.2
-            # # contact
-            # feet_contact_forces = -0.01
-            # # vel tracking
-            # tracking_lin_vel = 1.2
-            # tracking_ang_vel = 1.1
-            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
-            # track_vel_hard = 0.5
+            joint_pos = 1.6
+            feet_clearance = 1.0
+            feet_contact_number = 1.2
+            # gait
+            feet_air_time = 1.0
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
+            # contact
+            feet_contact_forces = -0.01
+            # vel tracking
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5
 
             # above this was removed for standing policy
             # base pos
@@ -223,7 +223,6 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class normalization:
         class obs_scales:
-            # is2ac
             lin_vel = 2.0
             ang_vel = 1.0
             dof_pos = 1.0
