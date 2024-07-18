@@ -75,7 +75,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = False
+        add_noise = True
         noise_level = 0.6  # scales other values
 
         class noise_scales:
@@ -97,31 +97,49 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
+        # stiffness = {
+        #     "shoulder": 200,
+        #     "elbow": 200,
+        #     "wrist": 200,
+        #     "hand": 200,
+        #     "torso": 200,
+        #     "hip": 250,
+        #     "ankle": 200,
+        #     "knee": 350,
+        # }
+
+        # damping = {
+        #     "shoulder": 10,
+        #     "elbow": 10,
+        #     "wrist": 10,
+        #     "hand": 10,
+        #     "torso": 10,
+        #     "hip": 10,
+        #     "ankle": 10,
+        #     "knee": 10,
+        # }
         stiffness = {
-            "shoulder": 200,
-            "elbow": 200,
-            "wrist": 200,
-            "hand": 200,
-            "torso": 200,
-            "hip": 250,
-            "ankle": 200,
-            "knee": 350,
+            "shoulder": 50,
+            "elbow": 50,
+            "wrist": 50,
+            "hand": 50,
+            "torso": 50,
+            "hip": 50,
+            "ankle": 50,
+            "knee": 50,
         }
         damping = {
-            "shoulder": 10,
-            "elbow": 10,
+            "shoulder": 1.5,
+            "elbow": 1.5,
             "wrist": 10,
             "hand": 10,
             "torso": 10,
-            "hip": 10,
-            "ankle": 10,
-            "knee": 10,
+            "hip": 1.5,
+            "ankle": 1.5,
+            "knee": 1.5,
         }
-        # for k in stiffness:
-        #     stiffness[k] *= 0.00001
-        #     damping[k] *= 0.1
         action_scale = 0.25
-        # decimation: Number of control action updates @ sim DT per policy DT
+
         decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
@@ -130,12 +148,12 @@ class OnlyLegsCfg(LeggedRobotCfg):
         up_axis = 1  # 0 is y, 1 is z
 
         class physx(LeggedRobotCfg.sim.physx):
-            num_threads = 12
-            solver_type = 0  # 0: pgs, 1: tgs
+            num_threads = 10
+            solver_type = 1 # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
-            contact_offset = 0.01  # [m]
-            rest_offset = 0  # -0.02  # [m]
+            contact_offset = 0.0 # [m]
+            rest_offset = 0.0  # -0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
@@ -149,8 +167,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         randomize_base_mass = True
         # added_mass_range = [-1.0, 1.0]
-        added_mass_range = [-0.5, 0.5]
-        push_robots = True
+        added_mass_range = [-0.3, 0.3]
+        push_robots = False
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -175,8 +193,6 @@ class OnlyLegsCfg(LeggedRobotCfg):
         #distance between the knees and feet is2ac
         min_dist = 0.2
         max_dist = 0.5
-        # min_dist = 0.4
-        # max_dist = 0.7
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
@@ -190,22 +206,22 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.0
-            feet_contact_number = 1.2
-            # gait
-            feet_air_time = 1.0
-            foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
+            # joint_pos = 1.6
+            # feet_clearance = 1.0
+            # feet_contact_number = 1.2
+            # # gait
+            # feet_air_time = 1.0
+            # foot_slip = -0.05
+            # feet_distance = 0.2
+            # knee_distance = 0.2
             # contact
-            feet_contact_forces = -0.01
-            # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5
+            # feet_contact_forces = -0.01
+            # # vel tracking
+            # tracking_lin_vel = 1.2
+            # tracking_ang_vel = 1.1
+            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            # low_speed = 0.2
+            # track_vel_hard = 0.5
 
             # above this was removed for standing policy
             # base pos
