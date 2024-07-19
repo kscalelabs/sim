@@ -51,14 +51,15 @@ def play(args: argparse.Namespace) -> None:
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
     env.set_camera(env_cfg.viewer.pos, env_cfg.viewer.lookat)
-    breakpoint()
+
     obs = env.get_observations()
 
     # load policy
     train_cfg.runner.resume = True
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
-    EXPORT_POLICY=True
+    
+    EXPORT_POLICY= True #True
     # export policy as a jit module (used to run it from C++)
     if EXPORT_POLICY:
         path = os.path.join(".")
@@ -68,7 +69,7 @@ def play(args: argparse.Namespace) -> None:
     env_logger = Logger(env.dt)
     robot_index = 0  # which robot is used for logging
     joint_index = 1  # which joint is used for logging
-    stop_state_log = 50  # number of steps before plotting states
+    stop_state_log = 500  # number of steps before plotting states
 
     if RENDER:
         camera_properties = gymapi.CameraProperties()
@@ -101,8 +102,8 @@ def play(args: argparse.Namespace) -> None:
 
     for _ in tqdm(range(stop_state_log)):
         actions = policy(obs.detach())
-        print(obs)
-        print(actions)
+        # print(obs)
+        # print(actions)
 
         if FIX_COMMAND:
             env.commands[:, 0] = 0.0

@@ -32,9 +32,9 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class safety:
         # safety factors
-        pos_limit = 0.9
-        vel_limit = 0.9
-        torque_limit = 0.9
+        pos_limit = 0.8
+        vel_limit = 0.8
+        torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
         file = str(stompy_urdf_path(legs_only=True))
@@ -46,7 +46,6 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         termination_height = 0.23
         default_feet_height = 0.0
-        # terminate_after_contacts_on = ["link_leg_assembly_left_1_leg_part_1_2", "link_leg_assembly_right_1_leg_part_1_2"]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -103,8 +102,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
             "hand": 50,
             "torso": 50,
             "hip": 50,
-            "ankle": 50,
-            "knee": 50,
+            "ankle": 15,
+            "knee": 15,
         }
         damping = {
             "shoulder": 1.5,
@@ -126,11 +125,11 @@ class OnlyLegsCfg(LeggedRobotCfg):
         up_axis = 1  # 0 is y, 1 is z
 
         class physx(LeggedRobotCfg.sim.physx):
-            num_threads = 10
+            num_threads = 12
             solver_type = 0 # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
-            contact_offset = 0.0 # [m]
+            contact_offset = 0.01 # [m]
             rest_offset = 0.0  # -0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
@@ -143,7 +142,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = True
+        randomize_base_mass = False
         # added_mass_range = [-1.0, 1.0]
         added_mass_range = [-0.3, 0.3]
         push_robots = False
@@ -203,9 +202,9 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
             # above this was removed for standing policy
             # base pos
-            default_joint_pos = 1.0
+            default_joint_pos = 0.5
             orientation = 1
-            base_height = 1.0
+            base_height = 0.2
 
             # energy
             action_smoothness = -0.002

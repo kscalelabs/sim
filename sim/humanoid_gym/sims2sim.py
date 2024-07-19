@@ -28,6 +28,10 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 """
+python sim/humanoid_gym/play.py --task only_legs_ppo --sim_device cpu
+python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt 
+
+
 Issac sim
 left hip pitch
 left hip yaw
@@ -46,11 +50,10 @@ Mujoco:
 [ 'root_x', 'root_y', 'root_z', 'root_ball', 'left hip pitch', 'left hip yaw','left hip roll', 
     'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw', 
    'right hip roll' ,  'right knee pitch', 'right ankle pitch', 'right ankle roll']
-python sim/humanoid_gym/play.py --task only_legs_ppo --sim_device gpu
-python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt 
 
 
-Observiation state:
+
+Observation state:
 obs_buf = torch.cat(
     (
         self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
@@ -122,10 +125,7 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     '''Calculates torques from position commands'''
-    print(default)
-    print(target_dq)
-    breakpoint()
-    return kp* (target_q + default - q)  - kd * dq
+    return kp * (target_q + default - q)  - kd * dq
 
 
 def run_mujoco(policy, cfg):
@@ -146,8 +146,10 @@ def run_mujoco(policy, cfg):
     # pfb30 add qpos
     data.qpos = model.keyframe("default").qpos
     default = deepcopy(model.keyframe("default").qpos)[7:]
-
+    data.qvel = np.zeros_like(data.qvel)
+    data.qacc = np.zeros_like(data.qacc)
     mujoco.mj_step(model, data)
+
     viewer = mujoco_viewer.MujocoViewer(model, data)
     for ii in JOINT_NAMES:
         print(data.joint(ii).id, data.joint(ii).qpos)
@@ -175,34 +177,19 @@ def run_mujoco(policy, cfg):
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
-            # obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt  / 0.64)
-            # obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt  / 0.64)
-            # obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
-            # obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
-            # obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
-            # obs[0, 5:17] = q * cfg.normalization.obs_scales.dof_pos
-            # obs[0, 17:29] = dq * cfg.normalization.obs_scales.dof_vel
-            # obs[0, 29:41] = action
-            # obs[0, 41:44] = omega
-            # obs[0, 44:47] = eu_ang
-
-            # mine pfb
             obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt  / 0.64)
             obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt  / 0.64)
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
-            obs[0, 5 : (cfg.env.num_actions + 5)] = q * cfg.normalization.obs_scales.dof_pos
-            obs[0, (cfg.env.num_actions + 5) : (2 * cfg.env.num_actions + 5)] = (
-                dq * cfg.normalization.obs_scales.dof_vel
-            )
-            obs[0, (2 * cfg.env.num_actions + 5) : (3 * cfg.env.num_actions + 5)] = action
-            obs[0, (3 * cfg.env.num_actions + 5) : (3 * cfg.env.num_actions + 5) + 3] = omega
-            obs[0, (3 * cfg.env.num_actions + 5) + 3 : (3 * cfg.env.num_actions + 5) + 2 * 3] = eu_ang
-            # end mine
+            obs[0, 5:17] = q * cfg.normalization.obs_scales.dof_pos
+            obs[0, 17:29] = dq * cfg.normalization.obs_scales.dof_vel
+            obs[0, 29:41] = action
+            obs[0, 41:44] = omega
+            obs[0, 44:47] = eu_ang
+
             obs = np.clip(obs, -cfg.normalization.clip_observations, cfg.normalization.clip_observations)
-            print(obs[0, :5])
-            breakpoint()
+
             hist_obs.append(obs)
             hist_obs.popleft()
 
@@ -214,8 +201,6 @@ def run_mujoco(policy, cfg):
 
             target_q = action * cfg.control.action_scale
         
-            # print(target_q)
-
 
         target_dq = np.zeros((cfg.env.num_actions), dtype=np.double)
 
@@ -252,7 +237,7 @@ if __name__ == '__main__':
             decimation = 10
 
         class robot_config:
-            kps = np.array([50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50], dtype=np.double)
+            kps = np.array([50, 50, 50, 50, 15, 15, 50, 50, 50, 50, 15, 15], dtype=np.double)
             kds = np.array([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], dtype=np.double)
             tau_limit = 200. * np.ones(12, dtype=np.double)
 

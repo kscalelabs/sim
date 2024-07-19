@@ -1,8 +1,12 @@
 <?xml version="1.0" ?>
 <mujoco model="lower_limbs">
-  <compiler angle="radian" meshdir="meshes" autolimits="true" eulerseq="zyx"/>
+  <compiler angle="radian" meshdir="meshes" eulerseq="zyx"/>
+    <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81">
+   <flag sensornoise="enable" frictionloss="enable"/>
+  </option>
+
   <default>
-    <joint limited="true" damping="0.01" armature="0.01"/>
+    <joint limited="true" damping="0.01" frictionloss="0.01"  armature="0.01"/>
     <motor ctrllimited="true"/>
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2"/>
     <equality solref="0.001 2"/>
@@ -10,8 +14,7 @@
       <geom material="visualgeom" condim="1" contype="0" conaffinity="0"/>
     </default>
   </default>
-  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81">
-  </option>
+
   <asset>
     <mesh name="leg_assembly_left_1_leg_part_1_2_simple" file="leg_assembly_left_1_leg_part_1_2_simple.stl"/>
     <mesh name="leg_assembly_right_1_leg_part_1_2_simple" file="leg_assembly_right_1_leg_part_1_2_simple.stl"/>
@@ -67,7 +70,7 @@
     <geom name="ground" type="plane" pos="0.001 0 0" quat="1 0 0 0" material="matplane" size="0 0 1" condim="1" conaffinity='15'/>
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false"/>
-    <body name="root" pos="0 0 1.99" quat="1 0 0 0">
+    <body name="root" pos="0 0 0.73" quat="1 0 0 0">
       <joint name="root_x" type="slide" axis="1 0 0" limited="false"/>
       <joint name="root_y" type="slide" axis="0 1 0" limited="false"/>
       <joint name="root_z" type="slide" axis="0 0 1" limited="false"/>
@@ -75,6 +78,7 @@
       <camera name="front" pos="0 -3 1" xyaxes="1 0 0 0 1 2" mode="trackcom"/>
 			<camera name="side" pos="-2.893 -1.330 0.757" xyaxes="0.405 -0.914 0.000 0.419 0.186 0.889" mode="trackcom"/>
       <site name="imu" size="0.01" pos="0 0 0"/>
+      
       <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="leg_assembly_left_1_leg_part_1_2_simple" class="visualgeom"/>
       <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="leg_assembly_left_1_leg_part_1_2_simple" contype="0" conaffinity="0" group="1" density="0"/>
       <geom pos="-0.0209987 -0.0690001 0.0170241" quat="0.5 -0.5 -0.5 0.5" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="leg_assembly_right_1_leg_part_1_2_simple" class="visualgeom"/>
@@ -274,6 +278,6 @@
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9"/>
   </sensor>
   <keyframe>
-    <key name="default" qpos='0 0 0 1 0 0 0 1.60595 1.0037 0 2.05 0.3292 1.715 -0.01 -2.152 -1.60465 2.1605 0.5008 1.7205'/>
+    <key name="default" qpos='0 0 0 1 0 0 0 1.60595 1.0037 0 2.05 0.236 1.72 -0.01 -2.152 -1.60465 2.1605 0.413 1.75'/>
   </keyframe>
 </mujoco>

@@ -241,6 +241,8 @@ class OnlyLegsFreeEnv(LeggedRobot):
             dim=-1,
         )
 
+        # print("ang", obs_buf[0][-6:-3], "quat", obs_buf[0][-3:])
+        # breakpoint()
         if self.cfg.terrain.measure_heights:
             heights = (
                 torch.clip(
