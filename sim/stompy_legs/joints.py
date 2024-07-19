@@ -116,53 +116,103 @@ class Stompy(Node):
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            Stompy.legs.right.hip_pitch: {
-                "lower": -1,
-                "upper": 1,
-            },
-            Stompy.legs.right.hip_yaw: {
-                "lower": -2.2,
-                "upper": -1,
-            },
-            Stompy.legs.right.hip_roll: {
-                "lower": -2.39,
-                "upper": -1,
-            },
-            Stompy.legs.right.knee_pitch: {
-                "lower": 1.54,
-                "upper": 3,
-            },
-            Stompy.legs.right.ankle_pitch: {
-                "lower": -0.5,
-                "upper": 0.94,
-            },
-            Stompy.legs.right.ankle_roll: {
-                "lower": 1,
-                "upper": 2.3,
-            },
+            # old joint limits
+            # Stompy.legs.right.hip_pitch: {
+            #     "lower": -1,
+            #     "upper": 1,
+            # },
+            # Stompy.legs.right.hip_yaw: {
+            #     "lower": -2.2,
+            #     "upper": -1,
+            # },
+            # Stompy.legs.right.hip_roll: {
+            #     "lower": -2.39,
+            #     "upper": -1,
+            # },
+            # Stompy.legs.right.knee_pitch: {
+            #     "lower": 1.54,
+            #     "upper": 3,
+            # },
+            # Stompy.legs.right.ankle_pitch: {
+            #     "lower": -0.5,
+            #     "upper": 0.94,
+            # },
+            # Stompy.legs.right.ankle_roll: {
+            #     "lower": 1,
+            #     "upper": 2.3,
+            # },
+            # Stompy.legs.left.hip_pitch: {
+            #     "lower": 0.5,
+            #     "upper": 2.69,
+            # },
+            # Stompy.legs.left.hip_yaw: {
+            #     "lower": 0.5,
+            #     "upper": 1.19,
+            # },
+            # Stompy.legs.left.hip_roll: {
+            #     "lower": -0.5,
+            #     "upper": 0.5,
+            # },
+            # Stompy.legs.left.knee_pitch: {
+            #     "lower": 1,
+            #     "upper": 3.1,
+            # },
+            # Stompy.legs.left.ankle_pitch: {
+            #     "lower": -0.3,
+            #     "upper": 1.13,
+            # },
+            # Stompy.legs.left.ankle_roll: {
+            #     "lower": 1.3,
+            #     "upper": 2,
+            # },
+            # sodfijsafd
             Stompy.legs.left.hip_pitch: {
-                "lower": 0.5,
+                "lower": 0.25,
                 "upper": 2.69,
-            },
-            Stompy.legs.left.hip_yaw: {
-                "lower": 0.5,
-                "upper": 1.19,
             },
             Stompy.legs.left.hip_roll: {
                 "lower": -0.5,
                 "upper": 0.5,
             },
+            Stompy.legs.left.hip_yaw: {
+                "lower": 0.5,
+                "upper": 1.19,
+            },
             Stompy.legs.left.knee_pitch: {
-                "lower": 1,
-                "upper": 3.1,
+                "lower": 0.5,
+                "upper": 2.5,
             },
             Stompy.legs.left.ankle_pitch: {
-                "lower": -0.3,
-                "upper": 1.13,
+                "lower": -0.8,
+                "upper": 0.6,
             },
             Stompy.legs.left.ankle_roll: {
-                "lower": 1.3,
-                "upper": 2,
+                "lower": 1,
+                "upper": 5,
+            },
+            Stompy.legs.right.hip_pitch: {
+                "lower": -1,
+                "upper": 1.25,
+            },
+            Stompy.legs.right.hip_roll: {
+                "lower": -2.39,
+                "upper": -1,
+            },
+            Stompy.legs.right.hip_yaw: {
+                "lower": -2.2,
+                "upper": -1,
+            },
+            Stompy.legs.right.knee_pitch: {
+                "lower": 1.54,
+                "upper": 3.5,
+            },
+            Stompy.legs.right.ankle_pitch: {
+                "lower": 0,
+                "upper": 1.5,
+            },
+            Stompy.legs.right.ankle_roll: {
+                "lower": 1,
+                "upper": 2.3,
             },
         }
 
