@@ -119,7 +119,7 @@ def play(args: argparse.Namespace) -> None:
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
 
             video.write(img[..., :3])  # Write only the RGB channels
-
+        breakpoint()
         env_logger.log_states(
             {
                 "dof_pos_target": actions[robot_index, joint_index].item() * env.cfg.control.action_scale,

@@ -92,33 +92,10 @@ class OnlyLegsCfg(LeggedRobotCfg):
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
         default_positions = Stompy.default_standing()
-        breakpoint()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
 
     class control(LeggedRobotCfg.control):
-        # PD Drive parameters:
-        # stiffness = {
-        #     "shoulder": 200,
-        #     "elbow": 200,
-        #     "wrist": 200,
-        #     "hand": 200,
-        #     "torso": 200,
-        #     "hip": 250,
-        #     "ankle": 200,
-        #     "knee": 350,
-        # }
-
-        # damping = {
-        #     "shoulder": 10,
-        #     "elbow": 10,
-        #     "wrist": 10,
-        #     "hand": 10,
-        #     "torso": 10,
-        #     "hip": 10,
-        #     "ankle": 10,
-        #     "knee": 10,
-        # }
         stiffness = {
             "shoulder": 50,
             "elbow": 50,
@@ -150,7 +127,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
-            solver_type = 1 # 0: pgs, 1: tgs
+            solver_type = 0 # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
             contact_offset = 0.0 # [m]
@@ -207,22 +184,22 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            # joint_pos = 1.6
-            # feet_clearance = 1.0
-            # feet_contact_number = 1.2
+            joint_pos = 1.6
+            feet_clearance = 1.0
+            feet_contact_number = 1.2
             # # gait
-            # feet_air_time = 1.0
-            # foot_slip = -0.05
-            # feet_distance = 0.2
-            # knee_distance = 0.2
+            feet_air_time = 1.0
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
             # contact
-            # feet_contact_forces = -0.01
+            feet_contact_forces = -0.01
             # # vel tracking
-            # tracking_lin_vel = 1.2
-            # tracking_ang_vel = 1.1
-            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
-            # track_vel_hard = 0.5
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5
 
             # above this was removed for standing policy
             # base pos
@@ -277,7 +254,7 @@ class OnlyLegsCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 10001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations

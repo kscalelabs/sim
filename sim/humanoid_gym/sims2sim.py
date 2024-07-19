@@ -27,7 +27,29 @@
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
+"""
+Issac sim
+left hip pitch
+left hip yaw
+left hip roll
+left knee pitch
+left ankle pitch
+left ankle roll
+right hip pitch
+right hip yaw
+right hip roll
+right knee pitch
+right ankle pitch
+right ankle roll
 
+Mujoco:
+[ 'root_x', 'root_y', 'root_z', 'root_ball', 'left hip pitch', 'left hip yaw','left hip roll', 
+    'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw', 
+   'right hip roll' ,  'right knee pitch', 'right ankle pitch', 'right ankle roll']
+python sim/humanoid_gym/play.py --task only_legs_ppo --sim_device gpu
+python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt 
+
+"""
 import math
 import numpy as np
 import mujoco, mujoco_viewer
@@ -38,6 +60,9 @@ from scipy.spatial.transform import Rotation as R
 from humanoid.envs import XBotLCfg
 import torch
 
+JOINT_NAMES = [ 'root_x', 'root_y', 'root_z', 'root_ball', 'left hip pitch', 'left hip yaw','left hip roll', 
+    'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw', 
+   'right hip roll' ,  'right knee pitch', 'right ankle pitch','right ankle roll']
 
 class cmd:
     vx = 0.0
@@ -100,9 +125,14 @@ def run_mujoco(policy, cfg):
     data = mujoco.MjData(model)
     mujoco.mj_step(model, data)
     viewer = mujoco_viewer.MujocoViewer(model, data)
+
     # pfb30 add qpos
     data.qpos = model.keyframe("default").qpos
+
     mujoco.mj_step(model, data)
+    for ii in JOINT_NAMES:
+        print(data.joint(ii).id, data.joint(ii).qpos)
+
     target_q = np.zeros((cfg.env.num_actions), dtype=np.double)
     action = np.zeros((cfg.env.num_actions), dtype=np.double)
 
@@ -111,7 +141,6 @@ def run_mujoco(policy, cfg):
         hist_obs.append(np.zeros([1, cfg.env.num_single_obs], dtype=np.double))
 
     count_lowlevel = 0
-
 
     for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
 
@@ -173,7 +202,7 @@ def run_mujoco(policy, cfg):
         # Generate PD control
         tau = pd_control(target_q, q, cfg.robot_config.kps,
                         target_dq, dq, cfg.robot_config.kds)  # Calc torques
-        print(eu_ang)
+
         # breakpoint()
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
         data.ctrl = tau
