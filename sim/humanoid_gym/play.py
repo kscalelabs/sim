@@ -43,7 +43,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.joint_angle_noise = 0.1
     env_cfg.noise.curriculum = False
-    env_cfg.noise.noise_level = 0.3
+    env_cfg.noise.noise_level = 0.5
 
     train_cfg.seed = 123145
     logger.info("train_cfg.runner_class_name: %s", train_cfg.runner_class_name)
@@ -51,7 +51,7 @@ def play(args: argparse.Namespace) -> None:
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
     env.set_camera(env_cfg.viewer.pos, env_cfg.viewer.lookat)
-
+    breakpoint()
     obs = env.get_observations()
 
     # load policy
@@ -68,7 +68,7 @@ def play(args: argparse.Namespace) -> None:
     env_logger = Logger(env.dt)
     robot_index = 0  # which robot is used for logging
     joint_index = 1  # which joint is used for logging
-    stop_state_log = 1200  # number of steps before plotting states
+    stop_state_log = 50  # number of steps before plotting states
 
     if RENDER:
         camera_properties = gymapi.CameraProperties()
@@ -101,10 +101,12 @@ def play(args: argparse.Namespace) -> None:
 
     for _ in tqdm(range(stop_state_log)):
         actions = policy(obs.detach())
+        print(obs)
+        print(actions)
 
         if FIX_COMMAND:
             env.commands[:, 0] = 0.0
-            env.commands[:, 1] = 0.0  # negative left, positive right
+            env.commands[:, 1] = -0.5 # negative left, positive right
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
 
@@ -119,7 +121,7 @@ def play(args: argparse.Namespace) -> None:
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
 
             video.write(img[..., :3])  # Write only the RGB channels
-        breakpoint()
+
         env_logger.log_states(
             {
                 "dof_pos_target": actions[robot_index, joint_index].item() * env.cfg.control.action_scale,
