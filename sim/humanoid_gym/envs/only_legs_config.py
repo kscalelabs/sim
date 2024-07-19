@@ -8,7 +8,7 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
 from sim.env import stompy_urdf_path
 from sim.stompy_legs.joints import Stompy
 
-NUM_JOINTS = len(Stompy.all_joints())  # 33
+NUM_JOINTS = len(Stompy.all_joints())  # 12
 
 
 class OnlyLegsCfg(LeggedRobotCfg):
@@ -92,6 +92,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
         default_positions = Stompy.default_standing()
+        breakpoint()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
 
