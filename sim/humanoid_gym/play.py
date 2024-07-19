@@ -13,9 +13,17 @@ from tqdm import tqdm
 from sim.logging import configure_logging
 
 logger = logging.getLogger(__name__)
-
+import copy
 from sim.env import run_dir
 from sim.humanoid_gym.envs import *  # noqa: F403
+
+
+def export_policy_as_jit(actor_critic, path):
+    os.makedirs(path, exist_ok=True)
+    path = os.path.join(path, "policy_1.pt")
+    model = copy.deepcopy(actor_critic.actor).to("cpu")
+    traced_script_module = torch.jit.script(model)
+    traced_script_module.save(path)
 
 
 def play(args: argparse.Namespace) -> None:
@@ -33,9 +41,9 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.terrain.max_init_terrain_level = 5
     env_cfg.noise.add_noise = True
     env_cfg.domain_rand.push_robots = False
-    env_cfg.domain_rand.joint_angle_noise = 0.0
+    env_cfg.domain_rand.joint_angle_noise = 0.1
     env_cfg.noise.curriculum = False
-    env_cfg.noise.noise_level = 0.5
+    env_cfg.noise.noise_level = 0.3
 
     train_cfg.seed = 123145
     logger.info("train_cfg.runner_class_name: %s", train_cfg.runner_class_name)
@@ -50,6 +58,12 @@ def play(args: argparse.Namespace) -> None:
     train_cfg.runner.resume = True
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
+    EXPORT_POLICY=True
+    # export policy as a jit module (used to run it from C++)
+    if EXPORT_POLICY:
+        path = os.path.join(".")
+        export_policy_as_jit(ppo_runner.alg.actor_critic, path)
+        print('Exported policy as jit script to: ', path)
 
     env_logger = Logger(env.dt)
     robot_index = 0  # which robot is used for logging
@@ -90,7 +104,7 @@ def play(args: argparse.Namespace) -> None:
 
         if FIX_COMMAND:
             env.commands[:, 0] = 0.0
-            env.commands[:, 1] = -0.5  # negative left, positive right
+            env.commands[:, 1] = 0.0  # negative left, positive right
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
 

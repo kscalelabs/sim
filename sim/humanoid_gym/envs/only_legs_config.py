@@ -225,9 +225,9 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
             # above this was removed for standing policy
             # base pos
-            default_joint_pos = 0.5
+            default_joint_pos = 1.0
             orientation = 1
-            base_height = 0.2
+            base_height = 1.0
 
             # energy
             action_smoothness = -0.002
