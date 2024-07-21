@@ -80,9 +80,18 @@ from copy import deepcopy
 from humanoid.envs import XBotLCfg
 import torch
 
-JOINT_NAMES = [ 'root_x', 'root_y', 'root_z', 'root_ball', 'left hip pitch', 'left hip yaw','left hip roll', 
+JOINT_NAMES = [
+    # 'root_x', 'root_y', 'root_z', 'root_ball',
+    'left hip pitch', 'left hip yaw','left hip roll', 
     'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw', 
-   'right hip roll' ,  'right knee pitch', 'right ankle pitch','right ankle roll']
+    'right hip roll' ,  'right knee pitch', 'right ankle pitch','right ankle roll'
+]
+
+
+# Load the data
+observations_sim = np.load('observations.npy')
+actions_sim = np.load('actions.npy')
+
 
 class cmd:
     vx = 0.0
@@ -112,8 +121,7 @@ def quaternion_to_euler_array(quat):
     return np.array([roll_x, pitch_y, yaw_z])
 
 def get_obs(data):
-    '''Extracts an observation from the mujoco data structure
-    '''
+    '''Extracts an observation from the mujoco data structure'''
     q = data.qpos.astype(np.double)
     dq = data.qvel.astype(np.double)
     quat = data.sensor('orientation').data[[1, 2, 3, 0]].astype(np.double)
@@ -125,7 +133,7 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     '''Calculates torques from position commands'''
-    return kp * (target_q + default - q)  - kd * dq
+    return kp * (target_q + default - q) - kd * dq
 
 
 def run_mujoco(policy, cfg):
@@ -143,9 +151,10 @@ def run_mujoco(policy, cfg):
     model.opt.timestep = cfg.sim_config.dt
     data = mujoco.MjData(model)
 
+
     # pfb30 add qpos
     data.qpos = model.keyframe("default").qpos
-    default = deepcopy(model.keyframe("default").qpos)[7:]
+    default = deepcopy(model.keyframe("default").qpos)[-cfg.env.num_actions:]
     data.qvel = np.zeros_like(data.qvel)
     data.qacc = np.zeros_like(data.qacc)
     mujoco.mj_step(model, data)
@@ -161,6 +170,7 @@ def run_mujoco(policy, cfg):
     for _ in range(cfg.env.frame_stack):
         hist_obs.append(np.zeros([1, cfg.env.num_single_obs], dtype=np.double))
 
+    kk=0
     count_lowlevel = 0
     print("start sim2sim")
     for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
@@ -182,7 +192,8 @@ def run_mujoco(policy, cfg):
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
-            obs[0, 5:17] = q * cfg.normalization.obs_scales.dof_pos
+            # pfb30 - missing bit
+            obs[0, 5:17] = (q - default) * cfg.normalization.obs_scales.dof_pos
             obs[0, 17:29] = dq * cfg.normalization.obs_scales.dof_vel
             obs[0, 29:41] = action
             obs[0, 41:44] = omega
@@ -197,10 +208,13 @@ def run_mujoco(policy, cfg):
             for i in range(cfg.env.frame_stack):
                 policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
+            
+            # pfb30 - todo test
+            # action[:] = actions_sim[kk]
+            kk+=1
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
 
             target_q = action * cfg.control.action_scale
-        
 
         target_dq = np.zeros((cfg.env.num_actions), dtype=np.double)
 
@@ -208,8 +222,8 @@ def run_mujoco(policy, cfg):
         tau = pd_control(target_q, q, cfg.robot_config.kps,
                         target_dq, dq, cfg.robot_config.kds, default)  # Calc torques
 
-        # breakpoint()
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
+        
         data.ctrl = tau
 
         mujoco.mj_step(model, data)
