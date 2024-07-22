@@ -63,8 +63,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
         curriculum = False
         # rough terrain only:
         measure_heights = False
-        static_friction = 2.0
-        dynamic_friction = 2.0
+        static_friction = 0.6
+        dynamic_friction = 0.6
         terrain_length = 8.0
         terrain_width = 8.0
         num_rows = 10  # number of terrain rows (levels)
@@ -76,7 +76,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.0  # scales other values
+        noise_level = 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05

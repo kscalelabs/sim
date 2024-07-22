@@ -211,7 +211,7 @@ if __name__ == '__main__':
             mujoco_model_path = f'sim/stompy_legs/robot_fixed.xml'
             sim_duration = 60.0
             dt = 0.001
-            decimation = 1
+            decimation = 10
         # pfb30 - todo this should be update more often
         class robot_config:
             kp_factor = 1
