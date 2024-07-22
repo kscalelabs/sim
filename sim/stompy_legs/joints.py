@@ -125,7 +125,7 @@ class Stompy(Node):
             },
             Stompy.legs.left.ankle_roll: {
                 "lower": 1,
-                "upper": 5,
+                "upper": 2.3,
             },
             Stompy.legs.right.hip_pitch: {
                 "lower": -1,

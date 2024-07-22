@@ -28,46 +28,9 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 """
+Difference setup
 python sim/humanoid_gym/play.py --task only_legs_ppo --sim_device cpu
 python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt 
-
-
-Issac sim
-left hip pitch
-left hip yaw
-left hip roll
-left knee pitch
-left ankle pitch
-left ankle roll
-right hip pitch
-right hip yaw
-right hip roll
-right knee pitch
-right ankle pitch
-right ankle roll
-
-Mujoco:
-[ 'root_x', 'root_y', 'root_z', 'root_ball', 'left hip pitch', 'left hip yaw','left hip roll', 
-    'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw', 
-   'right hip roll' ,  'right knee pitch', 'right ankle pitch', 'right ankle roll']
-
-
-
-Observation state:
-obs_buf = torch.cat(
-    (
-        self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
-        q,  # 12D
-        dq,  # 12D
-        self.actions,  # 12D
-        self.base_ang_vel * self.obs_scales.ang_vel,  # 3
-        self.base_euler_xyz * self.obs_scales.quat,  # 3
-    ),
-    dim=-1,
-)
-
-Action is
-12 d
 """
 import math
 import numpy as np
@@ -81,21 +44,21 @@ from humanoid.envs import XBotLCfg
 import torch
 
 JOINT_NAMES = [
-    # 'root_x', 'root_y', 'root_z', 'root_ball',
     'left hip pitch', 'left hip yaw','left hip roll', 
     'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw', 
     'right hip roll' ,  'right knee pitch', 'right ankle pitch','right ankle roll'
 ]
 
 
-# Load the data
-observations_sim = np.load('observations.npy')
-actions_sim = np.load('actions.npy')
+# Test exact actions
+# # Load the data
+# observations_sim = np.load('observations.npy')
+# actions_sim = np.load('actions.npy')
 
 
 class cmd:
     vx = 0.0
-    vy = -0.5
+    vy = 0.0
     dyaw = 0.0
 
 def quaternion_to_euler_array(quat):
@@ -151,15 +114,14 @@ def run_mujoco(policy, cfg):
     model.opt.timestep = cfg.sim_config.dt
     data = mujoco.MjData(model)
 
-
-    # pfb30 add qpos
     data.qpos = model.keyframe("default").qpos
     default = deepcopy(model.keyframe("default").qpos)[-cfg.env.num_actions:]
-    data.qvel = np.zeros_like(data.qvel)
-    data.qacc = np.zeros_like(data.qacc)
     mujoco.mj_step(model, data)
 
+    data.qvel = np.zeros_like(data.qvel)
+    data.qacc = np.zeros_like(data.qacc)
     viewer = mujoco_viewer.MujocoViewer(model, data)
+
     for ii in JOINT_NAMES:
         print(data.joint(ii).id, data.joint(ii).qpos)
 
@@ -248,12 +210,12 @@ if __name__ == '__main__':
             mujoco_model_path = f'sim/stompy_legs/robot_fixed.xml'
             sim_duration = 60.0
             dt = 0.001
-            decimation = 10
-
+            decimation = 4
+        # pfb30 - todo this should be update more often
         class robot_config:
-            kps = np.array([50, 50, 50, 50, 15, 15, 50, 50, 50, 50, 15, 15], dtype=np.double)
-            kds = np.array([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], dtype=np.double)
-            tau_limit = 200. * np.ones(12, dtype=np.double)
+            kps = np.array([90, 90, 90, 90, 24, 24, 90, 90, 90, 90, 24, 24], dtype=np.double)
+            kds = np.array([2.25, 2.25, 2.25, 2.25, 1.5, 1.5, 2.25, 2.25, 2.25, 2.25, 1.5, 1.5], dtype=np.double)
+            tau_limit = np.array([90, 90, 90, 90, 24, 24, 90, 90, 90, 90, 24, 24], dtype=np.double) * 0.85
 
     policy = torch.jit.load(args.load_model)
     run_mujoco(policy, Sim2simCfg())

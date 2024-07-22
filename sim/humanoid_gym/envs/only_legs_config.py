@@ -32,8 +32,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class safety:
         # safety factors
-        pos_limit = 0.8
-        vel_limit = 0.8
+        pos_limit = 0.85
+        vel_limit = 0.85
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
@@ -48,7 +48,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         default_feet_height = 0.0
 
         penalize_contacts_on = []
-        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
 
         collapse_fixed_joints = True
 
@@ -96,28 +96,31 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class control(LeggedRobotCfg.control):
         stiffness = {
-            "shoulder": 50,
-            "elbow": 50,
-            "wrist": 50,
-            "hand": 50,
-            "torso": 50,
-            "hip": 50,
-            "ankle": 15,
-            "knee": 15,
+            "hip yaw": 90,
+            "hip roll": 90,
+            "hip pitch": 90,
+            "knee pitch": 90,
+            "ankle pitch": 24,
+            "ankle roll": 24,
         }
         damping = {
-            "shoulder": 1.5,
-            "elbow": 1.5,
-            "wrist": 10,
-            "hand": 10,
-            "torso": 10,
-            "hip": 1.5,
-            "ankle": 1.5,
-            "knee": 1.5,
+            "hip yaw": 2.25,
+            "hip roll": 2.25,
+            "hip pitch": 2.25,
+            "knee pitch": 2.25,
+            "ankle pitch": 1.5,
+            "ankle roll": 1.5,
         }
+        # pfb30 - todo
+        # effort = {
+
+        # }
+        # velocity = {
+
+        # }
         action_scale = 0.25
 
-        decimation = 10  # 100hz
+        decimation = 4  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -125,13 +128,14 @@ class OnlyLegsCfg(LeggedRobotCfg):
         up_axis = 1  # 0 is y, 1 is z
 
         class physx(LeggedRobotCfg.sim.physx):
-            num_threads = 12
-            solver_type = 0 # 0: pgs, 1: tgs
+            num_threads = 10
+            # pfb30
+            solver_type = 1 # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
             contact_offset = 0.01 # [m]
             rest_offset = 0.0  # -0.02  # [m]
-            bounce_threshold_velocity = 0.1  # [m/s]
+            bounce_threshold_velocity = 0.5  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
             default_buffer_size_multiplier = 5
@@ -154,7 +158,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
         num_commands = 4
-        resampling_time = 8.0  # time before command are changed[s]
+        resampling_time = 30.0  # time before command are changed[s]
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
@@ -179,7 +183,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 400  # forces above this value are penalized
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
