@@ -37,6 +37,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
+
         file = str(stompy_urdf_path(legs_only=True))
 
         name = "stompy"
@@ -51,7 +52,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
 
         collapse_fixed_joints = True
-
+        default_dof_drive_mode = 3  # see GymDofDriveModeFlags (0 is none, 1 is pos tgt, 2 is vel tgt, 3 effort)
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -62,8 +63,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
         curriculum = False
         # rough terrain only:
         measure_heights = False
-        static_friction = 0.6
-        dynamic_friction = 0.6
+        static_friction = 2.0
+        dynamic_friction = 2.0
         terrain_length = 8.0
         terrain_width = 8.0
         num_rows = 10  # number of terrain rows (levels)
@@ -75,7 +76,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.6  # scales other values
+        noise_level = 1.0  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
@@ -95,22 +96,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
             default_joint_angles[joint] = default_positions[joint]
 
     class control(LeggedRobotCfg.control):
-        stiffness = {
-            "hip yaw": 90,
-            "hip roll": 90,
-            "hip pitch": 90,
-            "knee pitch": 90,
-            "ankle pitch": 24,
-            "ankle roll": 24,
-        }
-        damping = {
-            "hip yaw": 2.25,
-            "hip roll": 2.25,
-            "hip pitch": 2.25,
-            "knee pitch": 2.25,
-            "ankle pitch": 1.5,
-            "ankle roll": 1.5,
-        }
+        stiffness = Stompy.stiffness()
+        damping = Stompy.damping()
         # pfb30 - todo
         # effort = {
 
@@ -118,9 +105,9 @@ class OnlyLegsCfg(LeggedRobotCfg):
         # velocity = {
 
         # }
-        action_scale = 0.25
+        action_scale = 1
 
-        decimation = 4  # 100hz
+        decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -130,7 +117,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
             # pfb30
-            solver_type = 1 # 0: pgs, 1: tgs
+            solver_type = 0 # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
             contact_offset = 0.01 # [m]
@@ -186,23 +173,23 @@ class OnlyLegsCfg(LeggedRobotCfg):
         max_contact_force = 100  # forces above this value are penalized
 
         class scales:
-            # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.0
-            feet_contact_number = 1.2
-            # # gait
-            feet_air_time = 1.0
-            foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
-            # contact
-            feet_contact_forces = -0.01
-            # # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5
+            # # reference motion tracking
+            # joint_pos = 1.6
+            # feet_clearance = 1.0
+            # feet_contact_number = 1.2
+            # # # gait
+            # feet_air_time = 1.0
+            # foot_slip = -0.05
+            # feet_distance = 0.2
+            # knee_distance = 0.2
+            # # contact
+            # feet_contact_forces = -0.01
+            # # # vel tracking
+            # tracking_lin_vel = 1.2
+            # tracking_ang_vel = 1.1
+            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            # low_speed = 0.2
+            # track_vel_hard = 0.5
 
             # above this was removed for standing policy
             # base pos

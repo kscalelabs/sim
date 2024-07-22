@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -30,7 +30,7 @@
 """
 Difference setup
 python sim/humanoid_gym/play.py --task only_legs_ppo --sim_device cpu
-python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt 
+python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt
 """
 import math
 import numpy as np
@@ -42,10 +42,11 @@ from copy import deepcopy
 
 from humanoid.envs import XBotLCfg
 import torch
+from sim.stompy_legs.joints import Stompy
 
 JOINT_NAMES = [
-    'left hip pitch', 'left hip yaw','left hip roll', 
-    'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw', 
+    'left hip pitch', 'left hip yaw','left hip roll',
+    'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw',
     'right hip roll' ,  'right knee pitch', 'right ankle pitch','right ankle roll'
 ]
 
@@ -64,22 +65,22 @@ class cmd:
 def quaternion_to_euler_array(quat):
     # Ensure quaternion is in the correct format [x, y, z, w]
     x, y, z, w = quat
-    
+
     # Roll (x-axis rotation)
     t0 = +2.0 * (w * x + y * z)
     t1 = +1.0 - 2.0 * (x * x + y * y)
     roll_x = np.arctan2(t0, t1)
-    
+
     # Pitch (y-axis rotation)
     t2 = +2.0 * (w * y - z * x)
     t2 = np.clip(t2, -1.0, 1.0)
     pitch_y = np.arcsin(t2)
-    
+
     # Yaw (z-axis rotation)
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (y * y + z * z)
     yaw_z = np.arctan2(t3, t4)
-    
+
     # Returns roll, pitch, yaw in a NumPy array in radians
     return np.array([roll_x, pitch_y, yaw_z])
 
@@ -170,7 +171,7 @@ def run_mujoco(policy, cfg):
             for i in range(cfg.env.frame_stack):
                 policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
-            
+
             # pfb30 - todo test
             # action[:] = actions_sim[kk]
             kk+=1
@@ -185,7 +186,7 @@ def run_mujoco(policy, cfg):
                         target_dq, dq, cfg.robot_config.kds, default)  # Calc torques
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
-        
+
         data.ctrl = tau
 
         mujoco.mj_step(model, data)
@@ -210,12 +211,15 @@ if __name__ == '__main__':
             mujoco_model_path = f'sim/stompy_legs/robot_fixed.xml'
             sim_duration = 60.0
             dt = 0.001
-            decimation = 4
+            decimation = 10
         # pfb30 - todo this should be update more often
         class robot_config:
-            kps = np.array([90, 90, 90, 90, 24, 24, 90, 90, 90, 90, 24, 24], dtype=np.double)
-            kds = np.array([2.25, 2.25, 2.25, 2.25, 1.5, 1.5, 2.25, 2.25, 2.25, 2.25, 1.5, 1.5], dtype=np.double)
-            tau_limit = np.array([90, 90, 90, 90, 24, 24, 90, 90, 90, 90, 24, 24], dtype=np.double) * 0.85
+            kp_factor = 10
+            kd_factor = 1
+            tau_factor = 0.85
+            tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor
+            kps = tau_limit * kp_factor
+            kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values())) * kd_factor
 
     policy = torch.jit.load(args.load_model)
     run_mujoco(policy, Sim2simCfg())

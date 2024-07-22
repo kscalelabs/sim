@@ -1,12 +1,8 @@
 <?xml version="1.0" ?>
 <mujoco model="lower_limbs">
-  <compiler angle="radian" meshdir="meshes" eulerseq="zyx"/>
-    <option iterations="90" timestep="0.001" solver="PGS" gravity="0 0 -9.81">
-   <flag sensornoise="enable" frictionloss="enable"/>
-  </option>
-
+  <compiler angle="radian" meshdir="meshes" autolimits="true" eulerseq="zyx"/>
   <default>
-    <joint limited="true" damping="0.01" frictionloss="0.01"  armature="0.01"/>
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01"/>
     <motor ctrllimited="true"/>
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2"/>
     <equality solref="0.001 2"/>
@@ -14,7 +10,8 @@
       <geom material="visualgeom" condim="1" contype="0" conaffinity="0"/>
     </default>
   </default>
-
+  <option iterations="10" timestep="0.001" solver="PGS" gravity="0 0 -9.81">
+  </option>
   <asset>
     <mesh name="leg_assembly_left_1_leg_part_1_2_simple" file="leg_assembly_left_1_leg_part_1_2_simple.stl"/>
     <mesh name="leg_assembly_right_1_leg_part_1_2_simple" file="leg_assembly_right_1_leg_part_1_2_simple.stl"/>
@@ -70,13 +67,14 @@
     <geom name="ground" type="plane" pos="0.001 0 0" quat="1 0 0 0" material="matplane" size="0 0 1" condim="1" conaffinity='15'/>
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false"/>
-    <body name="root" pos="0 0 .72" quat="1 0 0 0">
-      <joint name="floating_base_joint" type="free" />
-
+    <body name="root" pos="0 0 0.71" quat="1 0 0 0">
+      <joint name="root_x" type="slide" axis="1 0 0" limited="false"/>
+      <joint name="root_y" type="slide" axis="0 1 0" limited="false"/>
+      <joint name="root_z" type="slide" axis="0 0 1" limited="false"/>
+      <joint name="root_ball" type="ball" limited="false"/>
       <camera name="front" pos="0 -3 1" xyaxes="1 0 0 0 1 2" mode="trackcom"/>
 			<camera name="side" pos="-2.893 -1.330 0.757" xyaxes="0.405 -0.914 0.000 0.419 0.186 0.889" mode="trackcom"/>
       <site name="imu" size="0.01" pos="0 0 0"/>
-      
       <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="leg_assembly_left_1_leg_part_1_2_simple" class="visualgeom"/>
       <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="leg_assembly_left_1_leg_part_1_2_simple" contype="0" conaffinity="0" group="1" density="0"/>
       <geom pos="-0.0209987 -0.0690001 0.0170241" quat="0.5 -0.5 -0.5 0.5" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="leg_assembly_right_1_leg_part_1_2_simple" class="visualgeom"/>
@@ -139,7 +137,7 @@
                 <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="left_foot_1_ankle_half_1_left_2_simple" pos="0 0.0145 0.04735" quat="0.707107 0 0.707107 0" contype="0" conaffinity="0" group="1" density="0"/>
                 <body name="link_left_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" pos="0.0135 -0.07155 0.01055" quat="-0.5 0.5 0.5 -0.5">
                   <inertial pos="0.00584595 -0.0275033 -0.0114478" quat="0.994413 -0.0147465 -0.00155004 0.104511" mass="0.422846" diaginertia="0.00136272 0.00135059 0.000429099"/>
-                  <joint name="left ankle roll" pos="0 0 0" axis="0 0 -1" range="1 2.3" />
+                  <joint name="left ankle roll" pos="0 0 0" axis="0 0 -1" range="1 2.23" />
                   <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="left_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1_simple" class="visualgeom"/>
                   <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="left_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
                   <geom pos="0.00275746 -0.0127042 -0.025" quat="0.994522 0 0 0.104528" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="left_foot_1_foot_1_simple" class="visualgeom"/>
@@ -222,18 +220,18 @@
     </body>
   </worldbody>
   <actuator>
-    <motor name="left hip pitch" joint="left hip pitch" ctrllimited="true" ctrlrange="-90 90" gear="1"/>
-    <motor name="left hip roll" joint="left hip roll" ctrllimited="true" ctrlrange="-90 90" gear="1"/>
-    <motor name="left hip yaw" joint="left hip yaw" ctrllimited="true" ctrlrange="-90 90" gear="1"/>
-    <motor name="left knee pitch" joint="left knee pitch" ctrllimited="true" ctrlrange="-90 90" gear="1"/>
-    <motor name="left ankle pitch" joint="left ankle pitch" ctrllimited="true" ctrlrange="-24 24" gear="1"/>
-    <motor name="left ankle roll" joint="left ankle roll" ctrllimited="true" ctrlrange="-24 24" gear="1"/>
-    <motor name="right hip pitch" joint="right hip pitch" ctrllimited="true" ctrlrange="-90 90" gear="1"/>
-    <motor name="right hip roll" joint="right hip roll" ctrllimited="true" ctrlrange="-90 90" gear="1"/>
-    <motor name="right hip yaw" joint="right hip yaw" ctrllimited="true" ctrlrange="-90 90" gear="1"/>
-    <motor name="right knee pitch" joint="right knee pitch" ctrllimited="true" ctrlrange="-90 90" gear="1"/>
-    <motor name="right ankle pitch" joint="right ankle pitch" ctrllimited="true" ctrlrange="-24 24" gear="1"/>
-    <motor name="right ankle roll" joint="right ankle roll" ctrllimited="true" ctrlrange="-24 24" gear="1"/>
+    <motor name="left hip pitch" joint="left hip pitch" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="left hip roll" joint="left hip roll" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="left hip yaw" joint="left hip yaw" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="left knee pitch" joint="left knee pitch" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="left ankle pitch" joint="left ankle pitch" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="left ankle roll" joint="left ankle roll" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="right hip pitch" joint="right hip pitch" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="right hip roll" joint="right hip roll" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="right hip yaw" joint="right hip yaw" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="right knee pitch" joint="right knee pitch" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="right ankle pitch" joint="right ankle pitch" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="right ankle roll" joint="right ankle roll" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
   </actuator>
   <sensor>
     <actuatorpos name="left hip pitch_p" actuator="left hip pitch" user="13"/>
@@ -276,6 +274,6 @@
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9"/>
   </sensor>
   <keyframe>
-    <key name="default" qpos='0 0 0.72 1 0 0 0 1.60595 1.0037 0 2.05 0.236 1.72 -0.01 -2.152 -1.60465 2.1605 0.413 1.75'/>
+    <key name="default" qpos='0 0 0 1 0 0 0 1.60595 1.0037 0 2.05 0.3292 1.715 -0.01 -2.152 -1.60465 2.1605 0.5008 1.7305'/>
   </keyframe>
 </mujoco>

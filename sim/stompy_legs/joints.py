@@ -151,7 +151,28 @@ class Stompy(Node):
                 "lower": 1,
                 "upper": 2.3,
             },
+        }
 
+    @classmethod
+    def stiffness(cls) -> Dict[str, float]:
+        return {
+            "hip pitch": 90,
+            "hip yaw": 90,
+            "hip roll": 90,
+            "knee pitch": 90,
+            "ankle pitch": 24,
+            "ankle roll": 24,
+        }
+
+    @classmethod
+    def damping(cls) -> Dict[str, float]:
+        return {
+            "hip pitch": 9,
+            "hip yaw": 9,
+            "hip roll": 9,
+            "knee pitch": 9,
+            "ankle pitch": 2.4,
+            "ankle roll": 2.4,
         }
 
 
