@@ -55,12 +55,12 @@ JOINT_NAMES = [
 # Test exact actions
 # # Load the data
 # observations_sim = np.load('observations.npy')
-# actions_sim = np.load('actions.npy')
+actions_sim = np.load('actions.npy')
 
 
 class cmd:
-    vx = 0.0
-    vy = 0.0
+    vx = -0.0
+    vy = -0.3
     dyaw = 0.0
 
 def quaternion_to_euler_array(quat):
@@ -204,6 +204,7 @@ if __name__ == '__main__':
     parser.add_argument('--load_model', type=str, required=True,
                         help='Run to load from.')
     parser.add_argument('--terrain', action='store_true', help='terrain or plane')
+    parser.add_argument('--load_actions', action='store_true', help='saved_actions')
     args = parser.parse_args()
 
     class Sim2simCfg(OnlyLegsCfg):

@@ -90,6 +90,7 @@ def play(args: argparse.Namespace) -> None:
 
         # Creates a directory to store videos.
         video_dir = run_dir() / "videos"
+        print(video_dir)
         experiment_dir = video_dir / train_cfg.runner.experiment_name
         experiment_dir.mkdir(parents=True, exist_ok=True)
 
@@ -106,12 +107,11 @@ def play(args: argparse.Namespace) -> None:
         # print(actions)
 
         if FIX_COMMAND:
-            env.commands[:, 0] = 0.0
-            env.commands[:, 1] = -0.5 # negative left, positive right
+            env.commands[:, 0] = -0.
+            env.commands[:, 1] = -0.0 # negative left, positive right
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
-
-        obs, critic_obs, rews, dones, infos = env.step(actions.detach())
+        obs, critic_obs, rews, dones, infos, _ = env.step(actions.detach())
 
         if RENDER:
             env.gym.fetch_results(env.sim, True)

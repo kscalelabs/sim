@@ -33,7 +33,6 @@ def update_urdf() -> None:
                 limit.set("lower", lower)
                 limit.set("upper", upper)
 
-
                 for key, value in effort.items():
                     if key in joint_name:
                         limit.set("effort", str(value))
@@ -51,6 +50,8 @@ def update_urdf() -> None:
     # Save the modified URDF to a new file
     tree.write("sim/stompy_legs/robot_fixed.urdf")
 
+
+def update_mcjf()
 
 if __name__ == "__main__":
     update_urdf()
