@@ -2,10 +2,8 @@
 """This script updates the URDF file to fix the joints of the robot."""
 
 import xml.etree.ElementTree as ET
-from pathlib import Path
 
-from sim import mjcf
-from sim.scripts.create_mjcf import Sim2SimRobot
+from sim.scripts.create_mjcf import create_mjcf
 from sim.stompy_legs.joints import Stompy
 
 STOMPY_URDF = "sim/stompy_legs/robot.urdf"
@@ -55,14 +53,4 @@ def update_urdf() -> None:
 
 if __name__ == "__main__":
     update_urdf()
-
-    path = Path("sim/stompy_legs/robot.urdf")
-    robot_name = path.stem
-    path = path.parent
-    robot = Sim2SimRobot(
-        robot_name,
-        path,
-        mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True, eulerseq="zyx"),
-    )
-    robot.adapt_world()
-    robot.save("sim/stompy_legs/robot_fixed.xml")
+    create_mjcf(STOMPY_URDF)

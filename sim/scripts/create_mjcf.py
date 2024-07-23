@@ -30,6 +30,8 @@ COLLISION_LINKS = [
     "left_foot_1_rubber_grip_1_simple",
 ]
 
+ROOT_HEIGHT = 0.72
+
 stompy = Stompy()
 
 
@@ -294,12 +296,9 @@ class Sim2SimRobot(mjcf.Robot):
             f.write(formatted_xml)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Create a MJCF file for the Stompy robot.")
-    parser.add_argument("filepath", type=str, help="The path to load and save the MJCF file.")
-    args = parser.parse_args()
-    # Robot name is whatever string comes right before ".urdf" extension
-    path = Path(args.filepath)
+def create_mjcf(filepath: str) -> None:
+    """Create a MJCF file for the Stompy robot."""
+    path = Path(filepath)
     robot_name = path.stem
     path = path.parent
     robot = Sim2SimRobot(
@@ -309,3 +308,11 @@ if __name__ == "__main__":
     )
     robot.adapt_world()
     robot.save(path / f"{robot_name}_updated.xml")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Create a MJCF file for the Stompy robot.")
+    parser.add_argument("filepath", type=str, help="The path to load and save the MJCF file.")
+    args = parser.parse_args()
+    # Robot name is whatever string comes right before ".urdf" extension
+    create_mjcf(args.filepath)
