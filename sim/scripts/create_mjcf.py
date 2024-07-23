@@ -17,7 +17,7 @@ import logging
 import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Union
 
 from sim import mjcf
 from sim.stompy.joints import Stompy
