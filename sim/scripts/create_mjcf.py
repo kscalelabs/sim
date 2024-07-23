@@ -46,19 +46,6 @@ def _pretty_print_xml(xml_string: str) -> str:
     return "\n".join(non_empty_lines)
 
 
-# def smartset(element: ET.Element, key: str, value: str) -> None:
-#     """Set element attribute smartly.
-
-#     Initialize the attrib dictionary if it doesn't exist, then set the
-#     attribute specified by *key* to *value*.
-
-#     *key* is what attribute to set, and *value* is the attribute value to set it to.
-#     """
-#     if element.attrib is None:
-#         element.attrib = {}
-#     element.attrib[key] = value
-
-
 class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
@@ -192,7 +179,7 @@ class Sim2SimRobot(mjcf.Robot):
         root.insert(
             1,
             mjcf.Default(
-                joint=mjcf.Joint(armature=0.01, damping=0.01, limited=True, frictionloss=0.01),
+                joint=mjcf.Joint(armature=0.01, stiffness=0, damping=0.01, limited=True, frictionloss=0.01),
                 motor=mjcf.Motor(ctrllimited=True),
                 equality=mjcf.Equality(solref=(0.001, 2)),
                 geom=mjcf.Geom(
@@ -259,6 +246,23 @@ class Sim2SimRobot(mjcf.Robot):
                     if "actuatorfrcrange" in join.attrib:
                         join.attrib.pop("actuatorfrcrange")
 
+        # Adding keyframe
+        default_standing = stompy.default_standing()
+        qpos = [0, 0, ROOT_HEIGHT, 1, 0, 0, 0] + list(default_standing.values())
+        key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
+        keyframe = mjcf.Keyframe(keys=[key])
+        root.append(keyframe.to_xml())
+
+        # Swap left and right leg
+        parent_body = root.find(".//body[@name='root']")
+        left = parent_body.find(".//body[@name='link_leg_assembly_left_1_rmd_x12_150_mock_1_inner_x12_150_1']")
+        right = parent_body.find(".//body[@name='link_leg_assembly_right_1_rmd_x12_150_mock_1_inner_x12_150_1']")
+        if left is not None and right is not None:
+            left_index = list(parent_body).index(left)
+            right_index = list(parent_body).index(right)
+            # Swap the bodies
+            parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
+
     def update_joints(self, root: ET.Element) -> None:
         joint_limits = stompy.default_limits()
 
@@ -307,7 +311,7 @@ def create_mjcf(filepath: str) -> None:
         mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True, eulerseq="zyx"),
     )
     robot.adapt_world()
-    robot.save(path / f"{robot_name}_updated.xml")
+    robot.save(path / f"{robot_name}_fixed.xml")
 
 
 if __name__ == "__main__":

@@ -408,6 +408,31 @@ class Sensor:
         return sensor
 
 
+@dataclass
+class Key:
+    name: Optional[str] = None
+    qpos: Optional[str] = None
+
+    def to_xml(self, root: Optional[ET.Element] = None) -> ET.Element:
+        key = ET.Element("key") if root is None else ET.SubElement(root, "key")
+        if self.name is not None:
+            key.set("name", self.name)
+        if self.qpos is not None:
+            key.set("qpos", self.qpos)
+        return key
+
+
+@dataclass
+class Keyframe:
+    keys: List[Key]
+
+    def to_xml(self, root: Optional[ET.Element] = None) -> ET.Element:
+        keyframe = ET.Element("keyframe") if root is None else ET.SubElement(root, "keyframe")
+        for key in self.keys:
+            key.to_xml(keyframe)
+        return keyframe
+
+
 def _copy_stl_files(source_directory: Union[str, Path], destination_directory: Union[str, Path]) -> None:
     # Ensure the destination directory exists, create if not
     os.makedirs(destination_directory, exist_ok=True)
