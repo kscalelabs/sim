@@ -3,6 +3,7 @@
 
 import xml.etree.ElementTree as ET
 
+from sim.scripts.create_mjcf import create_mjcf
 from sim.stompy_legs.joints import Stompy
 
 STOMPY_URDF = "sim/stompy_legs/robot.urdf"
@@ -36,20 +37,21 @@ def update_urdf() -> None:
                 for key, value in effort.items():
                     if key in joint_name:
                         limit.set("effort", str(value))
-                
+
                 for key, value in velocity.items():
                     if key in joint_name:
                         limit.set("velocity", str(value))
-            
+
             dynamics = joint.find("dynamics")
             if dynamics is not None:
                 for key, value in friction.items():
                     if key in joint_name:
                         dynamics.set("friction", str(value))
-                
+
     # Save the modified URDF to a new file
     tree.write("sim/stompy_legs/robot_fixed.urdf")
 
 
 if __name__ == "__main__":
     update_urdf()
+    create_mjcf(STOMPY_URDF)

@@ -115,7 +115,7 @@ class Stompy(Node):
             },
             Stompy.legs.left.knee_pitch: {
                 "lower": 0.5,
-                "upper": 2.25,
+                "upper": 2.5,
             },
             Stompy.legs.left.ankle_pitch: {
                 "lower": -0.8,
@@ -195,16 +195,72 @@ class Stompy(Node):
             "ankle roll": 12,
         }
 
+    # p_gains
+    @classmethod
+    def stiffness(cls) -> Dict[str, float]:
+        return {
+            "hip pitch": 250,
+            "hip yaw": 150,
+            "hip roll": 150,
+            "knee pitch": 150,
+            "ankle pitch": 45,
+            "ankle roll": 45,
+        }
+
+    # d_gains
+    @classmethod
+    def damping(cls) -> Dict[str, float]:
+        return {
+            "hip pitch": 15,
+            "hip yaw": 10,
+            "hip roll": 10,
+            "knee pitch": 10,
+            "ankle pitch": 3,
+            "ankle roll": 3,
+        }
+
+    # pos_limits
+    @classmethod
+    def effort(cls) -> Dict[str, float]:
+        return {
+            "hip pitch": 150,
+            "hip yaw": 90,
+            "hip roll": 90,
+            "knee pitch": 90,
+            "ankle pitch": 24,
+            "ankle roll": 24,
+        }
+
+    # vel_limits
+    @classmethod
+    def velocity(cls) -> Dict[str, float]:
+        return {
+            "hip pitch": 12,
+            "hip yaw": 12,
+            "hip roll": 12,
+            "knee pitch": 12,
+            "ankle pitch": 7,
+            "ankle roll": 7,
+        }
+        return {
+            "hip pitch": 25,
+            "hip yaw": 25,
+            "hip roll": 25,
+            "knee pitch": 25,
+            "ankle pitch": 12,
+            "ankle roll": 12,
+        }
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 0.,
-            "hip yaw": 0.,
-            "hip roll": 0.,
-            "knee pitch": 0.,
-            "ankle pitch": 0.,
+            "hip pitch": 0.0,
+            "hip yaw": 0.0,
+            "hip roll": 0.0,
+            "knee pitch": 0.0,
+            "ankle pitch": 0.0,
             "ankle roll": 0.1,
         }
+
 
 def print_joints() -> None:
     joints = Stompy.all_joints()
