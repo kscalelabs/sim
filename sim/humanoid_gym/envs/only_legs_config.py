@@ -32,8 +32,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class safety:
         # safety factors
-        pos_limit = 0.85
-        vel_limit = 0.85
+        pos_limit = 1.0
+        vel_limit = 1.0
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
