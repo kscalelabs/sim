@@ -17,7 +17,7 @@ import logging
 import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 from sim import mjcf
 from sim.stompy.joints import Stompy
@@ -124,7 +124,7 @@ class Sim2SimRobot(mjcf.Robot):
         for joint, _ in stompy.default_limits().items():
             if joint in stompy.default_standing().keys():
                 joint_name = joint
-                limit = 200
+                limit = 200.0  # Ensure limit is a float
                 keys = stompy.effort().keys()
                 for key in keys:
                     if key in joint_name:
@@ -221,13 +221,13 @@ class Sim2SimRobot(mjcf.Robot):
                 geom.set("class", "visualgeom")
                 # Create a new geom element
                 new_geom = ET.Element("geom")
-                new_geom.set("type", geom.get("type"))
-                new_geom.set("rgba", geom.get("rgba"))
-                new_geom.set("mesh", geom.get("mesh"))
+                new_geom.set("type", geom.get("type") or "")  # Ensure type is not None
+                new_geom.set("rgba", geom.get("rgba") or "")  # Ensure rgba is not None
+                new_geom.set("mesh", geom.get("mesh") or "")  # Ensure mesh is not None
                 if geom.get("pos"):
-                    new_geom.set("pos", geom.get("pos"))
+                    new_geom.set("pos", geom.get("pos") or "")
                 if geom.get("quat"):
-                    new_geom.set("quat", geom.get("quat"))
+                    new_geom.set("quat", geom.get("quat") or "")
                 # Exclude collision meshes
                 if geom.get("mesh") not in COLLISION_LINKS:
                     new_geom.set("contype", "0")
@@ -249,21 +249,22 @@ class Sim2SimRobot(mjcf.Robot):
         # Adding keyframe
         default_standing = stompy.default_standing()
         qpos = [0, 0, ROOT_HEIGHT, 1, 0, 0, 0] + list(default_standing.values())
-        key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
-        keyframe = mjcf.Keyframe(keys=[key])
+        default_key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
+        keyframe = mjcf.Keyframe(keys=[default_key])
         root.append(keyframe.to_xml())
 
         # Swap left and right leg
         parent_body = root.find(".//body[@name='root']")
-        left = parent_body.find(".//body[@name='link_leg_assembly_left_1_rmd_x12_150_mock_1_inner_x12_150_1']")
-        right = parent_body.find(".//body[@name='link_leg_assembly_right_1_rmd_x12_150_mock_1_inner_x12_150_1']")
-        if left is not None and right is not None:
-            left_index = list(parent_body).index(left)
-            right_index = list(parent_body).index(right)
-            # Swap the bodies
-            parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
+        if parent_body is not None:
+            left = parent_body.find(".//body[@name='link_leg_assembly_left_1_rmd_x12_150_mock_1_inner_x12_150_1']")
+            right = parent_body.find(".//body[@name='link_leg_assembly_right_1_rmd_x12_150_mock_1_inner_x12_150_1']")
+            if left is not None and right is not None:
+                left_index = list(parent_body).index(left)
+                right_index = list(parent_body).index(right)
+                # Swap the bodies
+                parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
 
-    def update_joints(self, root: ET.Element) -> None:
+    def update_joints(self, root: ET.Element) -> ET.Element:
         joint_limits = stompy.default_limits()
 
         for joint in root.findall(".//joint"):
@@ -281,7 +282,7 @@ class Sim2SimRobot(mjcf.Robot):
                         damping = stompy.damping()[key]
                 joint.set("damping", str(damping))
 
-                stiffness = 0
+                stiffness = 0.0
                 keys = stompy.stiffness().keys()
                 for key in keys:
                     if key in joint_name:
