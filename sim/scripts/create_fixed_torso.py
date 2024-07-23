@@ -51,7 +51,5 @@ def update_urdf() -> None:
     tree.write("sim/stompy_legs/robot_fixed.urdf")
 
 
-def update_mcjf()
-
 if __name__ == "__main__":
     update_urdf()

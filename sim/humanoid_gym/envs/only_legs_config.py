@@ -49,7 +49,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         default_feet_height = 0.0
 
         penalize_contacts_on = []
-        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
 
         collapse_fixed_joints = True
         # default_dof_drive_mode = 3  # see GymDofDriveModeFlags (0 is none, 1 is pos tgt, 2 is vel tgt, 3 effort)
@@ -100,7 +100,6 @@ class OnlyLegsCfg(LeggedRobotCfg):
         damping = Stompy.damping()
 
         action_scale = 0.25
-
         decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
@@ -115,8 +114,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
             num_position_iterations = 4
             num_velocity_iterations = 0
             contact_offset = 0.01 # [m]
-            rest_offset = 0.0  # -0.02  # [m]
-            bounce_threshold_velocity = 0.5  # [m/s]
+            rest_offset = 0.0 # [m]
+            bounce_threshold_velocity = 0.5 # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
             default_buffer_size_multiplier = 5
@@ -127,14 +126,13 @@ class OnlyLegsCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False
-        # added_mass_range = [-1.0, 1.0]
+        randomize_base_mass = True
         added_mass_range = [-0.3, 0.3]
         push_robots = False
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.05
+        dynamic_randomization = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -185,7 +183,6 @@ class OnlyLegsCfg(LeggedRobotCfg):
             low_speed = 0.2
             track_vel_hard = 0.5
 
-            # above this was removed for standing policy
             # base pos
             default_joint_pos = 0.5
             orientation = 1

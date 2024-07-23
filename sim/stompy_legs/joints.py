@@ -189,12 +189,12 @@ class Stompy(Node):
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 25,
+            "hip pitch": 40,
             "hip yaw": 40,
             "hip roll": 40,
             "knee pitch": 40,
-            "ankle pitch": 40,
-            "ankle roll": 40,
+            "ankle pitch": 32,
+            "ankle roll": 32,
         }
 
     @classmethod
