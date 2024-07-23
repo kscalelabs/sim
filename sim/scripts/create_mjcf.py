@@ -276,8 +276,6 @@ class Sim2SimRobot(mjcf.Robot):
 
     def update_joints(self, root: ET.Element, add_reference_position: bool = False) -> None:
         joint_limits = stompy.default_limits()
-        joint_stiffness = stompy.stiffness()
-        joint_damping = stompy.damping()
         default_standing = stompy.default_standing()
 
         for joint in root.findall(".//joint"):
