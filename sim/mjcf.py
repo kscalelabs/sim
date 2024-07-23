@@ -15,7 +15,7 @@ import shutil
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal, Optional, Union, Tuple, List
+from typing import List, Literal, Optional, Tuple, Union
 
 import mujoco
 
