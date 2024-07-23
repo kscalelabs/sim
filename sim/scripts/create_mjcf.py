@@ -30,9 +30,6 @@ COLLISION_LINKS = [
     "left_foot_1_rubber_grip_1_simple",
 ]
 
-# How high the root should be set above the ground
-ROOT_HEIGHT = "0.72"
-
 stompy = Stompy()
 
 
@@ -63,9 +60,7 @@ def _pretty_print_xml(xml_string: str) -> str:
 class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
-    def adapt_world(
-        self, add_floor: bool = True, add_reference_position: bool = False, remove_frc_range: bool = False
-    ) -> None:
+    def adapt_world(self, add_floor: bool = True, remove_frc_range: bool = False) -> None:
         root: ET.Element = self.tree.getroot()
 
         if add_floor:
@@ -137,7 +132,7 @@ class Sim2SimRobot(mjcf.Robot):
         sensor_frc: List[mjcf.Actuatorfrc] = []
         # Create motors and sensors for the joints
         joints = list(root.findall("joint"))
-        for joint, limits in stompy.default_limits().items():
+        for joint, _ in stompy.default_limits().items():
             if joint in stompy.default_standing().keys():
                 joint_name = joint
                 limit = 200
@@ -159,7 +154,7 @@ class Sim2SimRobot(mjcf.Robot):
                 sensor_vel.append(mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"))
                 sensor_frc.append(mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001))
 
-        root = self.update_joints(root, add_reference_position=add_reference_position)
+        root = self.update_joints(root)
 
         # Add motors and sensors
         root.append(mjcf.Actuator(motors).to_xml())
@@ -212,13 +207,14 @@ class Sim2SimRobot(mjcf.Robot):
         # Locate actual root body inside of worldbody
         root_body = worldbody.find(".//body")
         # Make position and orientation of the root body
-        root_body.set("pos", "0 0 " + ROOT_HEIGHT)
+        root_body.set("pos", "0 0 0")
         root_body.set("quat", "1 0 0 0")
+        root_body.insert(0, ET.Element("joint", name="floating_base_joint", type="free"))
 
         # Add cameras and imu
-        root_body.insert(0, ET.Element("camera", name="front", pos="0 -3 1", xyaxes="1 0 0 0 1 2", mode="trackcom"))
+        root_body.insert(1, ET.Element("camera", name="front", pos="0 -3 1", xyaxes="1 0 0 0 1 2", mode="trackcom"))
         root_body.insert(
-            1,
+            2,
             ET.Element(
                 "camera",
                 name="side",
@@ -227,20 +223,7 @@ class Sim2SimRobot(mjcf.Robot):
                 mode="trackcom",
             ),
         )
-        root_body.insert(2, ET.Element("site", name="imu", size="0.01", pos="0 0 0"))
-
-        # # Add joints to all the movement of the base
-        # Define the joints as individual elements
-        joints = [
-            ET.Element("joint", name="root_x", type="slide", axis="1 0 0", limited="false"),
-            ET.Element("joint", name="root_y", type="slide", axis="0 1 0", limited="false"),
-            ET.Element("joint", name="root_z", type="slide", axis="0 0 1", limited="false"),
-            ET.Element("joint", name="root_ball", type="ball", limited="false"),
-        ]
-
-        # Insert each joint at the front of the root element
-        for joint in reversed(joints):
-            root_body.insert(0, joint)
+        root_body.insert(3, ET.Element("site", name="imu", size="0.01", pos="0 0 0"))
 
         # add visual geom logic
         for body in root.findall(".//body"):
@@ -274,9 +257,8 @@ class Sim2SimRobot(mjcf.Robot):
                     if "actuatorfrcrange" in join.attrib:
                         join.attrib.pop("actuatorfrcrange")
 
-    def update_joints(self, root: ET.Element, add_reference_position: bool = False) -> None:
+    def update_joints(self, root: ET.Element) -> None:
         joint_limits = stompy.default_limits()
-        default_standing = stompy.default_standing()
 
         for joint in root.findall(".//joint"):
             joint_name = joint.get("name")
@@ -300,10 +282,6 @@ class Sim2SimRobot(mjcf.Robot):
                         stiffness = stompy.stiffness()[key]
 
                 joint.set("stiffness", str(stiffness))
-
-                if add_reference_position:
-                    if joint_name in default_standing.keys():
-                        joint.set("ref", str(default_standing[joint_name]))
 
         return root
 
@@ -329,5 +307,5 @@ if __name__ == "__main__":
         path,
         mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True, eulerseq="zyx"),
     )
-    robot.adapt_world(add_reference_position=True)
+    robot.adapt_world()
     robot.save(path / f"{robot_name}_updated.xml")

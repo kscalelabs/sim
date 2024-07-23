@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <mujoco model="lower_limbs">
   <compiler angle="radian" meshdir="meshes/" autolimits="true" />
   <statistic meansize="0.170441" extent="1.11801" center="-0.0355216 -0.0520159 -0.12411" />
