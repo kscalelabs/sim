@@ -40,7 +40,8 @@ from collections import deque
 from scipy.spatial.transform import Rotation as R
 from copy import deepcopy
 
-from humanoid.envs import XBotLCfg
+# from humanoid.envs import XBotLCfg
+from sim.humanoid_gym.envs import OnlyLegsCfg
 import torch
 from sim.stompy_legs.joints import Stompy
 
@@ -205,7 +206,7 @@ if __name__ == '__main__':
     parser.add_argument('--terrain', action='store_true', help='terrain or plane')
     args = parser.parse_args()
 
-    class Sim2simCfg(XBotLCfg):
+    class Sim2simCfg(OnlyLegsCfg):
 
         class sim_config:
             mujoco_model_path = f'sim/stompy_legs/robot_fixed.xml'
@@ -214,12 +215,10 @@ if __name__ == '__main__':
             decimation = 10
         # pfb30 - todo this should be update more often
         class robot_config:
-            kp_factor = 1
-            kd_factor = 1
-            tau_factor = 1
+            tau_factor = 0.85
             tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor
-            kps = tau_limit * kp_factor
-            kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values())) * kd_factor
+            kps = tau_limit
+            kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values()))
 
     policy = torch.jit.load(args.load_model)
     run_mujoco(policy, Sim2simCfg())

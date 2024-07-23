@@ -2,7 +2,7 @@
 <mujoco model="lower_limbs">
   <compiler angle="radian" meshdir="meshes" autolimits="true" eulerseq="zyx"/>
   <default>
-    <joint limited="true" damping="10" armature="0.01" frictionloss="0.01"/>
+    <joint limited="true" stiffness="90" damping="10" armature="0.01" frictionloss="0.01"/>
     <motor ctrllimited="true"/>
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2"/>
     <equality solref="0.001 2"/>
