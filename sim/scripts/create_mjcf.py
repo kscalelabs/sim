@@ -19,10 +19,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Union
 
-from kol.formats import mjcf
-
-from sim.env import model_dir, stompy_mjcf_path
-from sim.stompy.joints import MjcfStompy, StompyFixed
+from sim import mjcf
+from sim.stompy.joints import Stompy
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +33,8 @@ COLLISION_LINKS = [
 # How high the root should be set above the ground
 ROOT_HEIGHT = "0.72"
 
+stompy = Stompy()
+
 
 def _pretty_print_xml(xml_string: str) -> str:
     """Formats the provided XML string into a pretty-printed version."""
@@ -45,6 +45,19 @@ def _pretty_print_xml(xml_string: str) -> str:
     lines = pretty_xml.split("\n")
     non_empty_lines = [line for line in lines if line.strip() != ""]
     return "\n".join(non_empty_lines)
+
+
+# def smartset(element: ET.Element, key: str, value: str) -> None:
+#     """Set element attribute smartly.
+
+#     Initialize the attrib dictionary if it doesn't exist, then set the
+#     attribute specified by *key* to *value*.
+
+#     *key* is what attribute to set, and *value* is the attribute value to set it to.
+#     """
+#     if element.attrib is None:
+#         element.attrib = {}
+#     element.attrib[key] = value
 
 
 class Sim2SimRobot(mjcf.Robot):
@@ -124,36 +137,29 @@ class Sim2SimRobot(mjcf.Robot):
         sensor_frc: List[mjcf.Actuatorfrc] = []
         # Create motors and sensors for the joints
         joints = list(root.findall("joint"))
-        for joint, limits in StompyFixed.default_limits().items():
-            if joint in StompyFixed.default_standing().keys():
-                effort = 200
-                if joint in StompyFixed.eff
-                if joint in StompyFixed.default_effort.keys():
-                    minmaxeffort = default_effort[joint]
-                    motors.append(
-                        mjcf.Motor(
-                            name=joint,
-                            joint=joint,
-                            gear=1,
-                            ctrlrange=(-, 200),
-                            ctrllimited=True,
-                        )
+        for joint, limits in stompy.default_limits().items():
+            if joint in stompy.default_standing().keys():
+                joint_name = joint
+                limit = 200
+                keys = stompy.effort().keys()
+                for key in keys:
+                    if key in joint_name:
+                        limit = stompy.effort()[key]
+
+                motors.append(
+                    mjcf.Motor(
+                        name=joint,
+                        joint=joint,
+                        gear=1,
+                        ctrlrange=(-limit, limit),
+                        ctrllimited=True,
                     )
-                else:
-                    motors.append(
-                        mjcf.Motor(
-                            name=joint,
-                            joint=joint,
-                            gear=1,
-                            ctrlrange=(-200, 200),
-                            ctrllimited=True,
-                        )
-                    )
+                )
                 sensor_pos.append(mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"))
                 sensor_vel.append(mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"))
                 sensor_frc.append(mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001))
 
-        root = self.add_joint_limits(root, fixed=False)
+        root = self.update_joints(root, add_reference_position=add_reference_position)
 
         # Add motors and sensors
         root.append(mjcf.Actuator(motors).to_xml())
@@ -236,9 +242,6 @@ class Sim2SimRobot(mjcf.Robot):
         for joint in reversed(joints):
             root_body.insert(0, joint)
 
-        if add_reference_position:
-            root = self.add_reference_position(root)
-
         # add visual geom logic
         for body in root.findall(".//body"):
             original_geoms = list(body.findall("geom"))
@@ -271,19 +274,11 @@ class Sim2SimRobot(mjcf.Robot):
                     if "actuatorfrcrange" in join.attrib:
                         join.attrib.pop("actuatorfrcrange")
 
-    def add_reference_position(self, root: ET.Element) -> None:
-        # Find all 'joint' elements
-        joints = root.findall(".//joint")
-
-        default_standing = MjcfStompy.default_standing()
-        for joint in joints:
-            if joint.get("name") in default_standing.keys():
-                joint.set("ref", str(default_standing[joint.get("name")]))
-
-        return root
-
-    def add_joint_limits(self, root: ET.Element, fixed: bool = False) -> None:
-        joint_limits = MjcfStompy.default_limits()
+    def update_joints(self, root: ET.Element, add_reference_position: bool = False) -> None:
+        joint_limits = stompy.default_limits()
+        joint_stiffness = stompy.stiffness()
+        joint_damping = stompy.damping()
+        default_standing = stompy.default_standing()
 
         for joint in root.findall(".//joint"):
             joint_name = joint.get("name")
@@ -292,6 +287,25 @@ class Sim2SimRobot(mjcf.Robot):
                 lower = str(limits.get("lower", 0.0))
                 upper = str(limits.get("upper", 0.0))
                 joint.set("range", f"{lower} {upper}")
+
+                damping = 0.01
+                keys = stompy.damping().keys()
+                for key in keys:
+                    if key in joint_name:
+                        damping = stompy.damping()[key]
+                joint.set("damping", str(damping))
+
+                stiffness = 0
+                keys = stompy.stiffness().keys()
+                for key in keys:
+                    if key in joint_name:
+                        stiffness = stompy.stiffness()[key]
+
+                joint.set("stiffness", str(stiffness))
+
+                if add_reference_position:
+                    if joint_name in default_standing.keys():
+                        joint.set("ref", str(default_standing[joint_name]))
 
         return root
 
