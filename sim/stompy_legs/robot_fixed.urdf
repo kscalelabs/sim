@@ -128,8 +128,8 @@
     <origin xyz="-0.0071596999 -0.057556396 0.0245" rpy="3.1415927 0 -1.5707963" />
     <parent link="link_leg_assembly_left_1_rmd_x12_150_mock_1_outer_x12_150_1" />
     <child link="link_leg_assembly_left_1_rmd_x12_150_mock_1_inner_x12_150_1" />
-    <limit effort="80" velocity="2.25" lower="0.5" upper="2.69" />
-        <dynamics damping="0." friction="0." />
+    <limit effort="90" velocity="9" lower="0.5" upper="2.69" />
+        <dynamics damping="0." friction="0.0" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_leg_assembly_right_1_rmd_x12_150_mock_1_inner_x12_150_1">
@@ -158,8 +158,8 @@
     <origin xyz="-0.0071596999 -0.057556396 0.0245" rpy="3.1415927 0 -1.5707963" />
     <parent link="link_leg_assembly_right_1_rmd_x12_150_mock_1_outer_x12_150_1" />
     <child link="link_leg_assembly_right_1_rmd_x12_150_mock_1_inner_x12_150_1" />
-    <limit effort="80" velocity="2.25" lower="-1" upper="1" />
-      <dynamics damping="0." friction="0." />
+    <limit effort="90" velocity="9" lower="-1" upper="1" />
+      <dynamics damping="0." friction="0.0" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_leg_assembly_left_1_leg_part_2_left_1">
@@ -296,9 +296,9 @@
     <origin xyz="0.018560146 -0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_left_1_rmd_x8_90_mock_1_outer_rmd_x8_90_1" />
     <child link="link_leg_assembly_left_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1" />
-    <limit effort="80" velocity="2.25" lower="0.5" upper="1.19" />
+    <limit effort="90" velocity="9" lower="0.5" upper="1.19" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.0" />
     </joint>
   <link name="link_leg_assembly_right_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1">
     <visual>
@@ -327,9 +327,9 @@
     <origin xyz="0.018560146 0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_right_1_rmd_x8_90_mock_1_outer_rmd_x8_90_1" />
     <child link="link_leg_assembly_right_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1" />
-    <limit effort="80" velocity="2.25" lower="-2.2" upper="-1" />
+    <limit effort="90" velocity="9" lower="-2.2" upper="-1" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.0" />
     </joint>
   <link name="link_leg_assembly_left_1_leg_part_3_1">
     <visual>
@@ -519,9 +519,9 @@
     <origin xyz="-0.044808157 0.018560146 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_left_1_rmd_x8_90_mock_2_outer_rmd_x8_90_1" />
     <child link="link_leg_assembly_left_1_rmd_x8_90_mock_2_inner_rmd_x8_90_1" />
-    <limit effort="80" velocity="2.25" lower="-0.5" upper="0.5" />
+    <limit effort="90" velocity="9" lower="-0.5" upper="0.5" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.0" />
     </joint>
   <link name="link_leg_assembly_right_1_rmd_x8_90_mock_2_inner_rmd_x8_90_1">
     <visual>
@@ -549,9 +549,9 @@
     <origin xyz="-0.044808157 0.018560146 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_right_1_rmd_x8_90_mock_2_outer_rmd_x8_90_1" />
     <child link="link_leg_assembly_right_1_rmd_x8_90_mock_2_inner_rmd_x8_90_1" />
-    <limit effort="80" velocity="2.25" lower="-2.39" upper="-1" />
+    <limit effort="90" velocity="9" lower="-2.39" upper="-1" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.0" />
     </joint>
   <link name="link_leg_assembly_left_1_let_part_5_left_1">
     <visual>
@@ -687,9 +687,9 @@
     <origin xyz="-0.018560146 0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_left_1_rmd_x8_90_mock_3_outer_rmd_x8_90_1" />
     <child link="link_leg_assembly_left_1_rmd_x8_90_mock_3_inner_rmd_x8_90_1" />
-    <limit effort="80" velocity="2.25" lower="0.5" upper="2.5" />
+    <limit effort="90" velocity="9" lower="0.5" upper="2.5" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.0" />
     </joint>
   <link name="link_leg_assembly_right_1_rmd_x8_90_mock_3_inner_rmd_x8_90_1">
     <visual>
@@ -717,9 +717,9 @@
     <origin xyz="-0.018560146 -0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_right_1_rmd_x8_90_mock_3_outer_rmd_x8_90_1" />
     <child link="link_leg_assembly_right_1_rmd_x8_90_mock_3_inner_rmd_x8_90_1" />
-    <limit effort="80" velocity="2.25" lower="1.54" upper="3" />
+    <limit effort="90" velocity="9" lower="1.54" upper="3" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.0" />
     </joint>
   <link name="link_leg_assembly_left_1_leg_part_6_2">
     <visual>
@@ -909,9 +909,9 @@
     <origin xyz="-0.012380881 -0.0039640631 -0.025" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_left_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" />
     <child link="link_leg_assembly_left_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1" />
-    <limit effort="80" velocity="2.25" lower="-0.8" upper="0.6" />
+    <limit effort="24" velocity="2.4" lower="-0.8" upper="0.6" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.0" />
     </joint>
   <link name="link_leg_assembly_right_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1">
     <visual>
@@ -939,9 +939,9 @@
     <origin xyz="-0.012380881 -0.0039640631 -0.025" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_right_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" />
     <child link="link_leg_assembly_right_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1" />
-    <limit effort="80" velocity="2.25" lower="0" upper="1.5" />
+    <limit effort="24" velocity="2.4" lower="0" upper="1.5" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.0" />
     </joint>
   <link name="link_left_foot_1_ankle_half_2_left_1">
     <visual>
@@ -1131,9 +1131,9 @@
     <origin xyz="0 0.0245 0.02" rpy="0 0 -1.5707963" />
     <parent link="link_left_foot_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1" />
     <child link="link_left_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" />
-    <limit effort="80" velocity="2.25" lower="1" upper="5" />
+    <limit effort="24" velocity="2.4" lower="1" upper="2.3" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.1" />
     </joint>
   <link name="link_right_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1">
     <visual>
@@ -1161,9 +1161,9 @@
     <origin xyz="0 -0.0245 0.02" rpy="0 0 1.5707963" />
     <parent link="link_right_foot_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1" />
     <child link="link_right_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" />
-    <limit effort="80" velocity="2.25" lower="1" upper="2.3" />
+    <limit effort="24" velocity="2.4" lower="1" upper="2.3" />
     <axis xyz="0 0 -1" />
-      <dynamics damping="0." friction="0." />
+      <dynamics damping="0." friction="0.1" />
     </joint>
   <link name="link_left_foot_1_foot_1">
     <visual>

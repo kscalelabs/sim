@@ -52,7 +52,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
 
         collapse_fixed_joints = True
-        default_dof_drive_mode = 3  # see GymDofDriveModeFlags (0 is none, 1 is pos tgt, 2 is vel tgt, 3 effort)
+        # default_dof_drive_mode = 3  # see GymDofDriveModeFlags (0 is none, 1 is pos tgt, 2 is vel tgt, 3 effort)
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -98,14 +98,8 @@ class OnlyLegsCfg(LeggedRobotCfg):
     class control(LeggedRobotCfg.control):
         stiffness = Stompy.stiffness()
         damping = Stompy.damping()
-        # pfb30 - todo
-        # effort = {
 
-        # }
-        # velocity = {
-
-        # }
-        action_scale = 1
+        action_scale = 0.25
 
         decimation = 10  # 100hz
 
@@ -173,23 +167,23 @@ class OnlyLegsCfg(LeggedRobotCfg):
         max_contact_force = 100  # forces above this value are penalized
 
         class scales:
-            # # reference motion tracking
-            # joint_pos = 1.6
-            # feet_clearance = 1.0
-            # feet_contact_number = 1.2
-            # # # gait
-            # feet_air_time = 1.0
-            # foot_slip = -0.05
-            # feet_distance = 0.2
-            # knee_distance = 0.2
-            # # contact
-            # feet_contact_forces = -0.01
-            # # # vel tracking
-            # tracking_lin_vel = 1.2
-            # tracking_ang_vel = 1.1
-            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
-            # track_vel_hard = 0.5
+            # reference motion tracking
+            joint_pos = 1.6
+            feet_clearance = 1.0
+            feet_contact_number = 1.2
+            # # gait
+            feet_air_time = 1.0
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
+            # contact
+            feet_contact_forces = -0.01
+            # # vel tracking
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5
 
             # above this was removed for standing policy
             # base pos
