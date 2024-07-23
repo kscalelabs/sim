@@ -17,8 +17,6 @@ class OnlyLegsCfg(LeggedRobotCfg):
     """
 
     class env(LeggedRobotCfg.env):
-        # change the observation dim
-
         frame_stack = 15
         c_frame_stack = 3
         num_single_obs = 11 + NUM_JOINTS * 3
@@ -45,14 +43,13 @@ class OnlyLegsCfg(LeggedRobotCfg):
         foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
         knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
-        termination_height = 0.23
+        termination_height = 0.26
         default_feet_height = 0.0
 
         penalize_contacts_on = []
-        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 1 # 1 to disable, 0 to enable...bitwise filter
 
         collapse_fixed_joints = True
-        # default_dof_drive_mode = 3  # see GymDofDriveModeFlags (0 is none, 1 is pos tgt, 2 is vel tgt, 3 effort)
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -88,7 +85,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, 0.72]
-
+        rot = [0.0, 0, 0.7071068, 0.7071068]
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
         default_positions = Stompy.default_standing()
@@ -106,13 +103,14 @@ class OnlyLegsCfg(LeggedRobotCfg):
         dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
+        # gravity = [0., 0. , -9.81]  # [m/s^2]
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
             # pfb30
-            solver_type = 1 # 0: pgs, 1: tgs
+            solver_type = 0 # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 0
+            num_velocity_iterations = 1
             contact_offset = 0.01 # [m]
             rest_offset = 0.0 # [m]
             bounce_threshold_velocity = 0.5 # [m/s]
@@ -126,7 +124,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = True
+        randomize_base_mass = False
         added_mass_range = [-0.3, 0.3]
         push_robots = False
         push_interval_s = 4
@@ -137,14 +135,14 @@ class OnlyLegsCfg(LeggedRobotCfg):
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
         num_commands = 4
-        resampling_time = 30.0  # time before command are changed[s]
+        resampling_time = 8.0  # time before command are changed[s]
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.3, 0.6]  # min max [m/s]
-            lin_vel_y = [-0.3, 0.3]  # min max [m/s]
+            lin_vel_x = [0, 0.6]  # min max [m/s]
+            lin_vel_y = [0, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-3.14, 3.14]
+            heading = [-.2, .2]
 
     class rewards:
         # quite important to keep it right
@@ -169,14 +167,14 @@ class OnlyLegsCfg(LeggedRobotCfg):
             joint_pos = 1.6
             feet_clearance = 1.0
             feet_contact_number = 1.2
-            # # gait
+            # gait
             feet_air_time = 1.0
             foot_slip = -0.05
             feet_distance = 0.2
             knee_distance = 0.2
             # contact
             feet_contact_forces = -0.01
-            # # vel tracking
+            # vel tracking
             tracking_lin_vel = 1.2
             tracking_ang_vel = 1.1
             vel_mismatch_exp = 0.5  # lin_z; ang x,y

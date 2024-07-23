@@ -85,21 +85,19 @@ class Stompy(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            # legs
-            Stompy.legs.left.hip_pitch: 1.61,
-            Stompy.legs.left.hip_yaw: 1,
-            Stompy.legs.left.hip_roll: 0,
-            Stompy.legs.left.knee_pitch: 2.05,
-            Stompy.legs.left.ankle_pitch: 0.33,
+            Stompy.legs.left.hip_pitch: 1.17,
+            Stompy.legs.left.hip_roll: 0.1,
+            Stompy.legs.left.hip_yaw: 1.03,
+            Stompy.legs.left.knee_pitch: 1.13,
+            Stompy.legs.left.ankle_pitch: -0.27,
             Stompy.legs.left.ankle_roll: 1.73,
-            Stompy.legs.right.hip_pitch: 0,
-            Stompy.legs.right.hip_yaw: -2.15,
+            Stompy.legs.right.hip_pitch: 0.38,
             Stompy.legs.right.hip_roll: -1.6,
-            Stompy.legs.right.knee_pitch: 2.16,
-            Stompy.legs.right.ankle_pitch: 0.5,
+            Stompy.legs.right.hip_yaw: -2.15,
+            Stompy.legs.right.knee_pitch: 2.94,
+            Stompy.legs.right.ankle_pitch: 0.8,
             Stompy.legs.right.ankle_roll: 1.72,
         }
-
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
@@ -117,7 +115,7 @@ class Stompy(Node):
             },
             Stompy.legs.left.knee_pitch: {
                 "lower": 0.5,
-                "upper": 2.5,
+                "upper": 2.25,
             },
             Stompy.legs.left.ankle_pitch: {
                 "lower": -0.8,
@@ -140,8 +138,8 @@ class Stompy(Node):
                 "upper": -1,
             },
             Stompy.legs.right.knee_pitch: {
-                "lower": 1.54,
-                "upper": 3,
+                "lower": 2.09,
+                "upper": 3.2,
             },
             Stompy.legs.right.ankle_pitch: {
                 "lower": 0,
@@ -193,8 +191,8 @@ class Stompy(Node):
             "hip yaw": 40,
             "hip roll": 40,
             "knee pitch": 40,
-            "ankle pitch": 32,
-            "ankle roll": 32,
+            "ankle pitch": 12,
+            "ankle roll": 12,
         }
 
     @classmethod

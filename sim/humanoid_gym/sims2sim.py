@@ -40,7 +40,6 @@ from collections import deque
 from scipy.spatial.transform import Rotation as R
 from copy import deepcopy
 
-# from humanoid.envs import XBotLCfg
 from sim.humanoid_gym.envs import OnlyLegsCfg
 import torch
 from sim.stompy_legs.joints import Stompy
@@ -50,13 +49,6 @@ JOINT_NAMES = [
     'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw',
     'right hip roll' ,  'right knee pitch', 'right ankle pitch','right ankle roll'
 ]
-
-
-# Test exact actions
-# # Load the data
-# observations_sim = np.load('observations.npy')
-actions_sim = np.load('actions.npy')
-
 
 class cmd:
     vx = -0.0
@@ -134,9 +126,8 @@ def run_mujoco(policy, cfg):
     for _ in range(cfg.env.frame_stack):
         hist_obs.append(np.zeros([1, cfg.env.num_single_obs], dtype=np.double))
 
-    kk=0
     count_lowlevel = 0
-    print("start sim2sim")
+
     for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
 
         # Obtain an observation
@@ -173,9 +164,6 @@ def run_mujoco(policy, cfg):
                 policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
 
-            # pfb30 - todo test
-            # action[:] = actions_sim[kk]
-            kk+=1
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
 
             target_q = action * cfg.control.action_scale
