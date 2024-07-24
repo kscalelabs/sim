@@ -11,10 +11,10 @@ quickly.
 import isaacgym # isort:skip
 import torch #isort:skip
 # fmt: on
-from .getup_config import GetupCfg, GetupCfgPPO
-from .getup_env import GetupFreeEnv
-from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO
-from .only_legs_env import OnlyLegsFreeEnv
+# from .getup_config import GetupCfg, GetupCfgPPO
+# from .getup_env import GetupFreeEnv
+# from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO
+# from .only_legs_env import OnlyLegsFreeEnv
 from .stompy_config import StompyCfg, StompyCfgPPO
 from .stompy_env import StompyFreeEnv
 
@@ -28,8 +28,8 @@ def register_tasks() -> None:
     from humanoid.utils.task_registry import task_registry
 
     task_registry.register("stompy_ppo", StompyFreeEnv, StompyCfg(), StompyCfgPPO())
-    task_registry.register("getup_ppo", GetupFreeEnv, GetupCfg(), GetupCfgPPO())
-    task_registry.register("only_legs_ppo", OnlyLegsFreeEnv, OnlyLegsCfg(), OnlyLegsCfgPPO())
+    # task_registry.register("getup_ppo", GetupFreeEnv, GetupCfg(), GetupCfgPPO())
+    # task_registry.register("only_legs_ppo", OnlyLegsFreeEnv, OnlyLegsCfg(), OnlyLegsCfgPPO())
 
 
 register_tasks()
