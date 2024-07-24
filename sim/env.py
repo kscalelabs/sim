@@ -16,7 +16,7 @@ def stompy_urdf_path(legs_only: bool = False) -> Path:
     if legs_only:
         stompy_path = model_dir() / "robot_fixed.urdf"
     else:
-        stompy_path = model_dir() / "robot.urdf"
+        stompy_path = model_dir() / "robot_fixed.urdf"
 
     if not stompy_path.exists():
         raise FileNotFoundError(f"URDF file not found: {stompy_path}")
@@ -28,7 +28,7 @@ def stompy_mjcf_path(legs_only: bool = False) -> Path:
     if legs_only:
         stompy_path = model_dir() / "robot_fixed.xml"
     else:
-        stompy_path = model_dir() / "robot.xml"
+        stompy_path = model_dir() / "robot_fixed.xml"
 
     if not stompy_path.exists():
         raise FileNotFoundError(f"MJCF file not found: {stompy_path}")
