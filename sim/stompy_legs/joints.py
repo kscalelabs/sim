@@ -98,6 +98,7 @@ class Stompy(Node):
             Stompy.legs.right.ankle_pitch: 0.8,
             Stompy.legs.right.ankle_roll: 1.72,
         }
+
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
@@ -130,8 +131,8 @@ class Stompy(Node):
                 "upper": 1,
             },
             Stompy.legs.right.hip_yaw: {
-                "lower": -2.2,
-                "upper": -1,
+                "lower": -2.6,
+                "upper": -1.5,
             },
             Stompy.legs.right.hip_roll: {
                 "lower": -2.39,
@@ -150,6 +151,7 @@ class Stompy(Node):
                 "upper": 2.3,
             },
         }
+
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
@@ -158,9 +160,10 @@ class Stompy(Node):
             "hip yaw": 150,
             "hip roll": 150,
             "knee pitch": 150,
-            "ankle pitch": 45,
-            "ankle roll": 45,
+            "ankle pitch": 0,
+            "ankle roll": 0,
         }
+
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
@@ -169,9 +172,10 @@ class Stompy(Node):
             "hip yaw": 10,
             "hip roll": 10,
             "knee pitch": 10,
-            "ankle pitch": 3,
-            "ankle roll": 3,
+            "ankle pitch": 10,
+            "ankle roll": 10,
         }
+
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
@@ -183,6 +187,7 @@ class Stompy(Node):
             "ankle pitch": 24,
             "ankle roll": 24,
         }
+
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
@@ -250,6 +255,7 @@ class Stompy(Node):
             "ankle pitch": 12,
             "ankle roll": 12,
         }
+
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
