@@ -49,7 +49,7 @@ def _pretty_print_xml(xml_string: str) -> str:
 class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
-    def adapt_world(self, add_floor: bool = True, remove_frc_range: bool = False) -> None:
+    def adapt_world(self, add_floor: bool = True, remove_frc_range: bool = True) -> None:
         root: ET.Element = self.tree.getroot()
 
         if add_floor:
@@ -239,12 +239,12 @@ class Sim2SimRobot(mjcf.Robot):
                 index = list(body).index(geom)
                 body.insert(index + 1, new_geom)
 
-        if remove_frc_range:
-            for body in root.findall(".//body"):
-                joints = list(body.findall("joint"))
-                for join in joints:
-                    if "actuatorfrcrange" in join.attrib:
-                        join.attrib.pop("actuatorfrcrange")
+        for body in root.findall(".//body"):
+            joints = list(body.findall("joint"))
+            for join in joints:
+                print(join)
+                if "actuatorfrcrange" in join.attrib:
+                    join.attrib.pop("actuatorfrcrange")
 
         # Adding keyframe
         default_standing = stompy.default_standing()
