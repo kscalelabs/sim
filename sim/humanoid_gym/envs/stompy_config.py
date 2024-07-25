@@ -142,7 +142,7 @@ class StompyCfg(LeggedRobotCfg):
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
             lin_vel_y = [-0.3, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-3.14, 3.14]
+            heading = [-.14, .14]
 
     class rewards:
         # quite important to keep it right
