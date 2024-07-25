@@ -479,7 +479,7 @@
     <origin xyz="0.018560146 0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_upper_left_arm_1_rmd_x8_90_mock_1_outer_rmd_x8_90_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_upper_left_arm_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1" />
-    <limit effort="90" velocity="5" lower="-0.251" upper="-0.25" />
+    <limit effort="0" velocity="0" lower="-0.251" upper="-0.25" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1">
@@ -508,7 +508,7 @@
     <origin xyz="0.018560146 0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x8_90_mock_1_outer_rmd_x8_90_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1" />
-    <limit effort="90" velocity="5" lower="2.7" upper="2.701" />
+    <limit effort="0" velocity="0" lower="2.7" upper="2.701" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_limb_assembly_7_dof_1_torso_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1">
@@ -537,7 +537,7 @@
     <origin xyz="-0.018560146 0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_torso_1_rmd_x8_90_mock_1_outer_rmd_x8_90_1" />
     <child link="link_upper_limb_assembly_7_dof_1_torso_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1" />
-    <limit effort="90" velocity="5" lower="-0.502" upper="-0.501" />
+    <limit effort="0" velocity="0" lower="-0.502" upper="-0.501" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_head_1_head_front_1">
@@ -863,7 +863,7 @@
     <origin xyz="0.018560146 0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_upper_left_arm_1_rmd_x8_90_mock_2_outer_rmd_x8_90_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_upper_left_arm_1_rmd_x8_90_mock_2_inner_rmd_x8_90_1" />
-    <limit effort="90" velocity="5" lower="1.82" upper="1.821" />
+    <limit effort="0" velocity="0" lower="1.82" upper="1.821" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x8_90_mock_2_inner_rmd_x8_90_1">
@@ -892,7 +892,7 @@
     <origin xyz="0.018560146 0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x8_90_mock_2_outer_rmd_x8_90_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x8_90_mock_2_inner_rmd_x8_90_1" />
-    <limit effort="90" velocity="5" lower="-1.82" upper="-1.819" />
+    <limit effort="0" velocity="0" lower="-1.82" upper="-1.819" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_limbs_1_part_1_1">
@@ -1386,7 +1386,7 @@
     <origin xyz="0 0 -0.025" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_upper_left_arm_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_upper_left_arm_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="-1.44" upper="-1.439" />
+    <limit effort="0" velocity="0" lower="-1.44" upper="-1.439" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1">
@@ -1415,7 +1415,7 @@
     <origin xyz="0 0 -0.025" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="-2.57" upper="-2.569" />
+    <limit effort="0" velocity="0" lower="-2.57" upper="-2.569" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_limbs_1_leg_assembly_left_1_rmd_x8_90_mock_1_inner_rmd_x8_90_1">
@@ -1826,7 +1826,7 @@
     <origin xyz="0.01225 0.021217622 -0.02" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_upper_left_arm_1_rmd_x4_24_mock_2_outer_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_upper_left_arm_1_rmd_x4_24_mock_2_inner_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="2.07" upper="2.071" />
+    <limit effort="0" velocity="0" lower="2.07" upper="2.071" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x4_24_mock_2_inner_rmd_x4_24_1">
@@ -1855,7 +1855,7 @@
     <origin xyz="0.01225 0.021217622 -0.02" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x4_24_mock_2_outer_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_upper_left_arm_1_rmd_x4_24_mock_2_inner_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="-2.57" upper="-2.569" />
+    <limit effort="0" velocity="0" lower="-2.57" upper="-2.569" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_limbs_1_leg_assembly_left_1_rmd_x8_90_mock_2_inner_rmd_x8_90_1">
@@ -2322,7 +2322,7 @@
     <origin xyz="0 0 -0.025" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_lower_arm_3_dof_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_lower_arm_3_dof_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="-2.51" upper="-2.509" />
+    <limit effort="0" velocity="0" lower="-2.51" upper="-2.509" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1">
@@ -2351,7 +2351,7 @@
     <origin xyz="0 0 -0.025" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_1_outer_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="0" upper="0.001" />
+    <limit effort="0" velocity="0" lower="0" upper="0.001" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_limbs_1_leg_assembly_left_1_leg_part_6_2">
@@ -2708,7 +2708,7 @@
     <origin xyz="0.0245 0 -0.02" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_lower_arm_3_dof_1_rmd_x4_24_mock_2_outer_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_lower_arm_3_dof_1_rmd_x4_24_mock_2_inner_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="3.33" upper="3.331" />
+    <limit effort="0" velocity="0" lower="3.33" upper="3.331" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_2_inner_rmd_x4_24_1">
@@ -2737,7 +2737,7 @@
     <origin xyz="0.0245 0 -0.02" rpy="3.1415927 0 0" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_2_outer_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_2_inner_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="0.251" upper="0.252" />
+    <limit effort="0" velocity="0" lower="0.251" upper="0.252" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_limbs_1_left_foot_1_ankle_half_2_left_1">
@@ -3094,7 +3094,7 @@
     <origin xyz="0 -0.0245 0.02" rpy="0 0 1.5707963" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_lower_arm_3_dof_1_rmd_x4_24_mock_3_outer_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_2_lower_arm_3_dof_1_rmd_x4_24_mock_3_inner_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="0.0628" upper="0.0638" />
+    <limit effort="0" velocity="0" lower="0.0628" upper="0.0638" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_3_inner_rmd_x4_24_1">
@@ -3123,7 +3123,7 @@
     <origin xyz="0 -0.0245 0.02" rpy="0 0 1.5707963" />
     <parent link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_3_outer_rmd_x4_24_1" />
     <child link="link_upper_limb_assembly_7_dof_1_full_arm_7_dof_1_lower_arm_3_dof_1_rmd_x4_24_mock_3_inner_rmd_x4_24_1" />
-    <limit effort="24" velocity="5" lower="1.38" upper="1.381" />
+    <limit effort="0" velocity="0" lower="1.38" upper="1.381" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_limbs_1_left_foot_1_foot_1">
