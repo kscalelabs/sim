@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import List, Union
 
 from sim import mjcf
-from sim.stompy.joints import Stompy
+from sim.stompy_legs.joints import Stompy
 
 logger = logging.getLogger(__name__)
 
@@ -242,7 +242,6 @@ class Sim2SimRobot(mjcf.Robot):
         for body in root.findall(".//body"):
             joints = list(body.findall("joint"))
             for join in joints:
-                print(join)
                 if "actuatorfrcrange" in join.attrib:
                     join.attrib.pop("actuatorfrcrange")
 
