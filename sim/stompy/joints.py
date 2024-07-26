@@ -275,14 +275,14 @@ class Stompy(Node):
             "knee pitch": 150,
             "ankle pitch": 45,
             "ankle roll": 45,
-            "shoulder pitch": 0,
-            "shoulder yaw": 0,
-            "shoulder roll": 0,
-            "elbow pitch": 0,
-            "wrist roll": 0,
-            "wrist pitch": 0,
-            "wrist yaw": 0,
-            "torso roll": 0,
+            "shoulder pitch": 1,
+            "shoulder yaw": 1,
+            "shoulder roll": 1,
+            "elbow pitch": 1,
+            "wrist roll": 1,
+            "wrist pitch": 1,
+            "wrist yaw": 1,
+            "torso roll": 1,
         }
 
     # d_gains
@@ -295,14 +295,15 @@ class Stompy(Node):
             "knee pitch": 10,
             "ankle pitch": 10,
             "ankle roll": 10,
-            "shoulder pitch": 0,
-            "shoulder yaw": 0,
-            "shoulder roll": 0,
-            "elbow pitch": 0,
-            "wrist roll": 0,
-            "wrist pitch": 0,
-            "wrist yaw": 0,
-            "torso roll": 0,
+            
+            "shoulder pitch": 1,
+            "shoulder yaw": 1,
+            "shoulder roll": 1,
+            "elbow pitch": 1,
+            "wrist roll": 1,
+            "wrist pitch": 1,
+            "wrist yaw": 1,
+            "torso roll": 1,
         }
 
     # pos_limits
@@ -328,22 +329,39 @@ class Stompy(Node):
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
+        # return {
+        #     "hip pitch": 40,
+        #     "hip yaw": 40,
+        #     "hip roll": 40,
+        #     "knee pitch": 40,
+        #     "ankle pitch": 40,
+        #     "ankle roll": 40,
+        #     "shoulder pitch": 40,
+        #     "shoulder yaw": 40,
+        #     "shoulder roll": 40,
+        #     "elbow pitch": 40,
+        #     "wrist roll": 40,
+        #     "wrist pitch": 40,
+        #     "wrist yaw": 40,
+        #     "torso roll": 40,
+        # }
         return {
-            "hip pitch": 40,
-            "hip yaw": 40,
-            "hip roll": 40,
-            "knee pitch": 40,
-            "ankle pitch": 24,
-            "ankle roll": 24,
-            "shoulder pitch": 12,
-            "shoulder yaw": 12,
-            "shoulder roll": 12,
-            "elbow pitch": 12,
-            "wrist roll": 12,
-            "wrist pitch": 12,
-            "wrist yaw": 12,
-            "torso roll": 12,
+            "hip pitch": 150,
+            "hip yaw": 150,
+            "hip roll": 150,
+            "knee pitch": 150,
+            "ankle pitch": 150,
+            "ankle roll": 150,
+            "shoulder pitch": 150,
+            "shoulder yaw": 150,
+            "shoulder roll": 150,
+            "elbow pitch": 150,
+            "wrist roll": 150,
+            "wrist pitch": 150,
+            "wrist yaw": 150,
+            "torso roll": 150,
         }
+
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
