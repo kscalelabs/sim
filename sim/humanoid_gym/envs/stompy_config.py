@@ -44,7 +44,7 @@ class StompyCfg(LeggedRobotCfg):
         foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
         knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
-        termination_height = 0.23
+        termination_height = 0.35
         default_feet_height = 0.0
         terminate_after_contacts_on = ["link_upper_limb_assembly_7_dof_1_torso_1_top_skeleton_2"]
 
@@ -108,11 +108,11 @@ class StompyCfg(LeggedRobotCfg):
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 12
-            solver_type = 0  # 0: pgs, 1: tgs
+            solver_type = 0 # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
             contact_offset = 0.01  # [m]
-            rest_offset = 0.0  # [m]
+            rest_offset =-0.02  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
@@ -230,7 +230,7 @@ class StompyCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 10001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations

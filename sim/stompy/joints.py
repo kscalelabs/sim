@@ -153,65 +153,65 @@ class Stompy(Node):
         return {
             # torso
             Stompy.torso.roll: {
-                "lower": -0.502,
+                "lower": -0.503,
                 "upper": -0.501,
             },
             # left arm
             Stompy.left_arm.shoulder_pitch: {
-                "lower": -0.251,
+                "lower": -0.252,
                 "upper": -0.250,
             },
             Stompy.left_arm.shoulder_yaw: {
-                "lower": 1.82,
+                "lower": 1.819,
                 "upper": 1.821,
             },
             Stompy.left_arm.shoulder_roll: {
-                "lower": -1.44,
+                "lower": -1.45,
                 "upper": -1.439,
             },
             Stompy.left_arm.elbow_pitch: {
-                "lower": 2.07,
+                "lower": 2.06,
                 "upper": 2.071,
             },
             Stompy.left_arm.hand.wrist_roll: {
-                "lower": -2.51,
+                "lower": -2.512,
                 "upper": -2.509,
             },
             Stompy.left_arm.hand.wrist_pitch: {
-                "lower": 3.33,
+                "lower": 3.32,
                 "upper": 3.331,
             },
             Stompy.left_arm.hand.wrist_yaw: {
-                "lower": 0.0628,
+                "lower": 0.062,
                 "upper": 0.0638,
             },
             # right arm
             Stompy.right_arm.shoulder_pitch: {
-                "lower": 2.7,
+                "lower": 2.69,
                 "upper": 2.701,
             },
             Stompy.right_arm.shoulder_yaw: {
-                "lower": -1.82,
+                "lower": -1.83,
                 "upper": -1.819,
             },
             Stompy.right_arm.shoulder_roll: {
-                "lower": -2.57,
+                "lower": -2.58,
                 "upper": -2.569,
             },
             Stompy.right_arm.elbow_pitch: {
-                "lower": -2.57,
+                "lower": -2.58,
                 "upper": -2.569,
             },
             Stompy.right_arm.hand.wrist_roll: {
-                "lower": 0,
+                "lower": -0.01,
                 "upper": 0.001,
             },
             Stompy.right_arm.hand.wrist_pitch: {
-                "lower": 0.251,
+                "lower": 0.250,
                 "upper": 0.252,
             },
             Stompy.right_arm.hand.wrist_yaw: {
-                "lower": 1.38,
+                "lower": 1.37,
                 "upper": 1.381,
             },
             # left leg
@@ -315,14 +315,14 @@ class Stompy(Node):
             "knee pitch": 90,
             "ankle pitch": 24,
             "ankle roll": 24,
-            "shoulder pitch": 0,
-            "shoulder yaw": 0,
-            "shoulder roll": 0,
-            "elbow pitch": 0,
-            "wrist roll": 0,
-            "wrist pitch": 0,
-            "wrist yaw": 0,
-            "torso roll": 0,
+            "shoulder pitch":24,
+            "shoulder yaw": 24,
+            "shoulder roll": 24,
+            "elbow pitch": 24,
+            "wrist roll": 24,
+            "wrist pitch": 24,
+            "wrist yaw": 24,
+            "torso roll": 150,
         }
 
     # vel_limits
@@ -333,16 +333,16 @@ class Stompy(Node):
             "hip yaw": 40,
             "hip roll": 40,
             "knee pitch": 40,
-            "ankle pitch": 12,
-            "ankle roll": 12,
-            "shoulder pitch": 0,
-            "shoulder yaw": 0,
-            "shoulder roll": 0,
-            "elbow pitch": 0,
-            "wrist roll": 0,
-            "wrist pitch": 0,
-            "wrist yaw": 0,
-            "torso roll": 0,
+            "ankle pitch": 24,
+            "ankle roll": 24,
+            "shoulder pitch": 12,
+            "shoulder yaw": 12,
+            "shoulder roll": 12,
+            "elbow pitch": 12,
+            "wrist roll": 12,
+            "wrist pitch": 12,
+            "wrist yaw": 12,
+            "torso roll": 12,
         }
 
     @classmethod
