@@ -108,9 +108,9 @@ class OnlyLegsCfg(LeggedRobotCfg):
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
             # pfb30
-            solver_type = 0  # 0: pgs, 1: tgs
+            solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 1
+            num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
             bounce_threshold_velocity = 0.5  # [m/s]
@@ -142,7 +142,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
             lin_vel_x = [0, 0.6]  # min max [m/s]
             lin_vel_y = [0, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-0.2, 0.2]
+            heading = [-3.14, 3.14]
 
     class rewards:
         # quite important to keep it right
