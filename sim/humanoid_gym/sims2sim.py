@@ -39,12 +39,14 @@ from copy import deepcopy
 import mujoco
 import mujoco_viewer
 import numpy as np
-import torch
+
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from sim.humanoid_gym.envs import OnlyLegsCfg
 from sim.stompy_legs.joints import Stompy
+
+import torch
 
 JOINT_NAMES = [
     "left hip pitch",

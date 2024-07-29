@@ -707,8 +707,8 @@
     <origin xyz="-0.018560146 0.044808157 -0.0475" rpy="3.1415927 0 0" />
     <parent link="link_leg_assembly_left_1_rmd_x8_90_mock_3_outer_rmd_x8_90_1" />
     <child link="link_leg_assembly_left_1_rmd_x8_90_mock_3_inner_rmd_x8_90_1" />
-    <limit effort="90" velocity="40" lower="-2.14" upper="-1.0" />
-    <axis xyz="0 0 1" />
+    <limit effort="90" velocity="40" lower="0.5" upper="2.5" />
+    <axis xyz="0 0 -1" />
     </joint>
   <link name="link_leg_assembly_right_1_rmd_x8_90_mock_3_inner_rmd_x8_90_1">
     <visual>

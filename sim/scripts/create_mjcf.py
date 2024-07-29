@@ -281,13 +281,13 @@ class Sim2SimRobot(mjcf.Robot):
                         damping = stompy.damping()[key]
                 joint.set("damping", str(damping))
 
-                stiffness = 0.0
-                keys = stompy.stiffness().keys()
-                for key in keys:
-                    if key in joint_name:
-                        stiffness = stompy.stiffness()[key]
+                # stiffness = 0.0
+                # keys = stompy.stiffness().keys()
+                # for key in keys:
+                #     if key in joint_name:
+                #         stiffness = stompy.stiffness()[key]
 
-                joint.set("stiffness", str(stiffness))
+                # joint.set("stiffness", str(stiffness))
 
         return root
 
