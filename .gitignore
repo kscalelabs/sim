@@ -27,4 +27,3 @@ out*/
 # Training artifacts
 wandb/
 runs/
-stompy/
