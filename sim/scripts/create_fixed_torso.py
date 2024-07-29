@@ -4,9 +4,9 @@
 import xml.etree.ElementTree as ET
 
 from sim.scripts.create_mjcf import create_mjcf
-from sim.stompy.joints import Stompy
+from sim.stompy_legs.joints import Stompy
 
-STOMPY_URDF = "sim/stompy"
+STOMPY_URDF = "sim/stompy_legs"
 
 
 def update_urdf() -> None:
@@ -53,4 +53,4 @@ def update_urdf() -> None:
 
 if __name__ == "__main__":
     update_urdf()
-    create_mjcf(STOMPY_URDF + "/robot_fixed.urdf")
+    create_mjcf(STOMPY_URDF + "/robot")

@@ -479,11 +479,12 @@ class Robot:
         # mujoco has a hard time reading meshes
         _copy_stl_files(self.output_dir / "meshes", self.output_dir)
 
-        urdf_tree = ET.parse(self.output_dir / f"{self.robot_name}.xml")
+        urdf_tree = ET.parse(self.output_dir / f"{self.robot_name}.urdf")
         root = urdf_tree.getroot()
 
         tree = ET.ElementTree(root)
         tree.write(self.output_dir / f"{self.robot_name}.urdf", encoding="utf-8", xml_declaration=True)
+
         model = mujoco.MjModel.from_xml_path((self.output_dir / f"{self.robot_name}.urdf").as_posix())
         mujoco.mj_saveLastXML((self.output_dir / f"{self.robot_name}.xml").as_posix(), model)
         # remove all the files
