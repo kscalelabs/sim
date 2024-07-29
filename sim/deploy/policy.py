@@ -110,7 +110,7 @@ class SimPolicy(Policy):
         """
         target_dof_vel = np.zeros(self.cfg.num_actions, dtype=np.double)
         # breakpoint()
-        res = ( (target_dof_pos - dof_pos) * kp + (target_dof_vel - dof_vel) * kd )
+        res = (target_dof_pos - dof_pos) * kp + (target_dof_vel - dof_vel) * kd
         # breakpoint()
         return res * 0.0025
 

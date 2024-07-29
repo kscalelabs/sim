@@ -21,7 +21,6 @@ def update_urdf() -> None:
     friction = stompy.friction()
 
     for joint in root.findall("joint"):
-    
         joint_name = joint.get("name")
         if joint_name not in revolute_joints:
             joint.set("type", "fixed")

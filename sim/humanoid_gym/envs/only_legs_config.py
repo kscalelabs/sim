@@ -47,7 +47,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         default_feet_height = 0.0
 
         penalize_contacts_on = []
-        self_collisions = 1 # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
 
         collapse_fixed_joints = True
         flip_visual_attachments = False
@@ -108,12 +108,12 @@ class OnlyLegsCfg(LeggedRobotCfg):
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
             # pfb30
-            solver_type = 0 # 0: pgs, 1: tgs
+            solver_type = 0  # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
-            contact_offset = 0.01 # [m]
-            rest_offset = 0.0 # [m]
-            bounce_threshold_velocity = 0.5 # [m/s]
+            contact_offset = 0.01  # [m]
+            rest_offset = 0.0  # [m]
+            bounce_threshold_velocity = 0.5  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
             default_buffer_size_multiplier = 5
@@ -142,13 +142,13 @@ class OnlyLegsCfg(LeggedRobotCfg):
             lin_vel_x = [0, 0.6]  # min max [m/s]
             lin_vel_y = [0, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-.2, .2]
+            heading = [-0.2, 0.2]
 
     class rewards:
         # quite important to keep it right
         base_height_target = 0.72
 
-        #distance between the knees and feet is2ac
+        # distance between the knees and feet is2ac
         min_dist = 0.2
         max_dist = 0.5
 

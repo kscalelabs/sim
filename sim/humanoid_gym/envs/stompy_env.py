@@ -139,7 +139,6 @@ class StompyFreeEnv(LeggedRobot):
 
         self.ref_action = 2 * self.ref_dof_pos
 
-
     def create_sim(self):
         """Creates simulation, terrain and evironments"""
         self.up_axis_idx = 2  # 2 for z, 1 for y -> adapt gravity accordingly

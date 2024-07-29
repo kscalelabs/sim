@@ -33,27 +33,40 @@ python sim/humanoid_gym/play.py --task only_legs_ppo --sim_device cpu
 python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt
 """
 import math
-import numpy as np
-import mujoco, mujoco_viewer
-from tqdm import tqdm
 from collections import deque
-from scipy.spatial.transform import Rotation as R
 from copy import deepcopy
 
-from sim.humanoid_gym.envs import OnlyLegsCfg
+import mujoco
+import mujoco_viewer
+import numpy as np
 import torch
+from scipy.spatial.transform import Rotation as R
+from tqdm import tqdm
+
+from sim.humanoid_gym.envs import OnlyLegsCfg
 from sim.stompy_legs.joints import Stompy
 
 JOINT_NAMES = [
-    'left hip pitch', 'left hip yaw','left hip roll',
-    'left knee pitch', 'left ankle pitch', 'left ankle roll',     'right hip pitch', 'right hip yaw',
-    'right hip roll' ,  'right knee pitch', 'right ankle pitch','right ankle roll'
+    "left hip pitch",
+    "left hip yaw",
+    "left hip roll",
+    "left knee pitch",
+    "left ankle pitch",
+    "left ankle roll",
+    "right hip pitch",
+    "right hip yaw",
+    "right hip roll",
+    "right knee pitch",
+    "right ankle pitch",
+    "right ankle roll",
 ]
+
 
 class cmd:
     vx = -0.0
     vy = -0.3
     dyaw = 0.0
+
 
 def quaternion_to_euler_array(quat):
     # Ensure quaternion is in the correct format [x, y, z, w]
@@ -77,19 +90,21 @@ def quaternion_to_euler_array(quat):
     # Returns roll, pitch, yaw in a NumPy array in radians
     return np.array([roll_x, pitch_y, yaw_z])
 
+
 def get_obs(data):
-    '''Extracts an observation from the mujoco data structure'''
+    """Extracts an observation from the mujoco data structure"""
     q = data.qpos.astype(np.double)
     dq = data.qvel.astype(np.double)
-    quat = data.sensor('orientation').data[[1, 2, 3, 0]].astype(np.double)
+    quat = data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double)
     r = R.from_quat(quat)
     v = r.apply(data.qvel[:3], inverse=True).astype(np.double)  # In the base frame
-    omega = data.sensor('angular-velocity').data.astype(np.double)
-    gvec = r.apply(np.array([0., 0., -1.]), inverse=True).astype(np.double)
+    omega = data.sensor("angular-velocity").data.astype(np.double)
+    gvec = r.apply(np.array([0.0, 0.0, -1.0]), inverse=True).astype(np.double)
     return (q, dq, quat, v, omega, gvec)
 
+
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
-    '''Calculates torques from position commands'''
+    """Calculates torques from position commands"""
     return kp * (target_q + default - q) - kd * dq
 
 
@@ -109,7 +124,7 @@ def run_mujoco(policy, cfg):
     data = mujoco.MjData(model)
 
     data.qpos = model.keyframe("default").qpos
-    default = deepcopy(model.keyframe("default").qpos)[-cfg.env.num_actions:]
+    default = deepcopy(model.keyframe("default").qpos)[-cfg.env.num_actions :]
     mujoco.mj_step(model, data)
 
     data.qvel = np.zeros_like(data.qvel)
@@ -132,8 +147,8 @@ def run_mujoco(policy, cfg):
 
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
-        q = q[-cfg.env.num_actions:]
-        dq = dq[-cfg.env.num_actions:]
+        q = q[-cfg.env.num_actions :]
+        dq = dq[-cfg.env.num_actions :]
 
         # 1000hz -> 100hz
         if count_lowlevel % cfg.sim_config.decimation == 0:
@@ -142,8 +157,8 @@ def run_mujoco(policy, cfg):
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
-            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt  / 0.64)
-            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt  / 0.64)
+            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
+            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
@@ -171,8 +186,9 @@ def run_mujoco(policy, cfg):
         target_dq = np.zeros((cfg.env.num_actions), dtype=np.double)
 
         # Generate PD control
-        tau = pd_control(target_q, q, cfg.robot_config.kps,
-                        target_dq, dq, cfg.robot_config.kds, default)  # Calc torques
+        tau = pd_control(
+            target_q, q, cfg.robot_config.kps, target_dq, dq, cfg.robot_config.kds, default
+        )  # Calc torques
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
 
@@ -185,23 +201,23 @@ def run_mujoco(policy, cfg):
     viewer.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Deployment script.')
-    parser.add_argument('--load_model', type=str, required=True,
-                        help='Run to load from.')
-    parser.add_argument('--terrain', action='store_true', help='terrain or plane')
-    parser.add_argument('--load_actions', action='store_true', help='saved_actions')
+    parser = argparse.ArgumentParser(description="Deployment script.")
+    parser.add_argument("--load_model", type=str, required=True, help="Run to load from.")
+    parser.add_argument("--terrain", action="store_true", help="terrain or plane")
+    parser.add_argument("--load_actions", action="store_true", help="saved_actions")
     args = parser.parse_args()
 
     class Sim2simCfg(OnlyLegsCfg):
 
         class sim_config:
-            mujoco_model_path = f'sim/stompy_legs/robot_fixed.xml'
+            mujoco_model_path = f"sim/stompy_legs/robot_fixed.xml"
             sim_duration = 60.0
             dt = 0.001
             decimation = 10
+
         # pfb30 - todo this should be update more often
         class robot_config:
             tau_factor = 0.85
