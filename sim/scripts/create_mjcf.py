@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Union
 
-from sim import mjcf
+from sim.scripts import mjcf
 from sim.stompy_legs.joints import Stompy
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ COLLISION_LINKS = [
 ]
 
 ROOT_HEIGHT = 0.72
-
+DAMPING_DEFAULT = 0.01
 stompy = Stompy()
 
 
@@ -50,6 +50,25 @@ def _pretty_print_xml(xml_string: str) -> str:
 class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
+    def update_joints(self, root: ET.Element, damping=DAMPING_DEFAULT) -> ET.Element:
+        joint_limits = stompy.default_limits()
+
+        for joint in root.findall(".//joint"):
+            joint_name = joint.get("name")
+            if joint_name in joint_limits:
+                limits = joint_limits.get(joint_name)
+                lower = str(limits.get("lower", 0.0))
+                upper = str(limits.get("upper", 0.0))
+                joint.set("range", f"{lower} {upper}")
+
+                keys = stompy.damping().keys()
+                for key in keys:
+                    if key in joint_name:
+                        damping = stompy.damping()[key]
+                joint.set("damping", str(damping))
+
+        return root
+    
     def adapt_world(self, add_floor: bool = True, remove_frc_range: bool = True) -> None:
         root: ET.Element = self.tree.getroot()
 
@@ -67,7 +86,6 @@ class Sim2SimRobot(mjcf.Robot):
 
         # Add the new root body to the worldbody
         worldbody.append(new_root_body)
-
 
         if add_floor:
             asset = root.find("asset")
@@ -132,8 +150,6 @@ class Sim2SimRobot(mjcf.Robot):
             )
         worldbody = root.find("worldbody")
   
-
-
         motors: List[mjcf.Motor] = []
         sensor_pos: List[mjcf.Actuatorpos] = []
         sensor_vel: List[mjcf.Actuatorvel] = []
@@ -263,9 +279,6 @@ class Sim2SimRobot(mjcf.Robot):
             for join in joints:
                 if "actuatorfrcrange" in join.attrib:
                     join.attrib.pop("actuatorfrcrange")
-
-        # Adding keyframe
-        # TODO pfb30 preserve order
         
         default_standing = stompy.default_standing()
         qpos = [0, 0, ROOT_HEIGHT, 1, 0, 0, 0] + list(default_standing.values())
@@ -273,7 +286,7 @@ class Sim2SimRobot(mjcf.Robot):
         keyframe = mjcf.Keyframe(keys=[default_key])
         root.append(keyframe.to_xml())  
 
-        # Swap left and right leg
+        # Swap left and right leg since our setup
         parent_body = root.find(".//body[@name='root']")
         if parent_body is not None:
             left = parent_body.find(".//body[@name='link_leg_assembly_left_1_rmd_x12_150_mock_1_inner_x12_150_1']")
@@ -283,26 +296,6 @@ class Sim2SimRobot(mjcf.Robot):
                 right_index = list(parent_body).index(right)
                 # Swap the bodies
                 parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
-
-    def update_joints(self, root: ET.Element) -> ET.Element:
-        joint_limits = stompy.default_limits()
-
-        for joint in root.findall(".//joint"):
-            joint_name = joint.get("name")
-            if joint_name in joint_limits:
-                limits = joint_limits.get(joint_name)
-                lower = str(limits.get("lower", 0.0))
-                upper = str(limits.get("upper", 0.0))
-                joint.set("range", f"{lower} {upper}")
-
-                damping = 0.01
-                keys = stompy.damping().keys()
-                for key in keys:
-                    if key in joint_name:
-                        damping = stompy.damping()[key]
-                joint.set("damping", str(damping))
-
-        return root
 
     def save(self, path: Union[str, Path]) -> None:
         rough_string = ET.tostring(self.tree.getroot(), "utf-8", xml_declaration=False)
