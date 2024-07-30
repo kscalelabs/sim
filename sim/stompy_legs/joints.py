@@ -116,7 +116,7 @@ class Stompy(Node):
             },
             Stompy.legs.left.knee_pitch: {
                 "lower": -2.14,
-                "upper": -1.,
+                "upper": -1.0,
             },
             Stompy.legs.left.ankle_pitch: {
                 "lower": -0.8,

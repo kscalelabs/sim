@@ -1,11 +1,12 @@
 # mypy: disable-error-code="valid-newtype"
 """This script updates the URDF file to fix the joints of the robot."""
+
 import argparse
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
 from sim.scripts.create_mjcf import create_mjcf
 from sim.stompy_legs.joints import Stompy
-
 
 
 def update_urdf(model_path: str) -> None:
@@ -47,7 +48,7 @@ def update_urdf(model_path: str) -> None:
     tree.write(Path(model_path) / "robot_fixed.urdf", xml_declaration=False)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Update URDF file to fix robot joints.")
     parser.add_argument("--model_path", type=str, help="Path to the model directory", default="sim/stompy_legs")
     args = parser.parse_args()

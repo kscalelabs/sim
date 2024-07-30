@@ -50,7 +50,7 @@ def _pretty_print_xml(xml_string: str) -> str:
 class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
-    def update_joints(self, root: ET.Element, damping=DAMPING_DEFAULT) -> ET.Element:
+    def update_joints(self, root: ET.Element, damping: float = DAMPING_DEFAULT) -> ET.Element:
         joint_limits = stompy.default_limits()
 
         for joint in root.findall(".//joint"):
@@ -68,7 +68,7 @@ class Sim2SimRobot(mjcf.Robot):
                 joint.set("damping", str(damping))
 
         return root
-    
+
     def adapt_world(self, add_floor: bool = True, remove_frc_range: bool = True) -> None:
         root: ET.Element = self.tree.getroot()
 
@@ -149,7 +149,7 @@ class Sim2SimRobot(mjcf.Robot):
                 ).to_xml(),
             )
         worldbody = root.find("worldbody")
-  
+
         motors: List[mjcf.Motor] = []
         sensor_pos: List[mjcf.Actuatorpos] = []
         sensor_vel: List[mjcf.Actuatorvel] = []
@@ -279,12 +279,12 @@ class Sim2SimRobot(mjcf.Robot):
             for join in joints:
                 if "actuatorfrcrange" in join.attrib:
                     join.attrib.pop("actuatorfrcrange")
-        
+
         default_standing = stompy.default_standing()
         qpos = [0, 0, ROOT_HEIGHT, 1, 0, 0, 0] + list(default_standing.values())
         default_key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
         keyframe = mjcf.Keyframe(keys=[default_key])
-        root.append(keyframe.to_xml())  
+        root.append(keyframe.to_xml())
 
         # Swap left and right leg since our setup
         parent_body = root.find(".//body[@name='root']")
@@ -306,7 +306,7 @@ class Sim2SimRobot(mjcf.Robot):
             f.write(formatted_xml)
 
 
-def create_mjcf(filepath: str) -> None:
+def create_mjcf(filepath: Path) -> None:
     """Create a MJCF file for the Stompy robot."""
     path = Path(filepath)
     robot_name = path.stem
