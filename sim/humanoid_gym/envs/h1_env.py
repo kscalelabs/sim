@@ -5,9 +5,9 @@ import torch  # type: ignore[import]
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
-from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
+from isaacgym import gymtorch
 from sim.h1_2.joints import Stompy
 
 
@@ -137,7 +137,6 @@ class H1FreeEnv(LeggedRobot):
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
 
         self.ref_action = 2 * self.ref_dof_pos
-
 
     def create_sim(self):
         """Creates simulation, terrain and evironments"""
