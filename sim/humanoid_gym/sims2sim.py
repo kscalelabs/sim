@@ -29,7 +29,7 @@
 
 """
 Difference setup
-python sim/humanoid_gym/play.py --task only_legs_ppo --sim_device cpu
+python sim/humanoid_gym/play.py --task stompy_ppo --sim_device cpu
 python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt
 """
 import math
@@ -39,12 +39,12 @@ from copy import deepcopy
 import mujoco
 import mujoco_viewer
 import numpy as np
-import torch
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
-from sim.humanoid_gym.envs import OnlyLegsCfg
-from sim.stompy_legs.joints import Stompy
+from sim.humanoid_gym.envs import StompyCfg
+from sim.stompy.joints import Stompy
+import torch
 
 JOINT_NAMES = [
     "left hip pitch",
@@ -142,9 +142,9 @@ def run_mujoco(policy, cfg):
         hist_obs.append(np.zeros([1, cfg.env.num_single_obs], dtype=np.double))
 
     count_lowlevel = 0
+    num_dof = 27
 
     for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
-
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
         q = q[-cfg.env.num_actions :]
@@ -163,11 +163,11 @@ def run_mujoco(policy, cfg):
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
             # pfb30 - missing bit
-            obs[0, 5:17] = (q - default) * cfg.normalization.obs_scales.dof_pos
-            obs[0, 17:29] = dq * cfg.normalization.obs_scales.dof_vel
-            obs[0, 29:41] = action
-            obs[0, 41:44] = omega
-            obs[0, 44:47] = eu_ang
+            obs[0, 5:5 + num_dof] = (q - default) * cfg.normalization.obs_scales.dof_pos
+            obs[0, 5 + num_dof:5 + num_dof * 2] = dq * cfg.normalization.obs_scales.dof_vel
+            obs[0, 5 + num_dof * 2:5 + num_dof * 3] = action
+            obs[0, 5 + num_dof * 3:8 + num_dof * 3] = omega
+            obs[0, 8 + num_dof * 3:11 + num_dof * 3] = eu_ang
 
             obs = np.clip(obs, -cfg.normalization.clip_observations, cfg.normalization.clip_observations)
 
@@ -210,10 +210,13 @@ if __name__ == "__main__":
     parser.add_argument("--load_actions", action="store_true", help="saved_actions")
     args = parser.parse_args()
 
-    class Sim2simCfg(OnlyLegsCfg):
+    class Sim2simCfg(StompyCfg):
+
+        class control:
+            action_scale = 1.1
 
         class sim_config:
-            mujoco_model_path = f"sim/stompy_legs/robot_fixed.xml"
+            mujoco_model_path = f"sim/stompy/robot_fixed.xml"
             sim_duration = 60.0
             dt = 0.001
             decimation = 10
@@ -221,9 +224,8 @@ if __name__ == "__main__":
         # pfb30 - todo this should be update more often
         class robot_config:
             tau_factor = 0.85
-            tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor
-            kps = tau_limit
-            kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values()))
-
+            kps = np.array(list(Stompy.stiffness().values()))
+            tau_limit = kps * tau_factor
+            kds = np.array(list(Stompy.damping().values()))
     policy = torch.jit.load(args.load_model)
     run_mujoco(policy, Sim2simCfg())
