@@ -302,7 +302,6 @@ class H1FreeEnv(LeggedRobot):
         Calculates the reward based on the distance between the knee of the humanoid.
         """
         foot_pos = self.rigid_state[:, self.knee_indices, :2]
-        breakpoint()
         foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist
         max_df = self.cfg.rewards.max_dist / 2
