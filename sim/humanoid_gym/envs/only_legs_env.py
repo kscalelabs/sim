@@ -1,11 +1,11 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
-
+import numpy as np
 import torch  # type: ignore[import]
 from humanoid.envs import LeggedRobot
 from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
-from isaacgym import gymtorch
+from isaacgym import gymapi, gymtorch
 from isaacgym.torch_utils import *
 
 from sim.stompy_legs.joints import Stompy
@@ -115,21 +115,22 @@ class OnlyLegsFreeEnv(LeggedRobot):
         sin_pos = torch.sin(2 * torch.pi * phase)
         sin_pos_l = sin_pos.clone()
         sin_pos_r = sin_pos.clone()
+        default_clone = self.default_dof_pos.clone()
+        self.ref_dof_pos = self.default_dof_pos.repeat(self.num_envs, 1)
 
-        self.ref_dof_pos = torch.zeros_like(self.dof_pos)
         scale_1 = self.cfg.rewards.target_joint_pos_scale
         scale_2 = 2 * scale_1
         # left foot stance phase set to default joint pos
         sin_pos_l[sin_pos_l > 0] = 0
-        self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] = sin_pos_l * scale_1
-        self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] = sin_pos_l * scale_2
-        self.ref_dof_pos[:, self.legs_joints["left_ankle_roll"]] = sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += sin_pos_l * scale_2
+        self.ref_dof_pos[:, self.legs_joints["left_ankle_roll"]] += sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
-        self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] = sin_pos_r * scale_1
-        self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] = sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle_roll"]] = sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] += sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] += sin_pos_r * scale_2
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_roll"]] += sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -298,12 +299,12 @@ class OnlyLegsFreeEnv(LeggedRobot):
         """
         Calculates the reward based on the distance between the knee of the humanoid.
         """
-        foot_pos = self.rigid_state[:, self.knee_indices, :2]
-        foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
+        knee_pos = self.rigid_state[:, self.knee_indices, :2]
+        knee_dist = torch.norm(knee_pos[:, 0, :] - knee_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist
         max_df = self.cfg.rewards.max_dist / 2
-        d_min = torch.clamp(foot_dist - fd, -0.5, 0.0)
-        d_max = torch.clamp(foot_dist - max_df, 0, 0.5)
+        d_min = torch.clamp(knee_dist - fd, -0.5, 0.0)
+        d_max = torch.clamp(knee_dist - max_df, 0, 0.5)
         return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
     def _reward_foot_slip(self):

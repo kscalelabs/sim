@@ -58,7 +58,7 @@ class RobotConfig:
     tau_limit: np.ndarray
     robot_model_path: str
     # is2ac
-    dt: float = 0.00002  # 0.001
+    dt: float = 0.0002  # 0.001
     phase_duration: float = 0.64
     duration: float = 10.0
     decimation: int = 10

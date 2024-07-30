@@ -22,7 +22,7 @@ from tqdm import tqdm
 
 from sim.deploy.config import RobotConfig
 from sim.env import stompy_mjcf_path
-from sim.new_test.joints import Stompy as StompyFixed
+from sim.stompy_legs.joints import Stompy as StompyFixed
 
 
 class Worlds(Enum):
@@ -125,16 +125,19 @@ class MujocoWorld(World):
                 dof_pos, dof_vel, orientation, ang_vel = self.get_observation()
 
                 # Zero action
-                target_dof_pos = dof_pos
+                # target_dof_pos = dof_pos
 
                 # We update the policy at a lower frequency
                 # The simulation runs at 1000hz, but the policy is updated at 100hz
-                # if step % cfg.decimation == 0:
-                #     action = policy.next_action(dof_pos, dof_vel, orientation, ang_vel, step)
-                #     target_dof_pos = action * cfg.action_scale
-
+                if step % cfg.decimation == 0:
+                    action = policy.next_action(dof_pos, dof_vel, orientation, ang_vel, step)
+                    target_dof_pos = action
+                # set target_dof_pos to 0s
+                # target_dof_pos = np.zeros_like(target_dof_pos)
                 tau = policy.pd_control(target_dof_pos, dof_pos, cfg.kps, dof_vel, cfg.kds)
                 # breakpoint()
+                if step % 1000 == 0:
+                    breakpoint()
                 # set tau to zero for now
                 # tau = np.zeros_like(tau)
                 self.step(tau=tau)
@@ -271,6 +274,10 @@ if __name__ == "__main__":
     robot_path = stompy_mjcf_path(legs_only=True)
     num_single_obs = dof * 3 + 11
 
+    # is2ac, lets scale kps and kds to be the same as our stiffness and dmaping
+    # kps = np.ones((dof), dtype=np.double)
+    # kds = np.ones((dof), dtype=np.double) * 1
+    # tau_limit = np.ones((dof), dtype=np.double)
     kps = np.ones((dof), dtype=np.double) * 200
     kds = np.ones((dof), dtype=np.double) * 10
     tau_limit = np.ones((dof), dtype=np.double) * 200

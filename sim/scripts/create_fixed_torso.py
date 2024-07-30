@@ -53,4 +53,4 @@ def update_urdf() -> None:
 
 if __name__ == "__main__":
     update_urdf()
-    # create_mjcf(STOMPY_URDF + "/robot_fixed.urdf")
+    create_mjcf(STOMPY_URDF + "/robot_fixed.urdf")

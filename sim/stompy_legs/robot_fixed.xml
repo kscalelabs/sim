@@ -179,7 +179,7 @@
             <geom type="mesh" rgba="0.498039 0.498039 0.498039 1" mesh="leg_assembly_right_1_rmd_x8_90_mock_3_outer_rmd_x8_90_1_simple" pos="0.0448082 -0.02685 0.10844" quat="0.5 0.5 0.5 -0.5" contype="0" conaffinity="0" group="1" density="0"/>
             <body name="link_leg_assembly_right_1_rmd_x8_90_mock_3_inner_rmd_x8_90_1" pos="6.61991e-09 0.02065 0.127" quat="-0.5 0.5 -0.5 -0.5">
               <inertial pos="0.0449624 -0.0780024 -0.0105593" quat="0.691941 0.674006 0.18614 0.179682" mass="0.88694" diaginertia="0.00985766 0.00713533 0.00349125"/>
-              <joint name="right knee pitch" pos="0 0 0" axis="0 0 -1" range="1.54 3" damping="10" stiffness="150"/>
+              <joint name="right knee pitch" pos="0 0 0" axis="0 0 -1" range="2.09 3.2" damping="10" stiffness="150"/>
               <geom type="mesh" rgba="0.980392 0.713726 0.00392157 1" mesh="leg_assembly_right_1_rmd_x8_90_mock_3_inner_rmd_x8_90_1_simple" class="visualgeom"/>
               <geom type="mesh" rgba="0.980392 0.713726 0.00392157 1" mesh="leg_assembly_right_1_rmd_x8_90_mock_3_inner_rmd_x8_90_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
               <geom pos="0.0216506 0.0125 0.0035" quat="-2.00962e-08 0.866025 -0.5 1.16026e-08" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="leg_assembly_right_1_leg_part_6_2_simple" class="visualgeom"/>
@@ -271,6 +271,6 @@
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9"/>
   </sensor>
   <keyframe>
-    <key name="default" qpos="0 0 0.72 1 0 0 0 1.61 1 0 2.05 0.33 1.73 0 -2.15 -1.6 2.16 0.5 1.72"/>
+    <key name="default" qpos="0 0 0.72 1 0 0 0 1.17 0.1 1.03 1.13 -0.27 1.73 0.38 -1.6 -2.15 2.94 0.8 1.72"/>
   </keyframe>
 </mujoco>

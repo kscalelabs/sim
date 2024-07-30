@@ -8,7 +8,7 @@ from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
-from sim.stompy.joints import StompyFixed
+from sim.stompy2.joints import StompyFixed
 
 
 class LegsFreeEnv(LeggedRobot):
@@ -302,6 +302,7 @@ class LegsFreeEnv(LeggedRobot):
         """
         Calculates the reward based on the distance between the knee of the humanoid.
         """
+        # breakpoint()
         foot_pos = self.rigid_state[:, self.knee_indices, :2]
         foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist

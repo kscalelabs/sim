@@ -56,6 +56,7 @@ class StompyFreeEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Stompy.legs.left.joints_motors():
+            print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
@@ -137,7 +138,6 @@ class StompyFreeEnv(LeggedRobot):
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
 
         self.ref_action = 2 * self.ref_dof_pos
-
 
     def create_sim(self):
         """Creates simulation, terrain and evironments"""
@@ -387,6 +387,7 @@ class StompyFreeEnv(LeggedRobot):
         The reward is computed based on the height difference between the robot's base and the average height
         of its feet when they are in contact with the ground.
         """
+        # breakpoint()
         stance_mask = self._get_gait_phase()
         measured_heights = torch.sum(self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1) / torch.sum(
             stance_mask, dim=1

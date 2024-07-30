@@ -13,9 +13,18 @@ from tqdm import tqdm
 from sim.logging import configure_logging
 
 logger = logging.getLogger(__name__)
+import copy
 
 from sim.env import run_dir
 from sim.humanoid_gym.envs import *  # noqa: F403
+
+
+def export_policy_as_jit(actor_critic, path):
+    os.makedirs(path, exist_ok=True)
+    path = os.path.join(path, "policy_1.pt")
+    model = copy.deepcopy(actor_critic.actor).to("cpu")
+    traced_script_module = torch.jit.script(model)
+    traced_script_module.save(path)
 
 
 def play(args: argparse.Namespace) -> None:
@@ -51,10 +60,17 @@ def play(args: argparse.Namespace) -> None:
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
 
+    EXPORT_POLICY = True  # True
+    # export policy as a jit module (used to run it from C++)
+    if EXPORT_POLICY:
+        path = os.path.join(".")
+        export_policy_as_jit(ppo_runner.alg.actor_critic, path)
+        print("Exported policy as jit script to: ", path)
+
     env_logger = Logger(env.dt)
     robot_index = 0  # which robot is used for logging
     joint_index = 1  # which joint is used for logging
-    stop_state_log = 1200  # number of steps before plotting states
+    stop_state_log = 500  # number of steps before plotting states
 
     if RENDER:
         camera_properties = gymapi.CameraProperties()
@@ -75,6 +91,7 @@ def play(args: argparse.Namespace) -> None:
 
         # Creates a directory to store videos.
         video_dir = run_dir() / "videos"
+        print(video_dir)
         experiment_dir = video_dir / train_cfg.runner.experiment_name
         experiment_dir.mkdir(parents=True, exist_ok=True)
 
@@ -87,13 +104,14 @@ def play(args: argparse.Namespace) -> None:
 
     for _ in tqdm(range(stop_state_log)):
         actions = policy(obs.detach())
+        # print(obs)
+        # print(actions)
 
         if FIX_COMMAND:
             env.commands[:, 0] = 0.0
-            env.commands[:, 1] = -0.5  # negative left, positive right
+            env.commands[:, 1] = 0.5  # negative left, positive right
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
-
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
 
         if RENDER:
