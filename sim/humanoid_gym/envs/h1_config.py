@@ -6,7 +6,7 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
 )
 
 from sim.env import stompy_urdf_path
-from sim.h1.joints import Stompy
+from sim.h1_2.joints import Stompy
 
 NUM_JOINTS = len(Stompy.all_joints())  # 33
 
