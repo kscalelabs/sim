@@ -43,7 +43,8 @@ def _pretty_print_xml(xml_string: str) -> str:
     # Split the pretty-printed XML into lines and filter out empty lines
     lines = pretty_xml.split("\n")
     non_empty_lines = [line for line in lines if line.strip() != ""]
-    return "\n".join(non_empty_lines)
+    # Remove declaration
+    return "\n".join(non_empty_lines[1:])
 
 
 class Sim2SimRobot(mjcf.Robot):
@@ -51,6 +52,22 @@ class Sim2SimRobot(mjcf.Robot):
 
     def adapt_world(self, add_floor: bool = True, remove_frc_range: bool = True) -> None:
         root: ET.Element = self.tree.getroot()
+
+        worldbody = root.find("worldbody")
+        new_root_body = mjcf.Body(name="root", pos=(0, 0, 0), quat=(1, 0, 0, 0)).to_xml()
+
+        items_to_move = []
+        # Gather all children (geoms and bodies) that need to be moved under the new root body
+        for element in worldbody:
+            items_to_move.append(element)
+        # Move gathered elements to the new root body
+        for item in items_to_move:
+            worldbody.remove(item)
+            new_root_body.append(item)
+
+        # Add the new root body to the worldbody
+        worldbody.append(new_root_body)
+
 
         if add_floor:
             asset = root.find("asset")
@@ -82,7 +99,6 @@ class Sim2SimRobot(mjcf.Robot):
         if self.compiler is not None:
             compiler = self.compiler.to_xml(compiler)
 
-        worldbody = root.find("worldbody")
         worldbody.insert(
             0,
             mjcf.Light(
@@ -114,6 +130,9 @@ class Sim2SimRobot(mjcf.Robot):
                     conaffinity=15,
                 ).to_xml(),
             )
+        worldbody = root.find("worldbody")
+  
+
 
         motors: List[mjcf.Motor] = []
         sensor_pos: List[mjcf.Actuatorpos] = []
@@ -246,11 +265,13 @@ class Sim2SimRobot(mjcf.Robot):
                     join.attrib.pop("actuatorfrcrange")
 
         # Adding keyframe
+        # TODO pfb30 preserve order
+        
         default_standing = stompy.default_standing()
         qpos = [0, 0, ROOT_HEIGHT, 1, 0, 0, 0] + list(default_standing.values())
         default_key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
         keyframe = mjcf.Keyframe(keys=[default_key])
-        root.append(keyframe.to_xml())
+        root.append(keyframe.to_xml())  
 
         # Swap left and right leg
         parent_body = root.find(".//body[@name='root']")
@@ -281,18 +302,10 @@ class Sim2SimRobot(mjcf.Robot):
                         damping = stompy.damping()[key]
                 joint.set("damping", str(damping))
 
-                # stiffness = 0.0
-                # keys = stompy.stiffness().keys()
-                # for key in keys:
-                #     if key in joint_name:
-                #         stiffness = stompy.stiffness()[key]
-
-                # joint.set("stiffness", str(stiffness))
-
         return root
 
     def save(self, path: Union[str, Path]) -> None:
-        rough_string = ET.tostring(self.tree.getroot(), "utf-8")
+        rough_string = ET.tostring(self.tree.getroot(), "utf-8", xml_declaration=False)
         # Pretty print the XML
         formatted_xml = _pretty_print_xml(rough_string)
         logger.info("XML:\n%s", formatted_xml)
@@ -311,6 +324,7 @@ def create_mjcf(filepath: str) -> None:
         mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True, eulerseq="zyx"),
     )
     robot.adapt_world()
+
     robot.save(path / f"{robot_name}_fixed.xml")
 
 

@@ -6,11 +6,11 @@ import xml.etree.ElementTree as ET
 from sim.scripts.create_mjcf import create_mjcf
 from sim.stompy_legs.joints import Stompy
 
-STOMPY_URDF = "sim/stompy_legs"
+MODEL_PATH = "sim/stompy_legs"
 
 
 def update_urdf() -> None:
-    tree = ET.parse(STOMPY_URDF + "/robot.urdf")
+    tree = ET.parse(MODEL_PATH + "/robot.urdf")
     root = tree.getroot()
     stompy = Stompy()
     print(stompy.default_standing())
@@ -48,9 +48,9 @@ def update_urdf() -> None:
                         dynamics.set("friction", str(value))
 
     # Save the modified URDF to a new file
-    tree.write(STOMPY_URDF + "/robot_fixed.urdf")
+    tree.write(MODEL_PATH + "/robot_fixed.urdf", xml_declaration=False)
 
 
 if __name__ == "__main__":
     update_urdf()
-    create_mjcf(STOMPY_URDF + "/robot")
+    create_mjcf(MODEL_PATH + "/robot")

@@ -1,4 +1,3 @@
-<?xml version='1.0' encoding='utf-8'?>
 <robot name="lower_limbs">
   <link name="link_leg_assembly_left_1_leg_part_1_2">
     <visual>
