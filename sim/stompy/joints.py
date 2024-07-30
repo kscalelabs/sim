@@ -295,7 +295,6 @@ class Stompy(Node):
             "knee pitch": 10,
             "ankle pitch": 10,
             "ankle roll": 10,
-            
             "shoulder pitch": 1,
             "shoulder yaw": 1,
             "shoulder roll": 1,
@@ -316,7 +315,7 @@ class Stompy(Node):
             "knee pitch": 90,
             "ankle pitch": 24,
             "ankle roll": 24,
-            "shoulder pitch":24,
+            "shoulder pitch": 24,
             "shoulder yaw": 24,
             "shoulder roll": 24,
             "elbow pitch": 24,
@@ -361,7 +360,6 @@ class Stompy(Node):
             "wrist yaw": 150,
             "torso roll": 150,
         }
-
 
     @classmethod
     def friction(cls) -> Dict[str, float]:

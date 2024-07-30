@@ -1,16 +1,16 @@
 # mypy: disable-error-code="valid-newtype"
 """This script updates the URDF file to fix the joints of the robot."""
 
+import argparse
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 from sim.scripts.create_mjcf import create_mjcf
-from sim.stompy.joints import Stompy
-
-STOMPY_URDF = "sim/stompy"
+from sim.stompy_legs.joints import Stompy
 
 
-def update_urdf() -> None:
-    tree = ET.parse(STOMPY_URDF + "/robot.urdf")
+def update_urdf(model_path: str) -> None:
+    tree = ET.parse(Path(model_path) / "robot.urdf")
     root = tree.getroot()
     stompy = Stompy()
     print(stompy.default_standing())
@@ -32,15 +32,12 @@ def update_urdf() -> None:
                 upper = str(limits.get("upper", 0.0))
                 limit.set("lower", lower)
                 limit.set("upper", upper)
-
                 for key, value in effort.items():
                     if key in joint_name:
                         limit.set("effort", str(value))
-
                 for key, value in velocity.items():
                     if key in joint_name:
                         limit.set("velocity", str(value))
-
             dynamics = joint.find("dynamics")
             if dynamics is not None:
                 for key, value in friction.items():
@@ -48,9 +45,17 @@ def update_urdf() -> None:
                         dynamics.set("friction", str(value))
 
     # Save the modified URDF to a new file
-    tree.write(STOMPY_URDF + "/robot_fixed.urdf")
+    tree.write(Path(model_path) / "robot_fixed.urdf", xml_declaration=False)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Update URDF file to fix robot joints.")
+    parser.add_argument("--model_path", type=str, help="Path to the model directory", default="sim/stompy_legs")
+    args = parser.parse_args()
+
+    update_urdf(args.model_path)
+    create_mjcf(Path(args.model_path) / "robot")
 
 
 if __name__ == "__main__":
-    update_urdf()
-    # create_mjcf(STOMPY_URDF + "/robot_fixed.urdf")
+    main()

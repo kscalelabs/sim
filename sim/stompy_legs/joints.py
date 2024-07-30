@@ -85,18 +85,17 @@ class Stompy(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            # legs
-            Stompy.legs.left.hip_pitch: 1.61,
-            Stompy.legs.left.hip_yaw: 1,
-            Stompy.legs.left.hip_roll: 0,
-            Stompy.legs.left.knee_pitch: 2.05,
-            Stompy.legs.left.ankle_pitch: 0.33,
+            Stompy.legs.left.hip_pitch: 1.17,
+            Stompy.legs.left.hip_yaw: 1.03,
+            Stompy.legs.left.hip_roll: 0.1,
+            Stompy.legs.left.knee_pitch: -1.04,
+            Stompy.legs.left.ankle_pitch: -0.27,
             Stompy.legs.left.ankle_roll: 1.73,
-            Stompy.legs.right.hip_pitch: 0,
+            Stompy.legs.right.hip_pitch: 0.38,
             Stompy.legs.right.hip_yaw: -2.15,
             Stompy.legs.right.hip_roll: -1.6,
-            Stompy.legs.right.knee_pitch: 2.16,
-            Stompy.legs.right.ankle_pitch: 0.5,
+            Stompy.legs.right.knee_pitch: 2.94,
+            Stompy.legs.right.ankle_pitch: 0.8,
             Stompy.legs.right.ankle_roll: 1.72,
         }
 
@@ -116,8 +115,8 @@ class Stompy(Node):
                 "upper": 0.5,
             },
             Stompy.legs.left.knee_pitch: {
-                "lower": 0.5,
-                "upper": 2.5,
+                "lower": -2.14,
+                "upper": -1.0,
             },
             Stompy.legs.left.ankle_pitch: {
                 "lower": -0.8,
@@ -132,16 +131,16 @@ class Stompy(Node):
                 "upper": 1,
             },
             Stompy.legs.right.hip_yaw: {
-                "lower": -2.2,
-                "upper": -1,
+                "lower": -2.6,
+                "upper": -1.5,
             },
             Stompy.legs.right.hip_roll: {
                 "lower": -2.39,
                 "upper": -1,
             },
             Stompy.legs.right.knee_pitch: {
-                "lower": 1.54,
-                "upper": 3,
+                "lower": 2.09,
+                "upper": 3.2,
             },
             Stompy.legs.right.ankle_pitch: {
                 "lower": 0,
@@ -161,8 +160,8 @@ class Stompy(Node):
             "hip yaw": 150,
             "hip roll": 150,
             "knee pitch": 150,
-            "ankle pitch": 45,
-            "ankle roll": 45,
+            "ankle pitch": 150,
+            "ankle roll": 150,
         }
 
     # d_gains
@@ -173,8 +172,8 @@ class Stompy(Node):
             "hip yaw": 10,
             "hip roll": 10,
             "knee pitch": 10,
-            "ankle pitch": 3,
-            "ankle roll": 3,
+            "ankle pitch": 10,
+            "ankle roll": 10,
         }
 
     # pos_limits
@@ -193,12 +192,12 @@ class Stompy(Node):
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 25,
+            "hip pitch": 40,
             "hip yaw": 40,
             "hip roll": 40,
             "knee pitch": 40,
-            "ankle pitch": 40,
-            "ankle roll": 40,
+            "ankle pitch": 24,
+            "ankle roll": 24,
         }
 
     @classmethod

@@ -14,7 +14,7 @@ markers = [
 ]
 
 [tool.mypy]
-
+ignore_missing_imports = true
 pretty = true
 show_column_numbers = true
 show_error_context = true
@@ -30,8 +30,7 @@ warn_redundant_casts = true
 incremental = true
 namespace_packages = false
 
-exclude = ["sim/humanoid_gym/", "sim/deploy", "sim/scripts/create_mjcf.py"]
-
+exclude = ["sim/humanoid_gym/", "sim/scripts/create_mjcf.py"]
 
 
 [[tool.mypy.overrides]]
@@ -43,8 +42,6 @@ module = [
     "mujoco.*",
 ]
 
-ignore_missing_imports = true
-
 [tool.isort]
 
 profile = "black"
@@ -54,7 +51,7 @@ profile = "black"
 line-length = 120
 target-version = "py310"
 
-exclude = ["sim/humanoid_gym", "sim/deploy/"]
+exclude = ["sim/humanoid_gym"]
 
 [tool.ruff.lint]
 

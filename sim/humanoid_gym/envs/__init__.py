@@ -9,17 +9,14 @@ quickly.
 
 # fmt: off
 import isaacgym # isort:skip
-import torch #isort:skip
+import torch # isort:skip
 # fmt: on
-# from .getup_config import GetupCfg, GetupCfgPPO
-# from .getup_env import GetupFreeEnv
-# from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO
-# from .only_legs_env import OnlyLegsFreeEnv
-# from .stompy_config import StompyCfg, StompyCfgPPO
-# from .stompy_env import StompyFreeEnv
+from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO
+from .only_legs_env import OnlyLegsFreeEnv
+from .stompy_config import StompyCfg, StompyCfgPPO
+from .stompy_env import StompyFreeEnv
 from .h1_config import H1Cfg, H1CfgPPO
 from .h1_env import H1FreeEnv
-
 
 
 def register_tasks() -> None:
@@ -32,8 +29,7 @@ def register_tasks() -> None:
 
     task_registry.register( "h1", H1FreeEnv, H1Cfg(), H1CfgPPO())
     # task_registry.register("stompy_ppo", StompyFreeEnv, StompyCfg(), StompyCfgPPO())
-    # task_registry.register("getup_ppo", GetupFreeEnv, GetupCfg(), GetupCfgPPO())
-    # task_registry.register("only_legs_ppo", OnlyLegsFreeEnv, OnlyLegsCfg(), OnlyLegsCfgPPO())
+    task_registry.register("only_legs_ppo", OnlyLegsFreeEnv, OnlyLegsCfg(), OnlyLegsCfgPPO())
 
 
 register_tasks()
