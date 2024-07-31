@@ -7,7 +7,7 @@ from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym.torch_utils import *
 
-from isaacgym import gymtorch
+from isaacgym import gymtorch # isort:skip
 from sim.h1_2.joints import Stompy
 
 
