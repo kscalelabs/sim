@@ -44,7 +44,7 @@ class G1Cfg(LeggedRobotCfg):
         foot_name = "ankle_roll"
         knee_name = "knee_link"
 
-        termination_height = 0.35
+        termination_height = 0.55
         default_feet_height = 0.0
         terminate_after_contacts_on = []
 
@@ -72,7 +72,7 @@ class G1Cfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = False
+        add_noise = True
         noise_level = 0.6  # scales other values
 
         class noise_scales:
@@ -84,8 +84,7 @@ class G1Cfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 1.1]
-        rot = [0.0, 0.0, 0.7071068, 0.7071068]
+        pos = [0.0, 0.0, 0.9]
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
         default_positions = Stompy.default_standing()

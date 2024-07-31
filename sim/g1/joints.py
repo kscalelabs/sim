@@ -52,10 +52,6 @@ class Node(ABC):
         return f"[{self.__class__.__name__}]{parts_str}"
 
 
-class Torso(Node):
-    roll = "torso_joint"
-
-
 class LeftLeg(Node):
     hip_roll = "left_hip_roll_joint"
     hip_yaw = "left_hip_yaw_joint"
@@ -80,7 +76,6 @@ class Legs(Node):
 
 
 class Stompy(Node):
-    torso = Torso()
     legs = Legs()
 
     @classmethod
@@ -100,8 +95,6 @@ class Stompy(Node):
             Stompy.legs.right.knee_pitch: 0.3,
             Stompy.legs.right.ankle_pitch: -0.2,
             Stompy.legs.right.ankle_roll: 0.0,
-            # torso
-            Stompy.torso.roll: 0,
         }
 
     # p_gains
