@@ -6,12 +6,12 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
 )
 
 from sim.env import stompy_urdf_path
-from sim.h1_2.joints import Stompy
+from sim.g1.joints import Stompy
 
 NUM_JOINTS = len(Stompy.all_joints())  # 33
 
 
-class H1Cfg(LeggedRobotCfg):
+class G1Cfg(LeggedRobotCfg):
     """
     Configuration class for the Legs humanoid robot.
     """
@@ -99,7 +99,7 @@ class H1Cfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 10  # 100hz
+        decimation = 4  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.002  # 1000 Hz
@@ -209,7 +209,7 @@ class H1Cfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class H1CfgPPO(LeggedRobotCfgPPO):
+class G1CfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 

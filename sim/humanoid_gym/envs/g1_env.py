@@ -7,12 +7,12 @@ from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym.torch_utils import *
 
-from sim.h1_2.joints import Stompy
+from sim.g1.joints import Stompy
 
 from isaacgym import gymtorch  # isort:skip
 
 
-class H1FreeEnv(LeggedRobot):
+class G1FreeEnv(LeggedRobot):
     """StompyFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:

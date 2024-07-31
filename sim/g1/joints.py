@@ -56,20 +56,6 @@ class Torso(Node):
     roll = "torso_joint"
 
 
-class LeftArm(Node):
-    shoulder_yaw = "left_shoulder_yaw_joint"
-    shoulder_pitch = "left_shoulder_pitch_joint"
-    shoulder_roll = "left_shoulder_roll_joint"
-    elbow_pitch = "left_elbow_pitch_joint"
-
-
-class RightArm(Node):
-    shoulder_yaw = "right_shoulder_yaw_joint"
-    shoulder_pitch = "right_shoulder_pitch_joint"
-    shoulder_roll = "right_shoulder_roll_joint"
-    elbow_pitch = "right_elbow_pitch_joint"
-
-
 class LeftLeg(Node):
     hip_roll = "left_hip_roll_joint"
     hip_yaw = "left_hip_yaw_joint"
@@ -95,8 +81,6 @@ class Legs(Node):
 
 class Stompy(Node):
     torso = Torso()
-    left_arm = LeftArm()
-    right_arm = RightArm()
     legs = Legs()
 
     @classmethod
@@ -105,63 +89,41 @@ class Stompy(Node):
             # left leg
             Stompy.legs.left.hip_yaw: 0,
             Stompy.legs.left.hip_roll: 0,
-            Stompy.legs.left.hip_pitch: -0.6,
-            Stompy.legs.left.knee_pitch: 1.2,
-            Stompy.legs.left.ankle_pitch: -0.6,
+            Stompy.legs.left.hip_pitch: -0.1,
+            Stompy.legs.left.knee_pitch: 0.3,
+            Stompy.legs.left.ankle_pitch: -0.2,
             Stompy.legs.left.ankle_roll: 0.0,
             # right leg
             Stompy.legs.right.hip_yaw: 0,
             Stompy.legs.right.hip_roll: 0,
-            Stompy.legs.right.hip_pitch: -0.6,
-            Stompy.legs.right.knee_pitch: 1.2,
-            Stompy.legs.right.ankle_pitch: -0.6,
+            Stompy.legs.right.hip_pitch: -0.1,
+            Stompy.legs.right.knee_pitch: 0.3,
+            Stompy.legs.right.ankle_pitch: -0.2,
             Stompy.legs.right.ankle_roll: 0.0,
             # torso
             Stompy.torso.roll: 0,
-            # left arm
-            Stompy.left_arm.shoulder_pitch: 0.4,
-            Stompy.left_arm.shoulder_roll: 0,
-            Stompy.left_arm.shoulder_yaw: 0,
-            Stompy.left_arm.elbow_pitch: 0.3,
-            # right arm
-            Stompy.right_arm.shoulder_pitch: 0.4,
-            Stompy.right_arm.shoulder_roll: 0,
-            Stompy.right_arm.shoulder_yaw: 0,
-            Stompy.right_arm.elbow_pitch: 0.3,
         }
 
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 200,
-            "hip_yaw": 200,
-            "hip_roll": 200,
-            "knee_joint": 300,
-            "ankle_pitch": 40,
-            "ankle_roll": 40,
-            "shoulder_pitch": 80,
-            "shoulder_yaw": 40,
-            "shoulder_roll": 80,
-            "elbow_pitch": 60,
-            "torso_joint": 600,
+            "hip_pitch": 150,
+            "hip_yaw": 150,
+            "hip_roll": 150,
+            "knee": 300,
+            "ankle": 40,
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 5,
-            "hip_yaw": 5,
-            "hip_roll": 5,
-            "knee_joint": 7.5,
-            "ankle_pitch": 1,
-            "ankle_roll": 0.3,
-            "shoulder_pitch": 2,
-            "shoulder_yaw": 1,
-            "shoulder_roll": 2,
-            "elbow_pitch": 1,
-            "torso_joint": 15,
+            "hip_pitch": 2,
+            "hip_yaw": 2,
+            "hip_roll": 2,
+            "knee": 4,
+            "ankle": 2,
         }
 
 
