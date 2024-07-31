@@ -7,9 +7,9 @@ from datetime import datetime
 
 import cv2
 import numpy as np
+from isaacgym import gymapi
 from tqdm import tqdm
 
-from isaacgym import gymapi
 from sim.logging import configure_logging
 
 logger = logging.getLogger(__name__)
@@ -111,7 +111,7 @@ def play(args: argparse.Namespace) -> None:
             env.commands[:, 1] = 0.0  # negative left, positive right
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
-        obs, critic_obs, rews, dones, infos = env.step(actions.detach())
+        obs, critic_obs, rews, dones, infos, _ = env.step(actions.detach())
 
         if RENDER:
             env.gym.fetch_results(env.sim, True)
