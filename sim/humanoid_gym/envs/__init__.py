@@ -10,6 +10,8 @@ quickly.
 # fmt: off
 import isaacgym # isort:skip
 import torch # isort:skip
+from .g1_config import G1Cfg, G1CfgPPO
+from .g1_env import G1FreeEnv
 from .h1_config import H1Cfg, H1CfgPPO
 from .h1_env import H1FreeEnv
 
@@ -18,10 +20,6 @@ from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO
 from .only_legs_env import OnlyLegsFreeEnv
 from .stompy_config import StompyCfg, StompyCfgPPO
 from .stompy_env import StompyFreeEnv
-from .g1_config import G1Cfg, G1CfgPPO
-from .g1_env import G1FreeEnv
-from .h1_config import H1Cfg, H1CfgPPO
-from .h1_env import H1FreeEnv
 
 
 def register_tasks() -> None:
