@@ -49,7 +49,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
 
-        collapse_fixed_joints = True
+        # collapse_fixed_joints = True
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -84,7 +84,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 0.72]
+        pos = [0.0, 0.0, 0.75]
         rot = [0.0, 0, 0.7071068, 0.7071068]
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
@@ -97,7 +97,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         damping = Stompy.damping()
 
         action_scale = 0.25
-        decimation = 10  # 100hz
+        decimation = 4  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -110,10 +110,10 @@ class OnlyLegsCfg(LeggedRobotCfg):
             # pfb30
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 0
+            num_velocity_iterations = 1
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
-            bounce_threshold_velocity = 0.5  # [m/s]
+            bounce_threshold_velocity = 0.1  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
             default_buffer_size_multiplier = 5
@@ -139,14 +139,14 @@ class OnlyLegsCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [0, 0.6]  # min max [m/s]
-            lin_vel_y = [0, 0.3]  # min max [m/s]
+            lin_vel_x = [0.0, 0.6]  # min max [m/s]
+            lin_vel_y = [0.0, 0.0]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-3.14, 3.14]
+            heading = [-0.14, 0.14]
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.72
+        base_height_target = 0.75
 
         # distance between the knees and feet is2ac
         min_dist = 0.2
@@ -160,7 +160,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 100  # forces above this value are penalized
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
             # reference motion tracking

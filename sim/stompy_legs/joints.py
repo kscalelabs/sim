@@ -160,20 +160,20 @@ class Stompy(Node):
             "hip yaw": 150,
             "hip roll": 150,
             "knee pitch": 150,
-            "ankle pitch": 150,
-            "ankle roll": 150,
+            "ankle pitch": 40,
+            "ankle roll": 40,
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 15,
-            "hip yaw": 10,
-            "hip roll": 10,
-            "knee pitch": 10,
-            "ankle pitch": 10,
-            "ankle roll": 10,
+            "hip pitch": 10,
+            "hip yaw": 7,
+            "hip roll": 7,
+            "knee pitch": 7,
+            "ankle pitch": 1,
+            "ankle roll": 0.3,
         }
 
     # pos_limits
