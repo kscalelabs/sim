@@ -36,7 +36,7 @@ def register_tasks() -> None:
     task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
     task_registry.register("stompy_ppo", StompyFreeEnv, StompyCfg(), StompyCfgPPO())
     task_registry.register("only_legs_ppo", OnlyLegsFreeEnv, OnlyLegsCfg(), OnlyLegsCfgPPO())
-    task.registry.register("mini_ppo", MiniFreeEnv, MiniCfg(), MiniCfgPPO())
+    task_registry.register("mini_ppo", MiniFreeEnv, MiniCfg(), MiniCfgPPO())
 
 
 register_tasks()
