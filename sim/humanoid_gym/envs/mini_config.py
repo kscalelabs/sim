@@ -41,8 +41,8 @@ class MiniCfg(LeggedRobotCfg):
 
         name = "stompy"
 
-        foot_name = "foot_pad"
-        knee_name = "_leg_1_robstride_04_mock_2_rs_04_stator_1"
+        foot_name = "_leg_1_robstride_01_mock_2_rs_01_stator_1"
+        knee_name = "_leg_1_robstride_04_mock_2_rs_04_rotor_1"
 
         termination_height = 0.35
         default_feet_height = 0.0
@@ -84,8 +84,8 @@ class MiniCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 1.1]
-        rot = [0.0, 0.0, 0.7071068, 0.7071068]
+        pos = [0.0, 0.0, 0.8]
+        rot = [0.7071068, 0.7071068, 0.7071068, 0.7071068]
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
         default_positions = Stompy.default_standing()
@@ -146,7 +146,7 @@ class MiniCfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.97
+        base_height_target = 0.8
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
