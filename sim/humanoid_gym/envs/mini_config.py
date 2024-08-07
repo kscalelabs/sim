@@ -6,12 +6,12 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
 )
 
 from sim.env import stompy_urdf_path
-from sim.stompy.joints import Stompy
+from sim.stompymini.joints import Stompy
 
-NUM_JOINTS = len(Stompy.all_joints())  # 33
+NUM_JOINTS = len(Stompy.all_joints())  # 20
 
 
-class StompyCfg(LeggedRobotCfg):
+class MiniCfg(LeggedRobotCfg):
     """
     Configuration class for the Legs humanoid robot.
     """
@@ -41,12 +41,12 @@ class StompyCfg(LeggedRobotCfg):
 
         name = "stompy"
 
-        foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
-        knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
+        foot_name = "foot_pad"
+        knee_name = "_leg_1_robstride_04_mock_2_rs_04_stator_1"
 
         termination_height = 0.35
         default_feet_height = 0.0
-        terminate_after_contacts_on = ["link_upper_limb_assembly_7_dof_1_torso_1_top_skeleton_2"]
+        terminate_after_contacts_on = ["link_upper_half_assembly_1_torso_top_left_1"]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -209,7 +209,7 @@ class StompyCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class StompyCfgPPO(LeggedRobotCfgPPO):
+class MiniCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
