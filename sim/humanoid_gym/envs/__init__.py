@@ -20,8 +20,8 @@ from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO
 from .only_legs_env import OnlyLegsFreeEnv
 from .stompy_config import StompyCfg, StompyCfgPPO
 from .stompy_env import StompyFreeEnv
-from .mini_config import MiniCfg, MiniCfgPPO
-from .mini_env import MiniFreeEnv
+from .stompy_mini_config import MiniCfg, MiniCfgPPO
+from .stompy_mini_env import MiniFreeEnv
 
 
 def register_tasks() -> None:
