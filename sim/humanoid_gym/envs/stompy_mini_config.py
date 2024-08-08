@@ -72,7 +72,7 @@ class MiniCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = False
+        add_noise = True
         noise_level = 0.6  # scales other values
 
         class noise_scales:
@@ -84,7 +84,7 @@ class MiniCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 0.8]
+        pos = [0.0, 0.0, 1.0]
         rot = [0.7071068, 0.7071068, 0.7071068, 0.7071068]
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
@@ -124,9 +124,9 @@ class MiniCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False
+        randomize_base_mass = True
         added_mass_range = [-1.0, 1.0]
-        push_robots = False
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -146,7 +146,7 @@ class MiniCfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.8
+        base_height_target = 1.0
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning

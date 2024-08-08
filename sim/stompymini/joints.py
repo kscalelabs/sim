@@ -109,13 +109,16 @@ class Stompy(Node):
             Stompy.left_arm.shoulder_pitch: -1.02,
             Stompy.left_arm.shoulder_yaw: 1.38,
             Stompy.left_arm.shoulder_roll: -3.24,
+            Stompy.left_arm.elbow_pitch: 1.2,
+            Stompy.left_arm.hand.wrist_roll: 0,
+
             Stompy.right_arm.shoulder_pitch: 3.12,
             Stompy.right_arm.shoulder_yaw: -1.98,
             Stompy.right_arm.shoulder_roll: -1.38,
-            Stompy.left_arm.elbow_pitch: 1.2,
+
             Stompy.right_arm.elbow_pitch: 1.32,
             # hands
-            Stompy.left_arm.hand.wrist_roll: 0,
+
             Stompy.right_arm.hand.wrist_roll: 0,
             # legs
             Stompy.legs.left.hip_pitch: -0.28,
@@ -135,8 +138,8 @@ class Stompy(Node):
         return {
             # left arm
             Stompy.left_arm.shoulder_pitch: {
-                "lower": -1.02,
-                "upper": -1.019,
+                "lower": -1.03,
+                "upper": -1.009,
             },
             Stompy.left_arm.shoulder_yaw: {
                 "lower": 1.38,
