@@ -109,24 +109,24 @@ class Stompy(Node):
             Stompy.left_arm.shoulder_pitch: -1.02,
             Stompy.left_arm.shoulder_yaw: 1.38,
             Stompy.left_arm.shoulder_roll: -3.24,
+            Stompy.left_arm.elbow_pitch: 1.2,
+            Stompy.left_arm.hand.wrist_roll: 0,
             Stompy.right_arm.shoulder_pitch: 3.12,
             Stompy.right_arm.shoulder_yaw: -1.98,
             Stompy.right_arm.shoulder_roll: -1.38,
-            Stompy.left_arm.elbow_pitch: 1.2,
             Stompy.right_arm.elbow_pitch: 1.32,
             # hands
-            Stompy.left_arm.hand.wrist_roll: 0,
             Stompy.right_arm.hand.wrist_roll: 0,
             # legs
-            Stompy.legs.left.hip_pitch: -0.06,
+            Stompy.legs.left.hip_pitch: -0.28,
             Stompy.legs.left.hip_roll: 1.5,
             Stompy.legs.left.hip_yaw: 1.62,
-            Stompy.legs.left.knee_pitch: 0,
+            Stompy.legs.left.knee_pitch: 1,
             Stompy.legs.left.ankle_pitch: -1.62,
-            Stompy.legs.right.hip_pitch: 3.06,
+            Stompy.legs.right.hip_pitch: 3.55,
             Stompy.legs.right.hip_roll: 3.18,
             Stompy.legs.right.hip_yaw: 3.24,
-            Stompy.legs.right.knee_pitch: 0,
+            Stompy.legs.right.knee_pitch: -1,
             Stompy.legs.right.ankle_pitch: 0.42,
         }
 
@@ -135,50 +135,50 @@ class Stompy(Node):
         return {
             # left arm
             Stompy.left_arm.shoulder_pitch: {
-                "lower": -2.02,
-                "upper": -0.02,
+                "lower": -1.03,
+                "upper": -1.009,
             },
             Stompy.left_arm.shoulder_yaw: {
-                "lower": 0.38,
-                "upper": 2.38,
+                "lower": 1.38,
+                "upper": 1.381,
             },
             Stompy.left_arm.shoulder_roll: {
-                "lower": -4.24,
-                "upper": -2.24,
+                "lower": -3.24,
+                "upper": -3.239,
             },
             Stompy.left_arm.elbow_pitch: {
-                "lower": 0.2,
-                "upper": 2.2,
+                "lower": 1.2,
+                "upper": 1.201,
             },
             Stompy.left_arm.hand.wrist_roll: {
-                "lower": -1,
-                "upper": 1,
+                "lower": 0,
+                "upper": 0.001,
             },
             # right arm
             Stompy.right_arm.shoulder_pitch: {
-                "lower": 2.12,
-                "upper": 4.12,
+                "lower": 3.12,
+                "upper": 3.121,
             },
             Stompy.right_arm.shoulder_yaw: {
-                "lower": -2.98,
-                "upper": -0.98,
+                "lower": -1.98,
+                "upper": -1.979,
             },
             Stompy.right_arm.shoulder_roll: {
-                "lower": -2.38,
-                "upper": -0.38,
+                "lower": -1.38,
+                "upper": -1.379,
             },
             Stompy.right_arm.elbow_pitch: {
-                "lower": 0.32,
-                "upper": 2.32,
+                "lower": 1.32,
+                "upper": 1.321,
             },
             Stompy.right_arm.hand.wrist_roll: {
-                "lower": -1,
-                "upper": 1,
+                "lower": 0,
+                "upper": 0.001,
             },
             # left leg
             Stompy.legs.left.hip_pitch: {
-                "lower": -1.06,
-                "upper": 0.94,
+                "lower": -1.28,
+                "upper": 0.72,
             },
             Stompy.legs.left.hip_roll: {
                 "lower": 0.5,
@@ -189,8 +189,8 @@ class Stompy(Node):
                 "upper": 2.62,
             },
             Stompy.legs.left.knee_pitch: {
-                "lower": -1,
-                "upper": 1,
+                "lower": 0,
+                "upper": 2,
             },
             Stompy.legs.left.ankle_pitch: {
                 "lower": -2.62,
@@ -198,8 +198,8 @@ class Stompy(Node):
             },
             # right leg
             Stompy.legs.right.hip_pitch: {
-                "lower": 2.06,
-                "upper": 4.06,
+                "lower": 2.55,
+                "upper": 4.55,
             },
             Stompy.legs.right.hip_roll: {
                 "lower": 2.18,
@@ -210,8 +210,8 @@ class Stompy(Node):
                 "upper": 4.24,
             },
             Stompy.legs.right.knee_pitch: {
-                "lower": -1,
-                "upper": 1,
+                "lower": -2,
+                "upper": 0,
             },
             Stompy.legs.right.ankle_pitch: {
                 "lower": -0.58,

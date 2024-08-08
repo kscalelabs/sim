@@ -3,3 +3,4 @@
 mediapy
 torch
 python-dotenv
+h5py
