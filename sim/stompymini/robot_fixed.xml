@@ -457,7 +457,7 @@
         <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_34_simple" pos="-0.039524 0.0246301 0.0305766" quat="0.70561 -0.0459863 -0.70561 -0.0459863" contype="0" conaffinity="0" group="1" density="0"/>
         <body name="link_upper_half_assembly_1_robstride_04_mock_1_rs_04_rotor_1" pos="0.160889 -0.022154 -0.000282134" quat="-0.531459 -0.531459 0.466424 0.466424">
           <inertial pos="-0.000104167 0.00470427 -0.106611" quat="0.607801 0.00770951 -0.00798048 0.794012" mass="1.14677" diaginertia="0.00387531 0.00343178 0.00203563"/>
-          <joint name="right shoulder pitch" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+          <joint name="right shoulder pitch" pos="0 0 0" axis="0 0 -1" range="-1.01229 4.15388"/>
           <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="upper_half_assembly_1_robstride_04_mock_1_rs_04_rotor_1_simple" class="visualgeom"/>
           <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="upper_half_assembly_1_robstride_04_mock_1_rs_04_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
           <geom pos="0.00465874 -0.0173867 -0.0395" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_shoulder_1_simple" class="visualgeom"/>
@@ -478,7 +478,7 @@
           <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_4_simple" pos="-0.0231404 0.014 -0.179336" quat="0.707107 0.707107 0 0" contype="0" conaffinity="0" group="1" density="0"/>
           <body name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1" pos="-0.000346583 0.0117 -0.152164" quat="-0.707107 0.707107 0 0">
             <inertial pos="0.0200655 0.0634613 -0.00852937" quat="0.97414 0.0488216 -0.0136119 -0.220189" mass="1.07665" diaginertia="0.00301992 0.00235069 0.00199569"/>
-            <joint name="right shoulder yaw" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+            <joint name="right shoulder yaw" pos="0 0 0" axis="0 0 -1" range="-1.309 1.8326"/>
             <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple" class="visualgeom"/>
             <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
             <geom pos="0.00289087 -0.0116466 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_right_arm_part_1a_1_simple" class="visualgeom"/>
@@ -501,7 +501,7 @@
             <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_7_simple" pos="-0.0085647 0.0924513 -0.00166184" quat="-0.698877 0.698877 -0.107567 0.107567" contype="0" conaffinity="0" group="1" density="0"/>
             <body name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_rotor_1" pos="0.0262413 0.0838886 -0.00806441" quat="-0.698877 -0.698877 0.107567 0.107567">
               <inertial pos="-0.000291281 -0.00134211 -0.0912924" quat="0.950818 0.0291068 -0.0683769 0.300705" mass="1.30067" diaginertia="0.00325602 0.00288144 0.00182784"/>
-              <joint name="right shoulder roll" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+              <joint name="right shoulder roll" pos="0 0 0" axis="0 0 -1" range="-3.36849 -0.261799"/>
               <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple" class="visualgeom"/>
               <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
               <geom pos="-0.00289087 0.0116466 -0.0305" quat="0.866025 0 0 -0.5" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_rightt_arm_part_2b_1_simple" class="visualgeom"/>
@@ -542,7 +542,7 @@
               <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_22_simple" pos="-0.0342444 0.00674911 -0.09725" quat="0.701881 0.701881 0.0858071 0.0858071" contype="0" conaffinity="0" group="1" density="0"/>
               <body name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_rotor_1" pos="0.00282888 -0.0121771 -0.1155" quat="-0.0858071 0.0858071 -0.701881 0.701881">
                 <inertial pos="-0.0186421 -0.0636002 -0.0132227" quat="0.936458 0.0905941 -0.00917061 -0.338755" mass="1.0197" diaginertia="0.0023811 0.00204732 0.00184596"/>
-                <joint name="right elbow pitch" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+                <joint name="right elbow pitch" pos="0 0 0" axis="0 0 -1" range="1.8326 3.40339"/>
                 <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple" class="visualgeom"/>
                 <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
                 <geom pos="0.0086408 0.00832686 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_right_arm_part_3b_1_simple" class="visualgeom"/>
@@ -563,7 +563,7 @@
                 <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_29_simple" pos="-0.0489346 -0.0691987 -0.0359618" quat="0.564721 0.425548 -0.564721 0.425547" contype="0" conaffinity="0" group="1" density="0"/>
                 <body name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_rotor_1" pos="-0.0224087 -0.0783654 -0.0123244" quat="-0.564721 0.425547 -0.564721 -0.425547">
                   <inertial pos="-5.62987e-06 -5.42532e-06 -0.0527898" quat="0.501611 0.498876 -0.49961 0.499898" mass="0.451151" diaginertia="0.000464854 0.000367863 0.000367669"/>
-                  <joint name="right wrist roll" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+                  <joint name="right wrist roll" pos="0 0 0" axis="0 0 -1" range="-3.14159 3.14159"/>
                   <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple" class="visualgeom"/>
                   <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
                   <geom pos="0 0 -0.0305" quat="0.707107 0 0 -0.707107" type="mesh" rgba="0 0 0 1" mesh="upper_half_assembly_1_right_arm_1_stub_1_simple" class="visualgeom"/>
@@ -753,7 +753,7 @@
         </body>
         <body name="link_upper_half_assembly_1_robstride_04_mock_2_rs_04_rotor_1" pos="-0.0055085 -0.022154 -0.000282136" quat="-0.531459 -0.531459 -0.466424 -0.466424">
           <inertial pos="-0.00402193 -0.00244234 -0.106611" quat="0.585659 0.055097 0.0318002 0.808057" mass="1.14677" diaginertia="0.00408148 0.003387 0.00187425"/>
-          <joint name="left shoulder pitch" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+          <joint name="left shoulder pitch" pos="0 0 0" axis="0 0 -1" range="0.0349066 5.21853"/>
           <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="upper_half_assembly_1_robstride_04_mock_2_rs_04_rotor_1_simple" class="visualgeom"/>
           <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="upper_half_assembly_1_robstride_04_mock_2_rs_04_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
           <geom pos="0.0127279 -0.0127279 -0.0395" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_shoulder_1_simple" class="visualgeom"/>
@@ -774,7 +774,7 @@
           <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_3_simple" pos="-0.00596799 -0.0176631 -0.117929" quat="0.353553 0.353553 0.612372 0.612372" contype="0" conaffinity="0" group="1" density="0"/>
           <body name="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_rotor_1" pos="-0.00995921 -0.00615014 -0.152164" quat="-0.353553 0.353553 0.612372 -0.612372">
             <inertial pos="0.0200946 0.0635032 -0.00966893" quat="0.975681 0.0423855 -0.00970961 -0.21484" mass="1.0749" diaginertia="0.00299738 0.00234457 0.00199732"/>
-            <joint name="left shoulder yaw" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+            <joint name="left shoulder yaw" pos="0 0 0" axis="0 0 -1" range="-1.309 1.87623"/>
             <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple" class="visualgeom"/>
             <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
             <geom pos="0.00289087 -0.0116466 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_1a_1_simple" class="visualgeom"/>
@@ -797,7 +797,7 @@
             <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_10_simple" pos="0.0599989 0.0708333 -0.0143382" quat="-0.698877 0.698877 -0.107567 0.107567" contype="0" conaffinity="0" group="1" density="0"/>
             <body name="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_rotor_1" pos="0.0262724 0.0838788 -0.00812057" quat="0.107567 -0.107567 -0.698877 0.698877">
               <inertial pos="-0.000629542 0.000249779 -0.0912817" quat="0.698241 -0.0717126 0.0781786 0.707958" mass="1.2945" diaginertia="0.00366319 0.00247024 0.00183723"/>
-              <joint name="left shoulder roll" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+              <joint name="left shoulder roll" pos="0 0 0" axis="0 0 -1" range="-1.27409 1.8326"/>
               <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple" class="visualgeom"/>
               <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
               <geom pos="-0.0115317 0.00331973 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_2a_1_simple" class="visualgeom"/>
@@ -838,7 +838,7 @@
               <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_21_simple" pos="0.0241665 0.0304483 -0.121838" quat="0.425252 0.425252 -0.564943 -0.564943" contype="0" conaffinity="0" group="1" density="0"/>
               <body name="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_rotor_1" pos="-0.0120607 0.00328933 -0.115436" quat="0.564943 -0.564943 -0.425252 0.425252">
                 <inertial pos="0.0178702 0.0640787 -0.0133545" quat="0.951585 0.123864 0.00573468 -0.281268" mass="1.01978" diaginertia="0.00231309 0.00211902 0.00187083"/>
-                <joint name="left elbow pitch" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+                <joint name="left elbow pitch" pos="0 0 0" axis="0 0 -1" range="-1.309 1.8326"/>
                 <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple" class="visualgeom"/>
                 <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
                 <geom pos="0.0115317 -0.00331973 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_3b_1_simple" class="visualgeom"/>
@@ -857,7 +857,7 @@
                 <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_31_simple" pos="-0.00493803 0.0846268 0.0109614" quat="-0.425547 0.564721 0.425548 0.564721" contype="0" conaffinity="0" group="1" density="0"/>
                 <body name="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_rotor_1" pos="0.0226353 0.079113 -0.0126759" quat="-0.564721 -0.425548 0.564721 -0.425547">
                   <inertial pos="-5.62987e-06 -5.42532e-06 -0.0527898" quat="0.501611 0.498876 -0.49961 0.499898" mass="0.451151" diaginertia="0.000464854 0.000367863 0.000367669"/>
-                  <joint name="left wrist roll" pos="0 0 0" axis="0 0 -1" range="-6 6"/>
+                  <joint name="left wrist roll" pos="0 0 0" axis="0 0 -1" range="-3.14159 0"/>
                   <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple" class="visualgeom"/>
                   <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple" contype="0" conaffinity="0" group="1" density="0"/>
                   <geom pos="0 0 -0.0305" quat="0.707107 0 0 0.707107" type="mesh" rgba="0 0 0 1" mesh="upper_half_assembly_1_left_arm_1_stub_1_simple" class="visualgeom"/>

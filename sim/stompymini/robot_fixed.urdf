@@ -1235,7 +1235,7 @@
     <origin xyz="0.053 0 -0.039" rpy="3.1415927 0 0" />
     <parent link="link_upper_half_assembly_1_robstride_04_mock_2_rs_04_stator_1" />
     <child link="link_upper_half_assembly_1_robstride_04_mock_2_rs_04_rotor_1" />
-    <limit effort="120" velocity="40" lower="-2.02" upper="-0.02" />
+    <limit effort="120" velocity="40" lower="-1.02" upper="-1.019" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_half_assembly_1_head_assembly_1_head_outter_1">
@@ -1318,7 +1318,7 @@
     <origin xyz="0 -0.053 0.039" rpy="0 0 1.5707963" />
     <parent link="link_upper_half_assembly_1_robstride_04_mock_1_rs_04_stator_1" />
     <child link="link_upper_half_assembly_1_robstride_04_mock_1_rs_04_rotor_1" />
-    <limit effort="120" velocity="40" lower="2.12" upper="4.12" />
+    <limit effort="120" velocity="40" lower="3.12" upper="3.121" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_half_assembly_1_part_1_2">
@@ -2832,7 +2832,7 @@
     <origin xyz="-0.012659308 -0.034234368 0.0015" rpy="3.1415927 0 0" />
     <parent link="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_stator_1" />
     <child link="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_rotor_1" />
-    <limit effort="17" velocity="40" lower="0.38" upper="2.38" />
+    <limit effort="17" velocity="40" lower="1.38" upper="1.381" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1">
@@ -2861,7 +2861,7 @@
     <origin xyz="-0.012659308 -0.034234368 0.0015" rpy="3.1415927 0 0" />
     <parent link="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_stator_1" />
     <child link="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1" />
-    <limit effort="17" velocity="40" lower="-2.98" upper="-0.98" />
+    <limit effort="17" velocity="40" lower="-1.98" upper="-1.979" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_stator_1">
@@ -2917,7 +2917,7 @@
     <origin xyz="0.042877901 0.031152618 0" rpy="0 0 0" />
     <parent link="link_lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_stator_1" />
     <child link="link_lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_rotor_1" />
-    <limit effort="120" velocity="40" lower="2.06" upper="4.06" />
+    <limit effort="120" velocity="40" lower="2.55" upper="4.55" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_half_assembly_1_left_arm_1_left_arm_part_1a_1">
@@ -3000,7 +3000,7 @@
     <origin xyz="-0.042877901 -0.031152618 0" rpy="0 0 0" />
     <parent link="link_lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_stator_1" />
     <child link="link_lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_rotor_1" />
-    <limit effort="120" velocity="40" lower="-1.06" upper="0.94" />
+    <limit effort="120" velocity="40" lower="-1.28" upper="0.72" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_half_assembly_1_right_leg_1_hip_pitch_right_1">
@@ -3974,7 +3974,7 @@
     <origin xyz="0.023604701 -0.027840044 -0.0015" rpy="0 0 0" />
     <parent link="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_stator_1" />
     <child link="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_rotor_1" />
-    <limit effort="17" velocity="40" lower="-4.24" upper="-2.24" />
+    <limit effort="17" velocity="40" lower="-3.24" upper="-3.239" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_half_assembly_1_right_arm_1_washer_m4_12">
@@ -4030,7 +4030,7 @@
     <origin xyz="-0.012659308 -0.034234368 0.0015" rpy="3.1415927 0 0" />
     <parent link="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_stator_1" />
     <child link="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_rotor_1" />
-    <limit effort="17" velocity="40" lower="-2.38" upper="-0.38" />
+    <limit effort="17" velocity="40" lower="-1.38" upper="-1.379" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_half_assembly_1_left_leg_1_7806k63_1">
@@ -5197,7 +5197,7 @@
     <origin xyz="-0.012659308 0.034234368 -0.0015" rpy="0 0 0" />
     <parent link="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_stator_1" />
     <child link="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_rotor_1" />
-    <limit effort="17" velocity="40" lower="0.2" upper="2.2" />
+    <limit effort="17" velocity="40" lower="1.2" upper="1.201" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_half_assembly_1_right_arm_1_washer_m4_16">
@@ -5253,7 +5253,7 @@
     <origin xyz="0.036499516 0.00018797018 0.0265" rpy="0 0 1.5707963" />
     <parent link="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_stator_1" />
     <child link="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_rotor_1" />
-    <limit effort="17" velocity="40" lower="0.32" upper="2.32" />
+    <limit effort="17" velocity="40" lower="1.32" upper="1.321" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_half_assembly_1_left_leg_1_robstride_01_mock_1_rs_01_stator_1">
@@ -5907,7 +5907,7 @@
     <origin xyz="-0.012659308 0.034234368 -0.0015" rpy="0 0 0" />
     <parent link="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_stator_1" />
     <child link="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_rotor_1" />
-    <limit effort="17" velocity="40" lower="-1" upper="1" />
+    <limit effort="17" velocity="40" lower="0" upper="0.001" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_half_assembly_1_left_leg_1_7806k63_2">
@@ -6044,7 +6044,7 @@
     <origin xyz="0.012307835 0.034362293 -0.0015" rpy="0 0 0" />
     <parent link="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_stator_1" />
     <child link="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_rotor_1" />
-    <limit effort="17" velocity="40" lower="-1" upper="1" />
+    <limit effort="17" velocity="40" lower="0" upper="0.001" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_half_assembly_1_right_arm_1_washer_m4_28">
@@ -6181,7 +6181,7 @@
     <origin xyz="-0.053 0 0" rpy="0 0 0" />
     <parent link="link_lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_stator_1" />
     <child link="link_lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_rotor_1" />
-    <limit effort="120" velocity="40" lower="-1" upper="1" />
+    <limit effort="120" velocity="40" lower="-2" upper="0" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_upper_half_assembly_1_left_arm_1_left_arm_part_3a_1">
@@ -6291,7 +6291,7 @@
     <origin xyz="0.053 0 0" rpy="3.1415927 0 0" />
     <parent link="link_lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_stator_1" />
     <child link="link_lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_rotor_1" />
-    <limit effort="120" velocity="40" lower="-1" upper="1" />
+    <limit effort="120" velocity="40" lower="0" upper="2" />
     <axis xyz="0 0 -1" />
     </joint>
   <link name="link_lower_half_assembly_1_right_leg_1_calf_right_outer_1">
