@@ -85,15 +85,27 @@ def play(args: argparse.Namespace) -> None:
 
     # Create dataset of observations
     buf_len = len(env.obs_history)  # length of observation buffer
-    dset_2D_command = h5_file.create_dataset("observations/2D_command", (max_timesteps, buf_len, 2), dtype=np.float32) # sin and cos commands
-    dset_3D_command = h5_file.create_dataset("observations/3D_command", (max_timesteps, buf_len, 3), dtype=np.float32) # x, y, yaw commands
-    dset_q = h5_file.create_dataset("observations/q", (max_timesteps, buf_len, num_dof), dtype=np.float32) # joint positions
-    dset_dq = h5_file.create_dataset("observations/dq", (max_timesteps, buf_len, num_dof), dtype=np.float32) # joint velocities
+    dset_2D_command = h5_file.create_dataset(
+        "observations/2D_command", (max_timesteps, buf_len, 2), dtype=np.float32
+    )  # sin and cos commands
+    dset_3D_command = h5_file.create_dataset(
+        "observations/3D_command", (max_timesteps, buf_len, 3), dtype=np.float32
+    )  # x, y, yaw commands
+    dset_q = h5_file.create_dataset(
+        "observations/q", (max_timesteps, buf_len, num_dof), dtype=np.float32
+    )  # joint positions
+    dset_dq = h5_file.create_dataset(
+        "observations/dq", (max_timesteps, buf_len, num_dof), dtype=np.float32
+    )  # joint velocities
     dset_obs_actions = h5_file.create_dataset(
         "observations/actions", (max_timesteps, buf_len, num_dof), dtype=np.float32
-    ) # actions
-    dset_ang_vel = h5_file.create_dataset("observations/ang_vel", (max_timesteps, buf_len, 3), dtype=np.float32) # root angular velocity
-    dset_euler = h5_file.create_dataset("observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32) # root orientation
+    )  # actions
+    dset_ang_vel = h5_file.create_dataset(
+        "observations/ang_vel", (max_timesteps, buf_len, 3), dtype=np.float32
+    )  # root angular velocity
+    dset_euler = h5_file.create_dataset(
+        "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
+    )  # root orientation
 
     if RENDER:
         camera_properties = gymapi.CameraProperties()
@@ -162,13 +174,13 @@ def play(args: argparse.Namespace) -> None:
         # Store h5 data
         for i in range(buf_len):
             cur_obs = env.obs_history[i].tolist()[0]
-            dset_2D_command[t, i] = cur_obs[0:2] # sin and cos commands
-            dset_3D_command[t, i] = cur_obs[2:5] # x, y, yaw commands
-            dset_q[t, i] = cur_obs[5 : 5 + num_dof] # joint positions
-            dset_dq[t, i] = cur_obs[5 + num_dof : 5 + 2 * num_dof] # joint velocities
-            dset_obs_actions[t, i] = cur_obs[5 + 2 * num_dof : 5 + 3 * num_dof] # actions
-            dset_ang_vel[t, i] = cur_obs[5 + 3 * num_dof : 8 + 3 * num_dof] # root angular velocity
-            dset_euler[t, i] = cur_obs[8 + 3 * num_dof : 11 + 3 * num_dof] # root orientation
+            dset_2D_command[t, i] = cur_obs[0:2]  # sin and cos commands
+            dset_3D_command[t, i] = cur_obs[2:5]  # x, y, yaw commands
+            dset_q[t, i] = cur_obs[5 : 5 + num_dof]  # joint positions
+            dset_dq[t, i] = cur_obs[5 + num_dof : 5 + 2 * num_dof]  # joint velocities
+            dset_obs_actions[t, i] = cur_obs[5 + 2 * num_dof : 5 + 3 * num_dof]  # actions
+            dset_ang_vel[t, i] = cur_obs[5 + 3 * num_dof : 8 + 3 * num_dof]  # root angular velocity
+            dset_euler[t, i] = cur_obs[8 + 3 * num_dof : 11 + 3 * num_dof]  # root orientation
 
         env_logger.log_states(
             {
