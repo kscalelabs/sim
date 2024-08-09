@@ -234,9 +234,9 @@ class MiniFreeEnv(LeggedRobot):
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
-                q,  # 12D
-                dq,  # 12D
-                self.actions,  # 12D
+                q,  # 20D
+                dq,  # 20D
+                self.actions,  # 20D
                 self.base_ang_vel * self.obs_scales.ang_vel,  # 3
                 self.base_euler_xyz * self.obs_scales.quat,  # 3
             ),
@@ -265,6 +265,7 @@ class MiniFreeEnv(LeggedRobot):
 
         self.obs_buf = obs_buf_all.reshape(self.num_envs, -1)  # N, T*K
         self.privileged_obs_buf = torch.cat([self.critic_history[i] for i in range(self.cfg.env.c_frame_stack)], dim=1)
+        # breakpoint()
 
     def reset_idx(self, env_ids):
         super().reset_idx(env_ids)

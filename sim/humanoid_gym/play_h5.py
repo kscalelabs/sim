@@ -53,6 +53,7 @@ def play(args: argparse.Namespace) -> None:
     env.set_camera(env_cfg.viewer.pos, env_cfg.viewer.lookat)
 
     obs = env.get_observations()
+    # breakpoint()e
 
     # load policy
     train_cfg.runner.resume = True
@@ -76,26 +77,21 @@ def play(args: argparse.Namespace) -> None:
     now = datetime.now()
     now = now.strftime("%Y-%m-%d_%H-%M-%S")
     h5_file = h5py.File("data" + now + ".h5", "w")
-    max_timesteps = stop_state_log
-    dset_obs = h5_file.create_dataset("observations", (max_timesteps,) + obs.shape, dtype=np.float32)
-    sample_action = policy(obs.detach())
-    dset_actions = h5_file.create_dataset("actions", (max_timesteps,) + sample_action.shape, dtype=np.float32)
 
-    # Create datasets for additional logged parameters
-    dset_dof_pos_target = h5_file.create_dataset("dof_pos_target", (max_timesteps,), dtype=np.float32)
-    dset_dof_pos = h5_file.create_dataset("dof_pos", (max_timesteps,), dtype=np.float32)
-    dset_dof_vel = h5_file.create_dataset("dof_vel", (max_timesteps,), dtype=np.float32)
-    dset_dof_torque = h5_file.create_dataset("dof_torque", (max_timesteps,), dtype=np.float32)
-    dset_command_x = h5_file.create_dataset("command_x", (max_timesteps,), dtype=np.float32)
-    dset_command_y = h5_file.create_dataset("command_y", (max_timesteps,), dtype=np.float32)
-    dset_command_yaw = h5_file.create_dataset("command_yaw", (max_timesteps,), dtype=np.float32)
-    dset_base_vel_x = h5_file.create_dataset("base_vel_x", (max_timesteps,), dtype=np.float32)
-    dset_base_vel_y = h5_file.create_dataset("base_vel_y", (max_timesteps,), dtype=np.float32)
-    dset_base_vel_z = h5_file.create_dataset("base_vel_z", (max_timesteps,), dtype=np.float32)
-    dset_base_vel_yaw = h5_file.create_dataset("base_vel_yaw", (max_timesteps,), dtype=np.float32)
-    dset_contact_forces_z = h5_file.create_dataset(
-        "contact_forces_z", (max_timesteps, 2), dtype=np.float32
-    )
+    # Create dataset for actions
+    max_timesteps = stop_state_log
+    num_dof = env.num_dof
+    dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_dof), dtype=np.float32)
+
+    # Create dataset of observations
+    buf_len = len(env.obs_history) # length of observation buffer
+    dset_2D_command = h5_file.create_dataset("observations/2D_command", (max_timesteps, buf_len, 2), dtype=np.float32)
+    dset_3D_command = h5_file.create_dataset("observations/3D_command", (max_timesteps, buf_len, 3), dtype=np.float32)
+    dset_q = h5_file.create_dataset("observations/q", (max_timesteps, buf_len, num_dof), dtype=np.float32)
+    dset_dq = h5_file.create_dataset("observations/dq", (max_timesteps, buf_len, num_dof), dtype=np.float32)
+    dset_obs_actions = h5_file.create_dataset("observations/actions", (max_timesteps, buf_len, num_dof), dtype=np.float32)
+    dset_ang_vel = h5_file.create_dataset("observations/ang_vel", (max_timesteps, buf_len, 3), dtype=np.float32)
+    dset_euler = h5_file.create_dataset("observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32)
 
     if RENDER:
         camera_properties = gymapi.CameraProperties()
@@ -128,9 +124,6 @@ def play(args: argparse.Namespace) -> None:
 
     for t in tqdm(range(stop_state_log)):
         actions = policy(obs.detach())
-
-        # Store observations and actions
-        dset_obs[t] = obs.cpu().numpy()
         dset_actions[t] = actions.detach().numpy()
 
         if FIX_COMMAND:
@@ -164,19 +157,16 @@ def play(args: argparse.Namespace) -> None:
         base_vel_yaw = env.base_ang_vel[robot_index, 2].item()
         contact_forces_z = env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
 
-        # Store logged data
-        dset_dof_pos_target[t] = dof_pos_target
-        dset_dof_pos[t] = dof_pos
-        dset_dof_vel[t] = dof_vel
-        dset_dof_torque[t] = dof_torque
-        dset_command_x[t] = command_x
-        dset_command_y[t] = command_y
-        dset_command_yaw[t] = command_yaw
-        dset_base_vel_x[t] = base_vel_x
-        dset_base_vel_y[t] = base_vel_y
-        dset_base_vel_z[t] = base_vel_z
-        dset_base_vel_yaw[t] = base_vel_yaw
-        dset_contact_forces_z[t] = contact_forces_z
+        # Store h5 data
+        for i in range(buf_len):
+            cur_obs = env.obs_history[i].tolist()[0]
+            dset_2D_command[t, i] = cur_obs[0:2]
+            dset_3D_command[t, i] = cur_obs[2:5]
+            dset_q[t, i] = cur_obs[5:5+num_dof]
+            dset_dq[t, i] = cur_obs[5+num_dof:5+2*num_dof]
+            dset_obs_actions[t, i] = cur_obs[5+2*num_dof:5+3*num_dof]
+            dset_ang_vel[t, i] = cur_obs[5+3*num_dof:8+3*num_dof]
+            dset_euler[t, i] = cur_obs[8+3*num_dof:11+3*num_dof]
 
         env_logger.log_states(
             {
