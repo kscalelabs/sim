@@ -72,7 +72,6 @@ def play(args: argparse.Namespace) -> None:
     joint_index = 1
     stop_state_log = 1000
 
-    # Initialize HDF5 file if --log_h5 is enabled
     if args.log_h5:
         now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         h5_file = h5py.File(f"data{now}.h5", "w")
@@ -171,7 +170,6 @@ def play(args: argparse.Namespace) -> None:
         base_vel_yaw = env.base_ang_vel[robot_index, 2].item()
         contact_forces_z = env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
 
-        # Store h5 data if --log_h5 is enabled
         if args.log_h5:
             for i in range(buf_len):
                 cur_obs = env.obs_history[i].tolist()[0]
@@ -210,7 +208,6 @@ def play(args: argparse.Namespace) -> None:
     if RENDER:
         video.release()
 
-    # Close HDF5 file if --log_h5 is enabled
     if args.log_h5:
         print("Saving data to " + os.path.abspath(f"data{now}.h5"))
         h5_file.close()
