@@ -49,7 +49,7 @@ class MiniCfg(LeggedRobotCfg):
         terminate_after_contacts_on = ["link_upper_half_assembly_1_torso_top_left_1"]
 
         penalize_contacts_on = []
-        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -84,9 +84,9 @@ class MiniCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 1.05]
-        rot = [0, 0.7071068, 0.7071068, 0]
-        rot = [-0.7071068, 0.7071068, 0.7071068, -0.7071068]
+        pos = [0.0, 0.0, 0.85]
+        rot = [0, 0.7071068, 0.7071068, 0] # facing left
+        # rot = [-0.7071068, 0.7071068, 0.7071068, -0.7071068] # facing forward
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
         default_positions = Stompy.default_standing()
@@ -131,7 +131,7 @@ class MiniCfg(LeggedRobotCfg):
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.02
+        dynamic_randomization = 0.05
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -143,11 +143,11 @@ class MiniCfg(LeggedRobotCfg):
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
             lin_vel_y = [-0.3, 0.6]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-0.14, 0.14]
+            heading = [-3.14, 3.14]
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 1.05
+        base_height_target = 0.85
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
