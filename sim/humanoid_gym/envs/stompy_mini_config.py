@@ -108,10 +108,10 @@ class MiniCfg(LeggedRobotCfg):
         up_axis = 1  # 0 is y, 1 is z
 
         class physx(LeggedRobotCfg.sim.physx):
-            num_threads = 12
-            solver_type = 1  # 0: pgs, 1: tgs
+            num_threads = 10
+            solver_type = 0  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 1
+            num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
@@ -141,23 +141,26 @@ class MiniCfg(LeggedRobotCfg):
 
         class ranges:
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
-            lin_vel_y = [-0.3, 0.6]  # min max [m/s]
-            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
+            lin_vel_y = [-0.3, 0.3]   # min max [m/s]
+            ang_vel_yaw = [-0.3, 0.3]    # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.85
-        min_dist = 0.2
-        max_dist = 0.5
+        # pfb30 - changed this
+        base_height_target = 0.55
+        min_dist = 0.1
+        max_dist = 0.3
+        
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.06  # m
+        target_feet_height = 0.03  # m
         cycle_time = 0.64  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
-        tracking_sigma = 5
+        # pfb30 - this is very high
+        tracking_sigma = 5.
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:

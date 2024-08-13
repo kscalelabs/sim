@@ -357,10 +357,11 @@ class MiniFreeEnv(LeggedRobot):
         # breakpoint()
         # quat_mismatch = torch.dot(torch.squeeze(self.base_quat), rot)
         # breakpoint()
-        quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
-        breakpoint()
-        orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
 
+        quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
+        # breakpoint()
+        orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
+        # print(orientation, quat_mismatch)
         return (quat_mismatch + orientation)
 
     def _reward_feet_contact_forces(self):
