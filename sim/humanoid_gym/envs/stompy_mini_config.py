@@ -44,12 +44,12 @@ class MiniCfg(LeggedRobotCfg):
         foot_name = "_leg_1_robstride_01_mock_2_rs_01_stator_1"
         knee_name = "_leg_1_robstride_04_mock_2_rs_04_rotor_1"
 
-        termination_height = 0.5
+        termination_height = 0.24
         default_feet_height = 0.0
         terminate_after_contacts_on = ["link_upper_half_assembly_1_torso_top_left_1"]
 
         penalize_contacts_on = []
-        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -147,7 +147,7 @@ class MiniCfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        # pfb30 - changed this
+        # TODO: inspect these parameters
         base_height_target = 0.55
         min_dist = 0.1
         max_dist = 0.3
@@ -159,7 +159,6 @@ class MiniCfg(LeggedRobotCfg):
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
-        # pfb30 - this is very high
         tracking_sigma = 5.
         max_contact_force = 400  # forces above this value are penalized
 
@@ -234,7 +233,7 @@ class MiniCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 5001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations

@@ -70,7 +70,7 @@ def play(args: argparse.Namespace) -> None:
     env_logger = Logger(env.dt)
     robot_index = 0  # which robot is used for logging
     joint_index = 1  # which joint is used for logging
-    stop_state_log = 2000  # number of steps before plotting states
+    stop_state_log = 1000  # number of steps before plotting states
 
     if RENDER:
         camera_properties = gymapi.CameraProperties()
@@ -105,10 +105,10 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
         # print(obs)
         # print(actions)
-
+        # /home/dpsh/sim/third_party/humanoid-gym/logs/Full/Aug13_07-51-35_/model_1100.pt
         if FIX_COMMAND:
-            env.commands[:, 0] = 0.5
-            env.commands[:, 1] = 0.0  # negative left, positive right
+            env.commands[:, 0] = 0.0
+            env.commands[:, 1] = -0.5 # negative left, positive right
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())

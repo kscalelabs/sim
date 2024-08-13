@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from sim.scripts.create_mjcf import create_mjcf
-from sim.stompy_legs.joints import Stompy
+from sim.stompymini.joints import Stompy
 
 
 def update_urdf(model_path: str) -> None:
@@ -50,7 +50,7 @@ def update_urdf(model_path: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Update URDF file to fix robot joints.")
-    parser.add_argument("--model_path", type=str, help="Path to the model directory", default="sim/stompy_legs")
+    parser.add_argument("--model_path", type=str, help="Path to the model directory", default="sim/stompymini")
     args = parser.parse_args()
 
     update_urdf(args.model_path)
