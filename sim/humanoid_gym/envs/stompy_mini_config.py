@@ -45,7 +45,7 @@ class MiniCfg(LeggedRobotCfg):
         knee_name = "_leg_1_robstride_04_mock_2_rs_04_rotor_1"
 
         termination_height = 0.24
-        default_feet_height = 0.0
+        default_feet_height = 0.03
         terminate_after_contacts_on = ["link_upper_half_assembly_1_torso_top_left_1"]
 
         penalize_contacts_on = []
@@ -74,7 +74,7 @@ class MiniCfg(LeggedRobotCfg):
     class noise:
         add_noise = True
         noise_level = 0.6  # scales other values
-
+        
         class noise_scales:
             dof_pos = 0.05
             dof_vel = 0.5
@@ -109,7 +109,7 @@ class MiniCfg(LeggedRobotCfg):
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
-            solver_type = 0  # 0: pgs, 1: tgs
+            solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
@@ -122,6 +122,7 @@ class MiniCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand:
+        start_pos_noise = 0.01
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -148,9 +149,9 @@ class MiniCfg(LeggedRobotCfg):
     class rewards:
         # quite important to keep it right
         # TODO: inspect these parameters
-        base_height_target = 0.55
-        min_dist = 0.1
-        max_dist = 0.3
+        base_height_target = 0.45
+        min_dist = 0.15
+        max_dist = 0.5
         
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
