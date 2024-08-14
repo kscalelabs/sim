@@ -74,7 +74,7 @@ class MiniCfg(LeggedRobotCfg):
     class noise:
         add_noise = True
         noise_level = 0.6  # scales other values
-        
+
         class noise_scales:
             dof_pos = 0.05
             dof_vel = 0.5
@@ -150,7 +150,7 @@ class MiniCfg(LeggedRobotCfg):
         base_height_target = 0.78
         min_dist = 0.25
         max_dist = 0.5
-        
+
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.05  # m
