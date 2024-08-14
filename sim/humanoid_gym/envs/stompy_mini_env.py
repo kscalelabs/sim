@@ -362,7 +362,7 @@ class MiniFreeEnv(LeggedRobot):
         # breakpoint()
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
         # print(orientation, quat_mismatch)
-        return (quat_mismatch + orientation)
+        return quat_mismatch + orientation
 
     def _reward_feet_contact_forces(self):
         """

@@ -85,7 +85,7 @@ class MiniCfg(LeggedRobotCfg):
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, 0.85]
-        rot = [0, 0.7071068, 0.7071068, 0] # facing left
+        rot = [0, 0.7071068, 0.7071068, 0]  # facing left
         # rot = [-0.7071068, 0.7071068, 0.7071068, -0.7071068] # facing forward
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
@@ -141,8 +141,8 @@ class MiniCfg(LeggedRobotCfg):
 
         class ranges:
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
-            lin_vel_y = [-0.3, 0.3]   # min max [m/s]
-            ang_vel_yaw = [-0.3, 0.3]    # min max [rad/s]
+            lin_vel_y = [-0.3, 0.3]  # min max [m/s]
+            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
@@ -151,7 +151,7 @@ class MiniCfg(LeggedRobotCfg):
         base_height_target = 0.55
         min_dist = 0.1
         max_dist = 0.3
-        
+
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.03  # m
@@ -159,7 +159,7 @@ class MiniCfg(LeggedRobotCfg):
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
-        tracking_sigma = 5.
+        tracking_sigma = 5.0
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
