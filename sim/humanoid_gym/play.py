@@ -71,9 +71,8 @@ def play(args: argparse.Namespace) -> None:
     robot_index = 0
     joint_index = 1
     stop_state_log = 1000
-
+    now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     if args.log_h5:
-        now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         h5_file = h5py.File(f"data{now}.h5", "w")
 
         # Create dataset for actions
@@ -140,8 +139,8 @@ def play(args: argparse.Namespace) -> None:
             dset_actions[t] = actions.detach().numpy()
 
         if FIX_COMMAND:
-            env.commands[:, 0] = 0.5
-            env.commands[:, 1] = 0.0
+            env.commands[:, 0] = 0.0
+            env.commands[:, 1] = -0.5
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())

@@ -102,6 +102,33 @@ class Stompy(Node):
     right_arm = RightArm()
     legs = Legs()
 
+    # @classmethod
+    # def default_standing(cls) -> Dict[str, float]:
+    #     return {
+    #         # arms
+    #         Stompy.right_arm.shoulder_pitch: 3.12,
+    #         Stompy.right_arm.shoulder_yaw: -1.98,
+    #         Stompy.right_arm.shoulder_roll: -1.38,
+    #         Stompy.right_arm.elbow_pitch: 1.32,
+    #         Stompy.right_arm.hand.wrist_roll: 0,
+    #         Stompy.legs.left.hip_pitch: -0.087,
+    #         Stompy.legs.left.hip_roll: 1.62,
+    #         Stompy.legs.left.hip_yaw: 1.55,
+    #         Stompy.legs.left.knee_pitch: 0.2,
+    #         Stompy.legs.left.ankle_pitch: -1.74,
+    #         Stompy.legs.right.hip_pitch: 3.25,
+    #         Stompy.legs.right.hip_roll: 3.24,
+    #         Stompy.legs.right.hip_yaw: 3.08,
+    #         Stompy.legs.right.knee_pitch: -0.24,
+    #         Stompy.legs.right.ankle_pitch: 0.17,
+    #         Stompy.left_arm.shoulder_pitch: -1.02,
+    #         Stompy.left_arm.shoulder_yaw: 1.38,
+    #         Stompy.left_arm.shoulder_roll: -3.24,
+    #         Stompy.left_arm.elbow_pitch: 1.2,
+    #         Stompy.left_arm.hand.wrist_roll: 0,
+    #         # legs
+    #     }
+
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
@@ -122,7 +149,7 @@ class Stompy(Node):
             Stompy.legs.left.hip_roll: 1.5,
             Stompy.legs.left.hip_yaw: 1.62,
             Stompy.legs.left.knee_pitch: 1,
-            Stompy.legs.left.ankle_pitch: -1.62,
+            Stompy.legs.left.ankle_pitch: -2.2,
             Stompy.legs.right.hip_pitch: 3.55,
             Stompy.legs.right.hip_roll: 3.18,
             Stompy.legs.right.hip_yaw: 3.24,
@@ -135,44 +162,44 @@ class Stompy(Node):
         return {
             # left arm
             Stompy.left_arm.shoulder_pitch: {
-                "lower": -1.03,
-                "upper": -1.009,
+                "lower": -1.021,
+                "upper": -1.019,
             },
             Stompy.left_arm.shoulder_yaw: {
-                "lower": 1.38,
+                "lower": 1.379,
                 "upper": 1.381,
             },
             Stompy.left_arm.shoulder_roll: {
-                "lower": -3.24,
+                "lower": -3.241,
                 "upper": -3.239,
             },
             Stompy.left_arm.elbow_pitch: {
-                "lower": 1.2,
+                "lower": 1.199,
                 "upper": 1.201,
             },
             Stompy.left_arm.hand.wrist_roll: {
-                "lower": 0,
+                "lower": -0.001,
                 "upper": 0.001,
             },
             # right arm
             Stompy.right_arm.shoulder_pitch: {
-                "lower": 3.12,
+                "lower": 3.119,
                 "upper": 3.121,
             },
             Stompy.right_arm.shoulder_yaw: {
-                "lower": -1.98,
+                "lower": -1.981,
                 "upper": -1.979,
             },
             Stompy.right_arm.shoulder_roll: {
-                "lower": -1.38,
+                "lower": -1.381,
                 "upper": -1.379,
             },
             Stompy.right_arm.elbow_pitch: {
-                "lower": 1.32,
+                "lower": 1.319,
                 "upper": 1.321,
             },
             Stompy.right_arm.hand.wrist_roll: {
-                "lower": 0,
+                "lower": -0.001,
                 "upper": 0.001,
             },
             # left leg
@@ -193,8 +220,8 @@ class Stompy(Node):
                 "upper": 2,
             },
             Stompy.legs.left.ankle_pitch: {
-                "lower": -2.62,
-                "upper": -0.62,
+                "lower": -2.8,
+                "upper": -0.8,
             },
             # right leg
             Stompy.legs.right.hip_pitch: {
@@ -223,11 +250,11 @@ class Stompy(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 150,
-            "hip yaw": 150,
-            "hip roll": 45,
-            "knee pitch": 150,
-            "ankle pitch": 45,
+            "hip pitch": 250,
+            "hip yaw": 250,
+            "hip roll": 150,
+            "knee pitch": 250,
+            "ankle pitch": 150,
             "shoulder pitch": 150,
             "shoulder yaw": 45,
             "shoulder roll": 45,
@@ -239,13 +266,13 @@ class Stompy(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 5,
-            "hip yaw": 5,
-            "hip roll": 5,
-            "knee pitch": 5,
-            "ankle pitch": 5,
-            "shoulder pitch": 5,
-            "shoulder yaw": 5,
+            "hip pitch": 10,
+            "hip yaw": 10,
+            "hip roll": 10,
+            "knee pitch": 10,
+            "ankle pitch": 10,
+            "shoulder pitch": 10,
+            "shoulder yaw": 10,
             "shoulder roll": 5,
             "elbow pitch": 5,
             "wrist roll": 5,
