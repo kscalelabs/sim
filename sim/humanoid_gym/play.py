@@ -72,7 +72,6 @@ def play(args: argparse.Namespace) -> None:
     joint_index = 1
     stop_state_log = 1000
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
     if args.log_h5:
         h5_file = h5py.File(f"data{now}.h5", "w")
 
@@ -221,4 +220,9 @@ if __name__ == "__main__":
     RENDER = True
     FIX_COMMAND = True
 
-    play(get_args())
+    base_args = get_args()
+    parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
+    parser.add_argument("--log_h5", action="store_true", help="Enable HDF5 logging")
+    args, unknown = parser.parse_known_args(namespace=base_args)
+
+    play(args)
