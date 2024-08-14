@@ -10,6 +10,8 @@ quickly.
 # fmt: off
 import isaacgym # isort:skip
 import torch # isort:skip
+from .dora_config import DoraCfg, DoraCfgPPO
+from .dora_env import DoraFreeEnv
 from .g1_config import G1Cfg, G1CfgPPO
 from .g1_env import G1FreeEnv
 from .h1_config import H1Cfg, H1CfgPPO
@@ -22,8 +24,6 @@ from .stompy_config import StompyCfg, StompyCfgPPO
 from .stompy_env import StompyFreeEnv
 from .stompy_mini_config import MiniCfg, MiniCfgPPO
 from .stompy_mini_env import MiniFreeEnv
-from .dora_config import DoraCfg, DoraCfgPPO
-from .dora_env import DoraFreeEnv
 
 
 def register_tasks() -> None:
