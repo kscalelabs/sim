@@ -352,17 +352,10 @@ class MiniFreeEnv(LeggedRobot):
         Calculates the reward for maintaining a flat base orientation. It penalizes deviation
         from the desired base orientation using the base euler angles and the projected gravity vector.
         """
-        # we calculate this using the dot product between rotation and starting rotation
-        # rot = torch.tensor(self.cfg.init_state.rot).to(self.base_quat.device)
-        # breakpoint()
-        # quat_mismatch = torch.dot(torch.squeeze(self.base_quat), rot)
-        # breakpoint()
-
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
-        # breakpoint()
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
-        # print(orientation, quat_mismatch)
-        return (quat_mismatch + orientation)
+
+        return (quat_mismatch + orientation) / 2 
 
     def _reward_feet_contact_forces(self):
         """
@@ -381,13 +374,12 @@ class MiniFreeEnv(LeggedRobot):
         Calculates the reward for keeping joint positions close to default positions, with a focus
         on penalizing deviation in yaw and roll directions. Excludes yaw and roll from the main penalty.
         """
-        # breakpoint()
         joint_diff = self.dof_pos - self.default_joint_pd_target
         left_yaw_roll = joint_diff[:, [self.legs_joints["left_hip_roll"], self.legs_joints["left_hip_yaw"]]]
         right_yaw_roll = joint_diff[:, [self.legs_joints["right_hip_roll"], self.legs_joints["right_hip_yaw"]]]
         yaw_roll = torch.norm(left_yaw_roll, dim=1) + torch.norm(right_yaw_roll, dim=1)
         yaw_roll = torch.clamp(yaw_roll - 0.1, 0, 50)
-        # breakpoint()
+
         return torch.exp(-yaw_roll * 100) - 0.01 * torch.norm(joint_diff, dim=1)
 
     def _reward_base_height(self):
