@@ -354,7 +354,6 @@ class MiniFreeEnv(LeggedRobot):
         """
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
-
         return (quat_mismatch + orientation) / 2 
 
     def _reward_feet_contact_forces(self):
