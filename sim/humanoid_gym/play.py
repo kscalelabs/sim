@@ -1,11 +1,10 @@
-"""Script to replay a trained policy in the environment."""
-
 import argparse
 import logging
 import os
 from datetime import datetime
 
 import cv2
+import h5py
 import numpy as np
 from isaacgym import gymapi
 from tqdm import tqdm
@@ -30,18 +29,18 @@ def export_policy_as_jit(actor_critic, path):
 def play(args: argparse.Namespace) -> None:
     configure_logging()
 
+    logger.info("Configuring environment and training settings...")
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
     env_cfg.sim.max_gpu_contact_pairs = 2**10
-    # env_cfg.terrain.mesh_type = 'trimesh'
     env_cfg.terrain.mesh_type = "plane"
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.terrain.max_init_terrain_level = 5
     env_cfg.noise.add_noise = True
-    env_cfg.domain_rand.push_robots = False
+    env_cfg.domain_rand.push_robots = True
     env_cfg.domain_rand.joint_angle_noise = 0.0
     env_cfg.noise.curriculum = False
     env_cfg.noise.noise_level = 0.5
@@ -60,17 +59,51 @@ def play(args: argparse.Namespace) -> None:
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
 
-    EXPORT_POLICY = True  # True
-    # export policy as a jit module (used to run it from C++)
+    # Export policy if needed
+    EXPORT_POLICY = True
     if EXPORT_POLICY:
         path = os.path.join(".")
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
 
+    # Prepare for logging
     env_logger = Logger(env.dt)
-    robot_index = 0  # which robot is used for logging
-    joint_index = 1  # which joint is used for logging
-    stop_state_log = 1000  # number of steps before plotting states
+    robot_index = 0
+    joint_index = 1
+    stop_state_log = 1000
+    now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+    if args.log_h5:
+        h5_file = h5py.File(f"data{now}.h5", "w")
+
+        # Create dataset for actions
+        max_timesteps = stop_state_log
+        num_dof = env.num_dof
+        dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_dof), dtype=np.float32)
+
+        # Create dataset of observations
+        buf_len = len(env.obs_history)  # length of observation buffer
+        dset_2D_command = h5_file.create_dataset(
+            "observations/2D_command", (max_timesteps, buf_len, 2), dtype=np.float32
+        )  # sin and cos commands
+        dset_3D_command = h5_file.create_dataset(
+            "observations/3D_command", (max_timesteps, buf_len, 3), dtype=np.float32
+        )  # x, y, yaw commands
+        dset_q = h5_file.create_dataset(
+            "observations/q", (max_timesteps, buf_len, num_dof), dtype=np.float32
+        )  # joint positions
+        dset_dq = h5_file.create_dataset(
+            "observations/dq", (max_timesteps, buf_len, num_dof), dtype=np.float32
+        )  # joint velocities
+        dset_obs_actions = h5_file.create_dataset(
+            "observations/actions", (max_timesteps, buf_len, num_dof), dtype=np.float32
+        )  # actions
+        dset_ang_vel = h5_file.create_dataset(
+            "observations/ang_vel", (max_timesteps, buf_len, 3), dtype=np.float32
+        )  # root angular velocity
+        dset_euler = h5_file.create_dataset(
+            "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
+        )  # root orientation
 
     if RENDER:
         camera_properties = gymapi.CameraProperties()
@@ -94,21 +127,21 @@ def play(args: argparse.Namespace) -> None:
         experiment_dir = video_dir / train_cfg.runner.experiment_name
         experiment_dir.mkdir(parents=True, exist_ok=True)
 
-        dir = os.path.join(experiment_dir, datetime.now().strftime("%b%d_%H-%M-%S") + str(args.run_name) + ".mp4")
+        dir = os.path.join(experiment_dir, now + str(args.run_name) + ".mp4")
         if not os.path.exists(video_dir):
             os.mkdir(video_dir)
         if not os.path.exists(experiment_dir):
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
-    for _ in tqdm(range(stop_state_log)):
+    for t in tqdm(range(stop_state_log)):
         actions = policy(obs.detach())
-        # print(obs)
-        # print(actions)
-        # /home/dpsh/sim/third_party/humanoid-gym/logs/Full/Aug13_07-51-35_/model_1100.pt
+        if args.log_h5:
+            dset_actions[t] = actions.detach().numpy()
+
         if FIX_COMMAND:
             env.commands[:, 0] = 0.0
-            env.commands[:, 1] = -0.5 # negative left, positive right
+            env.commands[:, 1] = -0.5
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
@@ -121,25 +154,49 @@ def play(args: argparse.Namespace) -> None:
             img = np.reshape(img, (1080, 1920, 4))
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
 
-            video.write(img[..., :3])  # Write only the RGB channels
+            video.write(img[..., :3])
+
+        # Log states
+        dof_pos_target = actions[robot_index, joint_index].item() * env.cfg.control.action_scale
+        dof_pos = env.dof_pos[robot_index, joint_index].item()
+        dof_vel = env.dof_vel[robot_index, joint_index].item()
+        dof_torque = env.torques[robot_index, joint_index].item()
+        command_x = env.commands[robot_index, 0].item()
+        command_y = env.commands[robot_index, 1].item()
+        command_yaw = env.commands[robot_index, 2].item()
+        base_vel_x = env.base_lin_vel[robot_index, 0].item()
+        base_vel_y = env.base_lin_vel[robot_index, 1].item()
+        base_vel_z = env.base_lin_vel[robot_index, 2].item()
+        base_vel_yaw = env.base_ang_vel[robot_index, 2].item()
+        contact_forces_z = env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
+
+        if args.log_h5:
+            for i in range(buf_len):
+                cur_obs = env.obs_history[i].tolist()[0]
+                dset_2D_command[t, i] = cur_obs[0:2]  # sin and cos commands
+                dset_3D_command[t, i] = cur_obs[2:5]  # x, y, yaw commands
+                dset_q[t, i] = cur_obs[5 : 5 + num_dof]  # joint positions
+                dset_dq[t, i] = cur_obs[5 + num_dof : 5 + 2 * num_dof]  # joint velocities
+                dset_obs_actions[t, i] = cur_obs[5 + 2 * num_dof : 5 + 3 * num_dof]  # actions
+                dset_ang_vel[t, i] = cur_obs[5 + 3 * num_dof : 8 + 3 * num_dof]  # root angular velocity
+                dset_euler[t, i] = cur_obs[8 + 3 * num_dof : 11 + 3 * num_dof]  # root orientation
 
         env_logger.log_states(
             {
-                "dof_pos_target": actions[robot_index, joint_index].item() * env.cfg.control.action_scale,
-                "dof_pos": env.dof_pos[robot_index, joint_index].item(),
-                "dof_vel": env.dof_vel[robot_index, joint_index].item(),
-                "dof_torque": env.torques[robot_index, joint_index].item(),
-                "command_x": env.commands[robot_index, 0].item(),
-                "command_y": env.commands[robot_index, 1].item(),
-                "command_yaw": env.commands[robot_index, 2].item(),
-                "base_vel_x": env.base_lin_vel[robot_index, 0].item(),
-                "base_vel_y": env.base_lin_vel[robot_index, 1].item(),
-                "base_vel_z": env.base_lin_vel[robot_index, 2].item(),
-                "base_vel_yaw": env.base_ang_vel[robot_index, 2].item(),
-                "contact_forces_z": env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy(),
+                "dof_pos_target": dof_pos_target,
+                "dof_pos": dof_pos,
+                "dof_vel": dof_vel,
+                "dof_torque": dof_torque,
+                "command_x": command_x,
+                "command_y": command_y,
+                "command_yaw": command_yaw,
+                "base_vel_x": base_vel_x,
+                "base_vel_y": base_vel_y,
+                "base_vel_z": base_vel_z,
+                "base_vel_yaw": base_vel_yaw,
+                "contact_forces_z": contact_forces_z,
             }
         )
-        # ====================== Log states ======================
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
             if num_episodes > 0:
@@ -150,6 +207,10 @@ def play(args: argparse.Namespace) -> None:
 
     if RENDER:
         video.release()
+
+    if args.log_h5:
+        print("Saving data to " + os.path.abspath(f"data{now}.h5"))
+        h5_file.close()
 
 
 # Puts this import down here so that the environments are registered
