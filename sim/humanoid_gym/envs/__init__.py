@@ -22,6 +22,8 @@ from .stompy_config import StompyCfg, StompyCfgPPO
 from .stompy_env import StompyFreeEnv
 from .stompy_mini_config import MiniCfg, MiniCfgPPO
 from .stompy_mini_env import MiniFreeEnv
+from .dora_config import DoraCfg, DoraCfgPPO
+from .dora_env import DoraFreeEnv
 
 
 def register_tasks() -> None:
@@ -32,6 +34,7 @@ def register_tasks() -> None:
     """
     from humanoid.utils.task_registry import task_registry
 
+    task_registry.register("dora_ppo", DoraFreeEnv, DoraCfg(), DoraCfgPPO())
     task_registry.register("h1", H1FreeEnv, H1Cfg(), H1CfgPPO())
     task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
     task_registry.register("stompy_ppo", StompyFreeEnv, StompyCfg(), StompyCfgPPO())
