@@ -33,6 +33,7 @@ python sim/humanoid_gym/play.py --task mini_ppo --sim_device cpu
 python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt
 """
 import math
+import os
 from collections import deque
 from copy import deepcopy
 
@@ -42,8 +43,8 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
-from sim.humanoid_gym.envs import OnlyLegsCfg
-from sim.stompymini.joints import Stompy
+from sim.humanoid_gym.envs import MiniCfg
+from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
 
@@ -125,18 +126,15 @@ def run_mujoco(policy, cfg):
     data = mujoco.MjData(model)
 
     data.qpos = model.keyframe("default").qpos
-    default = deepcopy(model.keyframe("default").qpos)[-cfg.env.num_actions :]
+    default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
     mujoco.mj_step(model, data)
 
     data.qvel = np.zeros_like(data.qvel)
     data.qacc = np.zeros_like(data.qacc)
     viewer = mujoco_viewer.MujocoViewer(model, data)
 
-    for ii in JOINT_NAMES:
-        print(data.joint(ii).id, data.joint(ii).qpos)
-
-    target_q = np.zeros((cfg.env.num_actions), dtype=np.double)
-    action = np.zeros((cfg.env.num_actions), dtype=np.double)
+    target_q = np.zeros((cfg.num_actions), dtype=np.double)
+    action = np.zeros((cfg.num_actions), dtype=np.double)
 
     hist_obs = deque()
     for _ in range(cfg.env.frame_stack):
@@ -148,8 +146,8 @@ def run_mujoco(policy, cfg):
 
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
-        q = q[-cfg.env.num_actions :]
-        dq = dq[-cfg.env.num_actions :]
+        q = q[-cfg.num_actions :]
+        dq = dq[-cfg.num_actions :]
 
         # 1000hz -> 100hz
         if count_lowlevel % cfg.sim_config.decimation == 0:
@@ -163,8 +161,7 @@ def run_mujoco(policy, cfg):
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
-
-            obs[0, 5 : (cfg.env.num_actions + 5)] = (q - default) * cfg.normalization.obs_scales.dof_pos
+            obs[0, 5 : (cfg.num_actions + 5)] = (q - default) * cfg.normalization.obs_scales.dof_pos
             obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = dq * cfg.normalization.obs_scales.dof_vel
             obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
             obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
@@ -184,7 +181,7 @@ def run_mujoco(policy, cfg):
 
             target_q = action * cfg.control.action_scale
 
-        target_dq = np.zeros((cfg.env.num_actions), dtype=np.double)
+        target_dq = np.zeros((cfg.num_actions), dtype=np.double)
 
         # Generate PD control
         tau = pd_control(
@@ -211,19 +208,23 @@ if __name__ == "__main__":
     parser.add_argument("--load_actions", action="store_true", help="saved_actions")
     args = parser.parse_args()
 
-    class Sim2simCfg(OnlyLegsCfg):
+    robot = load_embodiment()
+    model_dir = os.environ.get("MODEL_DIR", "stompymini")
+
+    class Sim2simCfg(MiniCfg):
+        num_actions = len(robot.all_joints())
 
         class sim_config:
-            mujoco_model_path = f"sim/stompymini/robot_fixed.xml"
+            mujoco_model_path = f"{model_dir}/robot_fixed.xml"
             sim_duration = 60.0
             dt = 0.001
             decimation = 10
 
         class robot_config:
             tau_factor = 0.85
-            tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor
+            tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
             kps = tau_limit
-            kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values()))
+            kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
 
     policy = torch.jit.load(args.load_model)
     run_mujoco(policy, Sim2simCfg())

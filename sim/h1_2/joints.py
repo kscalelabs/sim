@@ -93,7 +93,15 @@ class Legs(Node):
     right = RightLeg()
 
 
-class Stompy(Node):
+class Robot(Node):
+    height = 0.9
+    rotation = [
+        1,
+        0,
+        0,
+        0,
+    ]
+
     torso = Torso()
     left_arm = LeftArm()
     right_arm = RightArm()
@@ -103,31 +111,31 @@ class Stompy(Node):
     def default_standing(cls) -> Dict[str, float]:
         return {  # = target angles [rad] when action = 0.0
             # left leg
-            Stompy.legs.left.hip_yaw: 0,
-            Stompy.legs.left.hip_roll: 0,
-            Stompy.legs.left.hip_pitch: -0.6,
-            Stompy.legs.left.knee_pitch: 1.2,
-            Stompy.legs.left.ankle_pitch: -0.6,
-            Stompy.legs.left.ankle_roll: 0.0,
+            Robot.legs.left.hip_yaw: 0,
+            Robot.legs.left.hip_roll: 0,
+            Robot.legs.left.hip_pitch: -0.6,
+            Robot.legs.left.knee_pitch: 1.2,
+            Robot.legs.left.ankle_pitch: -0.6,
+            Robot.legs.left.ankle_roll: 0.0,
             # right leg
-            Stompy.legs.right.hip_yaw: 0,
-            Stompy.legs.right.hip_roll: 0,
-            Stompy.legs.right.hip_pitch: -0.6,
-            Stompy.legs.right.knee_pitch: 1.2,
-            Stompy.legs.right.ankle_pitch: -0.6,
-            Stompy.legs.right.ankle_roll: 0.0,
+            Robot.legs.right.hip_yaw: 0,
+            Robot.legs.right.hip_roll: 0,
+            Robot.legs.right.hip_pitch: -0.6,
+            Robot.legs.right.knee_pitch: 1.2,
+            Robot.legs.right.ankle_pitch: -0.6,
+            Robot.legs.right.ankle_roll: 0.0,
             # torso
-            Stompy.torso.roll: 0,
+            Robot.torso.roll: 0,
             # left arm
-            Stompy.left_arm.shoulder_pitch: 0.4,
-            Stompy.left_arm.shoulder_roll: 0,
-            Stompy.left_arm.shoulder_yaw: 0,
-            Stompy.left_arm.elbow_pitch: 0.3,
+            Robot.left_arm.shoulder_pitch: 0.4,
+            Robot.left_arm.shoulder_roll: 0,
+            Robot.left_arm.shoulder_yaw: 0,
+            Robot.left_arm.elbow_pitch: 0.3,
             # right arm
-            Stompy.right_arm.shoulder_pitch: 0.4,
-            Stompy.right_arm.shoulder_roll: 0,
-            Stompy.right_arm.shoulder_yaw: 0,
-            Stompy.right_arm.elbow_pitch: 0.3,
+            Robot.right_arm.shoulder_pitch: 0.4,
+            Robot.right_arm.shoulder_roll: 0,
+            Robot.right_arm.shoulder_yaw: 0,
+            Robot.right_arm.elbow_pitch: 0.3,
         }
 
     # p_gains
@@ -166,11 +174,11 @@ class Stompy(Node):
 
 
 def print_joints() -> None:
-    joints = Stompy.all_joints()
+    joints = Robot.all_joints()
     assert len(joints) == len(set(joints)), "Duplicate joint names found!"
-    print(Stompy())
+    print(Robot())
 
 
 if __name__ == "__main__":
-    # python -m sim.stompy.joints
+    # python -m sim.Robot.joints
     print_joints()

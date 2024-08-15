@@ -273,11 +273,7 @@
     <geom name="ground" type="plane" pos="0.001 0 0" quat="1 0 0 0" material="matplane" condim="1" conaffinity="15" size="0 0 1"/>
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false"/>
-    <body name="root" pos="0 0 0" quat="1 0 0 0">
-      <joint name="floating_base_joint" type="free"/>
-      <camera name="front" pos="0 -3 1" xyaxes="1 0 0 0 1 2" mode="trackcom"/>
-      <camera name="side" pos="-2.893 -1.330 0.757" xyaxes="0.405 -0.914 0.000 0.419 0.186 0.889" mode="trackcom"/>
-      <site name="imu" size="0.01" pos="0 0 0"/>
+    <body name="root" pos="0 0 0" quat="0.5 -0.4996 -0.5 0.5004">
       <body name="link_upper_half_assembly_1_torso_top_left_1">
         <inertial pos="0.0765868 -0.141396 -0.00140606" quat="0.497254 0.493894 -0.506056 0.502707" mass="19.7895" diaginertia="0.622994 0.566654 0.14307"/>
         <joint name="link_upper_half_assembly_1_torso_top_left_1_free_joint" type="free"/>
@@ -663,7 +659,7 @@
                   <geom pos="7.29e-07 6.19197e-07 0.0273" quat="1.64085e-08 0.707107 0.707107 -1.64085e-08" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_left_leg_1_7806k63_4_simple" class="visualgeom"/>
                   <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_left_leg_1_7806k63_4_simple" pos="7.29e-07 6.19197e-07 0.0273" quat="1.64085e-08 0.707107 0.707107 -1.64085e-08" contype="0" conaffinity="0" group="1" density="0"/>
                   <geom pos="-0.0275132 0.0592506 0.0263" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_left_leg_1_foot_pad_1_simple" class="visualgeom"/>
-                  <geom type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_left_leg_1_foot_pad_1_simple" pos="-0.0275132 0.0592506 0.0263" quat="0.707107 0.707107 0 0" contype="0" conaffinity="0" group="1" density="0"/>
+                  <geom type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_left_leg_1_foot_pad_1_simple" pos="-0.0275132 0.0592506 0.0263" quat="0.707107 0.707107 0 0"/>
                 </body>
               </body>
             </body>
@@ -741,7 +737,7 @@
                   <geom pos="-6.5111e-05 0.000369286 0.0273" quat="6.96153e-08 -1 0 0" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_right_leg_1_7806k63_3_simple" class="visualgeom"/>
                   <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_right_leg_1_7806k63_3_simple" pos="-6.5111e-05 0.000369286 0.0273" quat="6.96153e-08 -1 0 0" contype="0" conaffinity="0" group="1" density="0"/>
                   <geom pos="0.0274488 0.0596193 0.0263" quat="-0.707107 -0.707107 0 0" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_right_leg_1_foot_pad_1_simple" class="visualgeom"/>
-                  <geom type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_right_leg_1_foot_pad_1_simple" pos="0.0274488 0.0596193 0.0263" quat="-0.707107 -0.707107 0 0" contype="0" conaffinity="0" group="1" density="0"/>
+                  <geom type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_right_leg_1_foot_pad_1_simple" pos="0.0274488 0.0596193 0.0263" quat="-0.707107 -0.707107 0 0"/>
                   <geom pos="0.0359124 0.00652319 -0.0265" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m3_10_simple" class="visualgeom"/>
                   <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m3_10_simple" pos="0.0359124 0.00652319 -0.0265" contype="0" conaffinity="0" group="1" density="0"/>
                   <geom pos="0.0359124 0.00652319 -0.0273" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_foot_right_outter_1_simple" class="visualgeom"/>
@@ -868,6 +864,9 @@
           </body>
         </body>
       </body>
+      <camera name="front" pos="0 -3 1" xyaxes="1 0 0 0 1 2" mode="trackcom"/>
+      <camera name="side" pos="-2.893 -1.330 0.757" xyaxes="0.405 -0.914 0.000 0.419 0.186 0.889" mode="trackcom"/>
+      <site name="imu" size="0.01" pos="0 0 0"/>
     </body>
   </worldbody>
   <actuator>
@@ -957,6 +956,6 @@
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9"/>
   </sensor>
   <keyframe>
-    <key name="default" qpos="0 0 0.72 1 0 0 0 -1.02 1.38 -3.24 1.2 0 3.12 -1.98 -1.38 1.32 0 -0.28 1.5 1.62 1 -2.2 3.55 3.18 3.24 -1 0.42"/>
+    <key name="default" qpos="0 0 0.85 0.5 -0.4996 -0.5 0.5004 -1.02 1.38 -3.24 1.2 0 3.12 -1.98 -1.38 1.32 0 -0.28 1.5 1.62 1 -2.2 3.55 3.18 3.24 -1 0.42"/>
   </keyframe>
 </mujoco>

@@ -22,18 +22,10 @@ from sim.scripts import mjcf
 
 logger = logging.getLogger(__name__)
 
-# TODO - load this automatically or specify as parameters
-# Links that will have collision with the floor
-COLLISION_LINKS = [
-    "right_foot_1_rubber_grip_3_simple",
-    "left_foot_1_rubber_grip_1_simple",
-]
-
-ROOT_HEIGHT = 0.72
 DAMPING_DEFAULT = 0.01
 
 
-def load_embodiment() -> Any:  # noqa: ANN401
+def load_embodiment() -> Any:
     # Dynamically import embodiment based on MODEL_DIR
     model_dir = os.environ.get("MODEL_DIR", "stompymini")
     if "sim/" in model_dir:
@@ -44,7 +36,15 @@ def load_embodiment() -> Any:  # noqa: ANN401
     return robot
 
 
-robot = load_embodiment()
+def load_config() -> Any:
+    # Dynamically import config based on MODEL_DIR
+    model_dir = os.environ.get("MODEL_DIR", "stompymini")
+    if "sim/" in model_dir:
+        model_dir = model_dir.split("sim/")[1]
+    module_name = f"sim.{model_dir}.config"
+    module = importlib.import_module(module_name)
+    config = getattr(module, "Config")
+    return config
 
 
 def _pretty_print_xml(xml_string: str) -> str:
@@ -57,6 +57,10 @@ def _pretty_print_xml(xml_string: str) -> str:
     non_empty_lines = [line for line in lines if line.strip() != ""]
     # Remove declaration
     return "\n".join(non_empty_lines[1:])
+
+
+# Load the robot and config
+robot = load_embodiment()
 
 
 class Sim2SimRobot(mjcf.Robot):
@@ -242,10 +246,8 @@ class Sim2SimRobot(mjcf.Robot):
 
         # Locate actual root body inside of worldbody
         root_body = worldbody.find(".//body")
-        # Make position and orientation of the root body
         root_body.set("pos", "0 0 0")
-        root_body.set("quat", "1 0 0 0")
-        root_body.insert(0, ET.Element("joint", name="floating_base_joint", type="free"))
+        root_body.set("quat", " ".join(map(str, robot.rotation)))
 
         # Add cameras and imu
         root_body.insert(1, ET.Element("camera", name="front", pos="0 -3 1", xyaxes="1 0 0 0 1 2", mode="trackcom"))
@@ -276,7 +278,7 @@ class Sim2SimRobot(mjcf.Robot):
                 if geom.get("quat"):
                     new_geom.set("quat", geom.get("quat") or "")
                 # Exclude collision meshes
-                if geom.get("mesh") not in COLLISION_LINKS:
+                if geom.get("mesh") not in robot.collision_links:
                     new_geom.set("contype", "0")
                     new_geom.set("conaffinity", "0")
                     new_geom.set("group", "1")
@@ -293,7 +295,7 @@ class Sim2SimRobot(mjcf.Robot):
                     join.attrib.pop("actuatorfrcrange")
 
         default_standing = robot.default_standing()
-        qpos = [0, 0, ROOT_HEIGHT, 1, 0, 0, 0] + list(default_standing.values())
+        qpos = [0, 0, robot.height] + robot.rotation + list(default_standing.values())
         default_key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
         keyframe = mjcf.Keyframe(keys=[default_key])
         root.append(keyframe.to_xml())
@@ -308,6 +310,13 @@ class Sim2SimRobot(mjcf.Robot):
                 right_index = list(parent_body).index(right)
                 # Swap the bodies
                 parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
+
+        # Remove the root body in the end
+        root_body = worldbody.find("./body[@name='root']")
+        children = list(root_body)
+        worldbody.remove(root_body)
+        for child in children:
+            worldbody.append(child)
 
     def save(self, path: Union[str, Path]) -> None:
         rough_string = ET.tostring(self.tree.getroot(), "utf-8", xml_declaration=False)

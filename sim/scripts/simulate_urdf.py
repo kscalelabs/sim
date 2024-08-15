@@ -13,9 +13,9 @@ from typing import Any, Dict, Literal, NewType
 
 from isaacgym import gymapi, gymtorch, gymutil
 
-from sim.env import stompy_urdf_path
+from sim.env import robot_urdf_path
 from sim.logging import configure_logging
-from sim.stompy_legs.joints import Stompy
+from sim.stompy_legs.joints import Robot as Stompy
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +118,7 @@ def load_gym() -> GymParams:
     asset_options.collapse_fixed_joints = True
     asset_options.disable_gravity = False
     asset_options.fix_base_link = True
-    asset_path = stompy_urdf_path(legs_only=True)
+    asset_path = robot_urdf_path(legs_only=True)
     robot_asset = gym.load_urdf(sim, str(asset_path.parent), str(asset_path.name), asset_options)
 
     # Adds the robot to the environment.

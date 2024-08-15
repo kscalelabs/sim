@@ -51,7 +51,7 @@ profile = "black"
 line-length = 120
 target-version = "py310"
 
-exclude = ["sim/humanoid_gym"]
+exclude = ["sim/humanoid_gym", "sim/scripts/create_mjcf.py"]
 
 [tool.ruff.lint]
 
