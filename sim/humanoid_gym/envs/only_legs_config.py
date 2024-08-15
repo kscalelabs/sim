@@ -5,10 +5,10 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfgPPO,
 )
 
-from sim.env import stompy_urdf_path
-from sim.stompy_legs.joints import Stompy
+from sim.env import robot_urdf_path
+from sim.stompy_legs.joints import Robot
 
-NUM_JOINTS = len(Stompy.all_joints())  # 12
+NUM_JOINTS = len(Robot.all_joints())  # 12
 
 
 class OnlyLegsCfg(LeggedRobotCfg):
@@ -36,7 +36,7 @@ class OnlyLegsCfg(LeggedRobotCfg):
 
     class asset(LeggedRobotCfg.asset):
 
-        file = str(stompy_urdf_path(legs_only=True))
+        file = str(robot_urdf_path(legs_only=True))
 
         name = "stompy"
 
@@ -84,17 +84,17 @@ class OnlyLegsCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 0.72]
-        rot = [0.0, 0, 0.7071068, 0.7071068]
-        default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
+        pos = [0.0, 0.0, Robot.height]
+        rot = Robot.rotation
+        default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
-        default_positions = Stompy.default_standing()
+        default_positions = Robot.default_standing()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
 
     class control(LeggedRobotCfg.control):
-        stiffness = Stompy.stiffness()
-        damping = Stompy.damping()
+        stiffness = Robot.stiffness()
+        damping = Robot.damping()
 
         action_scale = 0.25
         decimation = 10  # 100hz

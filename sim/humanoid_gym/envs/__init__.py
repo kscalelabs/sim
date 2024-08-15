@@ -18,10 +18,8 @@ from .h1_env import H1FreeEnv
 # fmt: on
 from .only_legs_config import OnlyLegsCfg, OnlyLegsCfgPPO
 from .only_legs_env import OnlyLegsFreeEnv
-from .stompy_config import StompyCfg, StompyCfgPPO
-from .stompy_env import StompyFreeEnv
-from .stompy_mini_config import MiniCfg, MiniCfgPPO
-from .stompy_mini_env import MiniFreeEnv
+from .stompymini_config import MiniCfg, MiniCfgPPO
+from .stompymini_env import MiniFreeEnv
 
 
 def register_tasks() -> None:
@@ -34,9 +32,8 @@ def register_tasks() -> None:
 
     task_registry.register("h1", H1FreeEnv, H1Cfg(), H1CfgPPO())
     task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
-    task_registry.register("stompy_ppo", StompyFreeEnv, StompyCfg(), StompyCfgPPO())
     task_registry.register("only_legs_ppo", OnlyLegsFreeEnv, OnlyLegsCfg(), OnlyLegsCfgPPO())
-    task_registry.register("mini_ppo", MiniFreeEnv, MiniCfg(), MiniCfgPPO())
+    task_registry.register("stompymini", MiniFreeEnv, MiniCfg(), MiniCfgPPO())
 
 
 register_tasks()

@@ -5,10 +5,10 @@ from humanoid.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfgPPO,
 )
 
-from sim.env import stompy_urdf_path
-from sim.g1.joints import Stompy
+from sim.env import robot_urdf_path
+from sim.g1.joints import Robot
 
-NUM_JOINTS = len(Stompy.all_joints())  # 33
+NUM_JOINTS = len(Robot.all_joints())  # 33
 
 
 class G1Cfg(LeggedRobotCfg):
@@ -37,9 +37,9 @@ class G1Cfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = str(stompy_urdf_path())
+        file = str(robot_urdf_path())
 
-        name = "stompy"
+        name = "g1"
 
         foot_name = "ankle_roll"
         knee_name = "knee_link"
@@ -84,17 +84,17 @@ class G1Cfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 0.9]
-        default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
+        pos = [0.0, 0.0, Robot.height]
+        default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
-        default_positions = Stompy.default_standing()
+        default_positions = Robot.default_standing()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
-        stiffness = Stompy.stiffness()
-        damping = Stompy.damping()
+        stiffness = Robot.stiffness()
+        damping = Robot.damping()
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT

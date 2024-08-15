@@ -75,26 +75,29 @@ class Legs(Node):
     right = RightLeg()
 
 
-class Stompy(Node):
+class Robot(Node):
     legs = Legs()
+
+    height = 1.1
+    rotation = [0.0, 0.0, 0.7071068, 0.7071068]
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {  # = target angles [rad] when action = 0.0
             # left leg
-            Stompy.legs.left.hip_yaw: 0,
-            Stompy.legs.left.hip_roll: 0,
-            Stompy.legs.left.hip_pitch: -0.1,
-            Stompy.legs.left.knee_pitch: 0.3,
-            Stompy.legs.left.ankle_pitch: -0.2,
-            Stompy.legs.left.ankle_roll: 0.0,
+            Robot.legs.left.hip_yaw: 0,
+            Robot.legs.left.hip_roll: 0,
+            Robot.legs.left.hip_pitch: -0.1,
+            Robot.legs.left.knee_pitch: 0.3,
+            Robot.legs.left.ankle_pitch: -0.2,
+            Robot.legs.left.ankle_roll: 0.0,
             # right leg
-            Stompy.legs.right.hip_yaw: 0,
-            Stompy.legs.right.hip_roll: 0,
-            Stompy.legs.right.hip_pitch: -0.1,
-            Stompy.legs.right.knee_pitch: 0.3,
-            Stompy.legs.right.ankle_pitch: -0.2,
-            Stompy.legs.right.ankle_roll: 0.0,
+            Robot.legs.right.hip_yaw: 0,
+            Robot.legs.right.hip_roll: 0,
+            Robot.legs.right.hip_pitch: -0.1,
+            Robot.legs.right.knee_pitch: 0.3,
+            Robot.legs.right.ankle_pitch: -0.2,
+            Robot.legs.right.ankle_roll: 0.0,
         }
 
     # p_gains
@@ -121,11 +124,11 @@ class Stompy(Node):
 
 
 def print_joints() -> None:
-    joints = Stompy.all_joints()
+    joints = Robot.all_joints()
     assert len(joints) == len(set(joints)), "Duplicate joint names found!"
-    print(Stompy())
+    print(Robot())
 
 
 if __name__ == "__main__":
-    # python -m sim.stompy.joints
+    # python -m sim.Robot.joints
     print_joints()

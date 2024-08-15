@@ -7,13 +7,13 @@ from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
 from humanoid.utils.terrain import HumanoidTerrain
 from isaacgym.torch_utils import *
 
-from sim.g1.joints import Stompy
+from sim.g1.joints import Robot
 
 from isaacgym import gymtorch  # isort:skip
 
 
 class G1FreeEnv(LeggedRobot):
-    """StompyFreeEnv is a class that represents a custom environment for a legged robot.
+    """RobotFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg (LeggedRobotCfg): Configuration object for the legged robot.
@@ -56,11 +56,11 @@ class G1FreeEnv(LeggedRobot):
         actor_handle = self.actor_handles[0]
 
         self.legs_joints = {}
-        for name, joint in Stompy.legs.left.joints_motors():
+        for name, joint in Robot.legs.left.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
-        for name, joint in Stompy.legs.right.joints_motors():
+        for name, joint in Robot.legs.right.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
 
