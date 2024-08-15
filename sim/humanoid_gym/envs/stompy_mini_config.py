@@ -85,12 +85,10 @@ class MiniCfg(LeggedRobotCfg):
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, 0.85]
-        # rot = [0, 0, 0, 0]  # facing left
-        # rot =  [0., 0, 0 , 1.]
+        # setting the right rotation
         # quat_from_euler_xyz(torch.tensor(1.57), torch.tensor(0), torch.tensor(-1.57))
         rot = [0.5000, -0.4996, -0.5000, 0.5004]
-        # breakpoint()
-        # [0, 0.7071068, 0.7071068, 0] -> rotation of 90 degrees of axis x
+
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
         default_positions = Stompy.default_standing()
