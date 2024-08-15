@@ -102,33 +102,6 @@ class Stompy(Node):
     right_arm = RightArm()
     legs = Legs()
 
-    # @classmethod
-    # def default_standing(cls) -> Dict[str, float]:
-    #     return {
-    #         # arms
-    #         Stompy.right_arm.shoulder_pitch: 3.12,
-    #         Stompy.right_arm.shoulder_yaw: -1.98,
-    #         Stompy.right_arm.shoulder_roll: -1.38,
-    #         Stompy.right_arm.elbow_pitch: 1.32,
-    #         Stompy.right_arm.hand.wrist_roll: 0,
-    #         Stompy.legs.left.hip_pitch: -0.087,
-    #         Stompy.legs.left.hip_roll: 1.62,
-    #         Stompy.legs.left.hip_yaw: 1.55,
-    #         Stompy.legs.left.knee_pitch: 0.2,
-    #         Stompy.legs.left.ankle_pitch: -1.74,
-    #         Stompy.legs.right.hip_pitch: 3.25,
-    #         Stompy.legs.right.hip_roll: 3.24,
-    #         Stompy.legs.right.hip_yaw: 3.08,
-    #         Stompy.legs.right.knee_pitch: -0.24,
-    #         Stompy.legs.right.ankle_pitch: 0.17,
-    #         Stompy.left_arm.shoulder_pitch: -1.02,
-    #         Stompy.left_arm.shoulder_yaw: 1.38,
-    #         Stompy.left_arm.shoulder_roll: -3.24,
-    #         Stompy.left_arm.elbow_pitch: 1.2,
-    #         Stompy.left_arm.hand.wrist_roll: 0,
-    #         # legs
-    #     }
-
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {

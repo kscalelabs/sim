@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import List, Union
 
 from sim.scripts import mjcf
-from sim.stompy_legs.joints import Stompy
+from sim.stompymini.joints import Stompy
 
 logger = logging.getLogger(__name__)
 

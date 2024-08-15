@@ -15,6 +15,7 @@ def update_urdf(model_path: str) -> None:
     stompy = Stompy()
     print(stompy.default_standing())
     revolute_joints = set(stompy.default_standing().keys())
+
     joint_limits = stompy.default_limits()
     effort = stompy.effort()
     velocity = stompy.velocity()
