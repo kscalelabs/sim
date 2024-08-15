@@ -16,7 +16,7 @@ import os
 import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import List, Union
+from typing import Any, List, Union
 
 from sim.scripts import mjcf
 
@@ -33,7 +33,7 @@ ROOT_HEIGHT = 0.72
 DAMPING_DEFAULT = 0.01
 
 
-def load_embodiment() -> None:
+def load_embodiment() -> Any:  # noqa: ANN401
     # Dynamically import embodiment based on MODEL_DIR
     model_dir = os.environ.get("MODEL_DIR", "stompymini")
     if "sim/" in model_dir:
