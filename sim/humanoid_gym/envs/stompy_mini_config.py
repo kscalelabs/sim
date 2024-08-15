@@ -9,7 +9,8 @@ from sim.env import stompy_urdf_path
 from sim.stompymini.joints import Stompy
 
 NUM_JOINTS = len(Stompy.all_joints())  # 20
-from isaacgym.torch_utils import * # isort: skip
+from isaacgym.torch_utils import *  # isort: skip
+
 
 class MiniCfg(LeggedRobotCfg):
     """
@@ -18,7 +19,6 @@ class MiniCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-
         frame_stack = 15
         c_frame_stack = 3
         num_single_obs = 11 + NUM_JOINTS * 3
@@ -29,7 +29,6 @@ class MiniCfg(LeggedRobotCfg):
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
-        breakpoint()
 
     class safety:
         # safety factors
@@ -89,7 +88,7 @@ class MiniCfg(LeggedRobotCfg):
         # rot = [0, 0, 0, 0]  # facing left
         # rot =  [0., 0, 0 , 1.]
         # quat_from_euler_xyz(torch.tensor(1.57), torch.tensor(0), torch.tensor(-1.57))
-        rot = [ 0.5000, -0.4996, -0.5000,  0.5004]
+        rot = [0.5000, -0.4996, -0.5000, 0.5004]
         # breakpoint()
         # [0, 0.7071068, 0.7071068, 0] -> rotation of 90 degrees of axis x
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}

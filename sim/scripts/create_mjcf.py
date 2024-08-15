@@ -2,28 +2,27 @@
 """Defines common types and functions for exporting MJCF files.
 
 Run:
-    python sim/scripts/create_mjcf.py /path/to/stompy.xml
+    python sim/scripts/create_mjcf.py /path/to/robot.xml
 
 Todo:
-    0. Add IMU to the right position
-    1. Armature damping setup for different parts of body
-    2. Test control range limits?
-    3. Add inertia in the first part of the body
-
+    1. Add IMU to the right position
+    2. Armature damping setup for different parts of body
 """
 
 import argparse
+import importlib
 import logging
+import os
 import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Union
 
 from sim.scripts import mjcf
-from sim.stompymini.joints import Stompy
 
 logger = logging.getLogger(__name__)
 
+# TODO - load this automatically or specify as parameters
 # Links that will have collision with the floor
 COLLISION_LINKS = [
     "right_foot_1_rubber_grip_3_simple",
@@ -32,7 +31,20 @@ COLLISION_LINKS = [
 
 ROOT_HEIGHT = 0.72
 DAMPING_DEFAULT = 0.01
-stompy = Stompy()
+
+
+def load_embodiment() -> None:
+    # Dynamically import embodiment based on MODEL_DIR
+    model_dir = os.environ.get("MODEL_DIR", "stompymini")
+    if "sim/" in model_dir:
+        model_dir = model_dir.split("sim/")[1]
+    module_name = f"sim.{model_dir}.joints"
+    module = importlib.import_module(module_name)
+    robot = getattr(module, "Robot")
+    return robot
+
+
+robot = load_embodiment()
 
 
 def _pretty_print_xml(xml_string: str) -> str:
@@ -51,7 +63,7 @@ class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
     def update_joints(self, root: ET.Element, damping: float = DAMPING_DEFAULT) -> ET.Element:
-        joint_limits = stompy.default_limits()
+        joint_limits = robot.default_limits()
 
         for joint in root.findall(".//joint"):
             joint_name = joint.get("name")
@@ -61,10 +73,10 @@ class Sim2SimRobot(mjcf.Robot):
                 upper = str(limits.get("upper", 0.0))
                 joint.set("range", f"{lower} {upper}")
 
-                keys = stompy.damping().keys()
+                keys = robot.damping().keys()
                 for key in keys:
                     if key in joint_name:
-                        damping = stompy.damping()[key]
+                        damping = robot.damping()[key]
                 joint.set("damping", str(damping))
 
         return root
@@ -156,14 +168,14 @@ class Sim2SimRobot(mjcf.Robot):
         sensor_frc: List[mjcf.Actuatorfrc] = []
         # Create motors and sensors for the joints
         joints = list(root.findall("joint"))
-        for joint, _ in stompy.default_limits().items():
-            if joint in stompy.default_standing().keys():
+        for joint, _ in robot.default_limits().items():
+            if joint in robot.default_standing().keys():
                 joint_name = joint
                 limit = 200.0  # Ensure limit is a float
-                keys = stompy.effort().keys()
+                keys = robot.effort().keys()
                 for key in keys:
                     if key in joint_name:
-                        limit = stompy.effort()[key]
+                        limit = robot.effort()[key]
 
                 motors.append(
                     mjcf.Motor(
@@ -280,7 +292,7 @@ class Sim2SimRobot(mjcf.Robot):
                 if "actuatorfrcrange" in join.attrib:
                     join.attrib.pop("actuatorfrcrange")
 
-        default_standing = stompy.default_standing()
+        default_standing = robot.default_standing()
         qpos = [0, 0, ROOT_HEIGHT, 1, 0, 0, 0] + list(default_standing.values())
         default_key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
         keyframe = mjcf.Keyframe(keys=[default_key])

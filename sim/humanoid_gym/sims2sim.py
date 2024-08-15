@@ -39,14 +39,13 @@ from copy import deepcopy
 import mujoco
 import mujoco_viewer
 import numpy as np
-
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from sim.humanoid_gym.envs import OnlyLegsCfg
 from sim.stompymini.joints import Stompy
 
-import torch # isort: skip
+import torch  # isort: skip
 
 JOINT_NAMES = [
     "left hip pitch",
@@ -165,14 +164,12 @@ def run_mujoco(policy, cfg):
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
 
-            obs[0, 5: (cfg.env.num_actions + 5)] = (q - default) * cfg.normalization.obs_scales.dof_pos
-            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = (
-                dq * cfg.normalization.obs_scales.dof_vel
-            )
+            obs[0, 5 : (cfg.env.num_actions + 5)] = (q - default) * cfg.normalization.obs_scales.dof_pos
+            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = dq * cfg.normalization.obs_scales.dof_vel
             obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
             obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
             obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
-        
+
             obs = np.clip(obs, -cfg.normalization.clip_observations, cfg.normalization.clip_observations)
 
             hist_obs.append(obs)

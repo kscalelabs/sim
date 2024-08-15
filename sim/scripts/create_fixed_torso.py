@@ -5,21 +5,20 @@ import argparse
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from sim.scripts.create_mjcf import create_mjcf
-from sim.stompymini.joints import Stompy
+from sim.scripts.create_mjcf import create_mjcf, load_embodiment
 
 
 def update_urdf(model_path: str) -> None:
     tree = ET.parse(Path(model_path) / "robot.urdf")
     root = tree.getroot()
-    stompy = Stompy()
-    print(stompy.default_standing())
-    revolute_joints = set(stompy.default_standing().keys())
+    robot = load_embodiment()
+    print(robot.default_standing())
+    revolute_joints = set(robot.default_standing().keys())
 
-    joint_limits = stompy.default_limits()
-    effort = stompy.effort()
-    velocity = stompy.velocity()
-    friction = stompy.friction()
+    joint_limits = robot.default_limits()
+    effort = robot.effort()
+    velocity = robot.velocity()
+    friction = robot.friction()
 
     for joint in root.findall("joint"):
         joint_name = joint.get("name")
