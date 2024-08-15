@@ -5,13 +5,14 @@ We publish there the most pressing issues to contribute. Feel free to post a new
 an issue or you want to add an enhancement.
 
 > [!NOTE]
-> You should develop the backend using Python 3.10 or later
+> You should develop the backend using Python 3.10 or later.
 
-When creating a pull request 
+When creating a new pull request please add the issue number.
+
 ## Adding new robot
 Adding new embodiment is very straightforward:
 1. Create a folder with a new robot [here](https://github.com/kscalelabs/sim/tree/master/sim).
-2. Add joint.py file setting up basic properties and join configuration - see [example](https://github.com/kscalelabs/sim/blob/master/sim/stompy/joints.py).
+2. Add joint.py file setting up basic properties and join configuration - see an [example](https://github.com/kscalelabs/sim/blob/master/sim/stompy/joints.py).
 3. Add the new embodiment configuration and environment [here](https://github.com/kscalelabs/sim/tree/master/sim/humanoid_gym/envs).
 4. Add the new embodiment to the [registry](https://github.com/kscalelabs/sim/blob/master/sim/humanoid_gym/envs/__init__.py).
 
