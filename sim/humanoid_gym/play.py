@@ -40,7 +40,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.terrain.curriculum = False
     env_cfg.terrain.max_init_terrain_level = 5
     env_cfg.noise.add_noise = True
-    env_cfg.domain_rand.push_robots = True
+    env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.joint_angle_noise = 0.0
     env_cfg.noise.curriculum = False
     env_cfg.noise.noise_level = 0.5
@@ -139,8 +139,8 @@ def play(args: argparse.Namespace) -> None:
             dset_actions[t] = actions.detach().numpy()
 
         if FIX_COMMAND:
-            env.commands[:, 0] = 0.0
-            env.commands[:, 1] = -0.5
+            env.commands[:, 0] = 0.5
+            env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
