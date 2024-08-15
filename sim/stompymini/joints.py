@@ -97,150 +97,123 @@ class Legs(Node):
     right = RightLeg()
 
 
-class Stompy(Node):
+class Robot(Node):
     left_arm = LeftArm()
     right_arm = RightArm()
     legs = Legs()
-
-    # @classmethod
-    # def default_standing(cls) -> Dict[str, float]:
-    #     return {
-    #         # arms
-    #         Stompy.right_arm.shoulder_pitch: 3.12,
-    #         Stompy.right_arm.shoulder_yaw: -1.98,
-    #         Stompy.right_arm.shoulder_roll: -1.38,
-    #         Stompy.right_arm.elbow_pitch: 1.32,
-    #         Stompy.right_arm.hand.wrist_roll: 0,
-    #         Stompy.legs.left.hip_pitch: -0.087,
-    #         Stompy.legs.left.hip_roll: 1.62,
-    #         Stompy.legs.left.hip_yaw: 1.55,
-    #         Stompy.legs.left.knee_pitch: 0.2,
-    #         Stompy.legs.left.ankle_pitch: -1.74,
-    #         Stompy.legs.right.hip_pitch: 3.25,
-    #         Stompy.legs.right.hip_roll: 3.24,
-    #         Stompy.legs.right.hip_yaw: 3.08,
-    #         Stompy.legs.right.knee_pitch: -0.24,
-    #         Stompy.legs.right.ankle_pitch: 0.17,
-    #         Stompy.left_arm.shoulder_pitch: -1.02,
-    #         Stompy.left_arm.shoulder_yaw: 1.38,
-    #         Stompy.left_arm.shoulder_roll: -3.24,
-    #         Stompy.left_arm.elbow_pitch: 1.2,
-    #         Stompy.left_arm.hand.wrist_roll: 0,
-    #         # legs
-    #     }
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
             # arms
-            Stompy.left_arm.shoulder_pitch: -1.02,
-            Stompy.left_arm.shoulder_yaw: 1.38,
-            Stompy.left_arm.shoulder_roll: -3.24,
-            Stompy.left_arm.elbow_pitch: 1.2,
-            Stompy.left_arm.hand.wrist_roll: 0,
-            Stompy.right_arm.shoulder_pitch: 3.12,
-            Stompy.right_arm.shoulder_yaw: -1.98,
-            Stompy.right_arm.shoulder_roll: -1.38,
-            Stompy.right_arm.elbow_pitch: 1.32,
+            Robot.left_arm.shoulder_pitch: -1.02,
+            Robot.left_arm.shoulder_yaw: 1.38,
+            Robot.left_arm.shoulder_roll: -3.24,
+            Robot.left_arm.elbow_pitch: 1.2,
+            Robot.left_arm.hand.wrist_roll: 0,
+            Robot.right_arm.shoulder_pitch: 3.12,
+            Robot.right_arm.shoulder_yaw: -1.98,
+            Robot.right_arm.shoulder_roll: -1.38,
+            Robot.right_arm.elbow_pitch: 1.32,
             # hands
-            Stompy.right_arm.hand.wrist_roll: 0,
+            Robot.right_arm.hand.wrist_roll: 0,
             # legs
-            Stompy.legs.left.hip_pitch: -0.28,
-            Stompy.legs.left.hip_roll: 1.5,
-            Stompy.legs.left.hip_yaw: 1.62,
-            Stompy.legs.left.knee_pitch: 1,
-            Stompy.legs.left.ankle_pitch: -2.2,
-            Stompy.legs.right.hip_pitch: 3.55,
-            Stompy.legs.right.hip_roll: 3.18,
-            Stompy.legs.right.hip_yaw: 3.24,
-            Stompy.legs.right.knee_pitch: -1,
-            Stompy.legs.right.ankle_pitch: 0.42,
+            Robot.legs.left.hip_pitch: -0.28,
+            Robot.legs.left.hip_roll: 1.5,
+            Robot.legs.left.hip_yaw: 1.62,
+            Robot.legs.left.knee_pitch: 1,
+            Robot.legs.left.ankle_pitch: -2.2,
+            Robot.legs.right.hip_pitch: 3.55,
+            Robot.legs.right.hip_roll: 3.18,
+            Robot.legs.right.hip_yaw: 3.24,
+            Robot.legs.right.knee_pitch: -1,
+            Robot.legs.right.ankle_pitch: 0.42,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
             # left arm
-            Stompy.left_arm.shoulder_pitch: {
+            Robot.left_arm.shoulder_pitch: {
                 "lower": -1.021,
                 "upper": -1.019,
             },
-            Stompy.left_arm.shoulder_yaw: {
+            Robot.left_arm.shoulder_yaw: {
                 "lower": 1.379,
                 "upper": 1.381,
             },
-            Stompy.left_arm.shoulder_roll: {
+            Robot.left_arm.shoulder_roll: {
                 "lower": -3.241,
                 "upper": -3.239,
             },
-            Stompy.left_arm.elbow_pitch: {
+            Robot.left_arm.elbow_pitch: {
                 "lower": 1.199,
                 "upper": 1.201,
             },
-            Stompy.left_arm.hand.wrist_roll: {
+            Robot.left_arm.hand.wrist_roll: {
                 "lower": -0.001,
                 "upper": 0.001,
             },
             # right arm
-            Stompy.right_arm.shoulder_pitch: {
+            Robot.right_arm.shoulder_pitch: {
                 "lower": 3.119,
                 "upper": 3.121,
             },
-            Stompy.right_arm.shoulder_yaw: {
+            Robot.right_arm.shoulder_yaw: {
                 "lower": -1.981,
                 "upper": -1.979,
             },
-            Stompy.right_arm.shoulder_roll: {
+            Robot.right_arm.shoulder_roll: {
                 "lower": -1.381,
                 "upper": -1.379,
             },
-            Stompy.right_arm.elbow_pitch: {
+            Robot.right_arm.elbow_pitch: {
                 "lower": 1.319,
                 "upper": 1.321,
             },
-            Stompy.right_arm.hand.wrist_roll: {
+            Robot.right_arm.hand.wrist_roll: {
                 "lower": -0.001,
                 "upper": 0.001,
             },
             # left leg
-            Stompy.legs.left.hip_pitch: {
+            Robot.legs.left.hip_pitch: {
                 "lower": -1.28,
                 "upper": 0.72,
             },
-            Stompy.legs.left.hip_roll: {
+            Robot.legs.left.hip_roll: {
                 "lower": 0.5,
                 "upper": 2.5,
             },
-            Stompy.legs.left.hip_yaw: {
+            Robot.legs.left.hip_yaw: {
                 "lower": 0.62,
                 "upper": 2.62,
             },
-            Stompy.legs.left.knee_pitch: {
+            Robot.legs.left.knee_pitch: {
                 "lower": 0,
                 "upper": 2,
             },
-            Stompy.legs.left.ankle_pitch: {
+            Robot.legs.left.ankle_pitch: {
                 "lower": -2.8,
                 "upper": -0.8,
             },
             # right leg
-            Stompy.legs.right.hip_pitch: {
+            Robot.legs.right.hip_pitch: {
                 "lower": 2.55,
                 "upper": 4.55,
             },
-            Stompy.legs.right.hip_roll: {
+            Robot.legs.right.hip_roll: {
                 "lower": 2.18,
                 "upper": 4.18,
             },
-            Stompy.legs.right.hip_yaw: {
+            Robot.legs.right.hip_yaw: {
                 "lower": 2.24,
                 "upper": 4.24,
             },
-            Stompy.legs.right.knee_pitch: {
+            Robot.legs.right.knee_pitch: {
                 "lower": -2,
                 "upper": 0,
             },
-            Stompy.legs.right.ankle_pitch: {
+            Robot.legs.right.ankle_pitch: {
                 "lower": -0.58,
                 "upper": 1.42,
             },
@@ -323,11 +296,11 @@ class Stompy(Node):
 
 
 def print_joints() -> None:
-    joints = Stompy.all_joints()
+    joints = Robot.all_joints()
     assert len(joints) == len(set(joints)), "Duplicate joint names found!"
-    print(Stompy())
+    print(Robot())
 
 
 if __name__ == "__main__":
-    # python -m sim.stompy.joints
+    # python -m sim.Robot.joints
     print_joints()

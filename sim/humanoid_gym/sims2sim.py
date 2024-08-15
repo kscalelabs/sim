@@ -29,7 +29,7 @@
 
 """
 Difference setup
-python sim/humanoid_gym/play.py --task only_legs_ppo --sim_device cpu
+python sim/humanoid_gym/play.py --task mini_ppo --sim_device cpu
 python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt
 """
 import math
@@ -39,12 +39,13 @@ from copy import deepcopy
 import mujoco
 import mujoco_viewer
 import numpy as np
-import torch
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from sim.humanoid_gym.envs import OnlyLegsCfg
-from sim.stompy_legs.joints import Stompy
+from sim.stompymini.joints import Stompy
+
+import torch  # isort: skip
 
 JOINT_NAMES = [
     "left hip pitch",
@@ -63,8 +64,8 @@ JOINT_NAMES = [
 
 
 class cmd:
-    vx = -0.0
-    vy = -0.3
+    vx = 0.3
+    vy = 0.0
     dyaw = 0.0
 
 
@@ -162,12 +163,12 @@ def run_mujoco(policy, cfg):
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
-            # pfb30 - missing bit
-            obs[0, 5:17] = (q - default) * cfg.normalization.obs_scales.dof_pos
-            obs[0, 17:29] = dq * cfg.normalization.obs_scales.dof_vel
-            obs[0, 29:41] = action
-            obs[0, 41:44] = omega
-            obs[0, 44:47] = eu_ang
+
+            obs[0, 5 : (cfg.env.num_actions + 5)] = (q - default) * cfg.normalization.obs_scales.dof_pos
+            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = dq * cfg.normalization.obs_scales.dof_vel
+            obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
+            obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
+            obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
 
             obs = np.clip(obs, -cfg.normalization.clip_observations, cfg.normalization.clip_observations)
 
@@ -213,12 +214,11 @@ if __name__ == "__main__":
     class Sim2simCfg(OnlyLegsCfg):
 
         class sim_config:
-            mujoco_model_path = f"sim/stompy_legs/robot_fixed.xml"
+            mujoco_model_path = f"sim/stompymini/robot_fixed.xml"
             sim_duration = 60.0
             dt = 0.001
             decimation = 10
 
-        # pfb30 - todo this should be update more often
         class robot_config:
             tau_factor = 0.85
             tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor

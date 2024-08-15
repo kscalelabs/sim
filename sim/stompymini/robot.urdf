@@ -1,4 +1,3 @@
-<?xml version='1.0' encoding='utf-8'?>
 <robot name="full_assembly">
   <link name="link_upper_half_assembly_1_torso_top_left_1">
     <visual>
