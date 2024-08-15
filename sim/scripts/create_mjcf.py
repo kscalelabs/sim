@@ -47,9 +47,6 @@ def load_config() -> Any:
     return config
 
 
-robot = load_embodiment()
-
-
 def _pretty_print_xml(xml_string: str) -> str:
     """Formats the provided XML string into a pretty-printed version."""
     parsed_xml = xml.dom.minidom.parseString(xml_string)
@@ -60,6 +57,10 @@ def _pretty_print_xml(xml_string: str) -> str:
     non_empty_lines = [line for line in lines if line.strip() != ""]
     # Remove declaration
     return "\n".join(non_empty_lines[1:])
+
+
+# Load the robot and config
+robot = load_embodiment()
 
 
 class Sim2SimRobot(mjcf.Robot):
@@ -88,9 +89,6 @@ class Sim2SimRobot(mjcf.Robot):
         root: ET.Element = self.tree.getroot()
 
         worldbody = root.find("worldbody")
-
-        # new_root_body = worldbody.find("./body")
-
         new_root_body = mjcf.Body(name="root", pos=(0, 0, 0), quat=(1, 0, 0, 0)).to_xml()
 
         items_to_move = []
@@ -248,7 +246,7 @@ class Sim2SimRobot(mjcf.Robot):
 
         # Locate actual root body inside of worldbody
         root_body = worldbody.find(".//body")
-        root_body.set("pos", f"0 0 0")
+        root_body.set("pos", "0 0 0")
         root_body.set("quat", " ".join(map(str, robot.rotation)))
 
         # Add cameras and imu
@@ -313,9 +311,9 @@ class Sim2SimRobot(mjcf.Robot):
                 # Swap the bodies
                 parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
 
+        # Remove the root body in the end
         root_body = worldbody.find("./body[@name='root']")
         children = list(root_body)
-        breakpoint()
         worldbody.remove(root_body)
         for child in children:
             worldbody.append(child)
