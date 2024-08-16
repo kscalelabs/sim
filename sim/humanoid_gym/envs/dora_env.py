@@ -382,7 +382,6 @@ class DoraFreeEnv(LeggedRobot):
 
         return torch.exp(-yaw_roll * 100) - 0.01 * torch.norm(joint_diff, dim=1)
 
-
     def _reward_base_height(self):
         """
         Calculates the reward based on the robot's base height. Penalizes deviation from a target base height.
