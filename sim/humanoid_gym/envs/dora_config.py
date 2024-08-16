@@ -84,7 +84,7 @@ class DoraCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 0.8]
+        pos = [0.0, 0.0, 0.9]
         default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
         default_positions = Stompy.default_standing()
@@ -145,9 +145,9 @@ class DoraCfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.55
+        base_height_target = 0.9
         min_dist = 0.1
-        max_dist = 0.3
+        max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.06  # m
@@ -233,7 +233,7 @@ class DoraCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "Full"
+        experiment_name = "Dora"
         run_name = ""
         # load and resume
         resume = False

@@ -85,17 +85,17 @@ class Stompy(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            Stompy.legs.left.hip_pitch: 0,
+            Stompy.legs.left.hip_pitch: 0.325,
             Stompy.legs.left.hip_yaw: 0,
             Stompy.legs.left.hip_roll: 0,
-            Stompy.legs.left.knee_pitch: 0,
-            Stompy.legs.left.ankle_pitch: 0,
+            Stompy.legs.left.knee_pitch: -0.259,
+            Stompy.legs.left.ankle_pitch: -0.0556,
             Stompy.legs.left.ankle_roll: 0,
-            Stompy.legs.right.hip_pitch: 0,
+            Stompy.legs.right.hip_pitch: 0.325,
             Stompy.legs.right.hip_yaw: 0,
             Stompy.legs.right.hip_roll: 0,
-            Stompy.legs.right.knee_pitch: 0,
-            Stompy.legs.right.ankle_pitch: 0,
+            Stompy.legs.right.knee_pitch: -0.259,
+            Stompy.legs.right.ankle_pitch: -0.0556,
             Stompy.legs.right.ankle_roll: 0,
         }
 
@@ -172,8 +172,8 @@ class Stompy(Node):
             "hip yaw": 10,
             "hip roll": 10,
             "knee pitch": 10,
-            "ankle pitch": 10,
-            "ankle roll": 10,
+            "ankle pitch": 5,
+            "ankle roll": 5,
         }
 
     # pos_limits

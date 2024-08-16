@@ -31,7 +31,7 @@
     </inertial>
     <visual>
       <origin
-        xyz="0 0 0" 
+        xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
         <mesh
@@ -810,7 +810,7 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="-0.28"
+      lower="-1.28"
       upper="1.08"
       effort="27"
       velocity="100" />
@@ -1158,7 +1158,7 @@
     <axis
       xyz="0 1 0" />
     <limit
-      lower="-0.28"
+      lower="-1.28"
       upper="1.08"
       effort="27"
       velocity="100" />
