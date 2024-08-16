@@ -10,6 +10,8 @@ quickly.
 # fmt: off
 import isaacgym # isort:skip
 import torch # isort:skip
+from .dora_config import DoraCfg, DoraCfgPPO
+from .dora_env import DoraFreeEnv
 from .g1_config import G1Cfg, G1CfgPPO
 from .g1_env import G1FreeEnv
 from .h1_config import H1Cfg, H1CfgPPO
@@ -30,6 +32,7 @@ def register_tasks() -> None:
     """
     from humanoid.utils.task_registry import task_registry
 
+    task_registry.register("dora_ppo", DoraFreeEnv, DoraCfg(), DoraCfgPPO())
     task_registry.register("h1", H1FreeEnv, H1Cfg(), H1CfgPPO())
     task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
     task_registry.register("only_legs_ppo", OnlyLegsFreeEnv, OnlyLegsCfg(), OnlyLegsCfgPPO())
