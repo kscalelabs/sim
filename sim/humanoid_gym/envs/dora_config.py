@@ -39,7 +39,7 @@ class DoraCfg(LeggedRobotCfg):
     class asset(LeggedRobotCfg.asset):
         file = str(stompy_urdf_path())
 
-        name = "stompy"
+        name = "dora"
 
         foot_name = "leg_ankle_roll_Link"
         knee_name = "leg_knee_Link"
