@@ -3,6 +3,7 @@ import json
 import logging
 import os
 from datetime import datetime
+from pathlib import Path
 
 import cv2
 import h5py
@@ -53,18 +54,19 @@ def play(args: argparse.Namespace) -> None:
 
     # load vla
     device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
-    processor = AutoProcessor.from_pretrained(args.openvla_path, trust_remote_code=True)
+    vlapath = Path(args.openvla_dir) / args.vla_model
+    processor = AutoProcessor.from_pretrained(vlapath, trust_remote_code=True)
     action_tokenizer = ActionTokenizer(processor.tokenizer)
     vla = AutoModelForVision2Seq.from_pretrained(
-        args.openvla_path,
+        vlapath,
         attn_implementation="flash_attention_2",
         torch_dtype=torch.float16,
         low_cpu_mem_usage=True,
         trust_remote_code=True,
     ).to(device)
     
-    if os.path.isdir(args.openvla_path):
-        with open(os.path.join(args.openvla_path, "dataset_statistics.json")) as f:
+    if os.path.isdir(vlapath):
+        with open(vlapath / "dataset_statistics.json") as f:
             vla.norm_stats = json.load(f)
 
     # Prepare for logging
@@ -241,7 +243,8 @@ if __name__ == "__main__":
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
     parser.add_argument("--log_h5", action="store_true", help="Enable HDF5 logging")
-    parser.add_argument("--openvla_path", type=str, default="/", help="Path to OpenVLA model")
+    parser.add_argument("--openvla_dir", type=str, default="vla-models", help="Path to OpenVLA model")
+    parser.add_argument("--vla_model", type=str, default="locomotion_over_2", help="OpenVLA model name")
     args, unknown = parser.parse_known_args(namespace=base_args)
 
     play(args)
