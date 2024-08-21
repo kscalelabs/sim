@@ -12,7 +12,7 @@ from isaacgym import gymapi
 from tqdm import tqdm
 import torch
 from transformers import AutoProcessor, AutoModelForVision2Seq
-from prismatic.vla.action_tokenizer import ActionTokenizer
+from sim.humanoid_gym.vla_utils.action_tokenizer import ActionTokenizer
 from transformers.utils import TensorType
 from transformers.image_processing_utils import BatchFeature
 
@@ -153,6 +153,9 @@ def play(args: argparse.Namespace) -> None:
         inputs = BatchFeature(data={**text_inputs}).to(device, dtype=torch.bfloat16)
 
         actions = vla.predict_action(**inputs, do_sample=False)
+
+        # load as torch.float32
+        actions = torch.from_numpy(actions).float().unsqueeze(0)
 
         if args.log_h5:
             dset_actions[t] = actions
