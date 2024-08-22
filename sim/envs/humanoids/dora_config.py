@@ -1,17 +1,17 @@
 """Defines the environment configuration for the Getting up task"""
 
-from humanoid.envs.base.legged_robot_config import (  # type: ignore
+from envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
 
+from sim.resources.dora.joints import Robot
 from sim.env import robot_urdf_path
-from sim.g1.joints import Robot
 
-NUM_JOINTS = len(Robot.all_joints())  # 33
+NUM_JOINTS = len(Robot.all_joints())  # 12
 
 
-class G1Cfg(LeggedRobotCfg):
+class DoraCfg(LeggedRobotCfg):
     """
     Configuration class for the Legs humanoid robot.
     """
@@ -39,12 +39,12 @@ class G1Cfg(LeggedRobotCfg):
     class asset(LeggedRobotCfg.asset):
         file = str(robot_urdf_path())
 
-        name = "g1"
+        name = "dora"
 
-        foot_name = "ankle_roll"
-        knee_name = "knee_link"
+        foot_name = "leg_ankle_roll_Link"
+        knee_name = "leg_knee_Link"
 
-        termination_height = 0.55
+        termination_height = 0.35
         default_feet_height = 0.0
         terminate_after_contacts_on = []
 
@@ -84,21 +84,21 @@ class G1Cfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height]
-        default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
+        pos = [0.0, 0.0, 0.9]
+        default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
 
-        default_positions = Robot.default_standing()
+        default_positions = Stompy.default_standing()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
-        stiffness = Robot.stiffness()
-        damping = Robot.damping()
+        stiffness = Stompy.stiffness()
+        damping = Stompy.damping()
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 4  # 100hz
+        decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.002  # 1000 Hz
@@ -109,7 +109,7 @@ class G1Cfg(LeggedRobotCfg):
             num_threads = 12
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 1
+            num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
@@ -123,9 +123,9 @@ class G1Cfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False
+        randomize_base_mass = True
         added_mass_range = [-1.0, 1.0]
-        push_robots = False
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -145,8 +145,8 @@ class G1Cfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.97
-        min_dist = 0.2
+        base_height_target = 0.9
+        min_dist = 0.1
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
@@ -208,7 +208,7 @@ class G1Cfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class G1CfgPPO(LeggedRobotCfgPPO):
+class DoraCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -233,7 +233,7 @@ class G1CfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "Full"
+        experiment_name = "Dora"
         run_name = ""
         # load and resume
         resume = False

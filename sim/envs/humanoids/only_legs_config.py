@@ -1,24 +1,22 @@
 """Defines the environment configuration for the Getting up task"""
 
-from humanoid.envs.base.legged_robot_config import (  # type: ignore
+from envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
 
 from sim.env import robot_urdf_path
-from sim.stompymini.joints import Robot
+from sim.resources.stompy_legs.joints import Robot
 
-NUM_JOINTS = len(Robot.all_joints())  # 20
-from isaacgym.torch_utils import *  # isort: skip
+NUM_JOINTS = len(Robot.all_joints())  # 12
 
 
-class MiniCfg(LeggedRobotCfg):
+class OnlyLegsCfg(LeggedRobotCfg):
     """
     Configuration class for the Legs humanoid robot.
     """
 
     class env(LeggedRobotCfg.env):
-        # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
         num_single_obs = 11 + NUM_JOINTS * 3
@@ -37,19 +35,21 @@ class MiniCfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = str(robot_urdf_path())
+
+        file = str(robot_urdf_path(legs_only=True))
 
         name = "stompy"
 
-        foot_name = "_leg_1_robstride_01_mock_2_rs_01_stator_1"
-        knee_name = "_leg_1_robstride_04_mock_2_rs_04_rotor_1"
+        foot_name = "_foot_1_rmd_x4_24_mock_1_inner_rmd_x4_24_1"
+        knee_name = "_rmd_x8_90_mock_3_inner_rmd_x8_90_1"
 
-        termination_height = 0.24
-        default_feet_height = 0.03
-        terminate_after_contacts_on = ["link_upper_half_assembly_1_torso_top_left_1"]
+        termination_height = 0.26
+        default_feet_height = 0.0
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
+
+        collapse_fixed_joints = True
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
@@ -85,10 +85,7 @@ class MiniCfg(LeggedRobotCfg):
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, Robot.height]
-        # setting the right rotation
-        # quat_from_euler_xyz(torch.tensor(1.57), torch.tensor(0), torch.tensor(-1.57))
         rot = Robot.rotation
-
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
         default_positions = Robot.default_standing()
@@ -96,27 +93,27 @@ class MiniCfg(LeggedRobotCfg):
             default_joint_angles[joint] = default_positions[joint]
 
     class control(LeggedRobotCfg.control):
-        # PD Drive parameters:
         stiffness = Robot.stiffness()
         damping = Robot.damping()
-        # action scale: target angle = actionScale * action + defaultAngle
+
         action_scale = 0.25
-        # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
+        # gravity = [0., 0. , -9.81]  # [m/s^2]
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
+            # pfb30
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
-            bounce_threshold_velocity = 0.1  # [m/s]
+            bounce_threshold_velocity = 0.5  # [m/s]
             max_depenetration_velocity = 1.0
             max_gpu_contact_pairs = 2**23  # 2**24 -> needed for 8000 envs and more
             default_buffer_size_multiplier = 5
@@ -124,17 +121,16 @@ class MiniCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand:
-        start_pos_noise = 0.01
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = True
-        added_mass_range = [-1.0, 1.0]
-        push_robots = True
+        randomize_base_mass = False
+        added_mass_range = [-0.3, 0.3]
+        push_robots = False
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.05
+        dynamic_randomization = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -143,33 +139,36 @@ class MiniCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.3, 0.6]  # min max [m/s]
-            lin_vel_y = [-0.3, 0.3]  # min max [m/s]
+            lin_vel_x = [0, 0.6]  # min max [m/s]
+            lin_vel_y = [0, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = 0.78
-        min_dist = 0.25
+        # quite important to keep it right
+        base_height_target = 0.72
+
+        # distance between the knees and feet is2ac
+        min_dist = 0.2
         max_dist = 0.5
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.05  # m
-        cycle_time = 0.4  # sec
+        target_feet_height = 0.06  # m
+        cycle_time = 0.64  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
-        tracking_sigma = 5.0
-        max_contact_force = 400  # forces above this value are penalized
+        tracking_sigma = 5
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
             joint_pos = 1.6
-            feet_clearance = 1.6
+            feet_clearance = 1.0
             feet_contact_number = 1.2
             # gait
-            feet_air_time = 1.6
+            feet_air_time = 1.0
             foot_slip = -0.05
             feet_distance = 0.2
             knee_distance = 0.2
@@ -186,12 +185,13 @@ class MiniCfg(LeggedRobotCfg):
             default_joint_pos = 0.5
             orientation = 1
             base_height = 0.2
-            base_acc = 0.2
+
             # energy
             action_smoothness = -0.002
             torques = -1e-5
             dof_vel = -5e-4
             dof_acc = -1e-7
+            base_acc = 0.2
             collision = -1.0
 
     class normalization:
@@ -212,7 +212,7 @@ class MiniCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class MiniCfgPPO(LeggedRobotCfgPPO):
+class OnlyLegsCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -233,11 +233,11 @@ class MiniCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 5001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "Full"
+        experiment_name = "Legs"
         run_name = ""
         # load and resume
         resume = False

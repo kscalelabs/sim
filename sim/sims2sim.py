@@ -29,8 +29,8 @@
 
 """
 Difference setup
-python sim/humanoid_gym/play.py --task mini_ppo --sim_device cpu
-python sim/humanoid_gym/sims2sim.py --load_model policy_1.pt
+python sim/play.py --task mini_ppo --sim_device cpu
+python sim/sims2sim.py --load_model policy_1.pt
 """
 import math
 import os
@@ -43,7 +43,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
-from sim.humanoid_gym.envs import MiniCfg
+from sim.envs import MiniCfg
 from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip

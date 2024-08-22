@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 import copy
 
 from sim.env import run_dir
-from sim.humanoid_gym.envs import *  # noqa: F403
+from sim.envs import *  # noqa: F403
 
 
 def export_policy_as_jit(actor_critic, path):

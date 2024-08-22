@@ -3,7 +3,7 @@
 import argparse
 
 # This import is necessary to register the environments.
-from sim.humanoid_gym.envs import *  # noqa: F403
+from sim.envs import *  # noqa: F403
 
 
 def train(args: argparse.Namespace) -> None:
@@ -14,7 +14,7 @@ def train(args: argparse.Namespace) -> None:
 
 # Puts this import down here so that the environments are registered
 # before we try to use them.
-from humanoid.utils import get_args, task_registry  # noqa: E402
+from sim.utils import get_args, task_registry  # noqa: E402
 
 if __name__ == "__main__":
     # python -m sim.humanoid_gym.train

@@ -2,17 +2,16 @@
 """Defines the environment for training the humanoid."""
 
 import torch  # type: ignore[import]
-from humanoid.envs import LeggedRobot
-from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
-from humanoid.utils.terrain import HumanoidTerrain
+from envs import LeggedRobot
+from envs.base.legged_robot_config import LeggedRobotCfg
+from utils.terrain import HumanoidTerrain
+from isaacgym import gymtorch
 from isaacgym.torch_utils import *
 
-from sim.h1_2.joints import Robot
-
-from isaacgym import gymtorch  # isort:skip
+from sim.resources.stompymini.joints import Robot
 
 
-class H1FreeEnv(LeggedRobot):
+class MiniFreeEnv(LeggedRobot):
     """RobotFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
@@ -57,6 +56,7 @@ class H1FreeEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Robot.legs.left.joints_motors():
+            print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
@@ -126,13 +126,13 @@ class H1FreeEnv(LeggedRobot):
         sin_pos_l[sin_pos_l > 0] = 0
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += sin_pos_l * scale_2
-        self.ref_dof_pos[:, self.legs_joints["left_ankle_roll"]] += sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
         self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] += sin_pos_r * scale_1
         self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] += sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle_roll"]] += sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -234,9 +234,9 @@ class H1FreeEnv(LeggedRobot):
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
-                q,  # 12D
-                dq,  # 12D
-                self.actions,  # 12D
+                q,  # 20D
+                dq,  # 20D
+                self.actions,  # 20D
                 self.base_ang_vel * self.obs_scales.ang_vel,  # 3
                 self.base_euler_xyz * self.obs_scales.quat,  # 3
             ),
@@ -354,8 +354,7 @@ class H1FreeEnv(LeggedRobot):
         """
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
-
-        return (quat_mismatch + orientation) / 2.0
+        return (quat_mismatch + orientation) / 2
 
     def _reward_feet_contact_forces(self):
         """
@@ -375,10 +374,11 @@ class H1FreeEnv(LeggedRobot):
         on penalizing deviation in yaw and roll directions. Excludes yaw and roll from the main penalty.
         """
         joint_diff = self.dof_pos - self.default_joint_pd_target
-        left_yaw_roll = joint_diff[:, :2]
-        right_yaw_roll = joint_diff[:, 6:8]
+        left_yaw_roll = joint_diff[:, [self.legs_joints["left_hip_roll"], self.legs_joints["left_hip_yaw"]]]
+        right_yaw_roll = joint_diff[:, [self.legs_joints["right_hip_roll"], self.legs_joints["right_hip_yaw"]]]
         yaw_roll = torch.norm(left_yaw_roll, dim=1) + torch.norm(right_yaw_roll, dim=1)
         yaw_roll = torch.clamp(yaw_roll - 0.1, 0, 50)
+
         return torch.exp(-yaw_roll * 100) - 0.01 * torch.norm(joint_diff, dim=1)
 
     def _reward_base_height(self):
