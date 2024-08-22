@@ -27,16 +27,16 @@ all:
 # ------------------------ #
 
 train-one-vis:
-	@python -m sim.humanoid_gym.train --task stompy_ppo --run_name v1 --num_envs 1
+	@python -m sim.train --task stompymini --num_envs 1
 
 train-many-vis:
-	@python -m sim.humanoid_gym.train --task stompy_ppo --run_name v1 --num_envs 16
+	@python -m sim.train --task stompymini --num_envs 16
 
 train:
-	@python -m sim.humanoid_gym.train --task stompy_ppo --run_name v1 --num_envs 4096 --headless
+	@python -m sim.train --task stompymini --num_envs 4096 --headless
 
 play:
-	@python -m sim.humanoid_gym.play --task stompy_ppo --run_name v1
+	@python -m sim.play --task stompymini
 
 # ------------------------ #
 #          Build           #
@@ -53,15 +53,9 @@ install-dev:
 install-third-party:
 	@git submodule update --init --recursive
 	@cd third_party/isaacgym/python/ && pip install --verbose -e .
-	@cd third_party/humanoid-gym && pip install --verbose -e .
-	@cd third_party/IsaacGymEnvs && pip install --verbose -e .
 
 install-third-party-external:
-	@git submodule update --init third_party/humanoid-gym
-	@git submodule update --init third_party/IsaacGymEnvs
 	@cd ${ISAACGYM_PATH}/python/ && pip install --verbose -e .
-	@cd third_party/humanoid-gym && pip install --verbose -e .
-	@cd third_party/IsaacGymEnvs && pip install --verbose -e .
 
 build-ext:
 	@python setup.py build_ext --inplace
