@@ -4,3 +4,6 @@
 [submodule "third_party/IsaacGymEnvs"]
 	path = third_party/IsaacGymEnvs
 	url = ../../kscalelabs/IsaacGymEnvs.git
+[submodule "third_party/isaacgym"]
+	path = third_party/isaacgym
+	url = ../../kscalelabs/isaacgym.git
