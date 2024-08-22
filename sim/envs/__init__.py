@@ -8,17 +8,20 @@ quickly.
 """
 
 # fmt: off
-import isaacgym # isort:skip
-import torch # isort:skip
-from .dora_config import DoraCfg, DoraCfgPPO
-from .dora_env import DoraFreeEnv
-from .g1_config import G1Cfg, G1CfgPPO
-from .g1_env import G1FreeEnv
-from .h1_config import H1Cfg, H1CfgPPO
-from .h1_env import H1FreeEnv
-from .stompymini_config import MiniCfg, MiniCfgPPO
-from .stompymini_env import MiniFreeEnv
+# import isaacgym # isort:skip
+# import torch # isort:skip
+from .base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
+from .humanoids.dora_config import DoraCfg, DoraCfgPPO
+from .humanoids.dora_env import DoraFreeEnv
+from .humanoids.g1_config import G1Cfg, G1CfgPPO
+from .humanoids.g1_env import G1FreeEnv
+from .humanoids.h1_config import H1Cfg, H1CfgPPO
+from .humanoids.h1_env import H1FreeEnv
+from .humanoids.stompymini_config import MiniCfg, MiniCfgPPO
+from .humanoids.stompymini_env import MiniFreeEnv
+
 # fmt: on
+
 
 def register_tasks() -> None:
     """Registers the tasks in the task registry.
@@ -34,4 +37,5 @@ def register_tasks() -> None:
     task_registry.register("stompymini", MiniFreeEnv, MiniCfg(), MiniCfgPPO())
 
 
+breakpoint()
 register_tasks()

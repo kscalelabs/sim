@@ -1,19 +1,20 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
 
-import torch  # type: ignore[import]
-from humanoid.envs import LeggedRobot
-from humanoid.envs.base.legged_robot_config import LeggedRobotCfg
-from humanoid.utils.terrain import HumanoidTerrain
+
+from sim.envs.base.legged_robot import LeggedRobot
+from sim.envs.base.legged_robot_config import LeggedRobotCfg
+from sim.utils.terrain import HumanoidTerrain
 from isaacgym.torch_utils import *
 
-from sim.dora.joints import Stompy
+from sim.resources.dora.joints import Robot
 
 from isaacgym import gymtorch  # isort:skip
 
+import torch # isort:skip
 
 class DoraFreeEnv(LeggedRobot):
-    """StompyFreeEnv is a class that represents a custom environment for a legged robot.
+    """DoraFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg (LeggedRobotCfg): Configuration object for the legged robot.

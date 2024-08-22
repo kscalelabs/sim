@@ -9,12 +9,12 @@ from isaacgym.torch_utils import * # isort: skip
 import torch # isort: skip
 # fmt: on
 
-import LEGGED_GYM_ROOT_DIR
+from sim import LEGGED_GYM_ROOT_DIR
 from envs.base.base_task import BaseTask
 from utils.helpers import class_to_dict
 from utils.math import quat_apply_yaw, wrap_to_pi
 
-from .legged_robot_config import LeggedRobotCfg
+from envs.base.legged_robot_config import LeggedRobotCfg
 
 
 def get_euler_xyz_tensor(quat):
@@ -470,8 +470,8 @@ class LeggedRobot(BaseTask):
         self.dof_state = gymtorch.wrap_tensor(dof_state_tensor)
         self.dof_pos = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
-        # self.base_quat = self.root_states[:, 3:7] 
-        # TODO(pfb30): debug this      
+        # self.base_quat = self.root_states[:, 3:7]
+        # TODO(pfb30): debug this
         origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
         origin = quat_conjugate(origin)
         self.base_quat = quat_mul(origin, self.root_states[:, 3:7])

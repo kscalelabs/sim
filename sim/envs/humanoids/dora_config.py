@@ -85,16 +85,16 @@ class DoraCfg(LeggedRobotCfg):
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, 0.9]
-        default_joint_angles = {k: 0.0 for k in Stompy.all_joints()}
+        default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
-        default_positions = Stompy.default_standing()
+        default_positions = Robot.default_standing()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
-        stiffness = Stompy.stiffness()
-        damping = Stompy.damping()
+        stiffness = Robot.stiffness()
+        damping = Robot.damping()
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT

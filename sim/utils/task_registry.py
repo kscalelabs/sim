@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-FileCopyrightText: Copyright (c) 2021 ETH Zurich, Nikita Rudin
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -37,7 +37,7 @@ from datetime import datetime
 from algo import VecEnv
 from algo import OnPolicyRunner
 
-from humanoid import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
+from sim import LEGGED_GYM_ROOT_DIR
 from .helpers import get_args, update_cfg_from_args, class_to_dict, get_load_path, set_seed, parse_sim_params
 from envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
@@ -46,22 +46,22 @@ class TaskRegistry():
         self.task_classes = {}
         self.env_cfgs = {}
         self.train_cfgs = {}
-    
+
     def register(self, name: str, task_class: VecEnv, env_cfg: LeggedRobotCfg, train_cfg: LeggedRobotCfgPPO):
         self.task_classes[name] = task_class
         self.env_cfgs[name] = env_cfg
         self.train_cfgs[name] = train_cfg
-    
+
     def get_task_class(self, name: str) -> VecEnv:
         return self.task_classes[name]
-    
+
     def get_cfgs(self, name) -> Tuple[LeggedRobotCfg, LeggedRobotCfgPPO]:
         train_cfg = self.train_cfgs[name]
         env_cfg = self.env_cfgs[name]
         # copy seed
         env_cfg.seed = train_cfg.seed
         return env_cfg, train_cfg
-    
+
     def make_env(self, name, args=None, env_cfg=None) -> Tuple[VecEnv, LeggedRobotCfg]:
         """ Creates an environment either from a registered namme or from the provided config file.
 
@@ -71,7 +71,7 @@ class TaskRegistry():
             env_cfg (Dict, optional): Environment config file used to override the registered config. Defaults to None.
 
         Raises:
-            ValueError: Error if no registered env corresponds to 'name' 
+            ValueError: Error if no registered env corresponds to 'name'
 
         Returns:
             isaacgym.VecTaskPython: The created environment
@@ -110,7 +110,7 @@ class TaskRegistry():
             name (string, optional): Name of a registered env. If None, the config file will be used instead. Defaults to None.
             args (Args, optional): Isaac Gym comand line arguments. If None get_args() will be called. Defaults to None.
             train_cfg (Dict, optional): Training config file. If None 'name' will be used to get the config file. Defaults to None.
-            log_root (str, optional): Logging directory for Tensorboard. Set to 'None' to avoid logging (at test time for example). 
+            log_root (str, optional): Logging directory for Tensorboard. Set to 'None' to avoid logging (at test time for example).
                                       Logs will be saved in <log_root>/<date_time>_<run_name>. Defaults to "default"=<path_to_LEGGED_GYM>/logs/<experiment_name>.
 
         Raises:
@@ -143,11 +143,11 @@ class TaskRegistry():
             log_dir = None
         else:
             log_dir = os.path.join(log_root, datetime.now().strftime('%b%d_%H-%M-%S') + '_' + train_cfg.runner.run_name)
-        
+
         train_cfg_dict = class_to_dict(train_cfg)
         env_cfg_dict = class_to_dict(self.env_cfg_for_wandb)
         all_cfg = {**train_cfg_dict, **env_cfg_dict}
-        
+
         runner_class = eval(train_cfg_dict["runner_class_name"])
         runner = runner_class(env, all_cfg, log_dir, device=args.rl_device)
         #save resume path before creating a new log_dir

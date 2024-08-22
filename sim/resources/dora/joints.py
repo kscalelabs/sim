@@ -75,7 +75,7 @@ class Legs(Node):
     right = RightLeg()
 
 
-class Stompy(Node):
+class Robot(Node):
     legs = Legs()
 
     @classmethod
@@ -85,68 +85,68 @@ class Stompy(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            Stompy.legs.left.hip_pitch: 0.325,
-            Stompy.legs.left.hip_yaw: 0,
-            Stompy.legs.left.hip_roll: 0,
-            Stompy.legs.left.knee_pitch: -0.259,
-            Stompy.legs.left.ankle_pitch: -0.0556,
-            Stompy.legs.left.ankle_roll: 0,
-            Stompy.legs.right.hip_pitch: 0.325,
-            Stompy.legs.right.hip_yaw: 0,
-            Stompy.legs.right.hip_roll: 0,
-            Stompy.legs.right.knee_pitch: -0.259,
-            Stompy.legs.right.ankle_pitch: -0.0556,
-            Stompy.legs.right.ankle_roll: 0,
+            Robot.legs.left.hip_pitch: 0.325,
+            Robot.legs.left.hip_yaw: 0,
+            Robot.legs.left.hip_roll: 0,
+            Robot.legs.left.knee_pitch: -0.259,
+            Robot.legs.left.ankle_pitch: -0.0556,
+            Robot.legs.left.ankle_roll: 0,
+            Robot.legs.right.hip_pitch: 0.325,
+            Robot.legs.right.hip_yaw: 0,
+            Robot.legs.right.hip_roll: 0,
+            Robot.legs.right.knee_pitch: -0.259,
+            Robot.legs.right.ankle_pitch: -0.0556,
+            Robot.legs.right.ankle_roll: 0,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            Stompy.legs.left.hip_pitch: {
+            Robot.legs.left.hip_pitch: {
                 "lower": 0.5,
                 "upper": 2.69,
             },
-            Stompy.legs.left.hip_yaw: {
+            Robot.legs.left.hip_yaw: {
                 "lower": 0.5,
                 "upper": 1.19,
             },
-            Stompy.legs.left.hip_roll: {
+            Robot.legs.left.hip_roll: {
                 "lower": -0.5,
                 "upper": 0.5,
             },
-            Stompy.legs.left.knee_pitch: {
+            Robot.legs.left.knee_pitch: {
                 "lower": -2.14,
                 "upper": -1.0,
             },
-            Stompy.legs.left.ankle_pitch: {
+            Robot.legs.left.ankle_pitch: {
                 "lower": -0.8,
                 "upper": 0.6,
             },
-            Stompy.legs.left.ankle_roll: {
+            Robot.legs.left.ankle_roll: {
                 "lower": 1,
                 "upper": 2.3,
             },
-            Stompy.legs.right.hip_pitch: {
+            Robot.legs.right.hip_pitch: {
                 "lower": -1,
                 "upper": 1,
             },
-            Stompy.legs.right.hip_yaw: {
+            Robot.legs.right.hip_yaw: {
                 "lower": -2.6,
                 "upper": -1.5,
             },
-            Stompy.legs.right.hip_roll: {
+            Robot.legs.right.hip_roll: {
                 "lower": -2.39,
                 "upper": -1,
             },
-            Stompy.legs.right.knee_pitch: {
+            Robot.legs.right.knee_pitch: {
                 "lower": 2.09,
                 "upper": 3.2,
             },
-            Stompy.legs.right.ankle_pitch: {
+            Robot.legs.right.ankle_pitch: {
                 "lower": 0,
                 "upper": 1.5,
             },
-            Stompy.legs.right.ankle_roll: {
+            Robot.legs.right.ankle_roll: {
                 "lower": 1,
                 "upper": 2.3,
             },
@@ -213,11 +213,11 @@ class Stompy(Node):
 
 
 def print_joints() -> None:
-    joints = Stompy.all_joints()
+    joints = Robot.all_joints()
     assert len(joints) == len(set(joints)), "Duplicate joint names found!"
     print(Stompy())
 
 
 if __name__ == "__main__":
-    # python -m sim.stompy.joints
+    # python -m sim.Robot.joints
     print_joints()
