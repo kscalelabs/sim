@@ -1,3 +1,4 @@
+# mypy: disable-error-code="no-untyped-def"
 """Play a trained policy in the environment.
 
 Run:
