@@ -12,9 +12,7 @@ NUM_JOINTS = len(Robot.all_joints())  # 33
 
 
 class G1Cfg(LeggedRobotCfg):
-    """
-    Configuration class for the Legs humanoid robot.
-    """
+    """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
         # change the observation dim

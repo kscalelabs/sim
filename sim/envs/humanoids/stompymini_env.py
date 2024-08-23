@@ -1,11 +1,11 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
 
-from envs.base.legged_robot import LeggedRobot
-from envs.base.legged_robot_config import LeggedRobotCfg
-from utils.terrain import HumanoidTerrain
-from isaacgym import gymtorch # isort:skip
-from isaacgym.torch_utils import *
+from sim.envs.base.legged_robot import LeggedRobot
+from sim.utils.terrain import HumanoidTerrain
+
+from isaacgym import gymtorch  # isort:skip
+from isaacgym.torch_utils import *  # isort: skip
 
 from sim.resources.stompymini.joints import Robot
 
@@ -16,9 +16,9 @@ class MiniFreeEnv(LeggedRobot):
     """StompyFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
-        cfg (LeggedRobotCfg): Configuration object for the legged robot.
+        cfg: Configuration object for the legged robot.
         sim_params: Parameters for the simulation.
-        physics_engine: Physics engine used in the simulation.
+        physics_engine: Physics engin e used in the simulation.
         sim_device: Device used for the simulation.
         headless: Flag indicating whether the simulation should be run in headless mode.
 
@@ -46,7 +46,7 @@ class MiniFreeEnv(LeggedRobot):
         reset_idx(env_ids): Resets the environment for the specified environment IDs.
     """
 
-    def __init__(self, cfg: LeggedRobotCfg, sim_params, physics_engine, sim_device, headless):
+    def __init__(self, cfg, sim_params, physics_engine, sim_device, headless):
         super().__init__(cfg, sim_params, physics_engine, sim_device, headless)
         self.last_feet_z = self.cfg.asset.default_feet_height
         self.feet_height = torch.zeros((self.num_envs, 2), device=self.device)
@@ -276,9 +276,7 @@ class MiniFreeEnv(LeggedRobot):
 
     # ================================================ Rewards ================================================== #
     def _reward_joint_pos(self):
-        """
-        Calculates the reward based on the difference between the current joint positions and the target joint positions.
-        """
+        """Calculates the reward based on the difference between the current joint positions and the target joint positions."""
         joint_pos = self.dof_pos.clone()
         pos_target = self.ref_dof_pos.clone()
         diff = joint_pos - pos_target
@@ -287,9 +285,7 @@ class MiniFreeEnv(LeggedRobot):
         return r
 
     def _reward_feet_distance(self):
-        """
-        Calculates the reward based on the distance between the feet. Penilize feet get close to each other or too far away.
-        """
+        """Calculates the reward based on the distance between the feet. Penilize feet get close to each other or too far away."""
         foot_pos = self.rigid_state[:, self.feet_indices, :2]
         foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist
@@ -299,9 +295,7 @@ class MiniFreeEnv(LeggedRobot):
         return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
     def _reward_knee_distance(self):
-        """
-        Calculates the reward based on the distance between the knee of the humanoid.
-        """
+        """Calculates the reward based on the distance between the knee of the humanoid."""
         foot_pos = self.rigid_state[:, self.knee_indices, :2]
         foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist
@@ -311,8 +305,7 @@ class MiniFreeEnv(LeggedRobot):
         return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
     def _reward_foot_slip(self):
-        """
-        Calculates the reward for minimizing foot slip. The reward is based on the contact forces
+        """Calculates the reward for minimizing foot slip. The reward is based on the contact forces
         and the speed of the feet. A contact threshold is used to determine if the foot is in contact
         with the ground. The speed of the foot is calculated and scaled by the contact condition.
         """
@@ -323,8 +316,7 @@ class MiniFreeEnv(LeggedRobot):
         return torch.sum(rew, dim=1)
 
     def _reward_feet_air_time(self):
-        """
-        Calculates the reward for feet air time, promoting longer steps. This is achieved by
+        """Calculates the reward for feet air time, promoting longer steps. This is achieved by
         checking the first contact with the ground after being in the air. The air time is
         limited to a maximum value for reward calculation.
         """
@@ -339,8 +331,7 @@ class MiniFreeEnv(LeggedRobot):
         return air_time.sum(dim=1)
 
     def _reward_feet_contact_number(self):
-        """
-        Calculates a reward based on the number of feet contacts aligning with the gait phase.
+        """Calculates a reward based on the number of feet contacts aligning with the gait phase.
         Rewards or penalizes depending on whether the foot contact matches the expected gait phase.
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
@@ -349,8 +340,7 @@ class MiniFreeEnv(LeggedRobot):
         return torch.mean(reward, dim=1)
 
     def _reward_orientation(self):
-        """
-        Calculates the reward for maintaining a flat base orientation. It penalizes deviation
+        """Calculates the reward for maintaining a flat base orientation. It penalizes deviation
         from the desired base orientation using the base euler angles and the projected gravity vector.
         """
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
@@ -358,8 +348,7 @@ class MiniFreeEnv(LeggedRobot):
         return (quat_mismatch + orientation) / 2
 
     def _reward_feet_contact_forces(self):
-        """
-        Calculates the reward for keeping contact forces within a specified range. Penalizes
+        """Calculates the reward for keeping contact forces within a specified range. Penalizes
         high contact forces on the feet.
         """
         return torch.sum(
@@ -370,8 +359,7 @@ class MiniFreeEnv(LeggedRobot):
         )
 
     def _reward_default_joint_pos(self):
-        """
-        Calculates the reward for keeping joint positions close to default positions, with a focus
+        """Calculates the reward for keeping joint positions close to default positions, with a focus
         on penalizing deviation in yaw and roll directions. Excludes yaw and roll from the main penalty.
         """
         joint_diff = self.dof_pos - self.default_joint_pd_target
@@ -383,8 +371,7 @@ class MiniFreeEnv(LeggedRobot):
         return torch.exp(-yaw_roll * 100) - 0.01 * torch.norm(joint_diff, dim=1)
 
     def _reward_base_height(self):
-        """
-        Calculates the reward based on the robot's base height. Penalizes deviation from a target base height.
+        """Calculates the reward based on the robot's base height. Penalizes deviation from a target base height.
         The reward is computed based on the height difference between the robot's base and the average height
         of its feet when they are in contact with the ground.
         """
@@ -397,8 +384,7 @@ class MiniFreeEnv(LeggedRobot):
         return reward
 
     def _reward_base_acc(self):
-        """
-        Computes the reward based on the base's acceleration. Penalizes high accelerations of the robot's base,
+        """Computes the reward based on the base's acceleration. Penalizes high accelerations of the robot's base,
         encouraging smoother motion.
         """
         root_acc = self.last_root_vel - self.root_states[:, 7:13]
@@ -406,8 +392,7 @@ class MiniFreeEnv(LeggedRobot):
         return rew
 
     def _reward_vel_mismatch_exp(self):
-        """
-        Computes a reward based on the mismatch in the robot's linear and angular velocities.
+        """Computes a reward based on the mismatch in the robot's linear and angular velocities.
         Encourages the robot to maintain a stable velocity by penalizing large deviations.
         """
         lin_mismatch = torch.exp(-torch.square(self.base_lin_vel[:, 2]) * 10)
@@ -418,8 +403,7 @@ class MiniFreeEnv(LeggedRobot):
         return c_update
 
     def _reward_track_vel_hard(self):
-        """
-        Calculates a reward for accurately tracking both linear and angular velocity commands.
+        """Calculates a reward for accurately tracking both linear and angular velocity commands.
         Penalizes deviations from specified linear and angular velocity targets.
         """
         # Tracking of linear velocity commands (xy axes)
@@ -435,28 +419,23 @@ class MiniFreeEnv(LeggedRobot):
         return (lin_vel_error_exp + ang_vel_error_exp) / 2.0 - linear_error
 
     def _reward_tracking_lin_vel(self):
-        """
-        Tracks linear velocity commands along the xy axes.
+        """Tracks linear velocity commands along the xy axes.
         Calculates a reward based on how closely the robot's linear velocity matches the commanded values.
         """
         lin_vel_error = torch.sum(torch.square(self.commands[:, :2] - self.base_lin_vel[:, :2]), dim=1)
         return torch.exp(-lin_vel_error * self.cfg.rewards.tracking_sigma)
 
     def _reward_tracking_ang_vel(self):
-        """
-        Tracks angular velocity commands for yaw rotation.
+        """Tracks angular velocity commands for yaw rotation.
         Computes a reward based on how closely the robot's angular velocity matches the commanded yaw values.
         """
-
         ang_vel_error = torch.square(self.commands[:, 2] - self.base_ang_vel[:, 2])
         return torch.exp(-ang_vel_error * self.cfg.rewards.tracking_sigma)
 
     def _reward_feet_clearance(self):
-        """
-        Calculates reward based on the clearance of the swing leg from the ground during movement.
+        """Calculates reward based on the clearance of the swing leg from the ground during movement.
         Encourages appropriate lift of the feet during the swing phase of the gait.
         """
-
         # Compute feet contact mask
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
 
@@ -477,8 +456,7 @@ class MiniFreeEnv(LeggedRobot):
         return rew_pos
 
     def _reward_low_speed(self):
-        """
-        Rewards or penalizes the robot based on its speed relative to the commanded speed.
+        """Rewards or penalizes the robot based on its speed relative to the commanded speed.
         This function checks if the robot is moving too slow, too fast, or at the desired speed,
         and if the movement direction matches the command.
         """
@@ -509,29 +487,25 @@ class MiniFreeEnv(LeggedRobot):
         return reward * (self.commands[:, 0].abs() > 0.1)
 
     def _reward_torques(self):
-        """
-        Penalizes the use of high torques in the robot's joints. Encourages efficient movement by minimizing
+        """Penalizes the use of high torques in the robot's joints. Encourages efficient movement by minimizing
         the necessary force exerted by the motors.
         """
         return torch.sum(torch.square(self.torques), dim=1)
 
     def _reward_dof_vel(self):
-        """
-        Penalizes high velocities at the degrees of freedom (DOF) of the robot. This encourages smoother and
+        """Penalizes high velocities at the degrees of freedom (DOF) of the robot. This encourages smoother and
         more controlled movements.
         """
         return torch.sum(torch.square(self.dof_vel), dim=1)
 
     def _reward_dof_acc(self):
-        """
-        Penalizes high accelerations at the robot's degrees of freedom (DOF). This is important for ensuring
+        """Penalizes high accelerations at the robot's degrees of freedom (DOF). This is important for ensuring
         smooth and stable motion, reducing wear on the robot's mechanical parts.
         """
         return torch.sum(torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1)
 
     def _reward_collision(self):
-        """
-        Penalizes collisions of the robot with the environment, specifically focusing on selected body parts.
+        """Penalizes collisions of the robot with the environment, specifically focusing on selected body parts.
         This encourages the robot to avoid undesired contact with objects or surfaces.
         """
         return torch.sum(
@@ -540,8 +514,7 @@ class MiniFreeEnv(LeggedRobot):
         )
 
     def _reward_action_smoothness(self):
-        """
-        Encourages smoothness in the robot's actions by penalizing large differences between consecutive actions.
+        """Encourages smoothness in the robot's actions by penalizing large differences between consecutive actions.
         This is important for achieving fluid motion and reducing mechanical stress.
         """
         term_1 = torch.sum(torch.square(self.last_actions - self.actions), dim=1)

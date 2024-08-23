@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-FileCopyrightText: Copyright (c) 2021 ETH Zurich, Nikita Rudin
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -30,31 +30,29 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 import sys
-from isaacgym import gymapi
-from isaacgym import gymutil
-import numpy as np
-import torch
+
+from isaacgym import gymapi  # isort: skip
+from isaacgym import gymutil  # isort: skip
+import torch  # isort: skip
 
 # Base class for RL tasks
 
 
-class BaseTask():
-
+class BaseTask:
     def __init__(self, cfg, sim_params, physics_engine, sim_device, headless):
         self.gym = gymapi.acquire_gym()
 
         self.sim_params = sim_params
         self.physics_engine = physics_engine
         self.sim_device = sim_device
-        sim_device_type, self.sim_device_id = gymutil.parse_device_str(
-            self.sim_device)
+        sim_device_type, self.sim_device_id = gymutil.parse_device_str(self.sim_device)
         self.headless = headless
 
         # env device is GPU only if sim is on GPU and use_gpu_pipeline=True, otherwise returned tensors are copied to CPU by physX.
-        if sim_device_type == 'cuda' and sim_params.use_gpu_pipeline:
+        if sim_device_type == "cuda" and sim_params.use_gpu_pipeline:
             self.device = self.sim_device
         else:
-            self.device = 'cpu'
+            self.device = "cpu"
 
         # graphics device for rendering, -1 for no rendering
         if self.headless:
@@ -72,25 +70,19 @@ class BaseTask():
         torch._C._jit_set_profiling_executor(False)
 
         # allocate buffers
-        self.obs_buf = torch.zeros(
-            self.num_envs, self.num_obs, device=self.device, dtype=torch.float)
-        self.rew_buf = torch.zeros(
-            self.num_envs, device=self.device, dtype=torch.float)
+        self.obs_buf = torch.zeros(self.num_envs, self.num_obs, device=self.device, dtype=torch.float)
+        self.rew_buf = torch.zeros(self.num_envs, device=self.device, dtype=torch.float)
         # new reward buffers for exp rewrads
-        self.neg_reward_buf = torch.zeros(
-            self.num_envs, device=self.device, dtype=torch.float)
-        self.pos_reward_buf = torch.zeros(
-            self.num_envs, device=self.device, dtype=torch.float)
+        self.neg_reward_buf = torch.zeros(self.num_envs, device=self.device, dtype=torch.float)
+        self.pos_reward_buf = torch.zeros(self.num_envs, device=self.device, dtype=torch.float)
 
-        self.reset_buf = torch.ones(
-            self.num_envs, device=self.device, dtype=torch.long)
-        self.episode_length_buf = torch.zeros(
-            self.num_envs, device=self.device, dtype=torch.long)
-        self.time_out_buf = torch.zeros(
-            self.num_envs, device=self.device, dtype=torch.bool)
+        self.reset_buf = torch.ones(self.num_envs, device=self.device, dtype=torch.long)
+        self.episode_length_buf = torch.zeros(self.num_envs, device=self.device, dtype=torch.long)
+        self.time_out_buf = torch.zeros(self.num_envs, device=self.device, dtype=torch.bool)
         if self.num_privileged_obs is not None:
             self.privileged_obs_buf = torch.zeros(
-                self.num_envs, self.num_privileged_obs, device=self.device, dtype=torch.float)
+                self.num_envs, self.num_privileged_obs, device=self.device, dtype=torch.float
+            )
         else:
             self.privileged_obs_buf = None
 
@@ -105,26 +97,21 @@ class BaseTask():
         # if running with a viewer, set up keyboard shortcuts and camera
         if self.headless == False:
             # subscribe to keyboard shortcuts
-            self.viewer = self.gym.create_viewer(
-                self.sim, gymapi.CameraProperties())
-            self.gym.subscribe_viewer_keyboard_event(
-                self.viewer, gymapi.KEY_ESCAPE, "QUIT")
-            self.gym.subscribe_viewer_keyboard_event(
-                self.viewer, gymapi.KEY_V, "toggle_viewer_sync")
+            self.viewer = self.gym.create_viewer(self.sim, gymapi.CameraProperties())
+            self.gym.subscribe_viewer_keyboard_event(self.viewer, gymapi.KEY_ESCAPE, "QUIT")
+            self.gym.subscribe_viewer_keyboard_event(self.viewer, gymapi.KEY_V, "toggle_viewer_sync")
 
             camera_properties = gymapi.CameraProperties()
             camera_properties.width = 720
             camera_properties.height = 480
-            camera_handle = self.gym.create_camera_sensor(
-                self.envs[0], camera_properties)
+            camera_handle = self.gym.create_camera_sensor(self.envs[0], camera_properties)
             self.camera_handle = camera_handle
         else:
             # pass
             camera_properties = gymapi.CameraProperties()
             camera_properties.width = 720
             camera_properties.height = 480
-            camera_handle = self.gym.create_camera_sensor(
-                self.envs[0], camera_properties)
+            camera_handle = self.gym.create_camera_sensor(self.envs[0], camera_properties)
             self.camera_handle = camera_handle
 
     def get_observations(self):
@@ -141,10 +128,11 @@ class BaseTask():
         raise NotImplementedError
 
     def reset(self):
-        """ Reset all robots"""
+        """Reset all robots"""
         self.reset_idx(torch.arange(self.num_envs, device=self.device))
-        obs, privileged_obs, _, _, _ = self.step(torch.zeros(
-            self.num_envs, self.num_actions, device=self.device, requires_grad=False))
+        obs, privileged_obs, _, _, _ = self.step(
+            torch.zeros(self.num_envs, self.num_actions, device=self.device, requires_grad=False)
+        )
         return obs, privileged_obs
 
     def step(self, actions):
@@ -164,7 +152,7 @@ class BaseTask():
                     self.enable_viewer_sync = not self.enable_viewer_sync
 
             # fetch results
-            if self.device != 'cpu':
+            if self.device != "cpu":
                 self.gym.fetch_results(self.sim, True)
 
             # step graphics

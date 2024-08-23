@@ -214,7 +214,7 @@ def play(args: argparse.Namespace) -> None:
 
 # Puts this import down here so that the environments are registered
 # before we try to use them.
-from humanoid.utils import Logger, get_args, task_registry  # noqa: E402
+from sim.utils import Logger, get_args, task_registry  # noqa: E402
 
 if __name__ == "__main__":
     RENDER = True

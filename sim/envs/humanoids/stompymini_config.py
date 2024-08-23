@@ -1,21 +1,20 @@
 """Defines the environment configuration for the Getting up task"""
 
-from envs.base.legged_robot_config import (  # type: ignore
+from sim.env import robot_urdf_path
+from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-
-from sim.env import robot_urdf_path
 from sim.resources.stompymini.joints import Robot
 
-NUM_JOINTS = len(Robot.all_joints())  # 20
 from isaacgym.torch_utils import *  # isort: skip
 
 
+NUM_JOINTS = len(Robot.all_joints())  # 20
+
+
 class MiniCfg(LeggedRobotCfg):
-    """
-    Configuration class for the Legs humanoid robot.
-    """
+    """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
         # change the observation dim

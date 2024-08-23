@@ -10,11 +10,9 @@ import torch # isort: skip
 # fmt: on
 
 from sim import LEGGED_GYM_ROOT_DIR
-from envs.base.base_task import BaseTask
-from utils.helpers import class_to_dict
-from utils.math import quat_apply_yaw, wrap_to_pi
-
-from envs.base.legged_robot_config import LeggedRobotCfg
+from sim.envs.base.base_task import BaseTask
+from sim.utils.helpers import class_to_dict
+from sim.utils.math import quat_apply_yaw, wrap_to_pi
 
 
 def get_euler_xyz_tensor(quat):
@@ -26,7 +24,7 @@ def get_euler_xyz_tensor(quat):
 
 
 class LeggedRobot(BaseTask):
-    def __init__(self, cfg: LeggedRobotCfg, sim_params, physics_engine, sim_device, headless):
+    def __init__(self, cfg, sim_params, physics_engine, sim_device, headless):
         """Parses the provided config file,
             calls create_sim() (which creates, simulation, terrain and environments),
             initilizes pytorch buffers used during training
@@ -191,7 +189,7 @@ class LeggedRobot(BaseTask):
         # TODO(pfb30) - debug this
         origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
         origin = quat_conjugate(origin)
-        self.base_quat[env_ids] = quat_mul(origin[env_ids,:], self.root_states[env_ids, 3:7])
+        self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.root_states[env_ids, 3:7])
 
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
         self.projected_gravity[env_ids] = quat_rotate_inverse(self.base_quat[env_ids], self.gravity_vec[env_ids])
@@ -368,7 +366,12 @@ class LeggedRobot(BaseTask):
         Args:
             env_ids (List[int]): Environemnt ids
         """
-        self.dof_pos[env_ids] = self.default_dof_pos + torch_rand_float(-self.cfg.domain_rand.start_pos_noise, self.cfg.domain_rand.start_pos_noise, (len(env_ids), self.num_dof), device=self.device )
+        self.dof_pos[env_ids] = self.default_dof_pos + torch_rand_float(
+            -self.cfg.domain_rand.start_pos_noise,
+            self.cfg.domain_rand.start_pos_noise,
+            (len(env_ids), self.num_dof),
+            device=self.device,
+        )
         self.dof_vel[env_ids] = 0.0
 
         env_ids_int32 = env_ids.to(dtype=torch.int32)

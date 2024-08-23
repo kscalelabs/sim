@@ -1,20 +1,17 @@
 """Defines the environment configuration for the Getting up task"""
 
-from envs.base.legged_robot_config import (  # type: ignore
+from sim.env import robot_urdf_path
+from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-
 from sim.resources.dora.joints import Robot
-from sim.env import robot_urdf_path
 
 NUM_JOINTS = len(Robot.all_joints())  # 12
 
 
 class DoraCfg(LeggedRobotCfg):
-    """
-    Configuration class for the Legs humanoid robot.
-    """
+    """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
