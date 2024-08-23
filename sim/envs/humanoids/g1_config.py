@@ -116,7 +116,7 @@ class G1Cfg(LeggedRobotCfg):
             # 0: never, 1: last sub-step, 2: all sub-steps (default=2)
             contact_collection = 2
 
-    class domain_rand:
+    class domain_rand(LeggedRobotCfg.domain_rand):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 

@@ -2,7 +2,7 @@
 
 import argparse
 
-from sim.envs.task_registry import task_registry
+from sim.envs import task_registry
 from sim.utils.helpers import get_args
 
 

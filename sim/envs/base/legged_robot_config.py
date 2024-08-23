@@ -139,6 +139,7 @@ class LeggedRobotCfg(BaseConfig):
         thickness = 0.01
 
     class domain_rand:
+        start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.5, 1.25]
         randomize_base_mass = False

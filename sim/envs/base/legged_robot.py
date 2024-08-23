@@ -6,7 +6,7 @@ import numpy as np
 from sim import LEGGED_GYM_ROOT_DIR
 from sim.envs.base.base_task import BaseTask
 from sim.utils.helpers import class_to_dict
-from sim.utils.math import quat_apply_yaw, wrap_to_pi
+from sim.utils.math import quat_apply_yaw, wrap_to_pi, get_euler_xyz_tensor
 
 # fmt: off
 from isaacgym import gymapi, gymtorch, gymutil # isort: skip
@@ -14,13 +14,8 @@ from isaacgym.torch_utils import * # isort: skip
 import torch # isort: skip
 # fmt: on
 
+# TODO: pfb30 move it to utils
 
-def get_euler_xyz_tensor(quat):
-    r, p, w = get_euler_xyz(quat)
-    # stack r, p, w in dim1
-    euler_xyz = torch.stack((r, p, w), dim=1)
-    euler_xyz[euler_xyz > np.pi] -= 2 * np.pi
-    return euler_xyz
 
 
 class LeggedRobot(BaseTask):
