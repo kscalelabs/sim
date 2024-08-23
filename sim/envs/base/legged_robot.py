@@ -3,7 +3,7 @@ from collections import deque
 
 import numpy as np
 
-from sim import LEGGED_GYM_ROOT_DIR
+from sim import ROOT_DIR
 from sim.envs.base.base_task import BaseTask
 from sim.utils.helpers import class_to_dict
 from sim.utils.math import get_euler_xyz_tensor, quat_apply_yaw, wrap_to_pi
@@ -649,7 +649,7 @@ class LeggedRobot(BaseTask):
            2.3 create actor with these properties and add them to the env
         3. Store indices of different bodies of the robot
         """
-        asset_path = self.cfg.asset.file.format(LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)
+        asset_path = self.cfg.asset.file.format(ROOT_DIR=ROOT_DIR)
         asset_root = os.path.dirname(asset_path)
         asset_file = os.path.basename(asset_path)
 
