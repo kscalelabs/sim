@@ -6,8 +6,3 @@ from sim.utils.helpers import (
     set_seed,
     update_class_from_dict,
 )
-
-# # from .task_registry import task_registry
-# from sim.utils.logger import Logger
-# from sim.utils.math import *
-# from sim.utils.terrain import Terrain

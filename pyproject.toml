@@ -30,15 +30,13 @@ warn_redundant_casts = true
 incremental = true
 namespace_packages = false
 
-exclude = ["sim/envs/","sim/algo/","sim/utils", "sim/sim2sim.py",  "sim/scripts/create_mjcf.py", "sim/scripts/create_fixed_torso.py"]
-
+exclude = ["sim/envs/", "sim/algo/*", "sim/utils/*", "sim/sim2sim.py",
+           "sim/scripts/create_mjcf.py", "sim/scripts/create_fixed_torso.py"]
 
 [[tool.mypy.overrides]]
 
 module = [
-    "humanoid.*",
     "isaacgym.*",
-    "IsaacGymEnvs.*",
     "mujoco.*",
 ]
 
@@ -51,7 +49,8 @@ profile = "black"
 line-length = 120
 target-version = "py310"
 
-exclude = ["sim/envs/", "sim/algo/", "sim/play.py", "sim/sim2sim.py","sim/utils", "sim/scripts/create_mjcf.py"]
+exclude = ["sim/envs/", "sim/algo/", "sim/play.py", 
+           "sim/sim2sim.py","sim/utils", "sim/scripts/create_mjcf.py"]
 
 [tool.ruff.lint]
 
