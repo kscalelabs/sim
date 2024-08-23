@@ -34,8 +34,10 @@ import os
 import random
 
 import numpy as np
-import torch
-from isaacgym import gymapi, gymutil
+
+from isaacgym import gymapi, gymutil  # isort: skip
+
+import torch  # isort: skip
 
 
 def class_to_dict(obj) -> dict:

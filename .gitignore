@@ -18,7 +18,7 @@ __pycache__/
 # Databases
 *.db
 *meshes*
-
+logs/*
 # Build artifacts
 build/
 dist/
