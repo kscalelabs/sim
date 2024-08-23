@@ -33,8 +33,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from .actor_critic import ActorCritic
-from .rollout_storage import RolloutStorage
+from sim.algo.ppo.actor_critic import ActorCritic
+from sim.algo.ppo.rollout_storage import RolloutStorage
 
 
 class PPO:

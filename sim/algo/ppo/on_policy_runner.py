@@ -37,11 +37,11 @@ from datetime import datetime
 
 import torch
 import wandb
-from algo.vec_env import VecEnv
 from torch.utils.tensorboard import SummaryWriter
 
-from .actor_critic import ActorCritic
-from .ppo import PPO
+from sim.algo.ppo.actor_critic import ActorCritic
+from sim.algo.ppo.ppo import PPO
+from sim.algo.vec_env import VecEnv
 
 
 class OnPolicyRunner:

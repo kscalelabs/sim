@@ -32,10 +32,9 @@
 
 import os
 from datetime import datetime
-from typing import Tuple
 
 from sim import ROOT_DIR
-from sim.algo import OnPolicyRunner, VecEnv
+from sim.algo import VecEnv
 from sim.utils.helpers import (
     class_to_dict,
     get_args,

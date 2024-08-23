@@ -35,6 +35,6 @@ setup(
     long_description_content_type="text/markdown",
     python_requires=">=3.8, <3.9",
     install_requires=requirements,
-    # tests_require=requirements_dev,
-    # extras_require={"dev": requirements_dev},
+    tests_require=requirements_dev,
+    extras_require={"dev": requirements_dev},
 )
