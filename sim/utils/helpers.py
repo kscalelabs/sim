@@ -29,6 +29,7 @@
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
+import argparse
 import copy
 import os
 import random
@@ -157,7 +158,7 @@ def update_cfg_from_args(env_cfg, cfg_train, args):
     return env_cfg, cfg_train
 
 
-def get_args():
+def get_args() -> argparse.Namespace:
     custom_parameters = [
         {
             "name": "--task",
@@ -242,7 +243,7 @@ def get_args():
     return args
 
 
-def export_policy_as_jit(actor_critic, path):
+def export_policy_as_jit(actor_critic, path) -> None:
     os.makedirs(path, exist_ok=True)
     path = os.path.join(path, "policy_1.pt")
     model = copy.deepcopy(actor_critic.actor).to("cpu")
