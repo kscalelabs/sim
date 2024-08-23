@@ -12,9 +12,9 @@ When creating a new pull request please add the issue number.
 ## Adding new robot
 Adding new embodiment is very straightforward:
 1. Create a folder with a new robot [here](https://github.com/kscalelabs/sim/tree/master/sim).
-2. Add joint.py file setting up basic properties and join configuration - see an [example](https://github.com/kscalelabs/sim/blob/master/sim/stompy/joints.py).
-3. Add the new embodiment configuration and environment [here](https://github.com/kscalelabs/sim/tree/master/sim/humanoid_gym/envs).
-4. Add the new embodiment to the [registry](https://github.com/kscalelabs/sim/blob/master/sim/humanoid_gym/envs/__init__.py).
+2. Add joint.py file setting up basic properties and join configuration - see an [example](https://github.com/kscalelabs/sim/blob/master/sim/resources/stompymini/joints.py).
+3. Add the new embodiment configuration and environment [here](https://github.com/kscalelabs/sim/tree/master/sim/envs).
+4. Add the new embodiment to the [registry](https://github.com/kscalelabs/sim/blob/master/sim/envs/__init__.py).
 
 We set up the logic so that your new robot should start to walk with basic configuration.
 

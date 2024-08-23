@@ -14,8 +14,7 @@ from typing import Any, Dict, Literal, NewType
 from isaacgym import gymapi, gymtorch, gymutil
 
 from sim.env import robot_urdf_path
-from sim.logging import configure_logging
-from sim.stompy_legs.joints import Robot as Stompy
+from sim.resources.stompymini.joints import Robot as Stompy
 
 logger = logging.getLogger(__name__)
 
@@ -236,7 +235,6 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
 
 
 def main() -> None:
-    configure_logging()
     gym = load_gym()
     run_gym(gym)
 

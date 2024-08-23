@@ -70,16 +70,16 @@ export MODEL_DIR=stompy
 
 2. Run training with the following command:
 ```bash
-python sim/humanoid_gym/train.py --task=legs_ppo --num_envs=4096 --headless
+python sim/train.py --task=stompymini --num_envs=4096 --headless
 ```
 or for full body:
 ```bash
-python sim/humanoid_gym/train.py --task=stompy_ppo --num_envs=4096 --headless
+python sim/train.py --task=stompymini --num_envs=4096 --headless
 ```
 
 3. Run evaluation with the following command:
 ```bash
-python sim/humanoid_gym/play.py --task legs_ppo --sim_device cpu
+python sim/play.py --task stompymini --sim_device cpu
 
 ```
 See [this doc](https://docs.google.com/document/d/1YZzBqIXO7oq7vIKu-BZr5ssNsi3nKtxpRPnfSnTXojA/edit?usp=sharing) for more beginner tips.
@@ -106,7 +106,6 @@ sudo apt-get vulkan1
 
 ### Appreciation
 - [Humanoid-gym](https://sites.google.com/view/humanoid-gym/)
-- [Isaac Gym](https://github.com/NVIDIA-Omniverse/IsaacGymEnvs)
 - KScale Labs community for bugspotting and feedback
 
 ### Discord
