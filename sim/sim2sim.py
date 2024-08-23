@@ -30,7 +30,7 @@
 """
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
-python sim/sims2sim.py --load_model policy_1.pt
+python sim/sim2sim.py --load_model policy_1.pt
 """
 
 import math

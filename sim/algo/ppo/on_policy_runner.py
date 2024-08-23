@@ -36,10 +36,9 @@ from collections import deque
 from datetime import datetime
 
 import torch
+import wandb
 from algo.vec_env import VecEnv
 from torch.utils.tensorboard import SummaryWriter
-
-import wandb
 
 from .actor_critic import ActorCritic
 from .ppo import PPO

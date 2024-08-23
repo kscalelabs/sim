@@ -6,9 +6,11 @@ Run:
 """
 
 import argparse
+import copy
 import logging
 import os
 from datetime import datetime
+from typing import Any, Union
 
 import cv2
 import h5py
@@ -17,7 +19,6 @@ from isaacgym import gymapi
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
-import copy
 
 from sim.env import run_dir
 from sim.envs import task_registry
@@ -27,7 +28,7 @@ from sim.utils.logger import Logger
 import torch  # isort: skip
 
 
-def export_policy_as_jit(actor_critic, path):
+def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> None:
     os.makedirs(path, exist_ok=True)
     path = os.path.join(path, "policy_1.pt")
     model = copy.deepcopy(actor_critic.actor).to("cpu")
@@ -127,7 +128,7 @@ def play(args: argparse.Namespace) -> None:
             h1, env.envs[0], body_handle, gymapi.Transform(camera_offset, camera_rotation), gymapi.FOLLOW_POSITION
         )
 
-        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+        fourcc = cv2.VideoWriter_fourcc(*"MJPG")  # type: ignore[attr-defined]
 
         # Creates a directory to store videos.
         video_dir = run_dir() / "videos"

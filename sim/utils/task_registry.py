@@ -74,7 +74,7 @@ class TaskRegistry:
         env_cfg.seed = train_cfg.seed
         return env_cfg, train_cfg
 
-    def make_env(self, name, args=None, env_cfg=None) -> Tuple[VecEnv]:
+    def make_env(self, name, args=None, env_cfg=None):
         """Creates an environment either from a registered namme or from the provided config file.
 
         Args:
@@ -116,7 +116,7 @@ class TaskRegistry:
         self.env_cfg_for_wandb = env_cfg
         return env, env_cfg
 
-    def make_alg_runner(self, env, name=None, args=None, train_cfg=None, log_root="default") -> Tuple[OnPolicyRunner]:
+    def make_alg_runner(self, env, name=None, args=None, train_cfg=None, log_root="default"):
         """Creates the training algorithm  either from a registered namme or from the provided config file.
 
         Args:
