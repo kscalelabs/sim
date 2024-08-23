@@ -32,9 +32,9 @@
 
 import os
 from datetime import datetime
-
+from sim.algo.ppo.on_policy_runner import OnPolicyRunner # mypy: ignore
 from sim import ROOT_DIR
-from sim.algo import VecEnv
+from sim.algo.vec_env import VecEnv
 from sim.utils.helpers import (
     class_to_dict,
     get_args,

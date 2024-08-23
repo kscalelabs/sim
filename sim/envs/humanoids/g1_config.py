@@ -142,7 +142,7 @@ class G1Cfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.97
+        base_height_target = 0.78
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning

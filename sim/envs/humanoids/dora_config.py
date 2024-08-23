@@ -41,7 +41,7 @@ class DoraCfg(LeggedRobotCfg):
         foot_name = "leg_ankle_roll_Link"
         knee_name = "leg_knee_Link"
 
-        termination_height = 0.35
+        termination_height = 0.25
         default_feet_height = 0.0
         terminate_after_contacts_on = []
 
@@ -81,7 +81,8 @@ class DoraCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, 0.9]
+        pos = [0.0, 0.0, Robot.height]
+        rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
         default_positions = Robot.default_standing()
@@ -95,7 +96,7 @@ class DoraCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 10  # 100hz
+        decimation = 4  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.002  # 1000 Hz
@@ -142,8 +143,8 @@ class DoraCfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.9
-        min_dist = 0.1
+        base_height_target = 0.75
+        min_dist = 0.3
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad

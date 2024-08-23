@@ -95,12 +95,7 @@ class Legs(Node):
 
 class Robot(Node):
     height = 0.9
-    rotation = [
-        0,
-        0,
-        0,
-        1,
-    ]
+    rotation = [0, 0, 0, 1]
 
     torso = Torso()
     left_arm = LeftArm()

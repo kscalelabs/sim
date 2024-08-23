@@ -78,6 +78,9 @@ class Legs(Node):
 class Robot(Node):
     legs = Legs()
 
+    height = 0.75
+    rotation = [0.0, 0.0, 0, 1]
+
     @classmethod
     def default_positions(cls) -> Dict[str, float]:
         return {}
