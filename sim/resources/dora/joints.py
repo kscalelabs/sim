@@ -215,7 +215,7 @@ class Robot(Node):
 def print_joints() -> None:
     joints = Robot.all_joints()
     assert len(joints) == len(set(joints)), "Duplicate joint names found!"
-    print(Stompy())
+    print(Robot())
 
 
 if __name__ == "__main__":

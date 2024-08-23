@@ -235,7 +235,6 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
 
 
 def main() -> None:
-    configure_logging()
     gym = load_gym()
     run_gym(gym)
 
