@@ -14,8 +14,7 @@ from typing import Any, Dict, Literal, NewType
 from isaacgym import gymapi, gymtorch, gymutil
 
 from sim.env import robot_urdf_path
-from sim.logging import configure_logging
-from sim.stompy_legs.joints import Robot as Stompy
+from sim.resources.stompymini.joints import Robot as Stompy
 
 logger = logging.getLogger(__name__)
 

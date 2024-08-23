@@ -1,11 +1,10 @@
 """Defines the environment configuration for the Getting up task"""
 
-from envs.base.legged_robot_config import (  # type: ignore
+from sim.env import robot_urdf_path
+from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-
-from sim.env import robot_urdf_path
 from sim.resources.g1.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())  # 33

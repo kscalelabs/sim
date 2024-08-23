@@ -7,9 +7,6 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
 )
 from sim.resources.stompymini.joints import Robot
 
-from isaacgym.torch_utils import *  # isort: skip
-
-
 NUM_JOINTS = len(Robot.all_joints())  # 20
 
 

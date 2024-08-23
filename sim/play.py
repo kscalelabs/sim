@@ -1,3 +1,10 @@
+"""Play a trained policy in the environment.
+
+Run:
+    python sim/play.py --task g1 --log_h5
+    python sim/play.py --task stompymini --log_h5
+"""
+
 import argparse
 import logging
 import os
@@ -9,13 +16,15 @@ import numpy as np
 from isaacgym import gymapi
 from tqdm import tqdm
 
-from sim.logging import configure_logging
-
 logger = logging.getLogger(__name__)
 import copy
 
 from sim.env import run_dir
-from sim.envs import *  # noqa: F403
+from sim.envs import task_registry
+from sim.utils.helpers import get_args  # noqa: E402
+from sim.utils.logger import Logger
+
+import torch  # isort: skip
 
 
 def export_policy_as_jit(actor_critic, path):
@@ -27,10 +36,9 @@ def export_policy_as_jit(actor_critic, path):
 
 
 def play(args: argparse.Namespace) -> None:
-    configure_logging()
-
     logger.info("Configuring environment and training settings...")
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
+
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
     env_cfg.sim.max_gpu_contact_pairs = 2**10
@@ -211,10 +219,6 @@ def play(args: argparse.Namespace) -> None:
         print("Saving data to " + os.path.abspath(f"data{now}.h5"))
         h5_file.close()
 
-
-# Puts this import down here so that the environments are registered
-# before we try to use them.
-from sim.utils import Logger, get_args, task_registry  # noqa: E402
 
 if __name__ == "__main__":
     RENDER = True

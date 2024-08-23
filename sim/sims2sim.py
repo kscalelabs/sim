@@ -32,6 +32,7 @@ Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
 python sim/sims2sim.py --load_model policy_1.pt
 """
+
 import math
 import os
 from collections import deque
@@ -143,7 +144,6 @@ def run_mujoco(policy, cfg):
     count_lowlevel = 0
 
     for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
-
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
         q = q[-cfg.num_actions :]
@@ -151,7 +151,6 @@ def run_mujoco(policy, cfg):
 
         # 1000hz -> 100hz
         if count_lowlevel % cfg.sim_config.decimation == 0:
-
             obs = np.zeros([1, cfg.env.num_single_obs], dtype=np.float32)
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi

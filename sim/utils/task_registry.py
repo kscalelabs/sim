@@ -36,7 +36,14 @@ from typing import Tuple
 
 from sim import LEGGED_GYM_ROOT_DIR
 from sim.algo import OnPolicyRunner, VecEnv
-from sim.utils.helpers import class_to_dict, get_args, get_load_path, parse_sim_params, set_seed, update_cfg_from_args
+from sim.utils.helpers import (
+    class_to_dict,
+    get_args,
+    get_load_path,
+    parse_sim_params,
+    set_seed,
+    update_cfg_from_args,
+)
 
 
 class TaskRegistry:

@@ -4,6 +4,7 @@
 from isaacgym.torch_utils import *  # isort:skip
 
 from sim.envs.base.legged_robot import LeggedRobot
+from sim.resources.dora.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
@@ -55,11 +56,11 @@ class DoraFreeEnv(LeggedRobot):
         actor_handle = self.actor_handles[0]
 
         self.legs_joints = {}
-        for name, joint in Stompy.legs.left.joints_motors():
+        for name, joint in Robot.legs.left.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
-        for name, joint in Stompy.legs.right.joints_motors():
+        for name, joint in Robot.legs.right.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
 

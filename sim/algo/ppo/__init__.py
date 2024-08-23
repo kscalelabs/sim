@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-FileCopyrightText: Copyright (c) 2021 ETH Zurich, Nikita Rudin
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -30,7 +30,7 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 
-from .ppo import PPO
-from .on_policy_runner import OnPolicyRunner
 from .actor_critic import ActorCritic
+from .on_policy_runner import OnPolicyRunner
+from .ppo import PPO
 from .rollout_storage import RolloutStorage
