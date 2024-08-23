@@ -6,7 +6,7 @@ import numpy as np
 from sim import LEGGED_GYM_ROOT_DIR
 from sim.envs.base.base_task import BaseTask
 from sim.utils.helpers import class_to_dict
-from sim.utils.math import quat_apply_yaw, wrap_to_pi, get_euler_xyz_tensor
+from sim.utils.math import get_euler_xyz_tensor, quat_apply_yaw, wrap_to_pi
 
 # fmt: off
 from isaacgym import gymapi, gymtorch, gymutil # isort: skip
@@ -15,7 +15,6 @@ import torch # isort: skip
 # fmt: on
 
 # TODO: pfb30 move it to utils
-
 
 
 class LeggedRobot(BaseTask):

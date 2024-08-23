@@ -109,7 +109,7 @@ class H1Cfg(LeggedRobotCfg):
             num_threads = 12
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 1
+            num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
@@ -123,9 +123,9 @@ class H1Cfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False
+        randomize_base_mass = True
         added_mass_range = [-1.0, 1.0]
-        push_robots = False
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -164,7 +164,7 @@ class H1Cfg(LeggedRobotCfg):
             feet_clearance = 1.0
             feet_contact_number = 1.2
             # gait
-            feet_air_time = 1.0
+            feet_air_time = 1.6
             foot_slip = -0.05
             feet_distance = 0.2
             knee_distance = 0.2
