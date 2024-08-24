@@ -144,12 +144,12 @@ class DoraCfg(LeggedRobotCfg):
     class rewards:
         # quite important to keep it right
         base_height_target = 0.75
-        min_dist = 0.1
-        max_dist = 0.3
+        min_dist = 0.25
+        max_dist = 0.5
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.03  # m
-        cycle_time = 0.4  # sec
+        target_joint_pos_scale = 0.14  # rad
+        target_feet_height = 0.05  # m
+        cycle_time = 0.5  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -164,8 +164,8 @@ class DoraCfg(LeggedRobotCfg):
             # gait
             feet_air_time = 1.0
             foot_slip = -0.05
-            feet_distance = 0.5
-            knee_distance = 0.5
+            feet_distance = 0.2
+            knee_distance = 0.2
             # contact
             feet_contact_forces = -0.01
             # vel tracking
