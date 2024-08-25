@@ -200,27 +200,21 @@ Joint right wrist roll - Stiffness: 45.0, Damping: 5.0
 """
 
 def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all_at_once") -> None:
-    last_time = time.time()
     torques = torch.zeros(1, len(Stompy.all_joints()))
-    joints = Stompy.all_joints()
     joint_id = 8
     test_duration = 10
-
     sin_freq = 2 * math.pi / test_duration
-
     tau_factor = 0.85
     tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor
     kps = tau_limit
     kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values()))
     t0 = time.time()
-    default = 0
     kd = 10
     kp = 250
-    # todo -get the 
     q = 0
     dq = 0
-    # breakpoint()
-    gym.dof_ids
+    default = Stompy.default_standing()["left knee pitch"]
+
     while not gym.gym.query_viewer_has_closed(gym.viewer):
         gym.gym.simulate(gym.sim)
         gym.gym.fetch_results(gym.sim, True)
@@ -232,14 +226,21 @@ def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all
         sin_pos = torch.tensor(math.sin(sin_freq * (time.time() - t0)))
         # breakpoint()
         torques[:, joint_id] = pd_control(sin_pos, q, kp, dq, kd, default)
-        if curr_time - last_time > 0.1:
-            last_time = curr_time
-            gym.gym.set_dof_actuation_force_tensor(gym.sim, gymtorch.unwrap_tensor(torques))
- 
-
+        gym.gym.set_dof_actuation_force_tensor(gym.sim, gymtorch.unwrap_tensor(torques))
+        print(torques)
         # Prints the joint angles.
         joint_positions = gym.gym.get_actor_dof_states(gym.env, gym.robot, gymapi.STATE_ALL)
-        print(joint_positions[8])
+
+
+        dof_state_tensor = gym.gym.acquire_dof_state_tensor(gym.sim)
+        gym.gym.refresh_dof_state_tensor(gym.sim)
+        dof_state = gymtorch.wrap_tensor(dof_state_tensor)
+        num_dof = len(Stompy.all_joints())
+        dof_pos = dof_state.view(1, num_dof, 2)[..., 0]
+        dof_vel = dof_state.view(1, num_dof, 2)[..., 1]
+        q = dof_pos[0, joint_id]
+        dq = dof_vel[0, joint_id]
+        print(joint_positions[8], q, dq)
         # for joint_name, (joint_position, joint_velocity) in zip(joints, joint_positions):
         #     print("Joint %s: %.3g %.3g", joint_name, joint_position, joint_velocity)
 
