@@ -10,11 +10,14 @@ the simulation, and how to configure the DOF properties of the robot.
 import logging
 from dataclasses import dataclass
 from typing import Any, Dict, Literal, NewType
-
+import math
+import time
 from isaacgym import gymapi, gymtorch, gymutil
-
+import numpy as np
 from sim.env import robot_urdf_path
 from sim.resources.stompymini.joints import Robot as Stompy
+# Importing torch down here to avoid gymtorch issues.
+import torch  # noqa: E402 #  type: ignore[import]
 
 logger = logging.getLogger(__name__)
 
@@ -25,18 +28,14 @@ Robot = NewType("Robot", Any)
 Viewer = NewType("Viewer", Any)
 Args = NewType("Args", Any)
 
-# Importing torch down here to avoid gymtorch issues.
-import torch  # noqa: E402 #  type: ignore[import]
 
-# DRIVE_MODE = gymapi.DOF_MODE_EFFORT
-DRIVE_MODE = gymapi.DOF_MODE_POS
+DRIVE_MODE = gymapi.DOF_MODE_EFFORT
+# DRIVE_MODE = gymapi.DOF_MODE_POS
 
 # Stiffness and damping are Kp and Kd parameters for the PD controller
 # that drives the joints to the desired position.
-STIFFNESS = 80.0
-DAMPING = 5.0
-# STIFFNESS = 0.0
-# DAMPING = 0.0
+STIFFNESS = 250.0
+DAMPING = 10.0
 
 # Armature is a parameter that can be used to model the inertia of the joint.
 # We set it to zero because the URDF already models the inertia of the joints.
@@ -51,7 +50,7 @@ class GymParams:
     robot: Robot
     viewer: Viewer
     args: Args
-
+    dof_ids: Dict[str, int] = None
 
 def load_gym() -> GymParams:
     # Initialize gym.
@@ -68,8 +67,6 @@ def load_gym() -> GymParams:
     sim_params.physx.solver_type = 1
     sim_params.physx.num_position_iterations = 4
     sim_params.physx.num_velocity_iterations = 1
-    sim_params.physx.contact_offset = -0.01
-    sim_params.physx.rest_offset = -0.015
     sim_params.physx.bounce_threshold_velocity = 0.5
     sim_params.physx.max_depenetration_velocity = 10.0
     sim_params.physx.max_gpu_contact_pairs = 2**24
@@ -114,7 +111,7 @@ def load_gym() -> GymParams:
     # Loads the robot asset.
     asset_options = gymapi.AssetOptions()
     asset_options.default_dof_drive_mode = DRIVE_MODE
-    asset_options.collapse_fixed_joints = True
+    asset_options.collapse_fixed_joints = False
     asset_options.disable_gravity = False
     asset_options.fix_base_link = True
     asset_path = robot_urdf_path(legs_only=True)
@@ -122,8 +119,8 @@ def load_gym() -> GymParams:
 
     # Adds the robot to the environment.
     initial_pose = gymapi.Transform()
-    initial_pose.p = gymapi.Vec3(0.0, 1.0, 0.0)
-    initial_pose.r = gymapi.Quat(-1.0, 0.0, 0.0, 1.0)
+    initial_pose.p = gymapi.Vec3(0.0, 1.3, 0.0)
+    # initial_pose.r = gymapi.Quat(0.5000, -0.4996, -0.5000, 0.5004)
     robot = gym.create_actor(env, robot_asset, initial_pose, "robot")
 
     # Configure DOF properties.
@@ -145,10 +142,10 @@ def load_gym() -> GymParams:
     dof_state = gymtorch.wrap_tensor(dof_state_tensor)
     num_dof = len(Stompy.all_joints())
     dof_pos = dof_state.view(1, num_dof, 2)[..., 0]
-    # dof_vel = dof_state.view(1, num_dof, 2)[..., 1]
+    dof_vel = dof_state.view(1, num_dof, 2)[..., 1]
 
-    # Resets the DOF positions to the starting positions.
-    # dof_vel[:] = 0.0
+    #Resets the DOF positions to the starting positions.
+    dof_vel[:] = 0.0
     starting_positions = Stompy.default_standing()
     dof_ids: Dict[str, int] = gym.get_actor_dof_dict(env, robot)
     print(starting_positions)
@@ -170,65 +167,81 @@ def load_gym() -> GymParams:
         robot=robot,
         viewer=viewer,
         args=args,
+        dof_ids=dof_ids
     )
 
 
+def pd_control(target_q, q, kp, dq, kd, default):
+    """Calculates torques from position commands"""
+    return kp * (target_q + default - q) - kd * dq
+
+
+"""
+Joint left hip pitch - Stiffness: 250.0, Damping: 10.0
+Joint left hip yaw - Stiffness: 250.0, Damping: 10.0
+Joint left hip roll - Stiffness: 150.0, Damping: 10.0
+Joint left knee pitch - Stiffness: 250.0, Damping: 10.0
+Joint left ankle pitch - Stiffness: 150.0, Damping: 10.0
+Joint left shoulder pitch - Stiffness: 150.0, Damping: 10.0
+Joint left shoulder yaw - Stiffness: 45.0, Damping: 10.0
+Joint left shoulder roll - Stiffness: 45.0, Damping: 5.0
+Joint left elbow pitch - Stiffness: 45.0, Damping: 5.0
+Joint left wrist roll - Stiffness: 45.0, Damping: 5.0
+Joint right hip pitch - Stiffness: 250.0, Damping: 10.0
+Joint right hip yaw - Stiffness: 250.0, Damping: 10.0
+Joint right hip roll - Stiffness: 150.0, Damping: 10.0
+Joint right knee pitch - Stiffness: 250.0, Damping: 10.0
+Joint right ankle pitch - Stiffness: 150.0, Damping: 10.0
+Joint right shoulder pitch - Stiffness: 150.0, Damping: 10.0
+Joint right shoulder yaw - Stiffness: 45.0, Damping: 10.0
+Joint right shoulder roll - Stiffness: 45.0, Damping: 5.0
+Joint right elbow pitch - Stiffness: 45.0, Damping: 5.0
+Joint right wrist roll - Stiffness: 45.0, Damping: 5.0
+"""
+
 def run_gym(gym: GymParams, mode: Literal["one_at_a_time", "all_at_once"] = "all_at_once") -> None:
-    # joints = Stompy.all_joints()
-    # last_time = time.time()
+    last_time = time.time()
+    torques = torch.zeros(1, len(Stompy.all_joints()))
+    joints = Stompy.all_joints()
+    joint_id = 8
+    test_duration = 10
 
-    # dof_ids: Dict[str, int] = gym.gym.get_actor_dof_dict(gym.env, gym.robot)
-    # body_ids: List[str] = gym.gym.get_actor_rigid_body_names(gym.env, gym.robot)
+    sin_freq = 2 * math.pi / test_duration
 
-    # joint_id = 0
-    # effort = 5.0
-
+    tau_factor = 0.85
+    tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor
+    kps = tau_limit
+    kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values()))
+    t0 = time.time()
+    default = 0
+    kd = 10
+    kp = 250
+    # todo -get the 
+    q = 0
+    dq = 0
+    # breakpoint()
+    gym.dof_ids
     while not gym.gym.query_viewer_has_closed(gym.viewer):
         gym.gym.simulate(gym.sim)
         gym.gym.fetch_results(gym.sim, True)
         gym.gym.step_graphics(gym.sim)
         gym.gym.draw_viewer(gym.viewer, gym.sim, True)
         gym.gym.sync_frame_time(gym.sim)
-        # Print the joint forces.
-        # print(gym.gym.get_actor_dof_forces(gym.env, gym.robot))
-        # print(gym.gym.get_env_rigid_contact_forces(gym.env))
 
-        # Prints the contact forces.
-        # net_contact_forces = gym.gym.acquire_net_contact_force_tensor(gym.sim)
-        # net_contact_forces_tensor = gymtorch.wrap_tensor(net_contact_forces).norm(2, dim=-1)  # (38, 3)
-        # if net_contact_forces_tensor.size(0) != len(body_ids):
-        #     raise ValueError("Mismatch between body IDs and contact forces.")
-        # for body_id, contact_force in zip(body_ids, net_contact_forces_tensor):
-        #     contact_force = contact_force.item()
-        #     logger.info("Body %s: %.3g", body_id, contact_force)
+        curr_time = time.time()
+        sin_pos = torch.tensor(math.sin(sin_freq * (time.time() - t0)))
+        # breakpoint()
+        torques[:, joint_id] = pd_control(sin_pos, q, kp, dq, kd, default)
+        if curr_time - last_time > 0.1:
+            last_time = curr_time
+            gym.gym.set_dof_actuation_force_tensor(gym.sim, gymtorch.unwrap_tensor(torques))
+ 
 
         # Prints the joint angles.
-        # joint_positions = gym.gym.get_actor_dof_states(gym.env, gym.robot, gymapi.STATE_ALL)
+        joint_positions = gym.gym.get_actor_dof_states(gym.env, gym.robot, gymapi.STATE_ALL)
+        print(joint_positions[8])
         # for joint_name, (joint_position, joint_velocity) in zip(joints, joint_positions):
-        #     logger.info("Joint %s: %.3g %.3g", joint_name, joint_position, joint_velocity)
-
-        # Every second, set the target effort for each joint to the reverse.
-        # curr_time = time.time()
-
-        # if mode == "one_at_a_time":
-        #     if curr_time - last_time > 0.25:
-        #         last_time = curr_time
-        #         gym.gym.apply_dof_effort(gym.env, joint_id, 0.0)
-        #         joint_id += 1
-        #         if joint_id >= len(joints):
-        #             effort = -effort
-        #             joint_id = 0
-        #         gym.gym.apply_dof_effort(gym.env, joint_id, effort)
-
-        # elif mode == "all_at_once":
-        #     if curr_time - last_time > 1.0:
-        #         last_time = curr_time
-        #         effort = -effort
-        #         for joint_name in joints:
-        #             gym.gym.apply_dof_effort(gym.env, dof_ids[joint_name], effort)
-
-        # else:
-        #     raise ValueError(f"Invalid mode: {mode}")
+        #     print("Joint %s: %.3g %.3g", joint_name, joint_position, joint_velocity)
 
     gym.gym.destroy_viewer(gym.viewer)
     gym.gym.destroy_sim(gym.sim)
@@ -240,5 +253,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    # python -m sim.scripts.simulate_urdf
     main()
