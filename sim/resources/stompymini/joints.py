@@ -98,7 +98,7 @@ class Legs(Node):
 
 
 class Robot(Node):
-    height = 0.85
+    height = 0.82
     rotation = [0.5000, -0.4996, -0.5000, 0.5004]
     collision_links = [
         "lower_half_assembly_1_left_leg_1_foot_pad_1_simple",

@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def model_dir() -> Path:
-    return Path(os.environ.get("MODEL_DIR", "models"))
+    return Path(os.environ.get("MODEL_DIR", "sim/resources/stompymini"))
 
 
 def run_dir() -> Path:
