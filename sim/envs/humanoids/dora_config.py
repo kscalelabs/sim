@@ -41,7 +41,11 @@ class DoraCfg(LeggedRobotCfg):
         foot_name = "leg_ankle_roll_Link"
         knee_name = "leg_knee_Link"
 
+<<<<<<< HEAD:sim/envs/humanoids/dora_config.py
         termination_height = 0.5
+=======
+        termination_height = 0.25
+>>>>>>> ca13a078bccda015aff4bd96e49ddbeba578e6a4:sim/humanoid_gym/envs/dora_config.py
         default_feet_height = 0.0
         terminate_after_contacts_on = []
 
@@ -144,7 +148,7 @@ class DoraCfg(LeggedRobotCfg):
     class rewards:
         # quite important to keep it right
         base_height_target = 0.75
-        min_dist = 0.25
+        min_dist = 0.3
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.14  # rad
