@@ -216,6 +216,12 @@ def run_id_test(gym: GymParams, joint_id="left knee pitch", mode="calibration") 
     TORQUE_SOFT = 100
 
     if mode == "calibration":
+        for _ in range(1000):
+            gym.gym.simulate(gym.sim)
+            gym.gym.fetch_results(gym.sim, True)
+            gym.gym.step_graphics(gym.sim)
+            gym.gym.draw_viewer(gym.viewer, gym.sim, True)
+            gym.gym.sync_frame_time(gym.sim)
         while step < steps/40:
             # 100 hz control loop
             for _ in  range(decimation):
