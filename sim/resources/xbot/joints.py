@@ -52,30 +52,6 @@ class Node(ABC):
         return f"[{self.__class__.__name__}]{parts_str}"
 
 
-class LeftHand(Node):
-    wrist_roll = "left wrist roll"
-
-
-class LeftArm(Node):
-    shoulder_yaw = "left shoulder yaw"
-    shoulder_pitch = "left shoulder pitch"
-    shoulder_roll = "left shoulder roll"
-    elbow_pitch = "left elbow pitch"
-    hand = LeftHand()
-
-
-class RightHand(Node):
-    wrist_roll = "right wrist roll"
-
-
-class RightArm(Node):
-    shoulder_yaw = "right shoulder yaw"
-    shoulder_pitch = "right shoulder pitch"
-    shoulder_roll = "right shoulder roll"
-    elbow_pitch = "right elbow pitch"
-    hand = RightHand()
-
-
 class LeftLeg(Node):
     hip_roll = "left_leg_roll_joint"
     hip_yaw = "left_leg_yaw_joint"
@@ -84,6 +60,7 @@ class LeftLeg(Node):
     ankle_pitch = "left_ankle_pitch_joint"
     ankle_roll = "left_ankle_roll_joint"
 
+
 class RightLeg(Node):
     hip_roll = "right_leg_roll_joint"
     hip_yaw = "right_leg_yaw_joint"
@@ -91,6 +68,7 @@ class RightLeg(Node):
     knee_pitch = "right_knee_joint"
     ankle_pitch = "right_ankle_pitch_joint"
     ankle_roll = "right_ankle_roll_joint"
+
 
 class Legs(Node):
     left = LeftLeg()
@@ -180,59 +158,59 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 350,
-            "hip yaw": 200,
-            "hip roll": 200,
-            "knee pitch": 350,
-            "ankle pitch": 15,
-            "ankle roll": 15,
+            "leg_pitch": 350,
+            "leg_yaw": 200,
+            "leg_roll": 200,
+            "knee": 350,
+            "ankle_pitch": 15,
+            "ankle_roll": 15,
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 10,
-            "hip yaw": 10,
-            "hip roll": 10,
-            "knee pitch": 10,
-            "ankle pitch": 10,
-            "ankle roll": 10,
+            "leg_pitch": 10,
+            "leg_yaw": 10,
+            "leg_roll": 10,
+            "knee": 10,
+            "ankle_pitch": 10,
+            "ankle_roll": 10,
         }
 
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 250,
-            "hip yaw": 100,
-            "hip roll": 100,
-            "knee pitch": 250,
-            "ankle pitch": 100,
-            "ankle roll": 100,
+            "leg_pitch": 250,
+            "leg_yaw": 100,
+            "leg_roll": 100,
+            "knee": 250,
+            "ankle_pitch": 100,
+            "ankle_roll": 100,
         }
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 12,
-            "hip yaw": 12,
-            "hip roll": 12,
-            "knee pitch": 12,
-            "ankle pitch": 12,
-            "ankle roll": 12,
+            "leg_pitch": 12,
+            "leg_yaw": 12,
+            "leg_roll": 12,
+            "knee": 12,
+            "ankle_pitch": 12,
+            "ankle_roll": 12,
         }
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 0.0,
-            "hip yaw": 0.0,
-            "hip roll": 0.0,
-            "knee pitch": 0.0,
-            "ankle pitch": 0.0,
-            "ankle roll": 0.1,
+            "leg_pitch": 0.0,
+            "leg_yaw": 0.0,
+            "leg_roll": 0.0,
+            "knee": 0.0,
+            "ankle_pitch": 0.0,
+            "ankle_roll": 0.1,
         }
 
 

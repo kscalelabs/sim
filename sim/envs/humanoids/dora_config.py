@@ -107,7 +107,7 @@ class DoraCfg(LeggedRobotCfg):
             num_threads = 12
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 0
+            num_velocity_iterations = 1
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]

@@ -2,7 +2,7 @@
 """Defines the environment for training the humanoid."""
 
 from sim.envs.base.legged_robot import LeggedRobot
-from sim.resources.stompymini.joints import Robot
+from sim.resources.xbot.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip

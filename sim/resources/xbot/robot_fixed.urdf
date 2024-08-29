@@ -26,7 +26,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/base_link.STL" />
+          filename="meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -49,7 +49,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/base_link.STL" />
+          filename="meshes/base_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -76,7 +76,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/neck_base_link.STL" />
+          filename="meshes/neck_base_link.STL" />
       </geometry>
       <material
         name="">
@@ -90,7 +90,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/neck_base_link.STL" />
+          filename="meshes/neck_base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -129,7 +129,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/neck_yaw_link.STL" />
+          filename="meshes/neck_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -143,7 +143,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/neck_yaw_link.STL" />
+          filename="meshes/neck_yaw_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -190,7 +190,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/neck_pitch_link.STL" />
+          filename="meshes/neck_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -204,7 +204,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/neck_pitch_link.STL" />
+          filename="meshes/neck_pitch_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -252,7 +252,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/realsense_link.STL" />
+          filename="meshes/realsense_link.STL" />
       </geometry>
       <material
         name="">
@@ -266,7 +266,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/realsense_link.STL" />
+          filename="meshes/realsense_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -306,7 +306,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_arm_base_link.STL" />
+          filename="meshes/left_arm_base_link.STL" />
       </geometry>
       <material
         name="">
@@ -320,7 +320,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_arm_base_link.STL" />
+          filename="meshes/left_arm_base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -359,7 +359,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_shoulder_pitch_link.STL" />
+          filename="meshes/left_shoulder_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -373,7 +373,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_shoulder_pitch_link.STL" />
+          filename="meshes/left_shoulder_pitch_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -420,7 +420,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_shoulder_roll_link.STL" />
+          filename="meshes/left_shoulder_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -434,7 +434,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_shoulder_roll_link.STL" />
+          filename="meshes/left_shoulder_roll_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -481,7 +481,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_arm_yaw_link.STL" />
+          filename="meshes/left_arm_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -495,7 +495,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_arm_yaw_link.STL" />
+          filename="meshes/left_arm_yaw_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -542,7 +542,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_elbow_pitch_link.STL" />
+          filename="meshes/left_elbow_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -556,7 +556,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_elbow_pitch_link.STL" />
+          filename="meshes/left_elbow_pitch_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -603,7 +603,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_elbow_yaw_link.STL" />
+          filename="meshes/left_elbow_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -617,7 +617,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_elbow_yaw_link.STL" />
+          filename="meshes/left_elbow_yaw_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -664,7 +664,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_wrist_roll_link.STL" />
+          filename="meshes/left_wrist_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -678,7 +678,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_wrist_roll_link.STL" />
+          filename="meshes/left_wrist_roll_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -725,7 +725,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_wrist_yaw_link.STL" />
+          filename="meshes/left_wrist_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -739,7 +739,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_wrist_yaw_link.STL" />
+          filename="meshes/left_wrist_yaw_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -787,7 +787,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_arm_base_link.STL" />
+          filename="meshes/right_arm_base_link.STL" />
       </geometry>
       <material
         name="">
@@ -801,7 +801,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_arm_base_link.STL" />
+          filename="meshes/right_arm_base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -840,7 +840,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_shoulder_pitch_link.STL" />
+          filename="meshes/right_shoulder_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -854,7 +854,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_shoulder_pitch_link.STL" />
+          filename="meshes/right_shoulder_pitch_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -901,7 +901,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_shoulder_roll_link.STL" />
+          filename="meshes/right_shoulder_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -915,7 +915,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_shoulder_roll_link.STL" />
+          filename="meshes/right_shoulder_roll_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -962,7 +962,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_arm_yaw_link.STL" />
+          filename="meshes/right_arm_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -976,7 +976,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_arm_yaw_link.STL" />
+          filename="meshes/right_arm_yaw_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1023,7 +1023,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_elbow_pitch_link.STL" />
+          filename="meshes/right_elbow_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -1037,7 +1037,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_elbow_pitch_link.STL" />
+          filename="meshes/right_elbow_pitch_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1084,7 +1084,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_elbow_yaw_link.STL" />
+          filename="meshes/right_elbow_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -1098,7 +1098,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_elbow_yaw_link.STL" />
+          filename="meshes/right_elbow_yaw_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1145,7 +1145,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_wrist_roll_link.STL" />
+          filename="meshes/right_wrist_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -1159,7 +1159,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_wrist_roll_link.STL" />
+          filename="meshes/right_wrist_roll_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1206,7 +1206,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_wrist_yaw_link.STL" />
+          filename="meshes/right_wrist_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -1220,7 +1220,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_wrist_yaw_link.STL" />
+          filename="meshes/right_wrist_yaw_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1269,7 +1269,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/waist_yaw_link.STL" />
+          filename="meshes/waist_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -1283,7 +1283,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/waist_yaw_link.STL" />
+          filename="meshes/waist_yaw_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1330,7 +1330,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/waist_roll_link.STL" />
+          filename="meshes/waist_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -1344,7 +1344,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/waist_roll_link.STL" />
+          filename="meshes/waist_roll_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1393,7 +1393,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_leg_roll_link.STL" />
+          filename="meshes/left_leg_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -1407,7 +1407,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_leg_roll_link.STL" />
+          filename="meshes/left_leg_roll_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1454,7 +1454,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_leg_yaw_link.STL" />
+          filename="meshes/left_leg_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -1468,7 +1468,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_leg_yaw_link.STL" />
+          filename="meshes/left_leg_yaw_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1515,7 +1515,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_leg_pitch_link.STL" />
+          filename="meshes/left_leg_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -1529,7 +1529,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_leg_pitch_link.STL" />
+          filename="meshes/left_leg_pitch_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1576,7 +1576,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_knee_link.STL" />
+          filename="meshes/left_knee_link.STL" />
       </geometry>
       <material
         name="">
@@ -1590,7 +1590,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_knee_link.STL" />
+          filename="meshes/left_knee_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1637,7 +1637,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_link.STL" />
+          filename="meshes/left_ankle_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -1651,7 +1651,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_link.STL" />
+          filename="meshes/left_ankle_pitch_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1698,7 +1698,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_roll_link.STL" />
+          filename="meshes/left_ankle_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -1721,7 +1721,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_roll_link.STL" />
+          filename="meshes/left_ankle_roll_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1768,7 +1768,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_foot_ee_link.STL" />
+          filename="meshes/left_foot_ee_link.STL" />
       </geometry>
       <material
         name="">
@@ -1782,7 +1782,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_foot_ee_link.STL" />
+          filename="meshes/left_foot_ee_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1821,7 +1821,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_motor1_link.STL" />
+          filename="meshes/left_ankle_pitch_motor1_link.STL" />
       </geometry>
       <material
         name="">
@@ -1835,7 +1835,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_motor1_link.STL" />
+          filename="meshes/left_ankle_pitch_motor1_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1882,7 +1882,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_linkage1_link.STL" />
+          filename="meshes/left_ankle_pitch_linkage1_link.STL" />
       </geometry>
       <material
         name="">
@@ -1896,7 +1896,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_linkage1_link.STL" />
+          filename="meshes/left_ankle_pitch_linkage1_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -1943,7 +1943,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_motor2_link.STL" />
+          filename="meshes/left_ankle_pitch_motor2_link.STL" />
       </geometry>
       <material
         name="">
@@ -1957,7 +1957,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_motor2_link.STL" />
+          filename="meshes/left_ankle_pitch_motor2_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2004,7 +2004,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_linkage2_link.STL" />
+          filename="meshes/left_ankle_pitch_linkage2_link.STL" />
       </geometry>
       <material
         name="">
@@ -2018,7 +2018,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_ankle_pitch_linkage2_link.STL" />
+          filename="meshes/left_ankle_pitch_linkage2_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2065,7 +2065,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_knee_motor_link.STL" />
+          filename="meshes/left_knee_motor_link.STL" />
       </geometry>
       <material
         name="">
@@ -2079,7 +2079,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_knee_motor_link.STL" />
+          filename="meshes/left_knee_motor_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2126,7 +2126,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_knee_linkage_link.STL" />
+          filename="meshes/left_knee_linkage_link.STL" />
       </geometry>
       <material
         name="">
@@ -2140,7 +2140,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_knee_linkage_link.STL" />
+          filename="meshes/left_knee_linkage_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2189,7 +2189,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_leg_roll_link.STL" />
+          filename="meshes/right_leg_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -2203,7 +2203,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_leg_roll_link.STL" />
+          filename="meshes/right_leg_roll_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2250,7 +2250,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_leg_yaw_link.STL" />
+          filename="meshes/right_leg_yaw_link.STL" />
       </geometry>
       <material
         name="">
@@ -2264,7 +2264,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_leg_yaw_link.STL" />
+          filename="meshes/right_leg_yaw_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2311,7 +2311,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_leg_pitch_link.STL" />
+          filename="meshes/right_leg_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -2325,7 +2325,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_leg_pitch_link.STL" />
+          filename="meshes/right_leg_pitch_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -2372,7 +2372,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_knee_link.STL" />
+          filename="meshes/right_knee_link.STL" />
       </geometry>
       <material
         name="">
@@ -2386,7 +2386,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_knee_link.STL" />
+          filename="meshes/right_knee_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -2433,7 +2433,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_link.STL" />
+          filename="meshes/right_ankle_pitch_link.STL" />
       </geometry>
       <material
         name="">
@@ -2447,7 +2447,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_link.STL" />
+          filename="meshes/right_ankle_pitch_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2494,7 +2494,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_roll_link.STL" />
+          filename="meshes/right_ankle_roll_link.STL" />
       </geometry>
       <material
         name="">
@@ -2508,7 +2508,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_roll_link.STL" />
+          filename="meshes/right_ankle_roll_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -2555,7 +2555,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_foot_ee_link.STL" />
+          filename="meshes/right_foot_ee_link.STL" />
       </geometry>
       <material
         name="">
@@ -2569,7 +2569,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_foot_ee_link.STL" />
+          filename="meshes/right_foot_ee_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2608,7 +2608,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_motor1_link.STL" />
+          filename="meshes/right_ankle_pitch_motor1_link.STL" />
       </geometry>
       <material
         name="">
@@ -2622,7 +2622,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_motor1_link.STL" />
+          filename="meshes/right_ankle_pitch_motor1_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2669,7 +2669,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_linkage1_link.STL" />
+          filename="meshes/right_ankle_pitch_linkage1_link.STL" />
       </geometry>
       <material
         name="">
@@ -2683,7 +2683,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_linkage1_link.STL" />
+          filename="meshes/right_ankle_pitch_linkage1_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2730,7 +2730,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_motor2_link.STL" />
+          filename="meshes/right_ankle_pitch_motor2_link.STL" />
       </geometry>
       <material
         name="">
@@ -2744,7 +2744,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_motor2_link.STL" />
+          filename="meshes/right_ankle_pitch_motor2_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2791,7 +2791,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_linkage2_link.STL" />
+          filename="meshes/right_ankle_pitch_linkage2_link.STL" />
       </geometry>
       <material
         name="">
@@ -2805,7 +2805,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_ankle_pitch_linkage2_link.STL" />
+          filename="meshes/right_ankle_pitch_linkage2_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2852,7 +2852,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_knee_motor_link.STL" />
+          filename="meshes/right_knee_motor_link.STL" />
       </geometry>
       <material
         name="">
@@ -2866,7 +2866,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_knee_motor_link.STL" />
+          filename="meshes/right_knee_motor_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2913,7 +2913,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_knee_linkage_link.STL" />
+          filename="meshes/right_knee_linkage_link.STL" />
       </geometry>
       <material
         name="">
@@ -2927,7 +2927,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_knee_linkage_link.STL" />
+          filename="meshes/right_knee_linkage_link.STL" />
       </geometry>
     </collision> -->
   </link>
@@ -2976,7 +2976,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_link.STL" />
+          filename="meshes/left_hand_link.STL" />
       </geometry>
       <material
         name="">
@@ -2990,7 +2990,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_link.STL" />
+          filename="meshes/left_hand_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -3027,7 +3027,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_thumb_bend_link.STL" />
+          filename="meshes/left_hand_thumb_bend_link.STL" />
       </geometry>
       <material
         name="">
@@ -3041,7 +3041,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_thumb_bend_link.STL" />
+          filename="meshes/left_hand_thumb_bend_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -3088,7 +3088,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_thumb_rota_link1.STL" />
+          filename="meshes/left_hand_thumb_rota_link1.STL" />
       </geometry>
       <material
         name="">
@@ -3102,7 +3102,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_thumb_rota_link1.STL" />
+          filename="meshes/left_hand_thumb_rota_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -3149,7 +3149,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_thumb_rota_link2.STL" />
+          filename="meshes/left_hand_thumb_rota_link2.STL" />
       </geometry>
       <material
         name="">
@@ -3163,7 +3163,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_thumb_rota_link2.STL" />
+          filename="meshes/left_hand_thumb_rota_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -3210,7 +3210,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_thumb_tip.STL" />
+          filename="meshes/left_hand_thumb_tip.STL" />
       </geometry>
       <material
         name="">
@@ -3224,7 +3224,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_thumb_tip.STL" />
+          filename="meshes/left_hand_thumb_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -3263,7 +3263,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_index_rota_link1.STL" />
+          filename="meshes/left_hand_index_rota_link1.STL" />
       </geometry>
       <material
         name="">
@@ -3277,7 +3277,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_index_rota_link1.STL" />
+          filename="meshes/left_hand_index_rota_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -3324,7 +3324,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_index_rota_link2.STL" />
+          filename="meshes/left_hand_index_rota_link2.STL" />
       </geometry>
       <material
         name="">
@@ -3338,7 +3338,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_index_rota_link2.STL" />
+          filename="meshes/left_hand_index_rota_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -3385,7 +3385,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_index_tip.STL" />
+          filename="meshes/left_hand_index_tip.STL" />
       </geometry>
       <material
         name="">
@@ -3399,7 +3399,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_index_tip.STL" />
+          filename="meshes/left_hand_index_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -3438,7 +3438,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_mid_link1.STL" />
+          filename="meshes/left_hand_mid_link1.STL" />
       </geometry>
       <material
         name="">
@@ -3452,7 +3452,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_mid_link1.STL" />
+          filename="meshes/left_hand_mid_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -3499,7 +3499,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_mid_link2.STL" />
+          filename="meshes/left_hand_mid_link2.STL" />
       </geometry>
       <material
         name="">
@@ -3513,7 +3513,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_mid_link2.STL" />
+          filename="meshes/left_hand_mid_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -3560,7 +3560,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_mid_tip.STL" />
+          filename="meshes/left_hand_mid_tip.STL" />
       </geometry>
       <material
         name="">
@@ -3574,7 +3574,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_mid_tip.STL" />
+          filename="meshes/left_hand_mid_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -3613,7 +3613,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_ring_link1.STL" />
+          filename="meshes/left_hand_ring_link1.STL" />
       </geometry>
       <material
         name="">
@@ -3627,7 +3627,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_ring_link1.STL" />
+          filename="meshes/left_hand_ring_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -3674,7 +3674,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_ring_link2.STL" />
+          filename="meshes/left_hand_ring_link2.STL" />
       </geometry>
       <material
         name="">
@@ -3688,7 +3688,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_ring_link2.STL" />
+          filename="meshes/left_hand_ring_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -3735,7 +3735,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_ring_tip.STL" />
+          filename="meshes/left_hand_ring_tip.STL" />
       </geometry>
       <material
         name="">
@@ -3749,7 +3749,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_ring_tip.STL" />
+          filename="meshes/left_hand_ring_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -3788,7 +3788,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_pinky_link1.STL" />
+          filename="meshes/left_hand_pinky_link1.STL" />
       </geometry>
       <material
         name="">
@@ -3802,7 +3802,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_pinky_link1.STL" />
+          filename="meshes/left_hand_pinky_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -3849,7 +3849,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_pinky_link2.STL" />
+          filename="meshes/left_hand_pinky_link2.STL" />
       </geometry>
       <material
         name="">
@@ -3863,7 +3863,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_pinky_link2.STL" />
+          filename="meshes/left_hand_pinky_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -3910,7 +3910,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_pinky_tip.STL" />
+          filename="meshes/left_hand_pinky_tip.STL" />
       </geometry>
       <material
         name="">
@@ -3924,7 +3924,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_pinky_tip.STL" />
+          filename="meshes/left_hand_pinky_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -3963,7 +3963,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_ee_link.STL" />
+          filename="meshes/left_hand_ee_link.STL" />
       </geometry>
       <material
         name="">
@@ -3977,7 +3977,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/left_hand_ee_link.STL" />
+          filename="meshes/left_hand_ee_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -4018,7 +4018,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_link.STL" />
+          filename="meshes/right_hand_link.STL" />
       </geometry>
       <material
         name="">
@@ -4032,7 +4032,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_link.STL" />
+          filename="meshes/right_hand_link.STL" />
       </geometry>
     </collision>
   </link>  
@@ -4069,7 +4069,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_thumb_bend_link.STL" />
+          filename="meshes/right_hand_thumb_bend_link.STL" />
       </geometry>
       <material
         name="">
@@ -4083,7 +4083,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_thumb_bend_link.STL" />
+          filename="meshes/right_hand_thumb_bend_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -4130,7 +4130,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_thumb_rota_link1.STL" />
+          filename="meshes/right_hand_thumb_rota_link1.STL" />
       </geometry>
       <material
         name="">
@@ -4144,7 +4144,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_thumb_rota_link1.STL" />
+          filename="meshes/right_hand_thumb_rota_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -4191,7 +4191,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_thumb_rota_link2.STL" />
+          filename="meshes/right_hand_thumb_rota_link2.STL" />
       </geometry>
       <material
         name="">
@@ -4205,7 +4205,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_thumb_rota_link2.STL" />
+          filename="meshes/right_hand_thumb_rota_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -4252,7 +4252,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_thumb_rota_tip.STL" />
+          filename="meshes/right_hand_thumb_rota_tip.STL" />
       </geometry>
       <material
         name="">
@@ -4266,7 +4266,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_thumb_rota_tip.STL" />
+          filename="meshes/right_hand_thumb_rota_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -4305,7 +4305,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_mid_link1.STL" />
+          filename="meshes/right_hand_mid_link1.STL" />
       </geometry>
       <material
         name="">
@@ -4319,7 +4319,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_mid_link1.STL" />
+          filename="meshes/right_hand_mid_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -4366,7 +4366,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_mid_link2.STL" />
+          filename="meshes/right_hand_mid_link2.STL" />
       </geometry>
       <material
         name="">
@@ -4380,7 +4380,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_mid_link2.STL" />
+          filename="meshes/right_hand_mid_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -4427,7 +4427,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_mid_tip.STL" />
+          filename="meshes/right_hand_mid_tip.STL" />
       </geometry>
       <material
         name="">
@@ -4441,7 +4441,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_mid_tip.STL" />
+          filename="meshes/right_hand_mid_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -4480,7 +4480,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_ring_link1.STL" />
+          filename="meshes/right_hand_ring_link1.STL" />
       </geometry>
       <material
         name="">
@@ -4494,7 +4494,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_ring_link1.STL" />
+          filename="meshes/right_hand_ring_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -4541,7 +4541,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_ring_link2.STL" />
+          filename="meshes/right_hand_ring_link2.STL" />
       </geometry>
       <material
         name="">
@@ -4555,7 +4555,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_ring_link2.STL" />
+          filename="meshes/right_hand_ring_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -4602,7 +4602,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_ring_tip.STL" />
+          filename="meshes/right_hand_ring_tip.STL" />
       </geometry>
       <material
         name="">
@@ -4616,7 +4616,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_ring_tip.STL" />
+          filename="meshes/right_hand_ring_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -4655,7 +4655,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_pinky_link1.STL" />
+          filename="meshes/right_hand_pinky_link1.STL" />
       </geometry>
       <material
         name="">
@@ -4669,7 +4669,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_pinky_link1.STL" />
+          filename="meshes/right_hand_pinky_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -4716,7 +4716,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_pinky_link2.STL" />
+          filename="meshes/right_hand_pinky_link2.STL" />
       </geometry>
       <material
         name="">
@@ -4730,7 +4730,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_pinky_link2.STL" />
+          filename="meshes/right_hand_pinky_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -4777,7 +4777,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_pinky_tip.STL" />
+          filename="meshes/right_hand_pinky_tip.STL" />
       </geometry>
       <material
         name="">
@@ -4791,7 +4791,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_pinky_tip.STL" />
+          filename="meshes/right_hand_pinky_tip.STL" />
       </geometry>
     </collision>
   </link>
@@ -4830,7 +4830,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_ee_link.STL" />
+          filename="meshes/right_hand_ee_link.STL" />
       </geometry>
       <material
         name="">
@@ -4844,7 +4844,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_ee_link.STL" />
+          filename="meshes/right_hand_ee_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -4883,7 +4883,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_index_rota_link1.STL" />
+          filename="meshes/right_hand_index_rota_link1.STL" />
       </geometry>
       <material
         name="">
@@ -4897,7 +4897,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_index_rota_link1.STL" />
+          filename="meshes/right_hand_index_rota_link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -4944,7 +4944,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_index_rota_link2.STL" />
+          filename="meshes/right_hand_index_rota_link2.STL" />
       </geometry>
       <material
         name="">
@@ -4958,7 +4958,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_index_rota_link2.STL" />
+          filename="meshes/right_hand_index_rota_link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -5005,7 +5005,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_index_tip.STL" />
+          filename="meshes/right_hand_index_tip.STL" />
       </geometry>
       <material
         name="">
@@ -5019,7 +5019,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/right_hand_index_tip.STL" />
+          filename="meshes/right_hand_index_tip.STL" />
       </geometry>
     </collision>
   </link>
