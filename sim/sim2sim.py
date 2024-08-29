@@ -32,7 +32,7 @@ Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
 python sim/sim2sim.py --load_model policy_1.pt
 """
-
+import argparse
 import math
 import os
 from collections import deque
@@ -44,29 +44,13 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
-from sim.envs import MiniCfg
 from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
 
-JOINT_NAMES = [
-    "left hip pitch",
-    "left hip yaw",
-    "left hip roll",
-    "left knee pitch",
-    "left ankle pitch",
-    "left ankle roll",
-    "right hip pitch",
-    "right hip yaw",
-    "right hip roll",
-    "right knee pitch",
-    "right ankle pitch",
-    "right ankle roll",
-]
-
 
 class cmd:
-    vx = 0.3
+    vx = 0.5
     vy = 0.0
     dyaw = 0.0
 
@@ -122,12 +106,17 @@ def run_mujoco(policy, cfg):
     Returns:
         None
     """
-    model = mujoco.MjModel.from_xml_path(cfg.sim_config.mujoco_model_path)
+    model_dir = os.environ.get("MODEL_DIR")
+    mujoco_model_path = f"{model_dir}/robot_fixed.xml"
+    model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = cfg.sim_config.dt
     data = mujoco.MjData(model)
 
-    data.qpos = model.keyframe("default").qpos
-    default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
+    try:
+        data.qpos = model.keyframe("default").qpos
+        default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
+    except:
+        default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
     mujoco.mj_step(model, data)
 
     data.qvel = np.zeros_like(data.qvel)
@@ -199,8 +188,6 @@ def run_mujoco(policy, cfg):
 
 
 if __name__ == "__main__":
-    import argparse
-
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--load_model", type=str, required=True, help="Run to load from.")
     parser.add_argument("--terrain", action="store_true", help="terrain or plane")
@@ -208,13 +195,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     robot = load_embodiment()
-    model_dir = os.environ.get("MODEL_DIR", "stompymini")
 
-    class Sim2simCfg(MiniCfg):
+    class Sim2simCfg:
         num_actions = len(robot.all_joints())
 
+        class env:
+            num_actions = 12
+            frame_stack = 15
+            c_frame_stack = 3
+            num_single_obs = 11 + num_actions * c_frame_stack
+            num_observations = int(frame_stack * num_single_obs)
+
         class sim_config:
-            mujoco_model_path = f"{model_dir}/robot_fixed.xml"
             sim_duration = 60.0
             dt = 0.001
             decimation = 10
@@ -224,6 +216,19 @@ if __name__ == "__main__":
             tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
             kps = tau_limit
             kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
+
+        class normalization:
+            class obs_scales:
+                lin_vel = 2.0
+                ang_vel = 1.0
+                dof_pos = 1.0
+                dof_vel = 0.05
+    
+            clip_observations = 18.0
+            clip_actions = 18.0
+
+        class control:
+            action_scale = 0.25
 
     policy = torch.jit.load(args.load_model)
     run_mujoco(policy, Sim2simCfg())
