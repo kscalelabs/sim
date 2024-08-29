@@ -27,10 +27,9 @@ DAMPING_DEFAULT = 0.01
 
 def load_embodiment() -> Any:
     # Dynamically import embodiment based on MODEL_DIR
-    model_dir = os.environ.get("MODEL_DIR", "stompymini")
-    if "sim/" in model_dir:
-        model_dir = model_dir.split("sim/")[1]
-    module_name = f"sim.{model_dir}.joints"
+    model_dir = os.environ.get("MODEL_DIR", "sim/resources/stompymini")
+    model_dir = model_dir.split("/")[-1]
+    module_name = f"sim.resources.{model_dir}.joints"
     module = importlib.import_module(module_name)
     robot = getattr(module, "Robot")
     return robot
