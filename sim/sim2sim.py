@@ -203,11 +203,8 @@ if __name__ == "__main__":
             num_actions = 12
             frame_stack = 15
             c_frame_stack = 3
-            num_single_obs = 11 + num_actions * 3
+            num_single_obs = 11 + num_actions * c_frame_stack
             num_observations = int(frame_stack * num_single_obs)
-            single_num_privileged_obs = 25 + num_actions * 4
-            num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
-            num_actions = num_actions
 
         class sim_config:
             sim_duration = 60.0
@@ -232,7 +229,6 @@ if __name__ == "__main__":
 
         class control:
             action_scale = 0.25
-            decimation = 10
 
     policy = torch.jit.load(args.load_model)
     run_mujoco(policy, Sim2simCfg())
