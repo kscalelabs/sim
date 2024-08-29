@@ -15,6 +15,8 @@ from sim.envs.humanoids.h1_config import H1Cfg, H1CfgPPO
 from sim.envs.humanoids.h1_env import H1FreeEnv
 from sim.envs.humanoids.stompymini_config import MiniCfg, MiniCfgPPO
 from sim.envs.humanoids.stompymini_env import MiniFreeEnv
+from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
+from sim.envs.humanoids.xbot_env import XBotLFreeEnv
 from sim.utils.task_registry import TaskRegistry
 
 task_registry = TaskRegistry()
@@ -22,3 +24,4 @@ task_registry.register("stompymini", MiniFreeEnv, MiniCfg(), MiniCfgPPO())
 task_registry.register("dora", DoraFreeEnv, DoraCfg(), DoraCfgPPO())
 task_registry.register("h1", H1FreeEnv, H1Cfg(), H1CfgPPO())
 task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
+task_registry.register("xbit", G1FreeEnv, G1Cfg(), G1CfgPPO())
