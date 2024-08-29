@@ -41,7 +41,7 @@ class DoraCfg(LeggedRobotCfg):
         foot_name = "leg_ankle_roll_Link"
         knee_name = "leg_knee_Link"
 
-        termination_height = 0.25
+        termination_height = 0.5
         default_feet_height = 0.0
         terminate_after_contacts_on = []
 
@@ -147,14 +147,14 @@ class DoraCfg(LeggedRobotCfg):
         min_dist = 0.3
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.06  # m
-        cycle_time = 0.64  # sec
+        target_joint_pos_scale = 0.14  # rad
+        target_feet_height = 0.05  # m
+        cycle_time = 0.5  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 400  # forces above this value are penalized
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
