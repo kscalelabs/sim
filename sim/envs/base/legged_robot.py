@@ -14,8 +14,6 @@ from isaacgym.torch_utils import * # isort: skip
 import torch # isort: skip
 # fmt: on
 
-# TODO: pfb30 move it to utils
-
 
 class LeggedRobot(BaseTask):
     def __init__(self, cfg, sim_params, physics_engine, sim_device, headless):
