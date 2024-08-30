@@ -108,7 +108,8 @@ class Robot(Node):
             "hip_yaw": 150,
             "hip_roll": 150,
             "knee": 300,
-            "ankle": 40,
+            "ankle_pitch": 40,
+            "ankle_roll": 40,
         }
 
     # d_gains
@@ -119,7 +120,8 @@ class Robot(Node):
             "hip_yaw": 2,
             "hip_roll": 2,
             "knee": 4,
-            "ankle": 2,
+            "ankle_pitch": 2,
+            "ankle_roll": 2,
         }
 
 
