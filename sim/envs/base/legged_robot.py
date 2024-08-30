@@ -263,7 +263,7 @@ class LeggedRobot(BaseTask):
 
             for s in range(len(props)):
                 props[s].friction = self.friction_coeffs[env_id]
-            # breakpoint()
+
             self.env_frictions[env_id] = self.friction_coeffs[env_id]
              
         return props
@@ -299,8 +299,9 @@ class LeggedRobot(BaseTask):
             rng = self.cfg.domain_rand.added_mass_range
             props[0].mass += np.random.uniform(rng[0], rng[1])
 
-        # breakpoint()
-        self.body_mass[env_id] = props[0].mass
+        for prop in props:
+            self.body_mass[env_id] += prop.mass
+
         return props
 
     def _post_physics_step_callback(self):
