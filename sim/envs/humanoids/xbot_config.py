@@ -99,7 +99,7 @@ class XBotCfg(LeggedRobotCfg):
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
-        substeps = 1  # 2
+        substeps = 1
         up_axis = 1  # 0 is y, 1 is z
 
         class physx(LeggedRobotCfg.sim.physx):
@@ -126,7 +126,9 @@ class XBotCfg(LeggedRobotCfg):
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.05
+        # dynamic randomization
+        action_delay = 0.5
+        action_noise = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)

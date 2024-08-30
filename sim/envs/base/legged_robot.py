@@ -48,8 +48,19 @@ class LeggedRobot(BaseTask):
         Args:
             actions (torch.Tensor): Tensor of shape (num_envs, num_actions_per_env)
         """
+        if self.cfg.env.use_ref_actions:
+            actions += self.ref_action
+        actions = torch.clip(actions, -self.cfg.normalization.clip_actions, self.cfg.normalization.clip_actions)
+        
+        # dynamic randomization
+        delay = torch.rand((self.num_envs, 1), device=self.device) * self.cfg.domain_rand.action_delay
+        actions = (1 - delay) * actions + delay * self.actions
+        actions += self.cfg.domain_rand.action_noise * torch.randn_like(actions) * actions
+        
+
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
+    
         # step physics and render each frame
         self.render()
         for _ in range(self.cfg.control.decimation):
@@ -89,11 +100,13 @@ class LeggedRobot(BaseTask):
         self.episode_length_buf += 1
         self.common_step_counter += 1
 
-        # prepare quantities
-        # TODO(pfb30) - debug this
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
-        self.base_quat[:] = quat_mul(origin, self.root_states[:, 3:7])
+        # # prepare quantities
+        # # TODO(pfb30) - debug this
+        # origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
+        # origin = quat_conjugate(origin)
+        # self.base_quat[:] = quat_mul(origin, self.root_states[:, 3:7])
+        # old version
+        self.base_quat[:] = self.root_states[:, 3:7]
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
 
         self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 7:10])
@@ -179,12 +192,24 @@ class LeggedRobot(BaseTask):
 
         # fix reset gravity bug
         # TODO(pfb30) - debug this
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
-        self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.root_states[env_ids, 3:7])
-
+        # origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
+        # origin = quat_conjugate(origin)
+        # self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.root_states[env_ids, 3:7])
+        # old version
+        self.base_quat[:] = self.root_states[:, 3:7]
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
         self.projected_gravity[env_ids] = quat_rotate_inverse(self.base_quat[env_ids], self.gravity_vec[env_ids])
+
+    # def step(self, actions):
+    #     if self.cfg.env.use_ref_actions:
+    #         actions += self.ref_action
+    #     actions = torch.clip(actions, -self.cfg.normalization.clip_actions, self.cfg.normalization.clip_actions)
+        
+    #     # dynamic randomization
+    #     delay = torch.rand((self.num_envs, 1), device=self.device) * self.cfg.domain_rand.action_delay
+    #     actions = (1 - delay) * actions + delay * self.actions
+    #     actions += self.cfg.domain_rand.action_noise * torch.randn_like(actions) * actions
+    #     return super().step(actions)
 
     def compute_reward(self):
         """Compute rewards
@@ -238,6 +263,9 @@ class LeggedRobot(BaseTask):
 
             for s in range(len(props)):
                 props[s].friction = self.friction_coeffs[env_id]
+            # breakpoint()
+            self.env_frictions[env_id] = self.friction_coeffs[env_id]
+             
         return props
 
     def _process_dof_props(self, props, env_id):
@@ -271,6 +299,8 @@ class LeggedRobot(BaseTask):
             rng = self.cfg.domain_rand.added_mass_range
             props[0].mass += np.random.uniform(rng[0], rng[1])
 
+        # breakpoint()
+        self.body_mass[env_id] = props[0].mass
         return props
 
     def _post_physics_step_callback(self):
@@ -467,9 +497,12 @@ class LeggedRobot(BaseTask):
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
         # self.base_quat = self.root_states[:, 3:7]
         # TODO(pfb30): debug this
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
-        self.base_quat = quat_mul(origin, self.root_states[:, 3:7])
+        # origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
+        # origin = quat_conjugate(origin)
+        # self.base_quat = quat_mul(origin, self.root_states[:, 3:7])
+
+        # old version
+        self.base_quat = self.root_states[:, 3:7]
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
 
         self.contact_forces = gymtorch.wrap_tensor(net_contact_forces).view(

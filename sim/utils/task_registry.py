@@ -172,7 +172,3 @@ class TaskRegistry:
             print(f"Loading model from: {resume_path}")
             runner.load(resume_path, load_optimizer=False)
         return runner, train_cfg
-
-
-# make global task registry
-# task_registry = TaskRegistry()
