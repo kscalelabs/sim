@@ -63,7 +63,7 @@ make install-third-party-external
 ### Running experiments (WIP)
 1. Stompymini:
 Download meshes at https://drive.google.com/file/d/19T7mY604P6hSctFymxuHbwqKQOzOtloH
-and unzip them to sim/resources/stompymini/meshes
+and unzip them to folder sim/resources/stompymini/meshes/
 ```bash
 export MODEL_DIR=sim/resources/stompymini
 ```
