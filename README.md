@@ -60,14 +60,17 @@ conda activate kscale-sim-library
 make install-third-party-external
 ```
 
-### Running Stompy experiments
-1. Download our URDF model from [here](https://store.kscale.dev/):
+### Running experiments (WIP)
+1. Download stompymini:
 ```bash
-wget https://media.kscale.dev/stompy/latest_stl_urdf.tar.gz && tar -xzvf latest_stl_urdf.tar.gz
-python sim/scripts/create_fixed_torso.py
-export MODEL_DIR=stompy
+gdown --folder https://drive.google.com/drive/folders/1h0m8vimXyI743i_eUJfocNGcouJDS6QI -O sim/resources/stompymini/meshes/
+export MODEL_DIR=sim/resources/stompymini
 ```
-
+To download Dora:
+```
+gdown --folder https://drive.google.com/drive/folders/1tQiMtOwGg3PGo9AygX3sj6X_HBpnW2S_ -O sim/resources/dora/meshes/
+export MODEL_DIR=sim/resources/dora
+```
 2. Run training with the following command:
 ```bash
 python sim/train.py --task=stompymini --num_envs=4096 --headless
