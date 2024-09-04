@@ -13,14 +13,13 @@ from sim.envs.humanoids.g1_config import G1Cfg, G1CfgPPO
 from sim.envs.humanoids.g1_env import G1FreeEnv
 from sim.envs.humanoids.h1_config import H1Cfg, H1CfgPPO
 from sim.envs.humanoids.h1_env import H1FreeEnv
+from sim.envs.humanoids.stompy_config import StompyCfg, StompyCfgPPO
+from sim.envs.humanoids.stompy_env import StompyFreeEnv
 from sim.envs.humanoids.stompymini_config import MiniCfg, MiniCfgPPO
 from sim.envs.humanoids.stompymini_env import MiniFreeEnv
 from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
 from sim.envs.humanoids.xbot_env import XBotLFreeEnv
-from sim.envs.humanoids.stompy_env import StompyFreeEnv
-from sim.envs.humanoids.stompy_config import StompyCfg, StompyCfgPPO
 from sim.utils.task_registry import TaskRegistry
-
 
 task_registry = TaskRegistry()
 task_registry.register("stompymini", MiniFreeEnv, MiniCfg(), MiniCfgPPO())

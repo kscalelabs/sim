@@ -116,7 +116,7 @@ class Robot(Node):
                 "upper": 1.05,
             },
             Robot.legs.left.knee_pitch: {
-                "lower":  -1.05,
+                "lower": -1.05,
                 "upper": 1.1,
             },
             Robot.legs.left.ankle_pitch: {
@@ -128,10 +128,7 @@ class Robot(Node):
                 "upper": 0.44,
             },
             # right leg
-            Robot.legs.right.hip_pitch: {
-                "lower": -1.31,
-                "upper": 1.57
-            },
+            Robot.legs.right.hip_pitch: {"lower": -1.31, "upper": 1.57},
             Robot.legs.right.hip_roll: {
                 "lower": -1.57,
                 "upper": 0.44,
