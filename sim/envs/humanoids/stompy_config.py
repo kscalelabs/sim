@@ -95,7 +95,7 @@ class StompyCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 4  # 100hz
+        decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.002  # 1000 Hz
@@ -103,7 +103,7 @@ class StompyCfg(LeggedRobotCfg):
         up_axis = 1  # 0 is y, 1 is z
 
         class physx(LeggedRobotCfg.sim.physx):
-            num_threads = 12
+            num_threads = 10
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
@@ -142,9 +142,9 @@ class StompyCfg(LeggedRobotCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.75
-        min_dist = 0.3
-        max_dist = 0.5
+        base_height_target = 0.63
+        min_dist = 0.2
+        max_dist = 0.4
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.14  # rad
         target_feet_height = 0.05  # m
@@ -153,7 +153,7 @@ class StompyCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 100  # forces above this value are penalized
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
             # reference motion tracking

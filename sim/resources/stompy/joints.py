@@ -151,22 +151,22 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 120,
-            "hip yaw": 60,
-            "hip roll": 60,
-            "knee pitch": 120,
-            "ankle pitch": 17,
+            "hip_y": 120,
+            "hip_x": 60,
+            "hip_z": 60,
+            "knee": 120,
+            "ankle_y": 17,
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 10,
-            "hip yaw": 10,
-            "hip roll": 10,
-            "knee pitch": 10,
-            "ankle pitch": 5,
+            "hip_y": 10,
+            "hip_x": 10,
+            "hip_z": 10,
+            "knee": 10,
+            "ankle_y": 5,
         }
 
     # pos_limits
