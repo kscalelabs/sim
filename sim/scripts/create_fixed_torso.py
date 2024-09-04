@@ -29,10 +29,11 @@ def update_urdf(model_path: str) -> None:
             limit = joint.find("limit")
             if limit is not None:
                 limits = joint_limits.get(joint_name, {})
-                lower = str(limits.get("lower", 0.0))
-                upper = str(limits.get("upper", 0.0))
-                limit.set("lower", lower)
-                limit.set("upper", upper)
+                if limits:
+                    lower = str(limits.get("lower", 0.0))
+                    upper = str(limits.get("upper", 0.0))
+                    limit.set("lower", lower)
+                    limit.set("upper", upper)
                 for key, value in effort.items():
                     if key in joint_name:
                         limit.set("effort", str(value))
@@ -51,11 +52,11 @@ def update_urdf(model_path: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Update URDF file to fix robot joints.")
-    parser.add_argument("--model_path", type=str, help="Path to the model directory", default="sim/stompymini")
+    parser.add_argument("--model_path", type=str, help="Path to the model directory", default="sim/resources/stompy")
     args = parser.parse_args()
 
     update_urdf(args.model_path)
-    create_mjcf(Path(args.model_path) / "robot")
+    # create_mjcf(Path(args.model_path) / "robot")
 
 
 if __name__ == "__main__":

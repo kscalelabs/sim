@@ -223,7 +223,7 @@ if __name__ == "__main__":
                 ang_vel = 1.0
                 dof_pos = 1.0
                 dof_vel = 0.05
-    
+
             clip_observations = 18.0
             clip_actions = 18.0
 
