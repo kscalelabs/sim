@@ -37,15 +37,15 @@ class StompyCfg(LeggedRobotCfg):
 
         name = "stompy"
 
-        foot_name = "leg_ankle_roll_Link"
-        knee_name = "leg_knee_Link"
+        foot_name = "foot"
+        knee_name = "calf"
 
-        termination_height = 0.5
+        termination_height = 0.2
         default_feet_height = 0.0
         terminate_after_contacts_on = []
 
         penalize_contacts_on = []
-        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
