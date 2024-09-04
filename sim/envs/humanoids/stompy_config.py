@@ -15,7 +15,6 @@ class StompyCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-
         frame_stack = 15
         c_frame_stack = 3
         num_single_obs = 11 + NUM_JOINTS * 3
@@ -231,7 +230,7 @@ class StompyCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "Dora"
+        experiment_name = "Stompy"
         run_name = ""
         # load and resume
         resume = False
