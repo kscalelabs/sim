@@ -42,7 +42,7 @@ class MiniCfg(LeggedRobotCfg):
 
         termination_height = 0.24
         default_feet_height = 0.03
-        terminate_after_contacts_on = [""]
+        terminate_after_contacts_on = []
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -120,7 +120,7 @@ class MiniCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.01
+        start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -161,22 +161,22 @@ class MiniCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.6
-            feet_contact_number = 1.2
-            # gait
-            feet_air_time = 1.6
-            foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
-            # contact
-            feet_contact_forces = -0.01
-            # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5
+            # joint_pos = 1.6
+            # feet_clearance = 1.6
+            # feet_contact_number = 1.2
+            # # gait
+            # feet_air_time = 1.6
+            # foot_slip = -0.05
+            # feet_distance = 0.2
+            # knee_distance = 0.2
+            # # contact
+            # feet_contact_forces = -0.01
+            # # vel tracking
+            # tracking_lin_vel = 1.2
+            # tracking_ang_vel = 1.1
+            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            # low_speed = 0.2
+            # track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 0.5

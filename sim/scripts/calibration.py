@@ -1,20 +1,22 @@
 # mypy: disable-error-code="valid-newtype"
-"""This script is used to calibrate the torque values for the joints of the robot."""
+"""Defines a simple demo script for dropping a URDF to observe the physics.
 
+This script demonstrates some good default physics parameters for the
+simulation which avoid some of the "blowing up" issues that can occur with
+default parameters. It also demonstrates how to load a URDF and drop it into
+the simulation, and how to configure the DOF properties of the robot.
+"""
 import logging
-import math
 from dataclasses import dataclass
-from typing import Any, Dict, NewType, Union
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Importing torch down here to avoid gymtorch issues.
-import torch  # noqa: E402 #  type: ignore[import]
+from typing import Any, Dict, Literal, NewType
+import math
+import time
 from isaacgym import gymapi, gymtorch, gymutil
-
+import numpy as np
 from sim.env import robot_urdf_path
 from sim.resources.stompymini.joints import Robot as Stompy
+# Importing torch down here to avoid gymtorch issues.
+import torch  # noqa: E402 #  type: ignore[import]
 
 logger = logging.getLogger(__name__)
 
@@ -26,12 +28,11 @@ Viewer = NewType("Viewer", Any)
 Args = NewType("Args", Any)
 
 
-DRIVE_MODE = 3  # == gymapi.DOF_MODE_EFFORT
+DRIVE_MODE = 3 # == gymapi.DOF_MODE_EFFORT
 # DRIVE_MODE = gymapi.DOF_MODE_POS
 
 # Stiffness and damping are Kp and Kd parameters for the PD controller
 # that drives the joints to the desired position.
-# For effort control, these should be set to zero.
 STIFFNESS = 0.0
 DAMPING = 0.0
 
@@ -48,7 +49,7 @@ class GymParams:
     robot: Robot
     viewer: Viewer
     args: Args
-    dof_ids: Union[Dict[str, int], None] = None
+    dof_ids: Dict[str, int] = None
 
 
 def load_gym() -> GymParams:
@@ -65,7 +66,7 @@ def load_gym() -> GymParams:
 
     sim_params.physx.solver_type = 1
     sim_params.physx.num_position_iterations = 4
-    sim_params.physx.num_velocity_iterations = 0
+    sim_params.physx.num_velocity_iterations = 1
     sim_params.physx.contact_offset = 0.01
     sim_params.physx.rest_offset = 0
     sim_params.physx.bounce_threshold_velocity = 0.5
@@ -120,10 +121,10 @@ def load_gym() -> GymParams:
 
     # Adds the robot to the environment.
     initial_pose = gymapi.Transform()
-    initial_pose.p = gymapi.Vec3(0.0, 1.3, 0.0)
+    initial_pose.p = gymapi.Vec3(0.0, 1.0, 0.0)
     # initial_pose.r = gymapi.Quat(0.5000, -0.4996, -0.5000, 0.5004)
-    # For default models the rotations are weirdly:
-    # initial_pose.r = gymapi.Quat(0.7071, 0.0, 0.0, 0.7071)
+    # initial_pose.r = gymapi.Quat(-0.707107, 0.0, 0.0, 0.707107)
+
     id = 0
     self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
     robot = gym.create_actor(env, robot_asset, initial_pose, "robot", id, self_collisions)
@@ -131,8 +132,8 @@ def load_gym() -> GymParams:
     # Configure DOF properties.
     props = gym.get_actor_dof_properties(env, robot)
     props["driveMode"] = DRIVE_MODE
-    props["stiffness"].fill(STIFFNESS)
-    props["damping"].fill(DAMPING)
+    props["stiffness"].fill(0)
+    props["damping"].fill(0)
     props["armature"].fill(ARMATURE)
     gym.set_actor_dof_properties(env, robot, props)
 
@@ -146,17 +147,20 @@ def load_gym() -> GymParams:
     gym.refresh_dof_state_tensor(sim)
     dof_state = gymtorch.wrap_tensor(dof_state_tensor)
     num_dof = len(Stompy.all_joints())
+
     dof_pos = dof_state.view(1, num_dof, 2)[..., 0]
     dof_vel = dof_state.view(1, num_dof, 2)[..., 1]
 
-    # Resets the DOF positions to the starting positions.
+    #Resets the DOF positions to the starting positions.
     dof_vel[:] = 0.0
     starting_positions = Stompy.default_standing()
     dof_ids: Dict[str, int] = gym.get_actor_dof_dict(env, robot)
 
     print(starting_positions)
+
     for joint_name, joint_position in starting_positions.items():
-        dof_pos[0, dof_ids[joint_name]] = joint_position
+        if joint_name in dof_ids:
+            dof_pos[0, dof_ids[joint_name]] = joint_position
     env_ids_int32 = torch.zeros(1, dtype=torch.int32)
     gym.set_dof_state_tensor_indexed(
         sim,
@@ -164,32 +168,36 @@ def load_gym() -> GymParams:
         gymtorch.unwrap_tensor(env_ids_int32),
         1,
     )
-    print(dof_pos)
 
-    return GymParams(gym=gym, env=env, sim=sim, robot=robot, viewer=viewer, args=args, dof_ids=dof_ids)
-
-
-def pd_control(
-    target_q: torch.Tensor,
-    q: torch.Tensor,
-    kp: torch.Tensor,
-    dq: torch.Tensor,
-    kd: torch.Tensor,
-    default: torch.Tensor,
-) -> torch.Tensor:
-    """Calculates torques from position commands."""
-    return kp * (target_q + default - q) - kd * dq
+    return GymParams(
+        gym=gym,
+        env=env,
+        sim=sim,
+        robot=robot,
+        viewer=viewer,
+        args=args,
+        dof_ids=dof_ids
+    )
 
 
-def run_id_test(gym: GymParams, joint_id: str = "left knee pitch", mode: str = "calibration") -> None:
-    torques = torch.zeros(1, len(Stompy.all_joints()))
+def pd_control(target_q, q, kp, dq, kd, default):
+    """Calculates torques from position commands"""
+    return kp * (target_q  + default - q) - kd * dq
+
+
+
+def run_id_test(gym: GymParams, joint_id="left knee pitch", mode="calibration") -> None:
+    NUM_JOINTS = len(Stompy.all_joints())
+    torques = torch.zeros(1, NUM_JOINTS)
     default_pos = Stompy.default_standing()[joint_id]
 
-    # tau_factor = 0.85
-    # tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor
-    # kps = tau_limit
-    # kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values()))
-
+    tau_factor = 0.85
+    tau_limit = np.array(list(Stompy.stiffness().values()) + list(Stompy.stiffness().values())) * tau_factor
+    kps = tau_limit
+    kds = np.array(list(Stompy.damping().values()) + list(Stompy.damping().values()))
+    gym.dof_ids
+    kd = 10
+    kp = 250
     for joint_name, value in Stompy.damping().items():
         if joint_name in joint_id:
             kd = value
@@ -199,38 +207,40 @@ def run_id_test(gym: GymParams, joint_id: str = "left knee pitch", mode: str = "
             kp = value
             break
 
-    q = torch.tensor(0)
-    dq = torch.tensor(0)
+    q = 0
+    dq = 0
     joint_id = gym.dof_ids[joint_id]
+    dof_pos = torch.zeros(1, len(Stompy.all_joints()))
+    dof_vel = torch.zeros(1, len(Stompy.all_joints()))
 
     # Lists to store time and position data for plotting
     time_data = []
     position_data = []
     velocity_data = []
 
-    steps = 3000
+    steps = 500
     step = 0
     dt = 0.001
-    decimation = 10
-    torque_soft = 100
+    decimation = 5
+    TORQUE_SOFT = 18
 
     if mode == "calibration":
-        # Setup default position
         for _ in range(100):
             gym.gym.simulate(gym.sim)
             gym.gym.fetch_results(gym.sim, True)
             gym.gym.step_graphics(gym.sim)
             gym.gym.draw_viewer(gym.viewer, gym.sim, True)
             gym.gym.sync_frame_time(gym.sim)
-        while step < steps / 40:
+
+        while step < steps/3:
             # 100 hz control loop
-            for _ in range(decimation):
-                torques[:, joint_id] = torque_soft
+            for _ in  range(decimation):
+                torques[:, joint_id] = TORQUE_SOFT
                 gym.gym.set_dof_actuation_force_tensor(gym.sim, gymtorch.unwrap_tensor(torques))
 
                 dof_state_tensor = gym.gym.acquire_dof_state_tensor(gym.sim)
                 dof_state = gymtorch.wrap_tensor(dof_state_tensor)
-                dof_pos = dof_state.view(1, len(Stompy.all_joints()), 2)[..., 0]
+                dof_pos = dof_state.view(1, NUM_JOINTS, 2)[..., 0]
                 q = dof_pos[0, joint_id]
 
                 gym.gym.simulate(gym.sim)
@@ -238,19 +248,19 @@ def run_id_test(gym: GymParams, joint_id: str = "left knee pitch", mode: str = "
                 gym.gym.step_graphics(gym.sim)
                 gym.gym.draw_viewer(gym.viewer, gym.sim, True)
                 gym.gym.sync_frame_time(gym.sim)
-
+        
             step += 1
         print("Position HIGH", q.item() - default_pos)
         step = 0
-        while step < steps / 40:
+        while step < steps/3:
             # 100 hz control loop
-            for _ in range(decimation):
-                torques[:, joint_id] = -torque_soft
+            for _ in  range(decimation):
+                torques[:, joint_id] = -TORQUE_SOFT
                 gym.gym.set_dof_actuation_force_tensor(gym.sim, gymtorch.unwrap_tensor(torques))
 
                 dof_state_tensor = gym.gym.acquire_dof_state_tensor(gym.sim)
                 dof_state = gymtorch.wrap_tensor(dof_state_tensor)
-                dof_pos = dof_state.view(1, len(Stompy.all_joints()), 2)[..., 0]
+                dof_pos = dof_state.view(1, NUM_JOINTS, 2)[..., 0]
                 q = dof_pos[0, joint_id]
 
                 gym.gym.simulate(gym.sim)
@@ -258,7 +268,7 @@ def run_id_test(gym: GymParams, joint_id: str = "left knee pitch", mode: str = "
                 gym.gym.step_graphics(gym.sim)
                 gym.gym.draw_viewer(gym.viewer, gym.sim, True)
                 gym.gym.sync_frame_time(gym.sim)
-
+            
             step += 1
         print("Position LOW", q.item() - default_pos)
 
@@ -309,11 +319,13 @@ def run_id_test(gym: GymParams, joint_id: str = "left knee pitch", mode: str = "
     else:
         raise ValueError("Invalid mode")
 
-
 def main() -> None:
     gym = load_gym()
-    mode = "calibration"
-    run_id_test(gym, joint_id="left knee pitch", mode=mode)
+    MODE = "calibration"
+    for joint in gym.dof_ids:
+        print("Calibrating joint:", joint)
+        run_id_test(gym, joint_id=joint, mode=MODE)
+
 
 
 if __name__ == "__main__":
