@@ -515,7 +515,7 @@
       <origin xyz="-0.024070518426869206 -0.057983520675797554 -0.004854984133664851" rpy="0 1.5707963 0"/>
     </inertial>
   </link>
-  <joint name="right wrist roll" type="revolute">
+  <joint name="right hand roll" type="revolute">
     <origin xyz="3.529497187571007e-08 -0.07449999902199926 -0.012501018201999262" rpy="-1.5707963071795865 1.5707963 0.0"/>
     <parent link="RS_01_Rotor_8"/>
     <child link="RS_01_Rotor_10"/>

@@ -25,7 +25,7 @@
     <origin xyz="0.024425008982714366 -0.02995532458015677 0.00036285432413509086" rpy="-1.570796247544539 -0.6283185697272987 -1.7009570996876473" />
     <parent link="Torso_Top_Left" />
     <child link="RS_04_Rotor" />
-    <limit effort="120" velocity="40" lower="2.54" upper="2.56" />
+    <limit effort="120" velocity="40" lower="2.04" upper="3.06" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_04_Rotor">
@@ -54,7 +54,7 @@
     <origin xyz="0.1909522526089682 -0.02995532590025842 0.0002628555146248879" rpy="1.5707963075247102 0.6283185801607192 -1.4406356454008646" />
     <parent link="Torso_Top_Left" />
     <child link="RS_04_Rotor_2" />
-    <limit effort="120" velocity="40" lower="3.119" upper="3.121" />
+    <limit effort="120" velocity="40" lower="2.619" upper="3.621" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_04_Rotor_2">
@@ -83,7 +83,7 @@
     <origin xyz="0.0836886262786379 -0.402760421846233 0.0003628562177818359" rpy="-2.679489613521826e-08 1.570796288901191 0.0" />
     <parent link="Torso_Top_Left" />
     <child link="RS_04_Rotor_3" />
-    <limit effort="120" velocity="40" lower="-1.14" upper="1.14" />
+    <limit effort="120" velocity="40" lower="-1.64" upper="1.64" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_04_Rotor_3">
@@ -112,7 +112,7 @@
     <origin xyz="0.1316886278749738 -0.40276042146787466 0.00036286062283471393" rpy="-3.1415926267948957 1.5707962725326015 0.0" />
     <parent link="Torso_Top_Left" />
     <child link="RS_04_Rotor_4" />
-    <limit effort="120" velocity="40" lower="0.55" upper="3.55" />
+    <limit effort="120" velocity="40" lower="0.05" upper="4.05" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_04_Rotor_4">
@@ -141,7 +141,7 @@
     <origin xyz="-0.012499999999999963 1.0450009692554367e-09 -0.17149999928993528" rpy="-7.179586503772435e-09 -1.5707963000000003 0.0" />
     <parent link="RS_04_Rotor" />
     <child link="RS_01_Rotor" />
-    <limit effort="17" velocity="40" lower="1.56" upper="1.58" />
+    <limit effort="17" velocity="40" lower="-1" upper="2" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor">
@@ -170,7 +170,7 @@
     <origin xyz="-3.7296467303438163e-10 -0.012700001588824082 -0.17150000072416888" rpy="1.570796373205103 1.570796288901191 0.0" />
     <parent link="RS_04_Rotor_2" />
     <child link="RS_01_Rotor_2" />
-    <limit effort="17" velocity="40" lower="1.981" upper="1.979" />
+    <limit effort="17" velocity="40" lower="-1.481" upper="1" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_2">
@@ -199,7 +199,7 @@
     <origin xyz="-0.018700002008366415 2.1435917263446046e-11 -0.1320000000214359" rpy="2.679489619440787e-08 -1.5707962889011904 0.0" />
     <parent link="RS_04_Rotor_3" />
     <child link="RS_04_Rotor_5" />
-    <limit effort="120" velocity="40" lower="3.14" upper="5.14" />
+    <limit effort="120" velocity="40" lower="2.64" upper="5.64" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_04_Rotor_5">
@@ -228,7 +228,7 @@
     <origin xyz="-0.07349999999999998 2.6794896579307448e-09 -0.012500000710064756" rpy="-3.1415926071795863 -1.5707963 0.0" />
     <parent link="RS_01_Rotor" />
     <child link="RS_01_Rotor_3" />
-    <limit effort="17" velocity="40" lower="3.13" upper="3.14" />
+    <limit effort="17" velocity="40" lower="2.63" upper="3.64" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_3">
@@ -257,7 +257,7 @@
     <origin xyz="0.018700000589129673 -5.393609593673521e-09 -0.13200000042436344" rpy="-3.1415926339744837 -1.5707962935875666 0.0" />
     <parent link="RS_04_Rotor_4" />
     <child link="RS_04_Rotor_6" />
-    <limit effort="120" velocity="40" lower="2.24" upper="4.24" />
+    <limit effort="120" velocity="40" lower="1.74" upper="4.74" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_04_Rotor_6">
@@ -286,7 +286,7 @@
     <origin xyz="3.5226699869606026e-07 -0.0736999974843999 -0.012500050861371164" rpy="-1.5707962803846895 1.5707962488400797 0.0" />
     <parent link="RS_01_Rotor_2" />
     <child link="RS_01_Rotor_4" />
-    <limit effort="17" velocity="40" lower="-1.381" upper="-1.979" />
+    <limit effort="17" velocity="40" lower="-1.881" upper="-1.479" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_4">
@@ -315,7 +315,7 @@
     <origin xyz="0.11430000143082522 -3.193900383752224e-09 -0.020000000238371677" rpy="-3.1415925071795865 1.5707963000000005 0.0" />
     <parent link="RS_04_Rotor_5" />
     <child link="RS_01_Rotor_5" />
-    <limit effort="17" velocity="40" lower="-3.5" upper="0.5" />
+    <limit effort="17" velocity="40" lower="-4.0" upper="1.0" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_5">
@@ -344,7 +344,7 @@
     <origin xyz="-8.949342570618857e-10 -0.012500000000000008 -0.15050000000000002" rpy="1.5707963928204127 1.5707963000000005 0.0" />
     <parent link="RS_01_Rotor_3" />
     <child link="RS_01_Rotor_6" />
-    <limit effort="17" velocity="40" lower="-1.56" upper="-1.58" />
+    <limit effort="17" velocity="40" lower="-2.06" upper="-1.08" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_6">
@@ -373,7 +373,7 @@
     <origin xyz="0.00036835123268656907 -0.11429999986219413 -0.019935050164893164" rpy="-1.5707962535897932 -1.5707962535897941 0.0" />
     <parent link="RS_04_Rotor_6" />
     <child link="RS_01_Rotor_7" />
-    <limit effort="17" velocity="40" lower="0" upper="3.24" />
+    <limit effort="17" velocity="40" lower="2.25" upper="4.49" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_7">
@@ -402,7 +402,7 @@
     <origin xyz="-8.893203283164008e-10 0.012699999522538107 -0.1504999997314119" rpy="-1.5707962803846904 -1.57079628890119 0.0" />
     <parent link="RS_01_Rotor_4" />
     <child link="RS_01_Rotor_8" />
-    <limit effort="17" velocity="40" lower="-3.319" upper="3.321" />
+    <limit effort="17" velocity="40" lower="-3.819" upper="3.821" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_8">
@@ -427,11 +427,11 @@
       <origin xyz="4.379038547428254e-05 -0.07031155327557514 -0.012946377213447343" rpy="3.1415927 0.76689767 -1.5707963" />
     </inertial>
   </link>
-  <joint name="left hand roll" type="fixed">
+  <joint name="left hand roll" type="revolute">
     <origin xyz="7.100647534674653e-10 0.07350000000000001 -0.012500000000000018" rpy="1.5707963999999996 -1.5707963 0.0" />
     <parent link="RS_01_Rotor_6" />
     <child link="RS_01_Rotor_9" />
-    <limit effort="80" velocity="5" lower="-3.1415927" upper="0" />
+    <limit effort="17" velocity="40" lower="-2.06" upper="-1.08" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_9">
@@ -460,7 +460,7 @@
     <origin xyz="0.018700001420129515 2.1435901664812462e-11 -0.12050000002143592" rpy="1.5707963928204132 2.220446049250313e-16 1.5707963000000005" />
     <parent link="RS_01_Rotor_5" />
     <child link="RS_04_Rotor_7" />
-    <limit effort="120" velocity="40" lower="-2" upper="0" />
+    <limit effort="120" velocity="40" lower="-2.5" upper="0.5" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_04_Rotor_7">
@@ -489,7 +489,7 @@
     <origin xyz="-5.225005081377354e-10 0.018699998579870557 -0.12050000248117687" rpy="1.5707963 -4.641020634466031e-08 -3.141592653589792" />
     <parent link="RS_01_Rotor_7" />
     <child link="RS_04_Rotor_8" />
-    <limit effort="120" velocity="40" lower="0" upper="2" />
+    <limit effort="120" velocity="40" lower="-0.5" upper="2.5" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_04_Rotor_8">
@@ -514,11 +514,11 @@
       <origin xyz="-0.024070518426869206 -0.057983520675797554 -0.004854984133664851" rpy="0 1.5707963 0" />
     </inertial>
   </link>
-  <joint name="right wrist roll" type="revolute">
+  <joint name="right hand roll" type="revolute">
     <origin xyz="3.529497187571007e-08 -0.07449999902199926 -0.012501018201999262" rpy="-1.5707963071795865 1.5707963 0.0" />
     <parent link="RS_01_Rotor_8" />
     <child link="RS_01_Rotor_10" />
-    <limit effort="17" velocity="40" lower="-0.001" upper="0.001" />
+    <limit effort="17" velocity="40" lower="-0.501" upper="0.501" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_10">
@@ -547,7 +547,7 @@
     <origin xyz="-0.019107094000452466 -1.6885888027392335e-05 -0.09775000004019237" rpy="-1.5707963 0.0 1.5707963" />
     <parent link="RS_01_Rotor_9" />
     <child link="RS_01_Rotor_11" />
-    <limit effort="17" velocity="40" lower="0" upper="1.57" />
+    <limit effort="17" velocity="40" lower="-0.5" upper="2.07" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_11">
@@ -576,7 +576,7 @@
     <origin xyz="0.0014746615 -0.18 0.0010000000000000009" rpy="0.0 0.0 1.5707963" />
     <parent link="RS_04_Rotor_7" />
     <child link="RS_01_Stator" />
-    <limit effort="17" velocity="40" lower="1.4" upper="2.2" />
+    <limit effort="17" velocity="40" lower="0.9" upper="2.7" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Stator">
@@ -605,7 +605,7 @@
     <origin xyz="-0.001474653146162871 -0.17999999865292787 0.0009999999999999731" rpy="9.282041313340983e-08 2.220446049250313e-16 -3.1415926071795863" />
     <parent link="RS_04_Rotor_8" />
     <child link="RS_01_Stator_2" />
-    <limit effort="17" velocity="40" lower="-1.0" upper="1" />
+    <limit effort="17" velocity="40" lower="-1.5" upper="0.7" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Stator_2">
@@ -634,7 +634,7 @@
     <origin xyz="0.019107094000452466 -1.6885888027392335e-05 -0.09775000004019237" rpy="-1.5707963 0.0 -1.5707963" />
     <parent link="RS_01_Rotor_10" />
     <child link="RS_01_Rotor_12" />
-    <limit effort="17" velocity="40" lower="0" upper="1.57" />
+    <limit effort="17" velocity="40" lower="-0.5" upper="2.07" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="RS_01_Rotor_12">
