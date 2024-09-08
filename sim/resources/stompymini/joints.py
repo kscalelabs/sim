@@ -53,7 +53,8 @@ class Node(ABC):
 
 
 class LeftHand(Node):
-    wrist_roll = "left wrist roll"
+    wrist_roll = "left hand roll"
+    gripper = "left hand gripper"
 
 
 class LeftArm(Node):
@@ -65,8 +66,8 @@ class LeftArm(Node):
 
 
 class RightHand(Node):
-    wrist_roll = "right wrist roll"
-
+    wrist_roll = "right hand roll"
+    gripper = "right hand gripper"
 
 class RightArm(Node):
     shoulder_yaw = "right shoulder yaw"
@@ -98,7 +99,7 @@ class Legs(Node):
 
 
 class Robot(Node):
-    height = 0.82
+    height = 0.92
     rotation = [0.5000, -0.4996, -0.5000, 0.5004]
     collision_links = [
         "lower_half_assembly_1_left_leg_1_foot_pad_1_simple",
@@ -113,28 +114,126 @@ class Robot(Node):
     def default_standing(cls) -> Dict[str, float]:
         return {
             # arms
-            Robot.left_arm.shoulder_pitch: -1.02,
-            Robot.left_arm.shoulder_yaw: 1.38,
-            Robot.left_arm.shoulder_roll: -3.24,
-            Robot.left_arm.elbow_pitch: 1.2,
-            Robot.left_arm.hand.wrist_roll: 0,
-            Robot.right_arm.shoulder_pitch: 3.12,
-            Robot.right_arm.shoulder_yaw: -1.98,
-            Robot.right_arm.shoulder_roll: -1.38,
-            Robot.right_arm.elbow_pitch: 1.32,
-            # hands
+            Robot.left_arm.shoulder_pitch: 2.25,
+            Robot.left_arm.shoulder_yaw: 1.57,
+            Robot.left_arm.shoulder_roll: 3.14,
+            Robot.left_arm.elbow_pitch: -1.61,
+            Robot.left_arm.hand.wrist_roll: -1.56,
+            Robot.left_arm.hand.gripper: -0.1,
+            Robot.right_arm.shoulder_pitch: 3.45,
+            Robot.right_arm.shoulder_yaw: -0.1,
+            Robot.right_arm.shoulder_roll: -1.61,
+            Robot.right_arm.elbow_pitch: -1.49,
             Robot.right_arm.hand.wrist_roll: 0,
+            Robot.right_arm.hand.gripper: 0.1,
             # legs
-            Robot.legs.left.hip_pitch: -0.28,
-            Robot.legs.left.hip_roll: 1.5,
-            Robot.legs.left.hip_yaw: 1.62,
-            Robot.legs.left.knee_pitch: 1,
-            Robot.legs.left.ankle_pitch: -2.2,
-            Robot.legs.right.hip_pitch: 3.55,
-            Robot.legs.right.hip_roll: 3.18,
-            Robot.legs.right.hip_yaw: 3.24,
-            Robot.legs.right.knee_pitch: -1,
-            Robot.legs.right.ankle_pitch: 0.42,
+            Robot.legs.left.hip_pitch: 0.33,
+            Robot.legs.left.hip_roll: -1.52,
+            Robot.legs.left.hip_yaw: 4.67,
+            Robot.legs.left.knee_pitch: -0.61,
+            Robot.legs.left.ankle_pitch: 1.88,
+            Robot.legs.right.hip_pitch: 2.91,
+            Robot.legs.right.hip_roll: 3.24,
+            Robot.legs.right.hip_yaw: 3.22,
+            Robot.legs.right.knee_pitch: 0.65,
+            Robot.legs.right.ankle_pitch: -0.54,
+        }
+
+    @classmethod
+    def default_limits2(cls) -> Dict[str, Dict[str, float]]:
+        return {
+            # left arm
+            Robot.left_arm.shoulder_pitch: {
+                "lower": 2.54,
+                "upper": 2.56,
+            },
+            Robot.left_arm.shoulder_yaw: {
+                "lower": 1.56,
+                "upper": 1.58,
+            },
+            Robot.left_arm.shoulder_roll: {
+                "lower": 3.13,
+                "upper": 3.14,
+            },
+            Robot.left_arm.elbow_pitch: {
+                "lower": -1.56,
+                "upper": -1.58,
+            },
+            Robot.left_arm.hand.wrist_roll: {
+                "lower": -1.56,
+                "upper": -1.58,
+            },
+            Robot.left_arm.hand.gripper: {
+                "lower": 0,
+                "upper": 1.57,
+            },  
+            # right arm
+            Robot.right_arm.shoulder_pitch: {
+                "lower": 3.119,
+                "upper": 3.121,
+            },
+            Robot.right_arm.shoulder_yaw: {
+                "lower": 1.981,
+                "upper": 1.979,
+            },
+            Robot.right_arm.shoulder_roll: {
+                "lower": -1.381,
+                "upper": -1.979,
+            },
+            Robot.right_arm.elbow_pitch: {
+                "lower": -3.319,
+                "upper": 3.321,
+            },
+            Robot.right_arm.hand.wrist_roll: {
+                "lower": -0.001,
+                "upper": 0.001,
+            },
+            Robot.right_arm.hand.gripper: {
+                "lower": 0,
+                "upper": 1.57,
+            },  
+            # left leg
+            Robot.legs.left.hip_pitch: {
+                "lower": -1.14,
+                "upper": 1.14,
+            },
+            Robot.legs.left.hip_roll: {
+                "lower": -3.5,
+                "upper": 0.5,
+            },
+            Robot.legs.left.hip_yaw: {
+                "lower": 3.14,
+                "upper": 5.14,
+            },
+            Robot.legs.left.knee_pitch: {
+                "lower": -2,
+                "upper": 0,
+            },
+            Robot.legs.left.ankle_pitch: {
+                "lower": 1.4,
+                "upper": 2.2,
+            },
+            # right leg
+            Robot.legs.right.hip_pitch: {
+                "lower": 0.55,
+                "upper": 3.55,
+            },
+            Robot.legs.right.hip_roll: {
+                "lower": 2.75,
+                "upper": 3.99,
+            },
+            Robot.legs.right.hip_yaw: {
+                "lower": 2.24,
+                "upper": 4.24,
+            },
+            Robot.legs.right.knee_pitch: {
+                "lower": 0,
+                "upper": 2,
+            },
+            Robot.legs.right.ankle_pitch: {
+                "lower": -1.0,
+                "upper": 0.2,
+            },
         }
 
     @classmethod
@@ -142,87 +241,95 @@ class Robot(Node):
         return {
             # left arm
             Robot.left_arm.shoulder_pitch: {
-                "lower": -1.021,
-                "upper": -1.019,
+                "lower": 2.04,
+                "upper": 3.06,
             },
             Robot.left_arm.shoulder_yaw: {
-                "lower": 1.379,
-                "upper": 1.381,
+                "lower": -1,
+                "upper": 2,
             },
             Robot.left_arm.shoulder_roll: {
-                "lower": -3.241,
-                "upper": -3.239,
+                "lower": 2.63,
+                "upper": 3.64,
             },
             Robot.left_arm.elbow_pitch: {
-                "lower": 1.199,
-                "upper": 1.201,
+                "lower": -2.06,
+                "upper": -1.08,
             },
             Robot.left_arm.hand.wrist_roll: {
-                "lower": -0.001,
-                "upper": 0.001,
+                "lower": -2.06,
+                "upper": -1.08,
+            },
+            Robot.left_arm.hand.gripper: {
+                "lower": -0.5,
+                "upper": 2.07,
             },
             # right arm
             Robot.right_arm.shoulder_pitch: {
-                "lower": 3.119,
-                "upper": 3.121,
+                "lower": 2.619,
+                "upper": 3.621,
             },
             Robot.right_arm.shoulder_yaw: {
-                "lower": -1.981,
-                "upper": -1.979,
+                "lower": -1.481,
+                "upper": 1,
             },
             Robot.right_arm.shoulder_roll: {
-                "lower": -1.381,
-                "upper": -1.379,
+                "lower": -1.881,
+                "upper": -1.479,
             },
             Robot.right_arm.elbow_pitch: {
-                "lower": 1.319,
-                "upper": 1.321,
+                "lower": -3.819,
+                "upper": 3.821,
             },
             Robot.right_arm.hand.wrist_roll: {
-                "lower": -0.001,
-                "upper": 0.001,
+                "lower": -0.501,
+                "upper": 0.501,
+            },
+            Robot.right_arm.hand.gripper: {
+                "lower": -0.5,
+                "upper": 2.07,
             },
             # left leg
             Robot.legs.left.hip_pitch: {
-                "lower": -1.28,
-                "upper": 0.72,
+                "lower": -1.64,
+                "upper": 1.64,
             },
             Robot.legs.left.hip_roll: {
-                "lower": 0.5,
-                "upper": 2.5,
+                "lower": -4.0,
+                "upper": 1.0,
             },
             Robot.legs.left.hip_yaw: {
-                "lower": 0.62,
-                "upper": 2.62,
+                "lower": 2.64,
+                "upper": 5.64,
             },
             Robot.legs.left.knee_pitch: {
-                "lower": 0,
-                "upper": 2,
+                "lower": -2.5,
+                "upper": 0.5,
             },
             Robot.legs.left.ankle_pitch: {
-                "lower": -2.8,
-                "upper": -0.8,
+                "lower": 0.9,
+                "upper": 2.7,
             },
             # right leg
             Robot.legs.right.hip_pitch: {
-                "lower": 2.55,
-                "upper": 4.55,
+                "lower": 0.05,
+                "upper": 4.05,
             },
             Robot.legs.right.hip_roll: {
-                "lower": 2.18,
-                "upper": 4.18,
+                "lower": 2.25,
+                "upper": 4.49,
             },
             Robot.legs.right.hip_yaw: {
-                "lower": 2.24,
-                "upper": 4.24,
+                "lower": 1.74,
+                "upper": 4.74,
             },
             Robot.legs.right.knee_pitch: {
-                "lower": -2,
-                "upper": 0,
+                "lower": -0.5,
+                "upper": 2.5,
             },
             Robot.legs.right.ankle_pitch: {
-                "lower": -0.58,
-                "upper": 1.42,
+                "lower": -1.5,
+                "upper": 0.7,
             },
         }
 
@@ -239,7 +346,8 @@ class Robot(Node):
             "shoulder yaw": 45,
             "shoulder roll": 45,
             "elbow pitch": 45,
-            "wrist roll": 45,
+            "hand roll": 45,
+            "gripper": 45,
         }
 
     # d_gains
@@ -255,7 +363,8 @@ class Robot(Node):
             "shoulder yaw": 10,
             "shoulder roll": 5,
             "elbow pitch": 5,
-            "wrist roll": 5,
+            "hand roll": 5,
+            "gripper": 5,
         }
 
     # pos_limits
@@ -271,7 +380,8 @@ class Robot(Node):
             "shoulder yaw": 17,
             "shoulder roll": 17,
             "elbow pitch": 17,
-            "wrist roll": 17,
+            "hand roll": 17,
+            "gripper": 17,
         }
 
     # vel_limits
@@ -287,7 +397,8 @@ class Robot(Node):
             "shoulder yaw": 40,
             "shoulder roll": 40,
             "elbow pitch": 40,
-            "wrist roll": 40,
+            "hand roll": 40,
+            "gripper": 40,
         }
 
     @classmethod
@@ -298,7 +409,8 @@ class Robot(Node):
             "hip roll": 0.0,
             "knee pitch": 0.0,
             "ankle pitch": 0.0,
-            "ankle roll": 0.1,
+            "hand roll": 0.0,
+            "gripper": 0.0,
         }
 
 
