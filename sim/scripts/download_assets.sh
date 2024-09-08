@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 # Stompymini
-gdown --id 19T7mY604P6hSctFymxuHbwqKQOzOtloH 
+gdown --id 1Ah92CTN63M2h4uKPLf8eXkX2H9Bg3Kji 
 tar -xzvf meshes.zip -C sim/resources/stompymini/
 rm meshes.zip
 
