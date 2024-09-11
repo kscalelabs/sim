@@ -69,6 +69,7 @@ class RightHand(Node):
     wrist_roll = "right hand roll"
     gripper = "right hand gripper"
 
+
 class RightArm(Node):
     shoulder_yaw = "right shoulder yaw"
     shoulder_pitch = "right shoulder pitch"
@@ -166,7 +167,7 @@ class Robot(Node):
             Robot.left_arm.hand.gripper: {
                 "lower": 0,
                 "upper": 1.57,
-            },  
+            },
             # right arm
             Robot.right_arm.shoulder_pitch: {
                 "lower": 3.119,
@@ -191,7 +192,7 @@ class Robot(Node):
             Robot.right_arm.hand.gripper: {
                 "lower": 0,
                 "upper": 1.57,
-            },  
+            },
             # left leg
             Robot.legs.left.hip_pitch: {
                 "lower": -1.14,

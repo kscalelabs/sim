@@ -28,24 +28,26 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
+# type: ignore
 
 import os
 import statistics
 import time
 from collections import deque
 from datetime import datetime
+from typing import Callable, Optional
 
 import torch
-import wandb
 from torch.utils.tensorboard import SummaryWriter
 
+import wandb
 from sim.algo.ppo.actor_critic import ActorCritic
 from sim.algo.ppo.ppo import PPO
 from sim.algo.vec_env import VecEnv
 
 
 class OnPolicyRunner:
-    def __init__(self, env: VecEnv, train_cfg, log_dir=None, device="cpu"):
+    def __init__(self, env: VecEnv, train_cfg: dict, log_dir: Optional[str] = None, device: str = "cpu"):
         self.cfg = train_cfg["runner"]
         self.alg_cfg = train_cfg["algorithm"]
         self.policy_cfg = train_cfg["policy"]
@@ -83,14 +85,14 @@ class OnPolicyRunner:
 
         # Log
         self.log_dir = log_dir
-        self.writer = None
+        self.writer: Optional[SummaryWriter] = None
         self.tot_timesteps = 0
         self.tot_time = 0
         self.current_learning_iteration = 0
 
         _, _ = self.env.reset()
 
-    def learn(self, num_learning_iterations, init_at_random_ep_len=False):
+    def learn(self, num_learning_iterations: int, init_at_random_ep_len: bool = False) -> None:
         # initialize writer
         if self.log_dir is not None and self.writer is None:
             wandb.init(
@@ -164,7 +166,7 @@ class OnPolicyRunner:
         self.current_learning_iteration += num_learning_iterations
         self.save(os.path.join(self.log_dir, "model_{}.pt".format(self.current_learning_iteration)))
 
-    def log(self, locs, width=80, pad=35):
+    def log(self, locs: dict, width: int = 80, pad: int = 35) -> None:
         self.tot_timesteps += self.num_steps_per_env * self.env.num_envs
         self.tot_time += locs["collection_time"] + locs["learn_time"]
         iteration_time = locs["collection_time"] + locs["learn_time"]
@@ -251,7 +253,7 @@ class OnPolicyRunner:
         )
         print(log_string)
 
-    def save(self, path, infos=None):
+    def save(self, path: str, infos: Optional[dict] = None) -> None:
         torch.save(
             {
                 "model_state_dict": self.alg.actor_critic.state_dict(),
@@ -262,7 +264,7 @@ class OnPolicyRunner:
             path,
         )
 
-    def load(self, path, load_optimizer=True):
+    def load(self, path: str, load_optimizer: bool = True) -> dict:
         loaded_dict = torch.load(path)
         self.alg.actor_critic.load_state_dict(loaded_dict["model_state_dict"])
         if load_optimizer:
@@ -270,13 +272,13 @@ class OnPolicyRunner:
         self.current_learning_iteration = loaded_dict["iter"]
         return loaded_dict["infos"]
 
-    def get_inference_policy(self, device=None):
+    def get_inference_policy(self, device: Optional[str] = None) -> Callable:
         self.alg.actor_critic.eval()  # switch to evaluation mode (dropout for example)
         if device is not None:
             self.alg.actor_critic.to(device)
         return self.alg.actor_critic.act_inference
 
-    def get_inference_critic(self, device=None):
+    def get_inference_critic(self, device: Optional[str] = None) -> Callable:
         self.alg.actor_critic.eval()  # switch to evaluation mode (dropout for example)
         if device is not None:
             self.alg.actor_critic.to(device)

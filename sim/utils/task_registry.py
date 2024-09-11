@@ -29,6 +29,7 @@
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 # mypy: disable-error-code="no-untyped-def"
+# type: ignore
 
 import os
 from datetime import datetime
