@@ -5,12 +5,12 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.stompy.joints import Robot
+from sim.resources.stompypro.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())  # 12
 
 
-class StompyCfg(LeggedRobotCfg):
+class StompyProCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
@@ -30,15 +30,15 @@ class StompyCfg(LeggedRobotCfg):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 0.85
+        torque_limit = 100 #0.85
 
     class asset(LeggedRobotCfg.asset):
         file = str(robot_urdf_path())
 
-        name = "stompy"
+        name = "stompypro"
 
-        foot_name = "foot"
-        knee_name = "calf"
+        foot_name = ["L_foot", "R_foot"]
+        knee_name = ["L_calf", "R_calf"]
 
         termination_height = 0.2
         default_feet_height = 0.0
@@ -139,16 +139,17 @@ class StompyCfg(LeggedRobotCfg):
             lin_vel_y = [-0.3, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
             heading = [-0.14, 0.14]
-
+# a - normal
+# b - negate target_join_pos_scale (-0.14)
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.63
+        base_height_target = 0.78
         min_dist = 0.2
-        max_dist = 0.4
+        max_dist = 0.4 #0.4
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.14  # rad
-        target_feet_height = 0.05  # m
-        cycle_time = 0.5  # sec
+        target_joint_pos_scale = -0.14 #0.14 #0.6 #0.14  # rad
+        target_feet_height = 0.08 #0.05  # m
+        cycle_time = 0.7  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -157,17 +158,17 @@ class StompyCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            # joint_pos = 1.6
+            # joint_pos = 1.6#1.6
             # feet_clearance = 1.0
-            # feet_contact_number = 1.2
-            # # gait
-            # feet_air_time = 1.0
+            # feet_contact_number = 1.2#1.2
+            # # # gait
+            # feet_air_time = 1.0 # 1.0
             # foot_slip = -0.05
             # feet_distance = 0.2
             # knee_distance = 0.2
-            # # contact
+            # # # contact
             # feet_contact_forces = -0.01
-            # # vel tracking
+            # # # vel tracking
             # tracking_lin_vel = 1.2
             # tracking_ang_vel = 1.1
             # vel_mismatch_exp = 0.5  # lin_z; ang x,y
@@ -205,7 +206,7 @@ class StompyCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class StompyCfgPPO(LeggedRobotCfgPPO):
+class StompyProCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -216,7 +217,7 @@ class StompyCfgPPO(LeggedRobotCfgPPO):
 
     class algorithm(LeggedRobotCfgPPO.algorithm):
         entropy_coef = 0.001
-        learning_rate = 1e-5
+        learning_rate = 2e-5#1e-5
         num_learning_epochs = 2
         gamma = 0.994
         lam = 0.9
@@ -230,7 +231,7 @@ class StompyCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "Stompy"
+        experiment_name = "StompyPro"
         run_name = ""
         # load and resume
         resume = False
