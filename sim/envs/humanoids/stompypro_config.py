@@ -30,7 +30,7 @@ class StompyProCfg(LeggedRobotCfg):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 100  # 0.85
+        torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
         file = str(robot_urdf_path())
@@ -148,7 +148,7 @@ class StompyProCfg(LeggedRobotCfg):
         min_dist = 0.2
         max_dist = 0.4  # 0.4
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = -0.14  # 0.14 #0.6 #0.14  # rad
+        target_joint_pos_scale = 0.14  # rad
         target_feet_height = 0.08  # 0.05  # m
         cycle_time = 0.7  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
@@ -218,7 +218,7 @@ class StompyProCfgPPO(LeggedRobotCfgPPO):
 
     class algorithm(LeggedRobotCfgPPO.algorithm):
         entropy_coef = 0.001
-        learning_rate = 2e-5  # 1e-5
+        learning_rate = 1e-5
         num_learning_epochs = 2
         gamma = 0.994
         lam = 0.9
