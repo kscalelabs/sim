@@ -34,9 +34,9 @@ class G1Cfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = str(robot_urdf_path())
-
         name = "g1"
+
+        file = str(robot_urdf_path(robot_name=name))
 
         foot_name = "ankle_roll"
         knee_name = "knee_link"

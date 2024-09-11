@@ -34,9 +34,9 @@ class DoraCfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = str(robot_urdf_path())
-
         name = "dora"
+
+        file = str(robot_urdf_path(robot_name=name))
 
         foot_name = "leg_ankle_roll_Link"
         knee_name = "leg_knee_Link"

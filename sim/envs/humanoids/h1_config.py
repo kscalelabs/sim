@@ -5,7 +5,7 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.h1_2.joints import Robot
+from sim.resources.h1.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())  # 33
 
@@ -36,9 +36,9 @@ class H1Cfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = str(robot_urdf_path())
-
         name = "h1"
+
+        file = str(robot_urdf_path(robot_name=name))
 
         foot_name = "ankle_roll"
         knee_name = "knee_link"

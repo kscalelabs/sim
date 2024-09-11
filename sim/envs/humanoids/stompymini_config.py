@@ -33,9 +33,9 @@ class MiniCfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = str(robot_urdf_path())
+        name = "stompymini"
 
-        name = "stompy"
+        file = str(robot_urdf_path(robot_name=name))
 
         foot_name = ["RS_01_Stator", "RS_01_Stator_2"]
         knee_name = ["RS_04_Rotor_7", "RS_04_Rotor_8"]
