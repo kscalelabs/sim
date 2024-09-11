@@ -1,9 +1,12 @@
 """Trains a humanoid to stand up."""
 
+# ruff: noqa
+# mypy: ignore-errors
+
 import argparse
 
-from sim.envs import task_registry
-from sim.utils.helpers import get_args
+from sim.envs import task_registry  # noqa: E402
+from sim.utils.helpers import get_args  # noqa: E402
 
 
 def train(args: argparse.Namespace) -> None:

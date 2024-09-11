@@ -161,22 +161,22 @@ class MiniCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            # joint_pos = 1.6
-            # feet_clearance = 1.6
-            # feet_contact_number = 1.2
-            # # gait
-            # feet_air_time = 1.6
-            # foot_slip = -0.05
-            # feet_distance = 0.2
-            # knee_distance = 0.2
-            # # contact
-            # feet_contact_forces = -0.01
-            # # vel tracking
-            # tracking_lin_vel = 1.2
-            # tracking_ang_vel = 1.1
-            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
-            # track_vel_hard = 0.5
+            joint_pos = 1.6
+            feet_clearance = 1.6
+            feet_contact_number = 1.2
+            # gait
+            feet_air_time = 1.6
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
+            # contact
+            feet_contact_forces = -0.01
+            # vel tracking
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 0.5
@@ -233,7 +233,7 @@ class MiniCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "Full"
+        experiment_name = "StompyMini"
         run_name = ""
         # load and resume
         resume = False

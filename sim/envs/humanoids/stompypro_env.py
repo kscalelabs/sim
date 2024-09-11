@@ -4,7 +4,7 @@
 from isaacgym.torch_utils import *  # isort:skip
 
 from sim.envs.base.legged_robot import LeggedRobot
-from sim.resources.stompy.joints import Robot
+from sim.resources.stompypro.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
@@ -12,8 +12,8 @@ from isaacgym import gymtorch  # isort:skip
 import torch  # isort:skip
 
 
-class StompyFreeEnv(LeggedRobot):
-    """StompyFreeEnv is a class that represents a custom environment for a legged robot.
+class StompyProFreeEnv(LeggedRobot):
+    """StompyProFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg (LeggedRobotCfg): Configuration object for the legged robot.

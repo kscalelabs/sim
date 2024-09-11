@@ -5,6 +5,8 @@ Run:
     python sim/play.py --task stompymini --log_h5
 """
 
+# mypy: ignore-errors
+
 import argparse
 import copy
 import logging
@@ -20,10 +22,10 @@ from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
-from sim.env import run_dir
-from sim.envs import task_registry
+from sim.env import run_dir  # noqa: E402
+from sim.envs import task_registry  # noqa: E402
 from sim.utils.helpers import get_args  # noqa: E402
-from sim.utils.logger import Logger
+from sim.utils.logger import Logger  # noqa: E402
 
 import torch  # isort: skip
 
