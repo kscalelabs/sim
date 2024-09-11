@@ -30,12 +30,12 @@ class StompyProCfg(LeggedRobotCfg):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 5#0.85
+        torque_limit = 0.85#0.85
 
     class asset(LeggedRobotCfg.asset):
         name = "stompypro"
-        
-        file = str(robot_urdf_path(robot_name=name))
+
+        file = str(robot_urdf_path())
 
         foot_name = ["L_foot", "R_foot"]
         knee_name = ["L_calf", "R_calf"]
@@ -148,7 +148,7 @@ class StompyProCfg(LeggedRobotCfg):
         min_dist = 0.2
         max_dist = 0.4  # 0.4
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.14  # rad
+        target_joint_pos_scale = 0.3 # 0.14  # rad
         target_feet_height = 0.08  # 0.05  # m
         cycle_time = 0.7  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
@@ -159,7 +159,7 @@ class StompyProCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 2.6#1.6
+            joint_pos = 10.6#1.6
             feet_clearance = 1.0
             feet_contact_number = 1.2#1.2
             # # gait
@@ -179,7 +179,7 @@ class StompyProCfg(LeggedRobotCfg):
             # above this was removed
             # base pos
             default_joint_pos = 0.1# 1.0
-            orientation = 1
+            orientation = 5 # 1
             base_height = 0.2
             base_acc = 0.2
             # energy
