@@ -7,9 +7,9 @@ import cv2
 import torch
 from sim.envs import task_registry
 from sim.utils.helpers import get_args
-from sim.tdmpc.src import logger
-from sim.tdmpc.src.algorithm.helper import Episode, ReplayBuffer
-from sim.tdmpc.src.algorithm.tdmpc import TDMPC
+from sim.algo.tdmpc.src import logger
+from sim.algo.tdmpc.src.algorithm.helper import Episode, ReplayBuffer
+from sim.algo.tdmpc.src.algorithm.tdmpc import TDMPC
 from dataclasses import dataclass, field
 from isaacgym import gymapi
 from typing import List
@@ -145,7 +145,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg, _ = task_registry.get_cfgs(name=args.task)
     env, _ = task_registry.make_env(name=args.task, args=args)	
 
-    fp = "/home/guest/sim/logs/2024-09-11_08-08-01_walk_state_dora/models/tdmpc_policy_2350.pt"
+    fp = "/home/guest/sim/logs/2024-09-12_17-42-05_walk_state_dora/models/tdmpc_policy_10.pt"
     config = torch.load(fp)["config"]
     tdmpc_cfg = TDMPC_DoraConfigs(**config)
     env.set_camera(env_cfg.viewer.pos, env_cfg.viewer.lookat)
