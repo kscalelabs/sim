@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from copy import deepcopy
 from dataclasses import asdict
-import sim.tdmpc.src.algorithm.helper as h
+import sim.algo.tdmpc.src.algorithm.helper as h
 
 
 class TOLD(nn.Module):

@@ -5,9 +5,9 @@ import isaacgym
 import torch
 from sim.envs import task_registry
 from sim.utils.helpers import get_args
-from sim.tdmpc.src import logger
-from sim.tdmpc.src.algorithm.helper import Episode, ReplayBuffer
-from sim.tdmpc.src.algorithm.tdmpc import TDMPC
+from sim.algo.tdmpc.src import logger
+from sim.algo.tdmpc.src.algorithm.helper import Episode, ReplayBuffer
+from sim.algo.tdmpc.src.algorithm.tdmpc import TDMPC
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from isaacgym import gymapi
@@ -202,11 +202,11 @@ def train(args: argparse.Namespace) -> None:
 		# Evaluate agent periodically
 		if tdmpc_cfg.save_model and episode_idx % tdmpc_cfg.eval_freq_episode == 0:
 			L.save(agent, f"tdmpc_policy_{int(step // tdmpc_cfg.episode_length) + 1}.pt")
+			buffer.save(str(work_dir / "buffer.pt"))
 	# 		# common_metrics['episode_reward'] = evaluate(env, agent, h1 if L.video is not None else None, tdmpc_cfg.eval_episodes, step, env_step, L.video, tdmpc_cfg.action_repeat)
 	# 		# L.log(common_metrics, category='eval')
-
 	
-	# print('Training completed successfully')
+	print('Training completed successfully')
 
 if __name__ == "__main__":
     # python -m sim.humanoid_gym.train

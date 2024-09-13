@@ -685,6 +685,18 @@ class ReplayBuffer:
             _idxs[mask] -= 1
             obs[:, -(i + 1) * 3 : -i * 3] = arr[_idxs].cuda(self.device)
         return obs.float()
+    
+    def save(self, buffer_fp):
+        data = {
+            "obs": self._obs,
+            "next_obs": self._next_obs,
+            "action": self._action,
+            "reward": self._reward,
+            "mask": self._mask,
+            "done": self._done,
+            "priorities": self._priorities,
+        }
+        torch.save(data, buffer_fp)
 
     def sample(self, bs=None):
         probs = (
