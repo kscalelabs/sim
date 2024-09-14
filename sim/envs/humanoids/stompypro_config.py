@@ -33,10 +33,9 @@ class StompyProCfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        file = str(robot_urdf_path())
-
         name = "stompypro"
-
+        file = str(robot_urdf_path(name))
+        
         foot_name = ["L_foot", "R_foot"]
         knee_name = ["L_calf", "R_calf"]
 
