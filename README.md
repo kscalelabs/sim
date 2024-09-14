@@ -67,7 +67,6 @@ export MODEL_DIR=sim/resources/stompymini
 ```
 2. Fix dependency issues:
 ```bash
-pip install matplotlib==3.3.4 numpy==1.19.5 wandb tensorboard
 conda install nvidia/label/cuda-12.0.0::cuda-nvrtc
 ```
 3. Run training with the following command:
