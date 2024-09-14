@@ -36,7 +36,6 @@ class XBotCfg(LeggedRobotCfg):
         name = "xbot"
         file = str(robot_urdf_path(name))
 
-
         foot_name = "ankle_roll"
         knee_name = "knee"
 
