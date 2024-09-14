@@ -25,11 +25,9 @@ logger = logging.getLogger(__name__)
 DAMPING_DEFAULT = 0.01
 
 
-def load_embodiment() -> Any:
+def load_embodiment(embodiment: str) -> Any:
     # Dynamically import embodiment based on MODEL_DIR
-    model_dir = os.environ.get("MODEL_DIR", "sim/resources/stompymini")
-    model_dir = model_dir.split("/")[-1]
-    module_name = f"sim.resources.{model_dir}.joints"
+    module_name = f"sim.resources.{embodiment}.joints"
     module = importlib.import_module(module_name)
     robot = getattr(module, "Robot")
     return robot
@@ -59,7 +57,7 @@ def _pretty_print_xml(xml_string: str) -> str:
 
 
 # Load the robot and config
-robot = load_embodiment()
+# robot = load_embodiment()
 
 
 class Sim2SimRobot(mjcf.Robot):

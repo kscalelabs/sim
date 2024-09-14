@@ -107,7 +107,7 @@ def run_mujoco(policy, cfg):
         None
     """
     model_dir = os.environ.get("MODEL_DIR")
-    mujoco_model_path = f"{model_dir}/robot_fixed.xml"
+    mujoco_model_path = f"{model_dir}/{args.embodiment}/robot_fixed.xml"
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = cfg.sim_config.dt
     data = mujoco.MjData(model)
@@ -190,11 +190,12 @@ def run_mujoco(policy, cfg):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--load_model", type=str, required=True, help="Run to load from.")
+    parser.add_argument("--embodiment", type=str, required=True, help="embodiment")
     parser.add_argument("--terrain", action="store_true", help="terrain or plane")
     parser.add_argument("--load_actions", action="store_true", help="saved_actions")
     args = parser.parse_args()
 
-    robot = load_embodiment()
+    robot = load_embodiment(args.embodiment)
 
     class Sim2simCfg:
         num_actions = len(robot.all_joints())
