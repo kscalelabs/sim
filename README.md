@@ -65,11 +65,7 @@ make install-third-party-external
 ```bash
 export MODEL_DIR=sim/resources/stompymini
 ```
-2. Fix dependency issues:
-```bash
-conda install nvidia/label/cuda-12.0.0::cuda-nvrtc
-```
-3. Run training with the following command:
+2. Run training with the following command:
 ```bash
 python sim/train.py --task=stompymini --num_envs=4096 --headless
 ```
