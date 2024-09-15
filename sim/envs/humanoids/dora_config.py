@@ -37,8 +37,6 @@ class DoraCfg(LeggedRobotCfg):
         name = "dora"
         file = str(robot_urdf_path(name))
 
-        file = str(robot_urdf_path(robot_name=name))
-
         foot_name = "leg_ankle_roll_Link"
         knee_name = "leg_knee_Link"
 

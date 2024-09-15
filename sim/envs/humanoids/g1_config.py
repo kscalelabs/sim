@@ -37,8 +37,6 @@ class G1Cfg(LeggedRobotCfg):
         name = "g1"
         file = str(robot_urdf_path(name))
 
-        file = str(robot_urdf_path(robot_name=name))
-
         foot_name = "ankle_roll"
         knee_name = "knee_link"
 
