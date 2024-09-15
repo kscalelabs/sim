@@ -61,7 +61,8 @@ make install-third-party-external
 ```
 
 ### Running experiments
-1. To run stompymini:
+1. (Optional, make sure that the robot name in your config file is the same as the folder name in resource) \
+   To run stompymini:
 ```bash
 export MODEL_DIR=sim/resources/stompymini
 ```

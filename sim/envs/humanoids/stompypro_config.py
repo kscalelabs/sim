@@ -35,7 +35,7 @@ class StompyProCfg(LeggedRobotCfg):
     class asset(LeggedRobotCfg.asset):
         name = "stompypro"
         file = str(robot_urdf_path(name))
-        
+
         foot_name = ["L_foot", "R_foot"]
         knee_name = ["L_calf", "R_calf"]
 
