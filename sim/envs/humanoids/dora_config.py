@@ -35,6 +35,7 @@ class DoraCfg(LeggedRobotCfg):
 
     class asset(LeggedRobotCfg.asset):
         name = "dora"
+        file = str(robot_urdf_path(name))
 
         file = str(robot_urdf_path(robot_name=name))
 

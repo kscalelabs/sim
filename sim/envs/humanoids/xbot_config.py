@@ -34,6 +34,8 @@ class XBotCfg(LeggedRobotCfg):
 
     class asset(LeggedRobotCfg.asset):
         name = "xbot"
+        file = str(robot_urdf_path(name))
+
 
         file = str(robot_urdf_path(robot_name=name))
 
