@@ -1,0 +1,598 @@
+<mujoco model="full_assembly">
+  <compiler angle="radian" autolimits="true"/>
+  <statistic meansize="0.165807" extent="1.26316" center="0.0196444 -0.305483 -0.00354017"/>
+  <asset>
+    <mesh name="upper_half_assembly_1_torso_top_left_1_simple" file="upper_half_assembly_1_torso_top_left_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_torso_top_half_2_simple" file="upper_half_assembly_1_torso_top_half_2_simple.stl"/>
+    <mesh name="upper_half_assembly_1_front_plate_top_section_1_simple" file="upper_half_assembly_1_front_plate_top_section_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_15_simple" file="upper_half_assembly_1_washer_m4_15_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_10_simple" file="upper_half_assembly_1_washer_m4_10_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_13_simple" file="upper_half_assembly_1_washer_m4_13_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_14_simple" file="upper_half_assembly_1_washer_m4_14_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_16_simple" file="upper_half_assembly_1_washer_m4_16_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_12_simple" file="upper_half_assembly_1_washer_m4_12_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_17_simple" file="upper_half_assembly_1_washer_m4_17_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_18_simple" file="upper_half_assembly_1_washer_m4_18_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_20_simple" file="upper_half_assembly_1_washer_m4_20_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_19_simple" file="upper_half_assembly_1_washer_m4_19_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_24_simple" file="upper_half_assembly_1_washer_m4_24_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_23_simple" file="upper_half_assembly_1_washer_m4_23_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_21_simple" file="upper_half_assembly_1_washer_m4_21_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_22_simple" file="upper_half_assembly_1_washer_m4_22_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_25_simple" file="upper_half_assembly_1_washer_m4_25_simple.stl"/>
+    <mesh name="upper_half_assembly_1_head_assembly_1_neck_1_simple" file="upper_half_assembly_1_head_assembly_1_neck_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_34_simple" file="upper_half_assembly_1_washer_m4_34_simple.stl"/>
+    <mesh name="upper_half_assembly_1_main_case_section_1_simple" file="upper_half_assembly_1_main_case_section_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_6_simple" file="upper_half_assembly_1_washer_m4_6_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_7_simple" file="upper_half_assembly_1_washer_m4_7_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_5_simple" file="upper_half_assembly_1_washer_m4_5_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_8_simple" file="upper_half_assembly_1_washer_m4_8_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_9_simple" file="upper_half_assembly_1_washer_m4_9_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_4_simple" file="upper_half_assembly_1_washer_m4_4_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_11_simple" file="upper_half_assembly_1_washer_m4_11_simple.stl"/>
+    <mesh name="upper_half_assembly_1_back_plate_upper_section_2_simple" file="upper_half_assembly_1_back_plate_upper_section_2_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_32_simple" file="upper_half_assembly_1_washer_m4_32_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_33_simple" file="upper_half_assembly_1_washer_m4_33_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_27_simple" file="upper_half_assembly_1_washer_m4_27_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_31_simple" file="upper_half_assembly_1_washer_m4_31_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_26_simple" file="upper_half_assembly_1_washer_m4_26_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_30_simple" file="upper_half_assembly_1_washer_m4_30_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_29_simple" file="upper_half_assembly_1_washer_m4_29_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_28_simple" file="upper_half_assembly_1_washer_m4_28_simple.stl"/>
+    <mesh name="upper_half_assembly_1_washer_m4_3_simple" file="upper_half_assembly_1_washer_m4_3_simple.stl"/>
+    <mesh name="upper_half_assembly_1_36v_battery_1_simple" file="upper_half_assembly_1_36v_battery_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_front_plate_bottom_section_1_simple" file="upper_half_assembly_1_front_plate_bottom_section_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_robstride_04_mock_2_rs_04_stator_1_simple" file="upper_half_assembly_1_robstride_04_mock_2_rs_04_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_head_assembly_1_head_inner_1_simple" file="upper_half_assembly_1_head_assembly_1_head_inner_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_removable_cap_1_simple" file="upper_half_assembly_1_removable_cap_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_robstride_04_mock_1_rs_04_stator_1_simple" file="upper_half_assembly_1_robstride_04_mock_1_rs_04_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_torso_bottom_half_1_simple" file="upper_half_assembly_1_torso_bottom_half_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_robstride_04_mock_2_rs_04_rotor_1_simple" file="upper_half_assembly_1_robstride_04_mock_2_rs_04_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_head_assembly_1_head_outter_1_simple" file="upper_half_assembly_1_head_assembly_1_head_outter_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_head_assembly_1_camera_mount_1_simple" file="upper_half_assembly_1_head_assembly_1_camera_mount_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_robstride_04_mock_1_rs_04_rotor_1_simple" file="upper_half_assembly_1_robstride_04_mock_1_rs_04_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_part_1_2_simple" file="upper_half_assembly_1_part_1_2_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_3_simple" file="upper_half_assembly_1_standoff_3_simple.stl"/>
+    <mesh name="upper_half_assembly_1_torso_bottom_half_2_simple" file="upper_half_assembly_1_torso_bottom_half_2_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_shoulder_1_simple" file="upper_half_assembly_1_left_arm_1_shoulder_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_head_assembly_1_camera_2_board_1_simple" file="upper_half_assembly_1_head_assembly_1_camera_2_board_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_head_assembly_1_camera_1_board_1_simple" file="upper_half_assembly_1_head_assembly_1_camera_1_board_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_shoulder_1_simple" file="upper_half_assembly_1_right_arm_1_shoulder_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_open_cascade_step_translator_7.5_1.1.1_1_simple" file="upper_half_assembly_1_open_cascade_step_translator_7.5_1.1.1_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_hip_left_2_simple" file="lower_half_assembly_1_hip_assembly_1_hip_left_2_simple.stl"/>
+    <mesh name="upper_half_assembly_1_robot_side_connector_1_simple" file="upper_half_assembly_1_robot_side_connector_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_11_simple" file="upper_half_assembly_1_standoff_11_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_9_simple" file="upper_half_assembly_1_standoff_9_simple.stl"/>
+    <mesh name="upper_half_assembly_1_breadboard_1_simple" file="upper_half_assembly_1_breadboard_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_back_plate_lower_section_1_simple" file="upper_half_assembly_1_back_plate_lower_section_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_1_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_2_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_2_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_6_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_6_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_5_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_5_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_4_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_4_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_3_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_3_simple.stl"/>
+    <mesh name="upper_half_assembly_1_head_assembly_1_camera_2_lens_1_simple" file="upper_half_assembly_1_head_assembly_1_camera_2_lens_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_head_assembly_1_camera_1_lens_1_simple" file="upper_half_assembly_1_head_assembly_1_camera_1_lens_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_5_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_5_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_6_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_6_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_3_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_3_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_2_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_2_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_1_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_4_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_4_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_1_simple" file="upper_half_assembly_1_standoff_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_4_simple" file="upper_half_assembly_1_standoff_4_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_2_simple" file="upper_half_assembly_1_standoff_2_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_hip_left_1_simple" file="lower_half_assembly_1_hip_assembly_1_hip_left_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_1_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_6_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_6_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_3_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_3_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_2_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_2_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_5_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_5_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_4_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_4_simple.stl"/>
+    <mesh name="upper_half_assembly_1_ethercat_with_board_1_simple" file="upper_half_assembly_1_ethercat_with_board_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_orin_nano_1_simple" file="upper_half_assembly_1_orin_nano_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_stator_1_simple" file="upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_stator_1_simple" file="upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_12_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_12_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_10_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_10_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_7_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_7_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_8_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_8_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_11_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_11_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_washer_m4_9_simple" file="lower_half_assembly_1_hip_assembly_1_washer_m4_9_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_stator_1_simple" file="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_12_simple" file="upper_half_assembly_1_standoff_12_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_7_simple" file="upper_half_assembly_1_standoff_7_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_5_simple" file="upper_half_assembly_1_standoff_5_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_10_simple" file="upper_half_assembly_1_standoff_10_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_6_simple" file="upper_half_assembly_1_standoff_6_simple.stl"/>
+    <mesh name="upper_half_assembly_1_standoff_8_simple" file="upper_half_assembly_1_standoff_8_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple" file="upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple" file="upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_stator_1_simple" file="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_rotor_1_simple" file="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_left_arm_part_1a_1_simple" file="upper_half_assembly_1_left_arm_1_left_arm_part_1a_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_right_arm_part_1a_1_simple" file="upper_half_assembly_1_right_arm_1_right_arm_part_1a_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_rotor_1_simple" file="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_hip_pitch_right_1_simple" file="lower_half_assembly_1_right_leg_1_hip_pitch_right_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_9_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_9_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_12_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_12_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_11_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_11_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_10_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_10_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_10_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_10_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_9_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_9_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_8_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_8_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_7_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_7_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_hip_pitch_left_1_simple" file="lower_half_assembly_1_left_leg_1_hip_pitch_left_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m4_1_simple" file="lower_half_assembly_1_right_leg_1_washer_m4_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m4_4_simple" file="lower_half_assembly_1_right_leg_1_washer_m4_4_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m4_5_simple" file="lower_half_assembly_1_right_leg_1_washer_m4_5_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m4_2_simple" file="lower_half_assembly_1_right_leg_1_washer_m4_2_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m4_6_simple" file="lower_half_assembly_1_right_leg_1_washer_m4_6_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m4_3_simple" file="lower_half_assembly_1_right_leg_1_washer_m4_3_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_hip_pitch_support_1_simple" file="lower_half_assembly_1_right_leg_1_hip_pitch_support_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_stator_1_simple" file="upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_stator_1_simple" file="upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_hip_pitch_support_1_simple" file="lower_half_assembly_1_left_leg_1_hip_pitch_support_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m5_5_simple" file="lower_half_assembly_1_left_leg_1_washer_m5_5_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m5_6_simple" file="lower_half_assembly_1_left_leg_1_washer_m5_6_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m5_1_simple" file="lower_half_assembly_1_left_leg_1_washer_m5_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m5_2_simple" file="lower_half_assembly_1_left_leg_1_washer_m5_2_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m5_3_simple" file="lower_half_assembly_1_left_leg_1_washer_m5_3_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m5_4_simple" file="lower_half_assembly_1_left_leg_1_washer_m5_4_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m4_7_simple" file="lower_half_assembly_1_left_leg_1_washer_m4_7_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m4_12_simple" file="lower_half_assembly_1_left_leg_1_washer_m4_12_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m4_11_simple" file="lower_half_assembly_1_left_leg_1_washer_m4_11_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m4_10_simple" file="lower_half_assembly_1_left_leg_1_washer_m4_10_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m4_9_simple" file="lower_half_assembly_1_left_leg_1_washer_m4_9_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m4_8_simple" file="lower_half_assembly_1_left_leg_1_washer_m4_8_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_robstride_04_mock_1_rs_04_stator_1_simple" file="lower_half_assembly_1_right_leg_1_robstride_04_mock_1_rs_04_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_7806k63_1_simple" file="lower_half_assembly_1_right_leg_1_7806k63_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_7_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_7_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple" file="upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_12_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_12_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple" file="upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_7806k63_1_simple" file="lower_half_assembly_1_left_leg_1_7806k63_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_robstride_04_mock_1_rs_04_stator_1_simple" file="lower_half_assembly_1_left_leg_1_robstride_04_mock_1_rs_04_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_robstride_04_mock_1_rs_04_rotor_1_simple" file="lower_half_assembly_1_right_leg_1_robstride_04_mock_1_rs_04_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_left_arm_part_1b_1_simple" file="upper_half_assembly_1_left_arm_1_left_arm_part_1b_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_left_arm_part_2a_1_simple" file="upper_half_assembly_1_left_arm_1_left_arm_part_2a_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_left_arm_part_2b_1_simple" file="upper_half_assembly_1_left_arm_1_left_arm_part_2b_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_right_arm_part_1b_1_simple" file="upper_half_assembly_1_right_arm_1_right_arm_part_1b_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_rightt_arm_part_2b_1_simple" file="upper_half_assembly_1_right_arm_1_rightt_arm_part_2b_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_robstride_04_mock_1_rs_04_rotor_1_simple" file="lower_half_assembly_1_left_leg_1_robstride_04_mock_1_rs_04_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_hip_roll_right_rear_1_simple" file="lower_half_assembly_1_right_leg_1_hip_roll_right_rear_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_8_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_8_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_24_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_24_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_25_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_25_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_22_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_22_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_26_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_26_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_27_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_27_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_23_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_23_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_13_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_13_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_18_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_18_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_19_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_19_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_17_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_17_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_16_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_16_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_20_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_20_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_15_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_15_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_14_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_14_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_21_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_21_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_11_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_11_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_18_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_18_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_15_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_15_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_21_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_21_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_27_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_27_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_26_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_26_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_25_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_25_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_23_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_23_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_24_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_24_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_22_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_22_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_hip_roll_left_rear_1_simple" file="lower_half_assembly_1_left_leg_1_hip_roll_left_rear_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m3_7_simple" file="lower_half_assembly_1_right_leg_1_washer_m3_7_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_stator_1_simple" file="upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_stator_1_simple" file="upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m3_13_simple" file="lower_half_assembly_1_left_leg_1_washer_m3_13_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_robstride_01_mock_1_rs_01_stator_1_simple" file="lower_half_assembly_1_right_leg_1_robstride_01_mock_1_rs_01_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple" file="upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_16_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_16_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple" file="upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_robstride_01_mock_1_rs_01_stator_1_simple" file="lower_half_assembly_1_left_leg_1_robstride_01_mock_1_rs_01_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_robstride_01_mock_1_rs_01_rotor_1_simple" file="lower_half_assembly_1_right_leg_1_robstride_01_mock_1_rs_01_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_left_arm_part_3b_1_simple" file="upper_half_assembly_1_left_arm_1_left_arm_part_3b_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_right_arm_part_2a_1_simple" file="upper_half_assembly_1_right_arm_1_right_arm_part_2a_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_right_arm_part_3b_1_simple" file="upper_half_assembly_1_right_arm_1_right_arm_part_3b_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_robstride_01_mock_1_rs_01_rotor_1_simple" file="lower_half_assembly_1_left_leg_1_robstride_01_mock_1_rs_01_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_knee_right_1_simple" file="lower_half_assembly_1_right_leg_1_knee_right_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_29_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_29_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_28_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_28_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_13_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_13_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_14_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_14_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_17_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_17_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_19_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_19_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_20_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_20_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_stator_1_simple" file="upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_32_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_32_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_30_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_30_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_29_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_29_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_knee_left_1_simple" file="lower_half_assembly_1_left_leg_1_knee_left_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m4_8_simple" file="lower_half_assembly_1_right_leg_1_washer_m4_8_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_7806k63_2_simple" file="lower_half_assembly_1_right_leg_1_7806k63_2_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_stator_1_simple" file="upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_right_arm_part_3a_1_simple" file="upper_half_assembly_1_right_arm_1_right_arm_part_3a_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple" file="upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_7806k63_2_simple" file="lower_half_assembly_1_left_leg_1_7806k63_2_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m4_19_simple" file="lower_half_assembly_1_left_leg_1_washer_m4_19_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_stator_1_simple" file="lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_stator_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_30_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_30_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple" file="upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_28_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_28_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_washer_m4_31_simple" file="upper_half_assembly_1_right_arm_1_washer_m4_31_simple.stl"/>
+    <mesh name="upper_half_assembly_1_right_arm_1_stub_1_simple" file="upper_half_assembly_1_right_arm_1_stub_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_stator_1_simple" file="lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_rotor_1_simple" file="lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_rotor_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_left_arm_part_3a_1_simple" file="upper_half_assembly_1_left_arm_1_left_arm_part_3a_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_stub_1_simple" file="upper_half_assembly_1_left_arm_1_stub_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m4_24_simple" file="lower_half_assembly_1_left_leg_1_washer_m4_24_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_rotor_1_simple" file="lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_calf_right_outer_1_simple" file="lower_half_assembly_1_right_leg_1_calf_right_outer_1_simple.stl"/>
+    <mesh name="upper_half_assembly_1_left_arm_1_washer_m4_31_simple" file="upper_half_assembly_1_left_arm_1_washer_m4_31_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_calf_left_outer_1_simple" file="lower_half_assembly_1_left_leg_1_calf_left_outer_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_calf_right_inner_1_simple" file="lower_half_assembly_1_right_leg_1_calf_right_inner_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_robstride_01_mock_2_rs_01_rotor_1_simple" file="lower_half_assembly_1_right_leg_1_robstride_01_mock_2_rs_01_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_calf_left_inner_1_simple" file="lower_half_assembly_1_left_leg_1_calf_left_inner_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_robstride_01_mock_2_rs_01_rotor_1_simple" file="lower_half_assembly_1_left_leg_1_robstride_01_mock_2_rs_01_rotor_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_robstride_01_mock_2_rs_01_stator_1_simple" file="lower_half_assembly_1_right_leg_1_robstride_01_mock_2_rs_01_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_robstride_01_mock_2_rs_01_stator_1_simple" file="lower_half_assembly_1_left_leg_1_robstride_01_mock_2_rs_01_stator_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m3_9_simple" file="lower_half_assembly_1_right_leg_1_washer_m3_9_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_washer_m3_10_simple" file="lower_half_assembly_1_right_leg_1_washer_m3_10_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m3_25_simple" file="lower_half_assembly_1_left_leg_1_washer_m3_25_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_washer_m3_14_simple" file="lower_half_assembly_1_left_leg_1_washer_m3_14_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_foot_right_inner_1_simple" file="lower_half_assembly_1_right_leg_1_foot_right_inner_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_foot_right_outter_1_simple" file="lower_half_assembly_1_right_leg_1_foot_right_outter_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_foot_left_outter_1_simple" file="lower_half_assembly_1_left_leg_1_foot_left_outter_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_foot_left_inner_1_simple" file="lower_half_assembly_1_left_leg_1_foot_left_inner_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_7806k63_3_simple" file="lower_half_assembly_1_right_leg_1_7806k63_3_simple.stl"/>
+    <mesh name="lower_half_assembly_1_right_leg_1_foot_pad_1_simple" file="lower_half_assembly_1_right_leg_1_foot_pad_1_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_7806k63_4_simple" file="lower_half_assembly_1_left_leg_1_7806k63_4_simple.stl"/>
+    <mesh name="lower_half_assembly_1_left_leg_1_foot_pad_1_simple" file="lower_half_assembly_1_left_leg_1_foot_pad_1_simple.stl"/>
+  </asset>
+  <worldbody>
+    <body name="link_upper_half_assembly_1_torso_top_left_1">
+      <inertial pos="0.0765868 -0.141396 -0.00140606" quat="0.497254 0.493894 -0.506056 0.502707" mass="19.7895" diaginertia="0.622994 0.566654 0.14307"/>
+      <joint name="link_upper_half_assembly_1_torso_top_left_1_free_joint" type="free"/>
+      <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_torso_top_left_1_simple"/>
+      <geom pos="0.0776902 0.0527407 0.0672179" quat="0.5 0.5 0.5 0.5" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_torso_top_half_2_simple"/>
+      <geom pos="0.0901902 0.0282281 0.0522179" quat="1 1.33974e-08 -1.33974e-08 0" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_main_case_section_1_simple"/>
+      <geom pos="0.0776902 -0.202022 0.0663602" quat="-6.93506e-09 -2.58819e-08 0.707107 0.707107" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_removable_cap_1_simple"/>
+      <geom pos="0.227066 0.00236614 -0.0502126" quat="-0.531459 0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_6_simple"/>
+      <geom pos="0.231278 -0.0298062 -0.0502126" quat="-0.531459 0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_7_simple"/>
+      <geom pos="0.234685 -0.0558341 -0.0311409" quat="-0.531459 0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_5_simple"/>
+      <geom pos="0.235986 -0.0657759 -0.000282131" quat="-0.531459 0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_8_simple"/>
+      <geom pos="0.234685 -0.0558341 0.0305766" quat="-0.531459 0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_9_simple"/>
+      <geom pos="0.231278 -0.0298062 0.0496483" quat="-0.531459 0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_4_simple"/>
+      <geom pos="0.227066 0.00236614 0.0496483" quat="-0.531459 0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_11_simple"/>
+      <geom pos="0.187105 0.0264263 0.0672179" quat="1 1.33974e-08 -1.33974e-08 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_back_plate_upper_section_2_simple"/>
+      <geom pos="0.194904 0.0246301 0.0305766" quat="-0.0459863 0.70561 0.0459863 0.70561" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_32_simple"/>
+      <geom pos="0.198312 -0.00139787 0.0496483" quat="-0.531459 -0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_33_simple"/>
+      <geom pos="0.202523 -0.0335702 0.0496483" quat="-0.531459 -0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_27_simple"/>
+      <geom pos="0.20593 -0.0595981 0.0305766" quat="-0.531459 -0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_31_simple"/>
+      <geom pos="0.207231 -0.0695399 -0.000282132" quat="-0.531459 -0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_26_simple"/>
+      <geom pos="0.206438 -0.0696438 -0.000282132" quat="-0.0459863 -0.70561 -0.0459863 0.70561" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="upper_half_assembly_1_robstride_04_mock_1_rs_04_stator_1_simple"/>
+      <geom pos="0.20593 -0.0595981 -0.0311409" quat="-0.531459 -0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_30_simple"/>
+      <geom pos="0.202523 -0.0335702 -0.0502126" quat="-0.531459 -0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_29_simple"/>
+      <geom pos="0.198312 -0.00139787 -0.0502126" quat="-0.531459 -0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_28_simple"/>
+      <geom pos="0.223659 0.0283941 0.0305766" quat="-0.531459 0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_3_simple"/>
+      <geom pos="0.0776902 0.0145451 -0.0138821" quat="0.707107 -0.707107 -9.47343e-09 -9.47343e-09" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_36v_battery_1_simple"/>
+      <geom pos="-0.0317248 0.0264263 -0.0677821" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_front_plate_top_section_1_simple"/>
+      <geom pos="0.0776902 -0.125576 -0.102782" quat="-0.707107 0.707107 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_front_plate_bottom_section_1_simple"/>
+      <geom pos="-0.0110362 -0.214063 -0.0677821" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_torso_bottom_half_1_simple"/>
+      <geom pos="-0.0142446 -0.230523 0.0372179" quat="-0.562992 0.562992 -0.427832 0.427832" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_part_1_2_simple"/>
+      <geom pos="-0.0487932 -0.106246 0.0572179" quat="0.700618 0.0955725 -0.700618 0.0955724" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_3_simple"/>
+      <geom pos="-0.0439759 -0.104907 0.0572179" quat="-0.0955725 0.700618 0.0955724 0.700618" type="mesh" rgba="0 0.501961 0 1" mesh="upper_half_assembly_1_open_cascade_step_translator_7.5_1.1.1_1_simple"/>
+      <geom pos="-0.0235665 -0.178323 -0.0520021" quat="-0.0955725 0.700618 0.0955724 0.700618" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_1_simple"/>
+      <geom pos="-0.0235665 -0.178323 0.0572179" quat="-0.0955725 0.700618 0.0955724 0.700618" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_4_simple"/>
+      <geom pos="-0.0439759 -0.104907 -0.0520021" quat="-0.700618 -0.0955725 0.700618 -0.0955725" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_2_simple"/>
+      <geom pos="0.0526902 -0.277455 0.00369285" quat="-0.5 0.5 0.5 -0.5" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_torso_bottom_half_2_simple"/>
+      <geom pos="0.15269 -0.293455 -0.000282145" quat="-0.5 0.5 0.5 0.5" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_hip_assembly_1_hip_left_2_simple"/>
+      <geom pos="0.0776902 -0.378479 -0.000282148" quat="-0.707107 2.53837e-09 0.707107 1.64085e-08" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_hip_assembly_1_hip_left_1_simple"/>
+      <geom pos="0.0544902 -0.354302 0.0425957" quat="-0.707107 -1.64085e-08 -0.707107 3.53553e-08" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_12_simple"/>
+      <geom pos="0.0544902 -0.385455 0.0527178" quat="-0.707107 -1.64085e-08 -0.707107 3.53553e-08" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_10_simple"/>
+      <geom pos="0.0544902 -0.416608 0.0425957" quat="-0.707107 -1.64085e-08 -0.707107 3.53553e-08" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_7_simple"/>
+      <geom pos="0.0544902 -0.416608 -0.0431601" quat="-0.707107 -1.64085e-08 -0.707107 3.53553e-08" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_8_simple"/>
+      <geom pos="0.0544902 -0.385455 -0.0532822" quat="-0.707107 -1.64085e-08 -0.707107 3.53553e-08" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_11_simple"/>
+      <geom pos="0.0544902 -0.354302 -0.0431601" quat="-0.707107 -1.64085e-08 -0.707107 3.53553e-08" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_9_simple"/>
+      <geom pos="0.0536902 -0.354302 -0.0431601" quat="-0.707107 -1.64085e-08 -0.707107 3.53553e-08" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_stator_1_simple"/>
+      <geom pos="0.10089 -0.354302 0.0425958" quat="-0.5 0.5 0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_1_simple"/>
+      <geom pos="0.10169 -0.354302 0.0425958" quat="-2.58819e-08 0.707107 2.58819e-08 -0.707107" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_stator_1_simple"/>
+      <geom pos="0.10089 -0.385455 0.0527179" quat="-1.64085e-08 0.707107 -2.53837e-09 -0.707107" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_6_simple"/>
+      <geom pos="0.10089 -0.416608 0.0425958" quat="-1.64085e-08 0.707107 -2.53837e-09 -0.707107" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_3_simple"/>
+      <geom pos="0.10089 -0.416608 -0.04316" quat="-1.64085e-08 0.707107 -2.53837e-09 -0.707107" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_2_simple"/>
+      <geom pos="0.10089 -0.385455 -0.0532821" quat="-1.64085e-08 0.707107 -2.53837e-09 -0.707107" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_5_simple"/>
+      <geom pos="0.10089 -0.354302 -0.04316" quat="-1.64085e-08 0.707107 -2.53837e-09 -0.707107" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_hip_assembly_1_washer_m4_4_simple"/>
+      <geom pos="0.0956902 -0.257522 -0.0614821" quat="-3.66026e-08 1 0 1.33974e-08" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_robot_side_connector_1_simple"/>
+      <geom pos="0.174513 -0.21294 -0.0427821" quat="-0.562992 0.562992 0.427832 -0.427832" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_11_simple"/>
+      <geom pos="0.169696 -0.211601 -0.0427821" quat="0.427832 0.427832 -0.562992 -0.562992" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_ethercat_with_board_1_simple"/>
+      <geom pos="0.159518 -0.248213 -0.0427821" quat="0.562992 -0.562992 -0.427832 0.427832" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_12_simple"/>
+      <geom pos="0.158112 -0.253271 0.00821786" quat="0.562992 -0.562992 -0.427832 0.427832" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_7_simple"/>
+      <geom pos="0.171102 -0.206543 0.00821786" quat="0.562992 -0.562992 -0.427832 0.427832" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_5_simple"/>
+      <geom pos="0.204094 -0.106533 0.0272179" quat="0.700618 0.0955725 0.700618 -0.0955724" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_9_simple"/>
+      <geom pos="0.199277 -0.105194 0.0272179" quat="0.700618 0.0955725 0.700618 -0.0955724" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_orin_nano_1_simple"/>
+      <geom pos="0.176242 -0.188051 0.0272179" quat="0.700618 0.0955725 0.700618 -0.0955724" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_10_simple"/>
+      <geom pos="0.176242 -0.188051 -0.0307821" quat="-0.0955725 0.700618 -0.0955724 -0.700618" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_6_simple"/>
+      <geom pos="0.199277 -0.105194 -0.0307821" quat="0.700618 0.0955725 0.700618 -0.0955724" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_standoff_8_simple"/>
+      <geom pos="0.130615 -0.170205 0.00319286" quat="-3.53553e-08 0.707107 1.64085e-08 -0.707107" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_breadboard_1_simple"/>
+      <geom pos="0.166417 -0.214063 0.0672179" quat="-1 -9.80765e-09 1.33974e-08 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_back_plate_lower_section_1_simple"/>
+      <geom pos="-0.0716857 0.00236615 -0.0502126" quat="0.531459 -0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_15_simple"/>
+      <geom pos="-0.0758971 -0.0298062 -0.0502126" quat="0.531459 -0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_10_simple"/>
+      <geom pos="-0.0793042 -0.0558341 -0.0311409" quat="0.531459 -0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_13_simple"/>
+      <geom pos="-0.0806056 -0.0657759 -0.000282135" quat="0.531459 -0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_14_simple"/>
+      <geom pos="-0.0793042 -0.0558341 0.0305766" quat="0.531459 -0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_16_simple"/>
+      <geom pos="-0.0758971 -0.0298062 0.0496483" quat="0.531459 -0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_12_simple"/>
+      <geom pos="-0.0716857 0.00236615 0.0496483" quat="0.531459 -0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_17_simple"/>
+      <geom pos="-0.0682786 0.0283941 0.0305766" quat="0.531459 -0.531459 -0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_18_simple"/>
+      <geom pos="-0.042931 -0.00139786 0.0496483" quat="0.70561 -0.0459863 -0.70561 -0.0459863" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_20_simple"/>
+      <geom pos="-0.0471424 -0.0335702 0.0496483" quat="0.531459 0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_19_simple"/>
+      <geom pos="-0.0518509 -0.0695399 -0.000282135" quat="0.531459 0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_24_simple"/>
+      <geom pos="-0.0510577 -0.0696438 -0.000282135" quat="-0.531459 0.531459 0.466424 -0.466424" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="upper_half_assembly_1_robstride_04_mock_2_rs_04_stator_1_simple"/>
+      <geom pos="-0.0505495 -0.0595981 -0.0311409" quat="0.531459 0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_23_simple"/>
+      <geom pos="-0.0471424 -0.0335702 -0.0502126" quat="0.531459 0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_21_simple"/>
+      <geom pos="-0.042931 -0.00139786 -0.0502126" quat="0.531459 0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_22_simple"/>
+      <geom pos="-0.0505495 -0.0595981 0.0305766" quat="0.531459 0.531459 0.466424 0.466424" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_25_simple"/>
+      <geom pos="0.00269023 0.0649363 0.0347179" quat="-1.64085e-08 1.64085e-08 0.707107 -0.707107" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_head_assembly_1_neck_1_simple"/>
+      <geom pos="0.0776902 0.124936 0.0165342" quat="-1.64085e-08 1.64085e-08 0.707107 -0.707107" type="mesh" rgba="0.498039 0.498039 0.498039 1" mesh="upper_half_assembly_1_head_assembly_1_head_inner_1_simple"/>
+      <geom pos="0.0776902 0.143901 0.0955342" quat="0 2.32051e-08 1 -2.67949e-08" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_head_assembly_1_head_outter_1_simple"/>
+      <geom pos="0.0936902 0.134936 -0.0249658" quat="-1.64085e-08 -1.64085e-08 -0.707107 -0.707107" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_head_assembly_1_camera_mount_1_simple"/>
+      <geom pos="0.00967223 0.171954 -0.0449658" quat="-2.32051e-08 0 -5e-08 -1" type="mesh" rgba="0 0.501961 0 1" mesh="upper_half_assembly_1_head_assembly_1_camera_2_board_1_simple"/>
+      <geom pos="0.0266593 0.154939 -0.0465658" quat="-2.32051e-08 0 -5e-08 -1" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_head_assembly_1_camera_2_lens_1_simple"/>
+      <geom pos="0.145708 0.171954 -0.0449658" quat="0.707107 -1.64085e-08 -3.53553e-08 -0.707107" type="mesh" rgba="0 0.501961 0 1" mesh="upper_half_assembly_1_head_assembly_1_camera_1_board_1_simple"/>
+      <geom pos="0.128687 0.154905 -0.0465658" quat="0.707107 -1.64085e-08 -3.53553e-08 -0.707107" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_head_assembly_1_camera_1_lens_1_simple"/>
+      <geom pos="-0.039524 0.0246301 0.0305766" quat="0.70561 -0.0459863 -0.70561 -0.0459863" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_washer_m4_34_simple"/>
+      <body name="link_upper_half_assembly_1_robstride_04_mock_1_rs_04_rotor_1" pos="0.160889 -0.022154 -0.000282134" quat="-0.531459 -0.531459 0.466424 0.466424">
+        <inertial pos="-0.000104167 0.00470427 -0.106611" quat="0.607801 0.00770951 -0.00798048 0.794012" mass="1.14677" diaginertia="0.00387531 0.00343178 0.00203563"/>
+        <joint name="right shoulder pitch" pos="0 0 0" axis="0 0 -1" range="-1.01229 4.15388"/>
+        <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="upper_half_assembly_1_robstride_04_mock_1_rs_04_rotor_1_simple"/>
+        <geom pos="0.00465874 -0.0173867 -0.0395" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_shoulder_1_simple"/>
+        <geom pos="-0.0123127 0.014 -0.117929" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_5_simple"/>
+        <geom pos="-0.0354531 0.014 -0.15801" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_6_simple"/>
+        <geom pos="0.0123127 0.014 -0.117929" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_3_simple"/>
+        <geom pos="0.0123127 0.0132 -0.117929" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_stator_1_simple"/>
+        <geom pos="0.0354531 0.014 -0.15801" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_2_simple"/>
+        <geom pos="0.0231404 0.014 -0.179336" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_1_simple"/>
+        <geom pos="-0.0231404 0.014 -0.179336" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_4_simple"/>
+        <body name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1" pos="-0.000346583 0.0117 -0.152164" quat="-0.707107 0.707107 0 0">
+          <inertial pos="0.0200655 0.0634613 -0.00852937" quat="0.97414 0.0488216 -0.0136119 -0.220189" mass="1.07665" diaginertia="0.00301992 0.00235069 0.00199569"/>
+          <joint name="right shoulder yaw" pos="0 0 0" axis="0 0 -1" range="-1.309 1.8326"/>
+          <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple"/>
+          <geom pos="0.00289087 -0.0116466 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_right_arm_part_1a_1_simple"/>
+          <geom pos="0.0599989 0.0708333 -0.00166184" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_10_simple"/>
+          <geom pos="0.0376231 0.0778883 -0.0422988" quat="0.698877 0.698877 -0.107567 -0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_9_simple"/>
+          <geom pos="0.0378636 0.0786513 -0.0422988" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_stator_1_simple"/>
+          <geom pos="0.0480292 0.0754461 0.0200161" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_12_simple"/>
+          <geom pos="0.0477886 0.0746832 0.0200161" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_right_arm_part_1b_1_simple"/>
+          <geom pos="0.00303688 0.0887933 0.0200161" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_11_simple"/>
+          <geom pos="0.0138112 0.0853962 -0.0422988" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_8_simple"/>
+          <geom pos="-0.0085647 0.0924513 -0.00166184" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_7_simple"/>
+          <body name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_rotor_1" pos="0.0262413 0.0838886 -0.00806441" quat="-0.698877 -0.698877 0.107567 0.107567">
+            <inertial pos="-0.000291281 -0.00134211 -0.0912924" quat="0.950818 0.0291068 -0.0683769 0.300705" mass="1.30067" diaginertia="0.00325602 0.00288144 0.00182784"/>
+            <joint name="right shoulder roll" pos="0 0 0" axis="0 0 -1" range="-3.36849 -0.261799"/>
+            <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple"/>
+            <geom pos="-0.00289087 0.0116466 -0.0305" quat="0.866025 0 0 -0.5" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_rightt_arm_part_2b_1_simple"/>
+            <geom pos="-0.0035654 0.0143641 -0.152" quat="0.701881 0.701881 0.0858071 0.0858071" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_18_simple"/>
+            <geom pos="-0.00337268 0.0135877 -0.152" quat="0.43563 0.55698 -0.43563 0.55698" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_stator_1_simple"/>
+            <geom pos="-0.00909623 -0.0166827 -0.0812661" quat="-0.55698 0.43563 0.55698 0.43563" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_16_simple"/>
+            <geom pos="-0.0089035 -0.0174591 -0.0812661" quat="-0.43563 -0.55698 0.43563 -0.55698" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_right_arm_part_2a_1_simple"/>
+            <geom pos="-0.0195582 -0.0201038 -0.143526" quat="0.701881 -0.701881 -0.0858071 0.0858071" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_13_simple"/>
+            <geom pos="-0.0195582 -0.0201038 -0.143526" quat="-0.43563 -0.55698 0.43563 -0.55698" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_14_simple"/>
+            <geom pos="0.0259833 -0.00879963 -0.143526" quat="-0.43563 -0.55698 0.43563 -0.55698" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_17_simple"/>
+            <geom pos="0.0153286 -0.0114443 -0.0812661" quat="-0.43563 -0.55698 0.43563 -0.55698" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_19_simple"/>
+            <geom pos="0.0380994 -0.00579223 -0.121903" quat="-0.43563 -0.55698 0.43563 -0.55698" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_20_simple"/>
+            <geom pos="0.0192054 0.0200162 -0.143461" quat="0.701881 0.701881 0.0858071 0.0858071" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_15_simple"/>
+            <geom pos="0.0313214 0.0230236 -0.121838" quat="0.55698 -0.43563 -0.55698 -0.43563" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_21_simple"/>
+            <geom pos="0.0271136 0.0219791 -0.09725" quat="0.55698 -0.43563 -0.55698 -0.43563" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_27_simple"/>
+            <geom pos="0.00855067 0.0173715 -0.0812012" quat="0.701881 0.701881 0.0858071 0.0858071" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_26_simple"/>
+            <geom pos="-0.0156815 0.0113567 -0.0812012" quat="0.701881 0.701881 0.0858071 0.0858071" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_25_simple"/>
+            <geom pos="-0.0263362 0.00871205 -0.143461" quat="0.701881 0.701881 0.0858071 0.0858071" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_23_simple"/>
+            <geom pos="-0.0384522 0.00570465 -0.121838" quat="0.701881 0.701881 0.0858071 0.0858071" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_24_simple"/>
+            <geom pos="-0.0342444 0.00674911 -0.09725" quat="0.701881 0.701881 0.0858071 0.0858071" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_22_simple"/>
+            <body name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_rotor_1" pos="0.00282888 -0.0121771 -0.1155" quat="-0.0858071 0.0858071 -0.701881 0.701881">
+              <inertial pos="-0.0186421 -0.0636002 -0.0132227" quat="0.936458 0.0905941 -0.00917061 -0.338755" mass="1.0197" diaginertia="0.0023811 0.00204732 0.00184596"/>
+              <joint name="right elbow pitch" pos="0 0 0" axis="0 0 -1" range="1.8326 3.40339"/>
+              <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple"/>
+              <geom pos="0.0086408 0.00832686 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_right_arm_part_3b_1_simple"/>
+              <geom pos="0.0109129 -0.0863597 -0.0249837" quat="-0.564721 0.425547 -0.564721 -0.425547" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_stator_1_simple"/>
+              <geom pos="0.0110359 -0.086395 -1.65966e-05" quat="0.564721 0.425548 -0.564721 0.425547" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_right_arm_1_right_arm_part_3a_1_simple"/>
+              <geom pos="-0.0488117 -0.069234 0.0109614" quat="0.564721 0.425548 -0.564721 0.425547" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_28_simple"/>
+              <geom pos="0.0110359 -0.086395 -1.65966e-05" quat="0.564721 0.425548 -0.564721 0.425547" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_31_simple"/>
+              <geom pos="0.0109129 -0.0863597 -0.0249837" quat="0.564721 0.425548 -0.564721 0.425547" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_32_simple"/>
+              <geom pos="-0.0281498 -0.0751587 -0.0484455" quat="0.564721 0.425548 -0.564721 0.425547" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_30_simple"/>
+              <geom pos="-0.0489346 -0.0691987 -0.0359618" quat="0.564721 0.425548 -0.564721 0.425547" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_right_arm_1_washer_m4_29_simple"/>
+              <body name="link_upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_rotor_1" pos="-0.0224087 -0.0783654 -0.0123244" quat="-0.564721 0.425547 -0.564721 -0.425547">
+                <inertial pos="-5.62987e-06 -5.42532e-06 -0.0527898" quat="0.501611 0.498876 -0.49961 0.499898" mass="0.451151" diaginertia="0.000464854 0.000367863 0.000367669"/>
+                <joint name="right wrist roll" pos="0 0 0" axis="0 0 -1" range="-3.14159 3.14159"/>
+                <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_right_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple"/>
+                <geom pos="0 0 -0.0305" quat="0.707107 0 0 -0.707107" type="mesh" rgba="0 0 0 1" mesh="upper_half_assembly_1_right_arm_1_stub_1_simple"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="link_lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_rotor_1" pos="0.0536902 -0.385455 -0.00028215" quat="-0.707107 -1.64085e-08 -0.707107 3.53553e-08">
+        <inertial pos="-0.00690371 0.000695918 -0.117869" quat="0.999833 -0.00183199 -0.0179502 -0.00279237" mass="2.41406" diaginertia="0.0100302 0.00754299 0.00447388"/>
+        <joint name="left hip pitch" pos="0 0 0" axis="0 0 -1" range="-2.0944 1.50098"/>
+        <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_1_rs_04_rotor_1_simple"/>
+        <geom pos="0 0 -0.0395" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_left_leg_1_hip_pitch_left_1_simple"/>
+        <geom pos="-0.0395 -0.0366636 -0.191932" quat="0.707107 0 0.707107 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_left_leg_1_hip_pitch_support_1_simple"/>
+        <geom pos="-0.0495 0 -0.132" quat="0.5 0.5 0.5 0.5" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_left_leg_1_7806k63_1_simple"/>
+        <geom pos="0.0127279 -0.0127279 -0.0545" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m5_5_simple"/>
+        <geom pos="0.0173867 0.00465874 -0.0545" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m5_6_simple"/>
+        <geom pos="0.00465874 0.0173867 -0.0545" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m5_1_simple"/>
+        <geom pos="-0.00465874 -0.0173867 -0.0545" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m5_2_simple"/>
+        <geom pos="-0.0127279 0.0127279 -0.0545" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m5_3_simple"/>
+        <geom pos="-0.0173867 -0.00465874 -0.0545" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m5_4_simple"/>
+        <geom pos="-0.0195 0.0311526 -0.0891221" quat="0.5 0.5 -0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m4_7_simple"/>
+        <geom pos="-0.0195 0 -0.079" quat="0.5 0.5 -0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m4_12_simple"/>
+        <geom pos="-0.0187 2.14359e-11 -0.079" quat="0.707107 1.89469e-08 -0.707107 0" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_left_leg_1_robstride_04_mock_1_rs_04_stator_1_simple"/>
+        <geom pos="-0.0195 -0.0311526 -0.0891221" quat="0.5 0.5 -0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m4_11_simple"/>
+        <geom pos="-0.0195 0.0311526 -0.174878" quat="0.5 0.5 -0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m4_10_simple"/>
+        <geom pos="-0.0195 0 -0.185" quat="0.5 0.5 -0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m4_9_simple"/>
+        <geom pos="-0.0195 -0.0311526 -0.174878" quat="0.5 0.5 -0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m4_8_simple"/>
+        <body name="link_lower_half_assembly_1_left_leg_1_robstride_04_mock_1_rs_04_rotor_1" pos="-0.0187 1.44157e-09 -0.132" quat="0.707107 1.89469e-08 -0.707107 0">
+          <inertial pos="0.0651443 -0.00105039 -0.0191977" quat="0.715352 0.0342353 0.0336281 0.697115" mass="1.50187" diaginertia="0.00652877 0.00547895 0.00503031"/>
+          <joint name="left hip yaw" pos="0 0 0" axis="0 0 -1" range="3.47321 4.99164"/>
+          <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="lower_half_assembly_1_left_leg_1_robstride_04_mock_1_rs_04_rotor_1_simple"/>
+          <geom pos="0 0 -0.0395" quat="0.707107 0 0 0.707107" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_left_leg_1_hip_roll_left_rear_1_simple"/>
+          <geom pos="0.112 -0.0280805 -0.0433182" quat="2.84203e-08 -0.707107 9.47343e-09 0.707107" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m3_13_simple"/>
+          <geom pos="0.1128 -0.0280805 -0.0433182" quat="0.707107 4.48288e-08 0.707107 -2.58819e-08" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_left_leg_1_robstride_01_mock_1_rs_01_stator_1_simple"/>
+          <body name="link_lower_half_assembly_1_left_leg_1_robstride_01_mock_1_rs_01_rotor_1" pos="0.1143 -3.81871e-09 -0.02" quat="-6.12373e-08 0.707107 -4.22904e-08 -0.707107">
+            <inertial pos="0.0102924 0.00365243 -0.104546" quat="-0.291692 0.479655 0.017008 0.82738" mass="2.0978" diaginertia="0.00546113 0.00524939 0.00479108"/>
+            <joint name="left hip roll" pos="0 0 0" axis="0 0 -1" range="4.06662 5.14872"/>
+            <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="lower_half_assembly_1_left_leg_1_robstride_01_mock_1_rs_01_rotor_1_simple"/>
+            <geom pos="0 0 -0.0305" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_left_leg_1_knee_left_1_simple"/>
+            <geom pos="0.0495 0 -0.1205" quat="0.5 -0.5 -0.5 0.5" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_left_leg_1_7806k63_2_simple"/>
+            <geom pos="0.0195 -0.053 -0.1205" quat="0.5 0.5 0.5 0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m4_19_simple"/>
+            <geom pos="0.0187 -0.053 -0.1205" quat="-0.5 0.5 0.5 -0.5" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_stator_1_simple"/>
+            <geom pos="0.0187 0.053 -0.1205" quat="-0.5 -0.5 -0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m4_24_simple"/>
+            <body name="link_lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_rotor_1" pos="0.0187 2.14359e-11 -0.1205" quat="-0.5 -0.5 -0.5 -0.5">
+              <inertial pos="0.0211875 -0.0555605 -0.00475887" quat="0.650988 0.75809 -0.0236336 0.0309162" mass="1.42271" diaginertia="0.00756809 0.00665639 0.00438449"/>
+              <joint name="left knee pitch" pos="0 0 0" axis="0 0 -1" range="-2.0944 0"/>
+              <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="lower_half_assembly_1_left_leg_1_robstride_04_mock_2_rs_04_rotor_1_simple"/>
+              <geom pos="0 0 -0.0395" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_left_leg_1_calf_left_outer_1_simple"/>
+              <geom pos="0.0825392 -0.0407614 -0.001625" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_left_leg_1_calf_left_inner_1_simple"/>
+              <geom pos="0.00147466 -0.18 -0.0295" quat="-1 -4.64102e-08 0 0" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="lower_half_assembly_1_left_leg_1_robstride_01_mock_2_rs_01_rotor_1_simple"/>
+              <body name="link_lower_half_assembly_1_left_leg_1_robstride_01_mock_2_rs_01_stator_1" pos="0.00147466 -0.18 0.000999992" quat="-0.707107 -3.2817e-08 3.2817e-08 -0.707107">
+                <inertial pos="-0.0255384 0.0171617 -0.00267811" quat="0.0418909 0.723295 -0.0432144 0.687912" mass="1.33887" diaginertia="0.00409462 0.00374004 0.00150927"/>
+                <joint name="left ankle pitch" pos="0 0 0" axis="0 0 -1" range="-2.35619 -0.261799"/>
+                <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_left_leg_1_robstride_01_mock_2_rs_01_stator_1_simple"/>
+                <geom pos="-0.00018797 0.0364995 -0.0265" quat="-2.32051e-08 0 0 1" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m3_25_simple"/>
+                <geom pos="-0.00018797 0.0364995 -0.0273" quat="-1 0 0 -4.64102e-08" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_left_leg_1_foot_left_outter_1_simple"/>
+                <geom pos="-0.0236047 0.02784 0.0015" quat="0 -2.32051e-08 1 -2.32051e-08" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_left_leg_1_washer_m3_14_simple"/>
+                <geom pos="-0.0236047 0.02784 0.0023" quat="2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_left_leg_1_foot_left_inner_1_simple"/>
+                <geom pos="7.29e-07 6.19197e-07 0.0273" quat="1.64085e-08 0.707107 0.707107 -1.64085e-08" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_left_leg_1_7806k63_4_simple"/>
+                <geom pos="-0.0275132 0.0592506 0.0263" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_left_leg_1_foot_pad_1_simple"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="link_lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_rotor_1" pos="0.10169 -0.385455 -0.00028215" quat="-2.58819e-08 0.707107 2.58819e-08 -0.707107">
+        <inertial pos="0.00731733 0.000554391 -0.117881" quat="0.999769 -0.00242879 -0.0212747 -0.00208146" mass="2.41373" diaginertia="0.0100692 0.00753673 0.00442916"/>
+        <joint name="right hip pitch" pos="0 0 0" axis="0 0 -1" range="1.65806 5.23599"/>
+        <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="lower_half_assembly_1_hip_assembly_1_robstride_04_mock_2_rs_04_rotor_1_simple"/>
+        <geom pos="0 0 -0.0395" quat="0 -2.32051e-08 1 -2.32051e-08" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_hip_pitch_right_1_simple"/>
+        <geom pos="0.0195 0.0311526 -0.174878" quat="0.5 -0.5 0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m4_1_simple"/>
+        <geom pos="0.0195 -5.84769e-09 -0.185" quat="0.5 -0.5 0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m4_4_simple"/>
+        <geom pos="0.0195 -5.84769e-09 -0.185" quat="0 -0.707107 -1.38701e-08 -0.707107" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_right_leg_1_robstride_04_mock_1_rs_04_stator_1_simple"/>
+        <geom pos="0.0195 -0.0311526 -0.174878" quat="0.5 -0.5 0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m4_5_simple"/>
+        <geom pos="0.0195 0.0311526 -0.0891221" quat="0.5 -0.5 0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m4_2_simple"/>
+        <geom pos="0.0195 -9.28204e-10 -0.079" quat="0.5 -0.5 0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m4_6_simple"/>
+        <geom pos="0.0195 -0.0311526 -0.0891221" quat="0.5 -0.5 0.5 -0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m4_3_simple"/>
+        <geom pos="0.0395 -0.0366636 -0.191932" quat="-4.92255e-08 -0.707107 -1.64085e-08 0.707107" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_hip_pitch_support_1_simple"/>
+        <geom pos="0.0495 -1.53154e-09 -0.132" quat="0.5 -0.5 -0.5 0.5" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_right_leg_1_7806k63_1_simple"/>
+        <body name="link_lower_half_assembly_1_right_leg_1_robstride_04_mock_1_rs_04_rotor_1" pos="0.0195 -4.80807e-09 -0.132" quat="0 -0.707107 -1.38701e-08 -0.707107">
+          <inertial pos="0.00113464 -0.0651442 -0.0191823" quat="0.996921 -0.0743466 0.000496799 -0.0248986" mass="1.50186" diaginertia="0.00653838 0.00547485 0.00502423"/>
+          <joint name="right hip yaw" pos="0 0 0" axis="0 0 -1" range="2.86234 4.38078"/>
+          <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="lower_half_assembly_1_right_leg_1_robstride_04_mock_1_rs_04_rotor_1_simple"/>
+          <geom pos="0 0 -0.0395" quat="-2.32051e-08 0 0 1" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_hip_roll_right_rear_1_simple"/>
+          <geom pos="0.00652225 -0.112 -0.0559125" quat="0.5 -0.5 0.5 0.5" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m3_7_simple"/>
+          <geom pos="0.00652225 -0.1128 -0.0559125" quat="0.5 0.5 0.5 -0.5" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_right_leg_1_robstride_01_mock_1_rs_01_stator_1_simple"/>
+          <body name="link_lower_half_assembly_1_right_leg_1_robstride_01_mock_1_rs_01_rotor_1" pos="0.000368353 -0.1143 -0.019935" quat="-0.5 0.5 0.5 0.5">
+            <inertial pos="0.00365125 0.0102922 -0.104545" quat="0.350951 0.378093 -0.791597 0.327497" mass="2.09775" diaginertia="0.0054611 0.00524925 0.00479095"/>
+            <joint name="right hip roll" pos="0 0 0" axis="0 0 -1" range="-3.63028 -2.53073"/>
+            <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="lower_half_assembly_1_right_leg_1_robstride_01_mock_1_rs_01_rotor_1_simple"/>
+            <geom pos="0 0 -0.0305" quat="0.707107 0 0 -0.707107" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_knee_right_1_simple"/>
+            <geom pos="-0.053 0.0195 -0.1205" quat="0.707107 -0.707107 0 0" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m4_8_simple"/>
+            <geom pos="-0.053 0.0187 -0.1205" quat="-1.64085e-08 1.64085e-08 0.707107 0.707107" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_stator_1_simple"/>
+            <geom pos="-1.32635e-09 0.0495 -0.1205" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_right_leg_1_7806k63_2_simple"/>
+            <body name="link_lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_rotor_1" pos="-5.22501e-10 0.0187 -0.1205" quat="-1.64085e-08 1.64085e-08 0.707107 0.707107">
+              <inertial pos="-0.0211841 -0.0555569 -0.00475872" quat="0.78009 0.624591 -0.0346469 0.0120658" mass="1.42271" diaginertia="0.00753639 0.00671287 0.00435756"/>
+              <joint name="right knee pitch" pos="0 0 0" axis="0 0 -1" range="0 2.1293"/>
+              <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="lower_half_assembly_1_right_leg_1_robstride_04_mock_2_rs_04_rotor_1_simple"/>
+              <geom pos="0 0 -0.0395" quat="-2.32051e-08 0 0 1" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_calf_right_outer_1_simple"/>
+              <geom pos="-0.0825392 -0.0407614 -0.001625" quat="0 -2.32051e-08 1 -2.32051e-08" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_calf_right_inner_1_simple"/>
+              <geom pos="-0.00147465 -0.18 -0.0295" quat="0 -2.32051e-08 1 -2.32051e-08" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="lower_half_assembly_1_right_leg_1_robstride_01_mock_2_rs_01_rotor_1_simple"/>
+              <body name="link_lower_half_assembly_1_right_leg_1_robstride_01_mock_2_rs_01_stator_1" pos="-0.00147465 -0.18 0.001" quat="2.32051e-08 0 -4.64102e-08 -1">
+                <inertial pos="0.0254924 0.0174329 -0.00267811" quat="0.0216012 0.701332 0.0814997 0.707831" mass="1.33887" diaginertia="0.00408639 0.00373116 0.00153297"/>
+                <joint name="right ankle pitch" pos="0 0 0" axis="0 0 -1" range="-1.48353 0.785398"/>
+                <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_right_leg_1_robstride_01_mock_2_rs_01_stator_1_simple"/>
+                <geom pos="0.0359125 0.00652225 0.0015" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m3_9_simple"/>
+                <geom pos="0.0359125 0.00652225 0.0023" quat="-1 -4.64102e-08 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_foot_right_inner_1_simple"/>
+                <geom pos="-6.5111e-05 0.000369286 0.0273" quat="6.96153e-08 -1 0 0" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="lower_half_assembly_1_right_leg_1_7806k63_3_simple"/>
+                <geom pos="0.0274488 0.0596193 0.0263" quat="-0.707107 -0.707107 0 0" type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="lower_half_assembly_1_right_leg_1_foot_pad_1_simple"/>
+                <geom pos="0.0359124 0.00652319 -0.0265" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="lower_half_assembly_1_right_leg_1_washer_m3_10_simple"/>
+                <geom pos="0.0359124 0.00652319 -0.0273" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="lower_half_assembly_1_right_leg_1_foot_right_outter_1_simple"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="link_upper_half_assembly_1_robstride_04_mock_2_rs_04_rotor_1" pos="-0.0055085 -0.022154 -0.000282136" quat="-0.531459 -0.531459 -0.466424 -0.466424">
+        <inertial pos="-0.00402193 -0.00244234 -0.106611" quat="0.585659 0.055097 0.0318002 0.808057" mass="1.14677" diaginertia="0.00408148 0.003387 0.00187425"/>
+        <joint name="left shoulder pitch" pos="0 0 0" axis="0 0 -1" range="0.0349066 5.21853"/>
+        <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="upper_half_assembly_1_robstride_04_mock_2_rs_04_rotor_1_simple"/>
+        <geom pos="0.0127279 -0.0127279 -0.0395" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_shoulder_1_simple"/>
+        <geom pos="-0.0182807 0.00366314 -0.117929" quat="0.353553 0.353553 0.612372 0.612372" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_1_simple"/>
+        <geom pos="-0.0175879 0.00406314 -0.117929" quat="0.353553 0.353553 0.612372 0.612372" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_stator_1_simple"/>
+        <geom pos="-0.0298509 0.0237033 -0.15801" quat="-0.353553 0.353553 0.612372 -0.612372" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_2_simple"/>
+        <geom pos="-0.0236945 0.0130401 -0.179336" quat="0.353553 0.353553 0.612372 0.612372" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_6_simple"/>
+        <geom pos="-0.000554179 -0.0270401 -0.179336" quat="-0.353553 0.353553 0.612372 -0.612372" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_5_simple"/>
+        <geom pos="0.00560218 -0.0377033 -0.15801" quat="0.353553 0.353553 0.612372 0.612372" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_4_simple"/>
+        <geom pos="-0.00596799 -0.0176631 -0.117929" quat="0.353553 0.353553 0.612372 0.612372" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_3_simple"/>
+        <body name="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_rotor_1" pos="-0.00995921 -0.00615014 -0.152164" quat="-0.353553 0.353553 0.612372 -0.612372">
+          <inertial pos="0.0200946 0.0635032 -0.00966893" quat="0.975681 0.0423855 -0.00970961 -0.21484" mass="1.0749" diaginertia="0.00299738 0.00234457 0.00199732"/>
+          <joint name="left shoulder yaw" pos="0 0 0" axis="0 0 -1" range="-1.309 1.87623"/>
+          <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_1_rs_01_rotor_1_simple"/>
+          <geom pos="0.00289087 -0.0116466 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_1a_1_simple"/>
+          <geom pos="-0.0085647 0.0924513 -0.0143382" quat="0.698877 0.698877 -0.107567 -0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_9_simple"/>
+          <geom pos="0.00334125 0.0886974 -0.0359606" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_12_simple"/>
+          <geom pos="0.048093 0.0745872 -0.0359606" quat="0.698877 0.698877 -0.107567 -0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_11_simple"/>
+          <geom pos="0.0483335 0.0753502 -0.0359606" quat="0.107567 -0.107567 -0.698877 0.698877" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_stator_1_simple"/>
+          <geom pos="0.0137479 0.086255 0.0261138" quat="0.698877 -0.698877 0.107567 -0.107568" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_7_simple"/>
+          <geom pos="0.0135074 0.085492 0.0261138" quat="0.698877 0.698877 -0.107568 -0.107567" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_1b_1_simple"/>
+          <geom pos="0.0373193 0.0779841 0.0261138" quat="-0.698877 0.698877 -0.107567 0.107568" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_8_simple"/>
+          <geom pos="0.0599989 0.0708333 -0.0143382" quat="-0.698877 0.698877 -0.107567 0.107567" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_10_simple"/>
+          <body name="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_rotor_1" pos="0.0262724 0.0838788 -0.00812057" quat="0.107567 -0.107567 -0.698877 0.698877">
+            <inertial pos="-0.000629542 0.000249779 -0.0912817" quat="0.698241 -0.0717126 0.0781786 0.707958" mass="1.2945" diaginertia="0.00366319 0.00247024 0.00183723"/>
+            <joint name="left shoulder roll" pos="0 0 0" axis="0 0 -1" range="-1.27409 1.8326"/>
+            <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_2_rs_01_rotor_1_simple"/>
+            <geom pos="-0.0115317 0.00331973 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_2a_1_simple"/>
+            <geom pos="-0.0176759 -0.0079022 -0.0812012" quat="-0.564943 0.564943 0.425252 -0.425252" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_24_simple"/>
+            <geom pos="-0.0241665 -0.0304483 -0.121838" quat="-0.425252 0.425252 -0.564943 0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_25_simple"/>
+            <geom pos="-0.0207129 -0.0184518 -0.143461" quat="-0.564943 0.564943 0.425252 -0.425252" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_22_simple"/>
+            <geom pos="-0.0107688 0.0160909 -0.0812012" quat="-0.425252 0.425252 -0.564943 0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_26_simple"/>
+            <geom pos="-0.0100001 0.0158695 -0.0812012" quat="0.564943 -0.564943 -0.425252 0.425252" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_stator_1_simple"/>
+            <geom pos="-0.0042783 0.038637 -0.121838" quat="-0.564943 0.564943 0.425252 -0.425252" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_27_simple"/>
+            <geom pos="-0.00773185 0.0266404 -0.143461" quat="-0.425252 0.425252 -0.564943 0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_23_simple"/>
+            <geom pos="0.0115317 -0.00331973 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_2b_1_simple"/>
+            <geom pos="0.0142224 -0.00409432 -0.152" quat="0.425252 0.425252 -0.564943 -0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_13_simple"/>
+            <geom pos="0.00773185 -0.0266404 -0.143461" quat="0.425252 0.425252 -0.564943 -0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_18_simple"/>
+            <geom pos="0.0207129 0.0184518 -0.143461" quat="0.425252 0.425252 -0.564943 -0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_19_simple"/>
+            <geom pos="0.0042783 -0.0386369 -0.121838" quat="0.425252 0.425252 -0.564943 -0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_17_simple"/>
+            <geom pos="0.0054777 -0.0344706 -0.09725" quat="0.425252 0.425252 -0.564943 -0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_16_simple"/>
+            <geom pos="0.0107688 -0.0160909 -0.0812012" quat="0.425252 0.425252 -0.564943 -0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_20_simple"/>
+            <geom pos="0.0176759 0.0079022 -0.0812012" quat="0.425252 0.425252 -0.564943 -0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_15_simple"/>
+            <geom pos="0.0229671 0.0262819 -0.09725" quat="0.700174 0.0987769 0.700174 -0.0987768" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_14_simple"/>
+            <geom pos="0.0241665 0.0304483 -0.121838" quat="0.425252 0.425252 -0.564943 -0.564943" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_21_simple"/>
+            <body name="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_rotor_1" pos="-0.0120607 0.00328933 -0.115436" quat="0.564943 -0.564943 -0.425252 0.425252">
+              <inertial pos="0.0178702 0.0640787 -0.0133545" quat="0.951585 0.123864 0.00573468 -0.281268" mass="1.01978" diaginertia="0.00231309 0.00211902 0.00187083"/>
+              <joint name="left elbow pitch" pos="0 0 0" axis="0 0 -1" range="-1.309 1.8326"/>
+              <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_3_rs_01_rotor_1_simple"/>
+              <geom pos="0.0115317 -0.00331973 -0.0305" quat="-2.32051e-08 1 0 0" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_3b_1_simple"/>
+              <geom pos="-0.00481506 0.0845916 -0.0359617" quat="-0.425547 0.564721 0.425547 0.564721" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_29_simple"/>
+              <geom pos="0.0550325 0.0674306 -0.0249837" quat="-0.425547 0.564721 0.425547 0.564721" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_28_simple"/>
+              <geom pos="0.055253 0.0681996 -0.0249837" quat="-0.564721 -0.425548 0.564721 -0.425547" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_stator_1_simple"/>
+              <geom pos="0.0551301 0.0682348 -1.65889e-05" quat="-0.564721 -0.425548 0.564721 -0.425547" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_30_simple"/>
+              <geom pos="0.0549096 0.0674658 -1.65889e-05" quat="0.425547 0.564721 0.425547 -0.564721" type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="upper_half_assembly_1_left_arm_1_left_arm_part_3a_1_simple"/>
+              <geom pos="-0.00493803 0.0846268 0.0109614" quat="-0.425547 0.564721 0.425548 0.564721" type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="upper_half_assembly_1_left_arm_1_washer_m4_31_simple"/>
+              <body name="link_upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_rotor_1" pos="0.0226353 0.079113 -0.0126759" quat="-0.564721 -0.425548 0.564721 -0.425547">
+                <inertial pos="-5.62987e-06 -5.42532e-06 -0.0527898" quat="0.501611 0.498876 -0.49961 0.499898" mass="0.451151" diaginertia="0.000464854 0.000367863 0.000367669"/>
+                <joint name="left wrist roll" pos="0 0 0" axis="0 0 -1" range="-3.14159 0"/>
+                <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="upper_half_assembly_1_left_arm_1_robstride_01_mock_4_rs_01_rotor_1_simple"/>
+                <geom pos="0 0 -0.0305" quat="0.707107 0 0 0.707107" type="mesh" rgba="0 0 0 1" mesh="upper_half_assembly_1_left_arm_1_stub_1_simple"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

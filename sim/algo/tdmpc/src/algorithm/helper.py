@@ -16,7 +16,6 @@ from torch.distributions.utils import _standard_normal
 __REDUCE__ = lambda b: "mean" if b else "none"
 
 
-
 def l1(pred, target, reduce=False):
     """Computes the L1-loss between predictions and targets."""
     return F.l1_loss(pred, target, reduction=__REDUCE__(reduce))
@@ -30,9 +29,7 @@ def mse(pred, target, reduce=False):
 def bce(pred, target, logits=True, reduce=False):
     """Computes the BCE loss between predictions and targets."""
     if logits:
-        return F.binary_cross_entropy_with_logits(
-            pred, target, reduction=__REDUCE__(reduce)
-        )
+        return F.binary_cross_entropy_with_logits(pred, target, reduction=__REDUCE__(reduce))
     return F.binary_cross_entropy(pred, target, reduction=__REDUCE__(reduce))
 
 
@@ -90,11 +87,7 @@ def mse_expectile(pred, target, expectile=0.7, reduce=False):
 def _get_out_shape(in_shape, layers):
     """Utility function. Returns the output shape of a network for a given input shape."""
     x = torch.randn(*in_shape).unsqueeze(0)
-    return (
-        (nn.Sequential(*layers) if isinstance(layers, list) else layers)(x)
-        .squeeze(0)
-        .shape
-    )
+    return (nn.Sequential(*layers) if isinstance(layers, list) else layers)(x).squeeze(0).shape
 
 
 def gaussian_logprob(eps, log_std):
@@ -136,6 +129,7 @@ def set_requires_grad(net, value):
     for param in net.parameters():
         param.requires_grad_(value)
 
+
 def linear_schedule(schdl, step):
     """
     Outputs values following a linear decay schedule.
@@ -150,6 +144,7 @@ def linear_schedule(schdl, step):
             mix = np.clip(step / duration, 0.0, 1.0)
             return (1.0 - mix) * init + mix * final
     raise NotImplementedError(schdl)
+
 
 class TruncatedNormal(pyd.Normal):
     """Utility class implementing the truncated normal distribution."""
@@ -223,9 +218,7 @@ def enc(cfg):
         if cfg.modality == "pixels":
             return ConvExt(nn.Sequential(*pixels_enc_layers))
     if cfg.modality in {"state", "all"}:
-        state_dim = (
-            cfg.obs_shape[0] if cfg.modality == "state" else cfg.obs_shape["state"][0]
-        )
+        state_dim = cfg.obs_shape[0] if cfg.modality == "state" else cfg.obs_shape["state"][0]
         state_enc_layers = [
             nn.Linear(state_dim, cfg.enc_dim),
             nn.LayerNorm(cfg.enc_dim),
@@ -259,7 +252,11 @@ def mlp(in_dim, mlp_dim, out_dim, act_fn=nn.ReLU(), layer_norm=True):
         mlp_dim = [mlp_dim, mlp_dim]
     layers = [nn.Linear(in_dim, mlp_dim[0]), nn.LayerNorm(mlp_dim[0]) if layer_norm else nn.Identity(), act_fn]
     for i in range(len(mlp_dim) - 1):
-        layers += [nn.Linear(mlp_dim[i], mlp_dim[i + 1]), nn.LayerNorm(mlp_dim[i + 1]) if layer_norm else nn.Identity(), act_fn]
+        layers += [
+            nn.Linear(mlp_dim[i], mlp_dim[i + 1]),
+            nn.LayerNorm(mlp_dim[i + 1]) if layer_norm else nn.Identity(),
+            act_fn,
+        ]
     layers += [nn.Linear(mlp_dim[-1], out_dim)]
     return nn.Sequential(*layers)
 
@@ -279,7 +276,11 @@ def q(in_dim, mlp_dim, act_fn=nn.ReLU(), layer_norm=True):
         mlp_dim = [mlp_dim, mlp_dim]
     layers = [nn.Linear(in_dim, mlp_dim[0]), nn.LayerNorm(mlp_dim[0]) if layer_norm else nn.Identity(), act_fn]
     for i in range(len(mlp_dim) - 1):
-        layers += [nn.Linear(mlp_dim[i], mlp_dim[i + 1]), nn.LayerNorm(mlp_dim[i + 1]) if layer_norm else nn.Identity(), act_fn]
+        layers += [
+            nn.Linear(mlp_dim[i], mlp_dim[i + 1]),
+            nn.LayerNorm(mlp_dim[i + 1]) if layer_norm else nn.Identity(),
+            act_fn,
+        ]
     layers += [nn.Linear(mlp_dim[-1], 1)]
     return nn.Sequential(*layers)
 
@@ -290,7 +291,11 @@ def v(in_dim, mlp_dim, act_fn=nn.ReLU(), layer_norm=True):
         mlp_dim = [mlp_dim, mlp_dim]
     layers = [nn.Linear(in_dim, mlp_dim[0]), nn.LayerNorm(mlp_dim[0]) if layer_norm else nn.Identity(), act_fn]
     for i in range(len(mlp_dim) - 1):
-        layers += [nn.Linear(mlp_dim[i], mlp_dim[i + 1]), nn.LayerNorm(mlp_dim[i + 1]) if layer_norm else nn.Identity(), act_fn]
+        layers += [
+            nn.Linear(mlp_dim[i], mlp_dim[i + 1]),
+            nn.LayerNorm(mlp_dim[i + 1]) if layer_norm else nn.Identity(),
+            act_fn,
+        ]
     layers += [[nn.Linear(mlp_dim[-1], 1)]]
     return nn.Sequential(*layers)
 
@@ -335,7 +340,8 @@ class Multiplexer(nn.Module):
                 return self.choices[key](x)
             return {k: self.choices[k](_x) for k, _x in x.items()}
         return self.choices(x)
-        
+
+
 class Episode(object):
     """Storage object for a single episode."""
 
@@ -376,18 +382,38 @@ class Episode(object):
             device=self.device,
         )
         self.rewards = torch.empty(
-            (cfg.num_envs, self.capacity,), dtype=torch.float32, device=self.device
+            (
+                cfg.num_envs,
+                self.capacity,
+            ),
+            dtype=torch.float32,
+            device=self.device,
         )
         self.dones = torch.empty(
-            (cfg.num_envs, self.capacity,), dtype=torch.bool, device=self.device
+            (
+                cfg.num_envs,
+                self.capacity,
+            ),
+            dtype=torch.bool,
+            device=self.device,
         )
         self.successes = torch.empty(
-            (cfg.num_envs, self.capacity,), dtype=torch.bool, device=self.device
+            (
+                cfg.num_envs,
+                self.capacity,
+            ),
+            dtype=torch.bool,
+            device=self.device,
         )
         self.masks = torch.zeros(
-            (cfg.num_envs, self.capacity,), dtype=torch.float32, device=self.device
+            (
+                cfg.num_envs,
+                self.capacity,
+            ),
+            dtype=torch.float32,
+            device=self.device,
         )
-        self.cumulative_reward = torch.tensor([0.] * cfg.num_envs)
+        self.cumulative_reward = torch.tensor([0.0] * cfg.num_envs)
         self.done = torch.tensor([False] * cfg.num_envs)
         self.success = torch.tensor([False] * cfg.num_envs)
         self._idx = 0
@@ -397,7 +423,7 @@ class Episode(object):
 
     @property
     def episode_length(self):
-        num_dones = self.dones[:, :self._idx].sum().item()
+        num_dones = self.dones[:, : self._idx].sum().item()
         if num_dones > 0:
             return float(self._idx) * self.cfg.num_envs / num_dones
         return float(self._idx)
@@ -408,23 +434,15 @@ class Episode(object):
 
         if cfg.modality in {"pixels", "state"}:
             episode = cls(cfg, obses[0])
-            episode.obses[1:] = torch.tensor(
-                obses[1:], dtype=episode.obses.dtype, device=episode.device
-            )
+            episode.obses[1:] = torch.tensor(obses[1:], dtype=episode.obses.dtype, device=episode.device)
         elif cfg.modality == "all":
             episode = cls(cfg, {k: v[0] for k, v in obses.items()})
             for k, v in obses.items():
-                episode.obses[k][1:] = torch.tensor(
-                    obses[k][1:], dtype=episode.obses[k].dtype, device=episode.device
-                )
+                episode.obses[k][1:] = torch.tensor(obses[k][1:], dtype=episode.obses[k].dtype, device=episode.device)
         else:
             raise NotImplementedError
-        episode.actions = torch.tensor(
-            actions, dtype=episode.actions.dtype, device=episode.device
-        )
-        episode.rewards = torch.tensor(
-            rewards, dtype=episode.rewards.dtype, device=episode.device
-        )
+        episode.actions = torch.tensor(actions, dtype=episode.actions.dtype, device=episode.device)
+        episode.rewards = torch.tensor(rewards, dtype=episode.rewards.dtype, device=episode.device)
         episode.dones = (
             torch.tensor(dones, dtype=episode.dones.dtype, device=episode.device)
             if dones is not None
@@ -480,6 +498,7 @@ class Episode(object):
         self.successes[:, self._idx] = torch.tensor(self.success).to(self.device)
         self._idx += 1
 
+
 class ReplayBuffer:
     """
     Storage and sampling functionality for training TD-MPC / TOLD.
@@ -496,9 +515,7 @@ class ReplayBuffer:
         print("Replay buffer sample device: ", self.device)
 
         if dataset is not None:
-            self.capacity = max(
-                dataset["rewards"].shape[0], cfg.max_offline_buffer_size
-            )
+            self.capacity = max(dataset["rewards"].shape[0], cfg.max_offline_buffer_size)
             print("Offline dataset size: ", dataset["rewards"].shape[0])
         else:
             self.capacity = max(cfg.train_steps, cfg.max_buffer_size)
@@ -508,15 +525,9 @@ class ReplayBuffer:
         if cfg.modality in {"pixels", "state"}:
             dtype = torch.float32 if cfg.modality == "state" else torch.uint8
             # Note self.obs_shape always has single frame, which is different from cfg.obs_shape
-            self.obs_shape = (
-                cfg.obs_shape if cfg.modality == "state" else (3, *cfg.obs_shape[-2:])
-            )
-            self._obs = torch.empty(
-                (self.capacity, *self.obs_shape), dtype=dtype, device=self.buffer_device
-            )
-            self._next_obs = torch.empty(
-                (self.capacity, *self.obs_shape), dtype=dtype, device=self.buffer_device
-            )
+            self.obs_shape = cfg.obs_shape if cfg.modality == "state" else (3, *cfg.obs_shape[-2:])
+            self._obs = torch.empty((self.capacity, *self.obs_shape), dtype=dtype, device=self.buffer_device)
+            self._next_obs = torch.empty((self.capacity, *self.obs_shape), dtype=dtype, device=self.buffer_device)
         elif cfg.modality == "all":
             self.obs_shape = {}
             self._obs, self._next_obs = {}, {}
@@ -538,21 +549,11 @@ class ReplayBuffer:
             dtype=torch.float32,
             device=self.buffer_device,
         )
-        self._reward = torch.empty(
-            (self.capacity,), dtype=torch.float32, device=self.buffer_device
-        )
-        self._mask = torch.empty(
-            (self.capacity,), dtype=torch.float32, device=self.buffer_device
-        )
-        self._done = torch.empty(
-            (self.capacity,), dtype=torch.bool, device=self.buffer_device
-        )
-        self._success = torch.empty(
-            (self.capacity,), dtype=torch.bool, device=self.buffer_device
-        )
-        self._priorities = torch.ones(
-            (self.capacity,), dtype=torch.float32, device=self.buffer_device
-        )
+        self._reward = torch.empty((self.capacity,), dtype=torch.float32, device=self.buffer_device)
+        self._mask = torch.empty((self.capacity,), dtype=torch.float32, device=self.buffer_device)
+        self._done = torch.empty((self.capacity,), dtype=torch.bool, device=self.buffer_device)
+        self._success = torch.empty((self.capacity,), dtype=torch.bool, device=self.buffer_device)
+        self._priorities = torch.ones((self.capacity,), dtype=torch.float32, device=self.buffer_device)
         self.ep_len = int(self.cfg.max_episode_length // self.cfg.action_repeat)
         self._eps = 1e-6
         self._full = False
@@ -582,9 +583,7 @@ class ReplayBuffer:
             # success = self._calc_sparse_success(dataset['success'])
             # copy_data(self._reward, success.astype(np.float32), n_transitions)
             if self.cfg.sparse_reward:
-                copy_data(
-                    self._reward, dataset["success"].astype(np.float32), n_transitions
-                )
+                copy_data(self._reward, dataset["success"].astype(np.float32), n_transitions)
             copy_data(self._success, dataset["success"], n_transitions)
         else:
             copy_data(self._reward, dataset["rewards"], n_transitions)
@@ -602,16 +601,14 @@ class ReplayBuffer:
         self.add(episode)
         return self
 
-    def add(self, episode: Episode):  
+    def add(self, episode: Episode):
         idxs = torch.arange(self.idx, self.idx + self.cfg.num_envs * self.ep_len) % self.capacity
         self._sampling_idx = (self.idx + self.cfg.num_envs * self.ep_len) % self.capacity
         mask_copy = episode.masks.clone()
-        mask_copy[:, episode._idx - self.cfg.horizon:] = 0.
+        mask_copy[:, episode._idx - self.cfg.horizon :] = 0.0
         if self.cfg.modality in {"pixels", "state"}:
             self._obs[idxs] = (
-                episode.obses.flatten(0, 1)
-                if self.cfg.modality == "state"
-                else episode.obses[:, -3:].flatten(0, 1)
+                episode.obses.flatten(0, 1) if self.cfg.modality == "state" else episode.obses[:, -3:].flatten(0, 1)
             )
             self._next_obs[idxs] = (
                 episode.next_obses.flatten(0, 1)
@@ -637,14 +634,10 @@ class ReplayBuffer:
         if self._full:
             max_priority = self._priorities.max().to(self.device).item()
         else:
-            max_priority = (
-                1.0
-                if self.idx == 0
-                else self._priorities[: self.idx].max().to(self.device).item()
-            )
+            max_priority = 1.0 if self.idx == 0 else self._priorities[: self.idx].max().to(self.device).item()
         mask = torch.arange(self.ep_len) > self.ep_len - self.cfg.horizon
         mask = torch.cat([mask] * self.cfg.num_envs)
-        new_priorities = torch.full((self.ep_len  * self.cfg.num_envs,), max_priority, device=self.buffer_device)
+        new_priorities = torch.full((self.ep_len * self.cfg.num_envs,), max_priority, device=self.buffer_device)
         new_priorities[mask] = 0
         new_priorities = new_priorities * self._mask[idxs]
         self._priorities[idxs] = new_priorities
@@ -656,16 +649,11 @@ class ReplayBuffer:
         self.batch_size = bs
 
     def update_priorities(self, idxs, priorities):
-        self._priorities[idxs.to(self.buffer_device)] = (
-            priorities.squeeze(1).to(self.buffer_device) + self._eps
-        )
+        self._priorities[idxs.to(self.buffer_device)] = priorities.squeeze(1).to(self.buffer_device) + self._eps
 
     def _get_obs(self, arr, idxs, bs=None, frame_stack=None):
         if isinstance(arr, dict):
-            return {
-                k: self._get_obs(v, idxs, bs=bs, frame_stack=frame_stack)
-                for k, v in arr.items()
-            }
+            return {k: self._get_obs(v, idxs, bs=bs, frame_stack=frame_stack) for k, v in arr.items()}
         if arr.ndim <= 2:  # if self.cfg.modality == 'state':
             return arr[idxs].cuda(self.device)
         obs = torch.empty(
@@ -685,46 +673,69 @@ class ReplayBuffer:
             _idxs[mask] -= 1
             obs[:, -(i + 1) * 3 : -i * 3] = arr[_idxs].cuda(self.device)
         return obs.float()
-    
+
     def save(self, buffer_fp):
         data = {
-            "obs": self._obs,
-            "next_obs": self._next_obs,
-            "action": self._action,
-            "reward": self._reward,
-            "mask": self._mask,
-            "done": self._done,
-            "priorities": self._priorities,
+            "obs": self._obs.cpu(),
+            "next_obs": self._next_obs.cpu(),
+            "action": self._action.cpu(),
+            "reward": self._reward.cpu(),
+            "mask": self._mask.cpu(),
+            "done": self._done.cpu(),
+            "priorities": self._priorities.cpu(),
         }
         torch.save(data, buffer_fp)
 
+    def load(self, buffer_fp):
+        data = torch.load(buffer_fp)
+        n_transitions = data["obs"].shape[0]
+
+        if n_transitions >= self.capacity:
+            self._obs = self._obs[-self.capacity :]
+            self._next_obs = data["next_obs"][-self.capacity :].to(self.buffer_device)
+            self._action = data["action"][-self.capacity :].to(self.buffer_device)
+            self._reward = data["reward"][-self.capacity :].to(self.buffer_device)
+            self._mask = data["mask"][-self.capacity :].to(self.buffer_device)
+            self._done = data["done"][-self.capacity :].to(self.buffer_device)
+            self._priorities = data["priorities"][-self.capacity :].to(self.buffer_device)
+            self.idx = 0
+            self._full = True
+        else:
+            self._obs[:n_transitions] = self._obs
+            self._next_obs[:n_transitions] = data["next_obs"].to(self.buffer_device)
+            self._action[:n_transitions] = data["action"].to(self.buffer_device)
+            self._reward[:n_transitions] = data["reward"].to(self.buffer_device)
+            self._mask[:n_transitions] = data["mask"].to(self.buffer_device)
+            self._done[:n_transitions] = data["done"].to(self.buffer_device)
+            self._priorities[:n_transitions] = data["priorities"].to(self.buffer_device)
+            self.idx = n_transitions
+            self._full = False
+
     def sample(self, bs=None):
-        probs = (
-            self._priorities if self._full else self._priorities[:self._sampling_idx]
-        ) ** self.cfg.per_alpha
+        probs = (self._priorities if self._full else self._priorities[: self._sampling_idx]) ** self.cfg.per_alpha
         probs /= probs.sum()
         total = len(probs)
         if torch.isnan(self._priorities).any():
             print(torch.isnan(self._priorities).any())
             print(torch.where(torch.isnan(self._priorities)))
-        idxs = torch.from_numpy(
-            np.random.choice(
-                total,
-                self.cfg.batch_size if bs is None else bs,
-                p=probs.cpu().numpy(),
-                replace=((not self._full) or (self.cfg.batch_size > self.capacity)),
-            )
-        ).to(self.buffer_device) % self.capacity
+        idxs = (
+            torch.from_numpy(
+                np.random.choice(
+                    total,
+                    self.cfg.batch_size if bs is None else bs,
+                    p=probs.cpu().numpy(),
+                    replace=((not self._full) or (self.cfg.batch_size > self.capacity)),
+                )
+            ).to(self.buffer_device)
+            % self.capacity
+        )
         weights = (total * probs[idxs]) ** (-self.cfg.per_beta)
         weights /= weights.max()
 
         idxs_in_horizon = torch.stack([idxs + t for t in range(self.cfg.horizon)]) % self.capacity
 
         obs = self._aug(self._get_obs(self._obs, idxs, bs=bs))
-        next_obs = [
-            self._aug(self._get_obs(self._next_obs, _idxs, bs=bs))
-            for _idxs in idxs_in_horizon
-        ]
+        next_obs = [self._aug(self._get_obs(self._next_obs, _idxs, bs=bs)) for _idxs in idxs_in_horizon]
         if isinstance(next_obs[0], dict):
             next_obs = {k: torch.stack([o[k] for o in next_obs]) for k in next_obs[0]}
         else:
