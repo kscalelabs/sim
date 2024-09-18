@@ -30,14 +30,16 @@ def load_embodiment(embodiment: str) -> Any:
     module_name = f"sim.resources.{embodiment}.joints"
     module = importlib.import_module(module_name)
     robot = getattr(module, "Robot")
+    print(robot)
     return robot
 
 
 def load_config() -> Any:
     # Dynamically import config based on MODEL_DIR
-    model_dir = os.environ.get("MODEL_DIR", "stompymini")
+    model_dir = os.environ.get("MODEL_DIR", "stompypro")
     if "sim/" in model_dir:
         model_dir = model_dir.split("sim/")[1]
+    model_dir = "stompypro"
     module_name = f"sim.{model_dir}.config"
     module = importlib.import_module(module_name)
     config = getattr(module, "Config")
@@ -56,29 +58,37 @@ def _pretty_print_xml(xml_string: str) -> str:
     return "\n".join(non_empty_lines[1:])
 
 
-# Load the robot and config
-# robot = load_embodiment()
-
-
 class Sim2SimRobot(mjcf.Robot):
     """A class to adapt the world in a Mujoco XML file."""
 
     def update_joints(self, root: ET.Element, damping: float = DAMPING_DEFAULT) -> ET.Element:
         joint_limits = robot.default_limits()
+        default_standing = robot.default_standing()
 
-        for joint in root.findall(".//joint"):
-            joint_name = joint.get("name")
-            if joint_name in joint_limits:
-                limits = joint_limits.get(joint_name)
-                lower = str(limits.get("lower", 0.0))
-                upper = str(limits.get("upper", 0.0))
-                joint.set("range", f"{lower} {upper}")
+        for body in root.findall(".//body"):
+            joints_to_remove = []
+            for joint in body.findall("joint"):
+                joint_name = joint.get("name")
+                if joint_name in joint_limits:
+                    limits = joint_limits.get(joint_name)
+                    lower = str(limits.get("lower", 0.0))
+                    upper = str(limits.get("upper", 0.0))
+                    joint.set("range", f"{lower} {upper}")
 
-                keys = robot.damping().keys()
-                for key in keys:
-                    if key in joint_name:
-                        damping = robot.damping()[key]
-                joint.set("damping", str(damping))
+                    keys = robot.damping().keys()
+                    for key in keys:
+                        if key in joint_name:
+                            damping = robot.damping()[key]
+                    joint.set("damping", str(damping))
+                
+                # Check if the joint is not in default_standing
+                if joint_name not in default_standing:
+                    joints_to_remove.append(joint)
+
+            # Remove joints not in default_standing
+            for joint in joints_to_remove:
+                body.remove(joint)
+                print(f"Removed joint: {joint.get('name')}")
 
         return root
 
@@ -87,7 +97,9 @@ class Sim2SimRobot(mjcf.Robot):
 
         worldbody = root.find("worldbody")
         new_root_body = mjcf.Body(name="root", pos=(0, 0, 0), quat=(1, 0, 0, 0)).to_xml()
-
+        # add freejoint to root
+        freejoint = ET.Element("freejoint", name="root")
+        new_root_body.insert(0, freejoint)
         items_to_move = []
         # Gather all children (geoms and bodies) that need to be moved under the new root body
         for element in worldbody:
@@ -96,7 +108,6 @@ class Sim2SimRobot(mjcf.Robot):
         for item in items_to_move:
             worldbody.remove(item)
             new_root_body.append(item)
-
         # Add the new root body to the worldbody
         worldbody.append(new_root_body)
 
@@ -168,8 +179,9 @@ class Sim2SimRobot(mjcf.Robot):
         sensor_vel: List[mjcf.Actuatorvel] = []
         sensor_frc: List[mjcf.Actuatorfrc] = []
         # Create motors and sensors for the joints
-        joints = list(root.findall("joint"))
-        for joint, _ in robot.default_limits().items():
+        joints = list(root.findall(".//joint"))
+        original_joints = joints.copy()
+        for joint in robot.all_joints():
             if joint in robot.default_standing().keys():
                 joint_name = joint
                 limit = 200.0  # Ensure limit is a float
@@ -192,7 +204,6 @@ class Sim2SimRobot(mjcf.Robot):
                 sensor_frc.append(mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001))
 
         root = self.update_joints(root)
-
         # Add motors and sensors
         root.append(mjcf.Actuator(motors).to_xml())
         root.append(mjcf.Sensor(sensor_pos, sensor_vel, sensor_frc).to_xml())
@@ -269,17 +280,29 @@ class Sim2SimRobot(mjcf.Robot):
                 new_geom = ET.Element("geom")
                 new_geom.set("type", geom.get("type") or "")  # Ensure type is not None
                 new_geom.set("rgba", geom.get("rgba") or "")  # Ensure rgba is not None
-                new_geom.set("mesh", geom.get("mesh") or "")  # Ensure mesh is not None
+
+                # Check if geom has mesh or is a box
+                if geom.get("mesh") is None:
+                    if geom.get("type") == "box":
+                        new_geom.set("type", "box")
+                        new_geom.set("size", geom.get("size") or "")
+                    else:
+                        print(f"Unknown geom type: {geom.get('type')}")
+                else:
+                    new_geom.set("mesh", geom.get("mesh"))
                 if geom.get("pos"):
                     new_geom.set("pos", geom.get("pos") or "")
                 if geom.get("quat"):
                     new_geom.set("quat", geom.get("quat") or "")
-                # Exclude collision meshes
-                if geom.get("mesh") not in robot.collision_links:
-                    new_geom.set("contype", "0")
-                    new_geom.set("conaffinity", "0")
-                    new_geom.set("group", "1")
-                    new_geom.set("density", "0")
+                try:
+                    # Exclude collision meshes
+                    if geom.get("mesh") not in robot.collision_links:
+                        new_geom.set("contype", "0")
+                        new_geom.set("conaffinity", "0")
+                        new_geom.set("group", "1")
+                        new_geom.set("density", "0")
+                except Exception as e:
+                    print(e)
 
                 # Append the new geom to the body
                 index = list(body).index(geom)
@@ -292,7 +315,15 @@ class Sim2SimRobot(mjcf.Robot):
                     join.attrib.pop("actuatorfrcrange")
 
         default_standing = robot.default_standing()
-        qpos = [0, 0, robot.height] + robot.rotation + list(default_standing.values())
+        joint_defaults = list(default_standing.values()) # + [0.0] * (len(original_joints) - len(default_standing))
+        qpos = [0, 0, robot.height] + robot.rotation + joint_defaults
+        
+        # qpos = list(default_standing.values())
+
+        # Pad qpos with zeros to match the number of joints
+        #qpos += [0.0] * (len(original_joints) - len(qpos))
+        # qpos = joint_defaults
+
         default_key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
         keyframe = mjcf.Keyframe(keys=[default_key])
         root.append(keyframe.to_xml())
@@ -308,12 +339,12 @@ class Sim2SimRobot(mjcf.Robot):
                 # Swap the bodies
                 parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
 
-        # Remove the root body in the end
-        root_body = worldbody.find("./body[@name='root']")
-        children = list(root_body)
-        worldbody.remove(root_body)
-        for child in children:
-            worldbody.append(child)
+        # # Remove the root body in the end
+        # root_body = worldbody.find("./body[@name='root']")
+        # children = list(root_body)
+        # worldbody.remove(root_body)
+        # for child in children:
+        #     worldbody.append(child)
 
     def save(self, path: Union[str, Path]) -> None:
         rough_string = ET.tostring(self.tree.getroot(), "utf-8", xml_declaration=False)
@@ -340,8 +371,13 @@ def create_mjcf(filepath: Path) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Create a MJCF file for the Stompy robot.")
+    parser = argparse.ArgumentParser(description="Create a MJCF file for the robot.")
     parser.add_argument("filepath", type=str, help="The path to load and save the MJCF file.")
+    parser.add_argument("--robot", type=str, help="The robot name to load.")
     args = parser.parse_args()
     # Robot name is whatever string comes right before ".urdf" extension
+    robot_name = args.filepath.split("/")[-1].split(".")[0]
+
+    # Load the robot and config
+    robot = load_embodiment(args.robot)
     create_mjcf(args.filepath)
