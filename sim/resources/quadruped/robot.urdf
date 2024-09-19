@@ -1,0 +1,257 @@
+<?xml version="1.0" ?>
+<robot name="quadruped">
+  <link name="Body">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/Body.stl"/>
+      </geometry>
+      <material name="Body_material">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/Body.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="2.585338142999999"/>
+      <inertia ixx="0.010861189163197308" iyy="0.029672995549036452" izz="0.02235782690555882" ixy="-0.0003491090114997283" ixz="-0.00013951506007256947" iyz="-4.29138351703065e-07"/>
+      <origin xyz="0.012818997373391898 0.003986083150485415 -0.046400642557250835" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="Left_Shoulder_Pitch" type="revolute">
+    <origin xyz="-0.039182572 0.015797064 0.102876778" rpy="0.0 0.0 -1.5707963"/>
+    <parent link="Body"/>
+    <child link="Left_Front_Upper"/>
+    <limit effort="80" velocity="5" lower="0" upper="1.2217305"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="Left_Front_Upper">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_leg.stl"/>
+      </geometry>
+      <material name="upper_leg_material">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_leg.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.123347432"/>
+      <inertia ixx="2.960555974648787e-05" iyy="0.0001699573614015481" izz="0.00016494237364451621" ixy="1.4923681964078867e-06" ixz="2.211390324141005e-07" iyz="-3.2312184376041967e-09"/>
+      <origin xyz="0.07095247440004748 0.0002264767402765696 -0.024490850704380323" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="Left_Hip_Pitch" type="revolute">
+    <origin xyz="0.130744145 0.010805994000000001 0.088021995" rpy="0.0 0.0 -1.5707963"/>
+    <parent link="Body"/>
+    <child link="Left_Back_Upper"/>
+    <limit effort="80" velocity="5" lower="0" upper="1.5707963"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="Left_Back_Upper">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_leg_2.stl"/>
+      </geometry>
+      <material name="upper_leg_material_2">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_leg_2.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.123347432"/>
+      <inertia ixx="2.993263481864417e-05" iyy="0.00017030257635288184" izz="0.0001649242337653388" ixy="6.119184842091685e-07" ixz="-5.942008952976921e-06" iyz="3.560014787383203e-08"/>
+      <origin xyz="0.07095247440004748 0.00044537063666510583 -0.019258593429660565" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="Right_Hip_Pitch" type="revolute">
+    <origin xyz="0.12674414535365716 0.010805999418395659 -0.1624546223450983" rpy="-1.9615308044507174e-08 7.320510442276884e-08 -1.5707963000000018"/>
+    <parent link="Body"/>
+    <child link="Right_Back_Upper"/>
+    <limit effort="80" velocity="5" lower="0" upper="1.5707963"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="Right_Back_Upper">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_leg_3.stl"/>
+      </geometry>
+      <material name="upper_leg_material_3">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_leg_3.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.123347432"/>
+      <inertia ixx="2.9986011666132636e-05" iyy="0.00017035595320037035" izz="0.00016492423376533884" ixy="6.119184842091686e-07" ixz="6.384287017805129e-06" iyz="-3.824995278557794e-08"/>
+      <origin xyz="0.0709524744000475 0.00044537063666510583 0.01977689202089992" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="Right_Shoulder_Pitch" type="revolute">
+    <origin xyz="-0.03518256928426158 0.015797070039031802 -0.15081340916885574" rpy="-1.9615308044507174e-08 7.320510442276884e-08 -1.5707963000000018"/>
+    <parent link="Body"/>
+    <child link="Right_Front_Upper"/>
+    <limit effort="80" velocity="5" lower="0" upper="1.2217305"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="Right_Front_Upper">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_leg_4.stl"/>
+      </geometry>
+      <material name="upper_leg_material_4">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/upper_leg_4.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.123347432"/>
+      <inertia ixx="2.9587419867310438e-05" iyy="0.00016995736140154816" izz="0.00016492423376533884" ixy="6.119184842091686e-07" ixz="2.211390324141067e-07" iyz="-1.3249024558729755e-09"/>
+      <origin xyz="0.0709524744000475 0.00044537063666510583 -0.02079085070438032" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="Left_Elbow_Pitch" type="revolute">
+    <origin xyz="0.11699999999999999 -0.0002500000000000002 -0.048" rpy="0.0 0.0 0.0"/>
+    <parent link="Left_Front_Upper"/>
+    <child link="Left_Front_Lower"/>
+    <limit effort="80" velocity="5" lower="-1.3962634" upper="1.3962634"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="Left_Front_Lower">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/NEWlower_leg.stl"/>
+      </geometry>
+      <material name="NEWlower_leg_material">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/NEWlower_leg.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.16861945"/>
+      <inertia ixx="5.9263746e-05" iyy="0.00030229406" izz="0.00029264329" ixy="1.6572576e-06" ixz="0" iyz="0"/>
+      <origin xyz="0.082003407 -0.00018204201 0.021477588" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="Left_Knee_Pitch" type="revolute">
+    <origin xyz="0.11449999999999999 0.0002500000000000002 0.00945" rpy="0.0 0.0 0.0"/>
+    <parent link="Left_Back_Upper"/>
+    <child link="Left_Back_Lower"/>
+    <limit effort="80" velocity="5" lower="-1.3962634" upper="1.3962634"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="Left_Back_Lower">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_leg.stl"/>
+      </geometry>
+      <material name="lower_leg_material">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_leg.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.13196544"/>
+      <inertia ixx="4.110089e-05" iyy="0.00020860897" izz="0.00019998066" ixy="0" ixz="0" iyz="0"/>
+      <origin xyz="0.069849395 -0.00023075507 -0.027714712" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="Right_Knee_Pitch" type="revolute">
+    <origin xyz="0.117 0.0002500000000000002 0.041550000000000004" rpy="0.0 0.0 0.0"/>
+    <parent link="Right_Back_Upper"/>
+    <child link="Right_Back_Lower"/>
+    <limit effort="80" velocity="5" lower="-1.3962634" upper="1.3962634"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="Right_Back_Lower">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_leg_2.stl"/>
+      </geometry>
+      <material name="lower_leg_material_2">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/lower_leg_2.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.13196544"/>
+      <inertia ixx="4.110089e-05" iyy="0.00020860897" izz="0.00019998066" ixy="0" ixz="0" iyz="0"/>
+      <origin xyz="0.069849395 -0.00023075507 -0.024564712" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="Right_Elbow_Pitch" type="revolute">
+    <origin xyz="0.117 0.0002500000000000002 -5.000000000000143e-05" rpy="3.1415926071795868 0.0 0.0"/>
+    <parent link="Right_Front_Upper"/>
+    <child link="Right_Front_Lower"/>
+    <limit effort="80" velocity="5" lower="-1.3962634" upper="1.3962634"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="Right_Front_Lower">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/NEWlower_leg_2.stl"/>
+      </geometry>
+      <material name="NEWlower_leg_material_2">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/NEWlower_leg_2.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.16861945"/>
+      <inertia ixx="5.9263746e-05" iyy="0.00030229406" izz="0.00029264329" ixy="-1.6572576e-06" ixz="0" iyz="0"/>
+      <origin xyz="0.082003407 0.00018204201 0.021422412" rpy="0 0 0"/>
+    </inertial>
+  </link>
+</robot>

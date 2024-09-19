@@ -20,6 +20,8 @@ from sim.envs.humanoids.stompypro_config import StompyProCfg, StompyProCfgPPO
 from sim.envs.humanoids.stompypro_env import StompyProFreeEnv
 from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
 from sim.envs.humanoids.xbot_env import XBotLFreeEnv
+from sim.envs.humanoids.quadruped_config import QuadrupedCfg, QuadrupedCfgPPO
+from sim.envs.humanoids.quadruped_env import QuadrupedFreeEnv
 from sim.utils.task_registry import TaskRegistry  # noqa: E402
 
 task_registry = TaskRegistry()
@@ -29,3 +31,4 @@ task_registry.register("dora", DoraFreeEnv, DoraCfg(), DoraCfgPPO())
 task_registry.register("h1", H1FreeEnv, H1Cfg(), H1CfgPPO())
 task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
 task_registry.register("xbot", XBotLFreeEnv, XBotCfg(), XBotCfgPPO())
+task_registry.register("quadruped", QuadrupedFreeEnv, QuadrupedCfg(), QuadrupedCfgPPO())
