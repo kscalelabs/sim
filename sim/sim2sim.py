@@ -92,7 +92,7 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     """Calculates torques from position commands"""
-    return kp * (target_q + default - q) - kd * dq
+    return kp * (target_q - q) - kd * dq # kp * (target_q + default - q) - kd * dq
 
 
 def run_mujoco(policy, cfg):
@@ -111,11 +111,12 @@ def run_mujoco(policy, cfg):
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = cfg.sim_config.dt
     data = mujoco.MjData(model)
-
     try:
         data.qpos = model.keyframe("default").qpos
         default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
+        print("Default position:", default)
     except:
+        print("No default position found, using zero initialization")
         default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
     mujoco.mj_step(model, data)
 
@@ -163,11 +164,14 @@ def run_mujoco(policy, cfg):
             policy_input = np.zeros([1, cfg.env.num_observations], dtype=np.float32)
             for i in range(cfg.env.frame_stack):
                 policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
+            
+            # print(model.joints)
+
+            # Call the model with the corrected input shape
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
 
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
-
-            target_q = action * cfg.control.action_scale
+            target_q = action * cfg.control.action_scale # * list(robot.isaac_to_mujoco_signs().values())
 
         target_dq = np.zeros((cfg.num_actions), dtype=np.double)
 
@@ -177,8 +181,15 @@ def run_mujoco(policy, cfg):
         )  # Calc torques
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
-
+        
         data.ctrl = tau
+
+        # print(f"Giving force: {tau}")
+        # print(f"Current position: {q}")
+        #print(f"Offset from default: {q - default}")
+        #data.ctrl = [0] * cfg.num_actions
+        
+        #data.qpos[-cfg.num_actions:] = default
 
         mujoco.mj_step(model, data)
         viewer.render()
@@ -201,7 +212,7 @@ if __name__ == "__main__":
         num_actions = len(robot.all_joints())
 
         class env:
-            num_actions = 12
+            num_actions = len(robot.all_joints())
             frame_stack = 15
             c_frame_stack = 3
             num_single_obs = 11 + num_actions * c_frame_stack
@@ -213,7 +224,7 @@ if __name__ == "__main__":
             decimation = 10
 
         class robot_config:
-            tau_factor = 0.85
+            tau_factor = 0.85 #* 100
             tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
             kps = tau_limit
             kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))

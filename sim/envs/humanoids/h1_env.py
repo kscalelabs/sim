@@ -6,7 +6,7 @@ from isaacgym.torch_utils import *  # isort:skip
 from isaacgym import gymtorch  # isort:skip
 
 from sim.envs.base.legged_robot import LeggedRobot
-from sim.resources.h1.joints import Robot
+from sim.resources.h1_2.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
 import torch  # isort:skip

@@ -5,7 +5,7 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.h1.joints import Robot
+from sim.resources.h1_2.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())  # 33
 

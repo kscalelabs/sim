@@ -132,7 +132,7 @@ class StompyProFreeEnv(LeggedRobot):
         sin_pos_r[sin_pos_r < 0] = 0
         self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] += sin_pos_r * scale_1
         self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] += sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += -1 * sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += 1 * sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -253,7 +253,6 @@ class StompyProFreeEnv(LeggedRobot):
                 * self.obs_scales.height_measurements
             )
             self.privileged_obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
-
         if self.add_noise:
             obs_now = obs_buf.clone() + torch.randn_like(obs_buf) * self.noise_scale_vec * self.cfg.noise.noise_level
         else:
@@ -279,7 +278,7 @@ class StompyProFreeEnv(LeggedRobot):
         joint_pos = self.dof_pos.clone()
         pos_target = self.ref_dof_pos.clone()
         diff = joint_pos - pos_target
-        r = torch.exp(-2 * torch.norm(diff, dim=1)) - 0.2 * torch.norm(diff, dim=1).clamp(0, 0.5)
+        r = torch.exp(-3 * torch.norm(diff, dim=1)) - 0.2 * torch.norm(diff, dim=1).clamp(0, 0.5)
 
         return r
 
