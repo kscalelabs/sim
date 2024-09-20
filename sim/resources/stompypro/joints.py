@@ -187,56 +187,56 @@ class Robot(Node):
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {}
 
-    # # p_gains
-    # @classmethod
-    # def stiffness(cls) -> Dict[str, float]:
-    #     return {
-    #         "hip_y": 120,
-    #         "hip_x": 60,
-    #         "hip_z": 60,
-    #         "knee": 120,
-    #         "ankle_y": 17,
-    #         # "shoulder_y": 120,
-    #         # "shoulder_z": 60,
-    #         # "shoulder_x": 60,
-    #         # "elbow_x": 120,
-    #     }
+    # p_gains
+    @classmethod
+    def stiffness(cls) -> Dict[str, float]:
+        return {
+            "hip_y": 120,
+            "hip_x": 60,
+            "hip_z": 60,
+            "knee": 120,
+            "ankle_y": 17,
+            # "shoulder_y": 120,
+            # "shoulder_z": 60,
+            # "shoulder_x": 60,
+            # "elbow_x": 120,
+        }
 
     # For mujoco
     @classmethod
-    def stiffness(cls) -> Dict[str, float]:
+    def stiffness_mujoco(cls) -> Dict[str, float]:
+        return {
+            "hip_y": 5,
+            "hip_x": 5,
+            "hip_z": 5,
+            "knee": 5,
+            "ankle_y": 5,
+        }
+
+    @classmethod
+    def damping_mujoco(cls) -> Dict[str, float]:
+        return {
+            "hip_y": 1,
+            "hip_x": 1,
+            "hip_z": 1,
+            "knee": 1,
+            "ankle_y": 1,
+        }
+
+    # d_gains
+    @classmethod
+    def damping(cls) -> Dict[str, float]:
         return {
             "hip_y": 10,
             "hip_x": 10,
             "hip_z": 10,
             "knee": 10,
-            "ankle_y": 10,
+            "ankle_y": 5,
+            # "shoulder_y": 10,
+            # "shoulder_z": 10,
+            # "shoulder_x": 10,
+            # "elbow_x": 10,
         }
-
-    @classmethod
-    def damping(cls) -> Dict[str, float]:
-        return {
-            "hip_y": 15,
-            "hip_x": 15,
-            "hip_z": 15,
-            "knee": 15,
-            "ankle_y": 15,
-        }
-
-    # # d_gains
-    # @classmethod
-    # def damping(cls) -> Dict[str, float]:
-    #     return {
-    #         "hip_y": 10,
-    #         "hip_x": 10,
-    #         "hip_z": 10,
-    #         "knee": 10,
-    #         "ankle_y": 5,
-    #         # "shoulder_y": 10,
-    #         # "shoulder_z": 10,
-    #         # "shoulder_x": 10,
-    #         # "elbow_x": 10,
-    #     }
 
     # # d_gains
     # @classmethod

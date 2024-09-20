@@ -79,17 +79,17 @@ class Sim2SimRobot(mjcf.Robot):
                 for key in keys:
                     if key in joint_name:
                         damping = robot.damping()[key]
-                        damping = 100
+                        damping = 10
                         joint.set("damping", str(damping))
                         print(f"Damping for {joint_name}: {damping}")
                 
-                keys = robot.stiffness().keys()
-                for key in keys:
-                    if key in joint_name:
-                        stiffness = robot.stiffness()[key]
-                        stiffness = 0.1
-                        joint.set("stiffness", str(stiffness))
-                        print(f"Stiffness for {joint_name}: {stiffness}")
+                # keys = robot.stiffness().keys()
+                # for key in keys:
+                #     if key in joint_name:
+                #         stiffness = robot.stiffness()[key]
+                #         stiffness = 0.1
+                #         joint.set("stiffness", str(stiffness))
+                #         print(f"Stiffness for {joint_name}: {stiffness}")
                 
                 # Check if the joint is not in default_standing
                 if joint_name not in default_standing:
@@ -194,7 +194,7 @@ class Sim2SimRobot(mjcf.Robot):
         for joint in robot.all_joints():
             if joint in robot.default_standing().keys():
                 joint_name = joint
-                limit = 200.0  # Ensure limit is a float
+                limit = 1000.0 #200.0  # Ensure limit is a float
                 keys = robot.effort().keys()
                 for key in keys:
                     if key in joint_name:
@@ -338,16 +338,18 @@ class Sim2SimRobot(mjcf.Robot):
         keyframe = mjcf.Keyframe(keys=[default_key])
         root.append(keyframe.to_xml())
 
-        # Swap left and right leg since our setup
-        parent_body = root.find(".//body[@name='root']")
-        if parent_body is not None:
-            left = parent_body.find(".//body[@name='link_leg_assembly_left_1_rmd_x12_150_mock_1_inner_x12_150_1']")
-            right = parent_body.find(".//body[@name='link_leg_assembly_right_1_rmd_x12_150_mock_1_inner_x12_150_1']")
-            if left is not None and right is not None:
-                left_index = list(parent_body).index(left)
-                right_index = list(parent_body).index(right)
-                # Swap the bodies
-                parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
+        # Swap left and right leg since our setup - IDK if this is necessary (wesley)
+        # parent_body = root.find(".//body[@name='root']")
+        # if parent_body is not None:
+        #     left = parent_body.find(".//body[@name='L_clav']")
+        #     right = parent_body.find(".//body[@name='R_clav']")
+        #     print(left.get("name"))
+        #     print(right.get("name"))
+        #     if left is not None and right is not None:
+        #         left_index = list(parent_body).index(left)
+        #         right_index = list(parent_body).index(right)
+        #         # Swap the bodies
+        #         parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
 
         # # Remove the root body in the end
         # root_body = worldbody.find("./body[@name='root']")

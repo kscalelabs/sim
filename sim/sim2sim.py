@@ -92,7 +92,7 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     """Calculates torques from position commands"""
-    return kp * (target_q - q) - kd * dq # kp * (target_q + default - q) - kd * dq
+    return kp * (target_q + default - q) - kd * dq # kp * (target_q - q) - kd * dq # 
 
 
 def run_mujoco(policy, cfg):
@@ -145,13 +145,23 @@ def run_mujoco(policy, cfg):
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
+            cur_pos_obs = (q - default) * cfg.normalization.obs_scales.dof_pos
+            # if args.embodiment == "stompypro":
+            #     cur_pos_obs[cfg.num_actions//2:] *= -1
+            #     cur_pos_obs[:cfg.num_actions//2] *= -1
+
+            cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
+            # if args.embodiment == "stompypro":
+            #     cur_vel_obs[cfg.num_actions//2:] *= -1
+            #     cur_vel_obs[:cfg.num_actions//2] *= -1
+
             obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
             obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
-            obs[0, 5 : (cfg.num_actions + 5)] = (q - default) * cfg.normalization.obs_scales.dof_pos
-            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = dq * cfg.normalization.obs_scales.dof_vel
+            obs[0, 5 : (cfg.num_actions + 5)] = cur_pos_obs
+            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = cur_vel_obs
             obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
             obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
             obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
@@ -170,10 +180,23 @@ def run_mujoco(policy, cfg):
             # Call the model with the corrected input shape
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
 
+            # Negate the left leg actions
+            # if args.embodiment == "stompypro":
+            #     action[:cfg.num_actions//2] *= -1
+            #     action[cfg.num_actions//2:] *= -1
+
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
             target_q = action * cfg.control.action_scale # * list(robot.isaac_to_mujoco_signs().values())
 
         target_dq = np.zeros((cfg.num_actions), dtype=np.double)
+
+        # negate the left leg actions
+        # if args.embodiment == "stompypro":
+        #     target_q[:cfg.num_actions//2] *= -1
+        #     target_q[cfg.num_actions//2:] *= -1
+        
+        # Force target_q to be 0
+        target_q = np.zeros_like(target_q)
 
         # Generate PD control
         tau = pd_control(
@@ -186,10 +209,14 @@ def run_mujoco(policy, cfg):
 
         # print(f"Giving force: {tau}")
         # print(f"Current position: {q}")
+        # print(f"Desired position: {target_q + default}")
+        print(f"PD target: {target_q + default - q}")
+        print(f"Set torques: {tau}")
+        # print(f"Position delta: {target_q - q}")
         #print(f"Offset from default: {q - default}")
         #data.ctrl = [0] * cfg.num_actions
         
-        #data.qpos[-cfg.num_actions:] = default
+        # data.qpos[-cfg.num_actions:] = default
 
         mujoco.mj_step(model, data)
         viewer.render()
@@ -225,9 +252,9 @@ if __name__ == "__main__":
 
         class robot_config:
             tau_factor = 0.85 #* 100
-            tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
+            tau_limit = np.array(list(robot.stiffness_mujoco().values()) + list(robot.stiffness_mujoco().values())) * tau_factor
             kps = tau_limit
-            kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
+            kds = np.array(list(robot.damping_mujoco().values()) + list(robot.damping_mujoco().values()))
 
         class normalization:
             class obs_scales:

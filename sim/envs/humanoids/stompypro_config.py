@@ -40,9 +40,10 @@ class StompyProCfg(LeggedRobotCfg):
         foot_name = ["L_foot", "R_foot"]
         knee_name = ["L_calf", "R_calf"]
 
-        termination_height = 0.35
+        termination_height = 0.2
         default_feet_height = 0.0
         terminate_after_contacts_on = ["base", "L_thigh", "R_thigh"]
+        # terminate_after_contacts_on = []
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -124,7 +125,7 @@ class StompyProCfg(LeggedRobotCfg):
         added_mass_range = [-1.0, 1.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.25 # 0.2
+        max_push_vel_xy = 0.3 # 0.2
         max_push_ang_vel = 0.4
         dynamic_randomization = 0.02
 
@@ -155,26 +156,26 @@ class StompyProCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 800  # forces above this value are penalized
+        max_contact_force = 500 # 800  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
-            joint_pos = 1.6 #1.6
-            feet_clearance = 1.5 # 1.0
-            feet_contact_number = 2.1 #1.2
-            # # gait
-            feet_air_time = 2.5  # 1.0
-            foot_slip = -0.05
-            feet_distance = 0.2 # 0.2
-            knee_distance = 0.2
-            # # contact
-            feet_contact_forces = -0.01
-            # # vel tracking
-            tracking_lin_vel = 2
-            tracking_ang_vel = 1.1 # 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5 # 0.5
+            # joint_pos = 1.6 #1.6
+            # feet_clearance = 1.5 # 1.0
+            # feet_contact_number = 2.1 #1.2
+            # # # gait
+            # feet_air_time = 2.5  # 1.0
+            # foot_slip = -0.05
+            # feet_distance = 0.2 # 0.2
+            # knee_distance = 0.2
+            # # # contact
+            # feet_contact_forces = -0.01
+            # # # vel tracking
+            # tracking_lin_vel = 2
+            # tracking_ang_vel = 1.1 # 1.1
+            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            # low_speed = 0.2
+            # track_vel_hard = 0.5 # 0.5
 
             # above this was removed
             # base pos
