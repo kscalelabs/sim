@@ -49,7 +49,7 @@ class QuadrupedFreeEnv(LeggedRobot):
     def __init__(self, cfg, sim_params, physics_engine, sim_device, headless):
         super().__init__(cfg, sim_params, physics_engine, sim_device, headless)
         self.last_feet_z = self.cfg.asset.default_feet_height
-        self.feet_height = torch.zeros((self.num_envs, 2), device=self.device)
+        self.feet_height = torch.zeros((self.num_envs, 4), device=self.device)
         self.reset_idx(torch.tensor(range(self.num_envs), device=self.device))
 
         env_handle = self.envs[0]
@@ -103,11 +103,13 @@ class QuadrupedFreeEnv(LeggedRobot):
         phase = self._get_phase()
         sin_pos = torch.sin(2 * torch.pi * phase)
         # Add double support phase
-        stance_mask = torch.zeros((self.num_envs, 2), device=self.device)
+        stance_mask = torch.zeros((self.num_envs, 4), device=self.device)
         # left foot stance
         stance_mask[:, 0] = sin_pos >= 0
+        stance_mask[:, 3] = sin_pos >= 0
         # right foot stance
         stance_mask[:, 1] = sin_pos < 0
+        stance_mask[:, 2] = sin_pos < 0
         # Double support phase
         stance_mask[torch.abs(sin_pos) < 0.1] = 1
 
@@ -386,7 +388,7 @@ class QuadrupedFreeEnv(LeggedRobot):
         measured_heights = torch.sum(self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1) / torch.sum(
             stance_mask, dim=1
         )
-        base_height = self.root_states[:, 2] - (measured_heights - self.cfg.asset.default_feet_height)
+        base_height = self.root_states[:, 4] - (measured_heights - self.cfg.asset.default_feet_height)
         reward = torch.exp(-torch.abs(base_height - self.cfg.rewards.base_height_target) * 100)
         return reward
 

@@ -19,7 +19,7 @@ class QuadrupedCfg(LeggedRobotCfg):
         c_frame_stack = 3
         num_single_obs = 11 + NUM_JOINTS * 3
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 25 + NUM_JOINTS * 4
+        single_num_privileged_obs = 25 + NUM_JOINTS * 4 + 4 #WHY THIS WORK???
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = NUM_JOINTS
         num_envs = 4096
@@ -37,10 +37,10 @@ class QuadrupedCfg(LeggedRobotCfg):
         file = str(robot_urdf_path(name))
 
 
-        foot_name = ["Right_Back_Lower", "Left_Back_Lower"]
-        knee_name = ["Right_Back_Upper", "Left_Back_Upper"]
+        foot_name = ["Right_Back_Lower", "Left_Back_Lower", "Right_Front_Lower", "Left_Front_Lower"]
+        knee_name = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper"]
 
-        termination_height = 0.24
+        termination_height = 0.155
         default_feet_height = 0.03
         terminate_after_contacts_on = []
 
