@@ -41,7 +41,7 @@ class QuadrupedCfg(LeggedRobotCfg):
         knee_name = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper"]
 
         termination_height = 0.155
-        default_feet_height = 0.03
+        default_feet_height = 0.05
         terminate_after_contacts_on = []
 
         penalize_contacts_on = []
@@ -145,9 +145,9 @@ class QuadrupedCfg(LeggedRobotCfg):
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = 0.78
-        min_dist = 0.25
-        max_dist = 0.5
+        base_height_target = 0.35
+        min_dist = 0.1
+        max_dist = 0.7
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
