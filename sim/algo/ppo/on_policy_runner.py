@@ -38,9 +38,9 @@ from datetime import datetime
 from typing import Callable, Optional
 
 import torch
-import wandb
 from torch.utils.tensorboard import SummaryWriter
 
+import wandb
 from sim.algo.ppo.actor_critic import ActorCritic
 from sim.algo.ppo.ppo import PPO
 from sim.algo.vec_env import VecEnv

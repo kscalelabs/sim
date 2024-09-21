@@ -57,6 +57,7 @@ install-third-party:
 	@cd third_party/isaacgym/python/ && pip install --verbose -e .
 
 install-third-party-external:
+	@conda install -y nvidia/label/cuda-12.0.0::cuda-nvrtc
 	@cd ${ISAACGYM_PATH}/python/ && pip install --verbose -e .
 
 build-ext:
