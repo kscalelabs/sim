@@ -114,6 +114,11 @@ class LeggedRobotCfg(BaseConfig):
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 4
 
+    class safety:
+        # safety factors
+        termination_height = 0.0
+        terminate_after_contacts_on = []
+
     class asset:
         file = ""
         name = "legged_robot"  # actor name
