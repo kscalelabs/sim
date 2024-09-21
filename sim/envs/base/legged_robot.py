@@ -685,6 +685,9 @@ class LeggedRobot(BaseTask):
         termination_contact_names = []
         for name in self.cfg.asset.terminate_after_contacts_on:
             termination_contact_names.extend([s for s in body_names if name in s])
+        safety_termination_contact_names = []
+        for name in self.cfg.safety.terminate_after_contacts_on:
+            safety_termination_contact_names.extend([s for s in body_names if name in s])
         base_init_state_list = (
             self.cfg.init_state.pos
             + self.cfg.init_state.rot
@@ -757,6 +760,14 @@ class LeggedRobot(BaseTask):
         for i in range(len(termination_contact_names)):
             self.termination_contact_indices[i] = self.gym.find_actor_rigid_body_handle(
                 self.envs[0], self.actor_handles[0], termination_contact_names[i]
+            )
+
+        self.safety_termination_contact_indices = torch.zeros(
+            len(safety_termination_contact_names), dtype=torch.long, device=self.device, requires_grad=False
+        )
+        for i in range(len(safety_termination_contact_names)):
+            self.safety_termination_contact_indices[i] = self.gym.find_actor_rigid_body_handle(
+                self.envs[0], self.actor_handles[0], safety_termination_contact_names[i]
             )
 
     def _get_env_origins(self):

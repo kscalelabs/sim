@@ -31,11 +31,30 @@ class StompyProCfg(LeggedRobotCfg):
         pos_limit = 1.0
         vel_limit = 1.0
         torque_limit = 0.85
+        termination_height = 0.1
+        terminate_after_contacts_on = [
+            "base",
+            "trunk",
+            "L_buttock",
+            "L_leg",
+            "L_thigh",
+            "L_calf",
+            "L_clav",
+            "L_scapula",
+            "L_uarm",
+            "L_farm",
+            "R_buttock",
+            "R_leg",
+            "R_thigh",
+            "R_calf",
+            "R_clav",
+            "R_scapula",
+        ]
 
     class asset(LeggedRobotCfg.asset):
         name = "stompypro"
         file = str(robot_urdf_path(name))
-        
+
         foot_name = ["L_foot", "R_foot"]
         knee_name = ["L_calf", "R_calf"]
 
