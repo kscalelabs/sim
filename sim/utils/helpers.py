@@ -164,7 +164,7 @@ def get_args() -> argparse.Namespace:
         {
             "name": "--task",
             "type": str,
-            "default": "",
+            "default": "stompymicro",
             "help": "Resume training or start testing from a checkpoint. Overrides config file if provided.",
         },
         {

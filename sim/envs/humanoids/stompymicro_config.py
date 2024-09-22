@@ -10,7 +10,7 @@ from sim.resources.stompymicro.joints import Robot
 NUM_JOINTS = len(Robot.all_joints())  # 20
 
 
-class MiniCfg(LeggedRobotCfg):
+class StompyMicroCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
@@ -31,13 +31,14 @@ class MiniCfg(LeggedRobotCfg):
         pos_limit = 1.0
         vel_limit = 1.0
         torque_limit = 0.85
+        terminate_after_contacts_on = []
 
     class asset(LeggedRobotCfg.asset):
         name = "stompymicro"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["RS_01_Stator", "RS_01_Stator_2"]
-        knee_name = ["RS_04_Rotor_7", "RS_04_Rotor_8"]
+        foot_name = ["DRIVING_ROTOR_PLATE_9", "DRIVING_ROTOR_PLATE_10"]
+        knee_name = ["DRIVING_ROTOR_PLATE_7", "DRIVING_ROTOR_PLATE_8"]
 
         termination_height = 0.24
         default_feet_height = 0.03
@@ -207,7 +208,7 @@ class MiniCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class MiniCfgPPO(LeggedRobotCfgPPO):
+class StompyMicroCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
