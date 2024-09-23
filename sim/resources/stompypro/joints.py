@@ -214,21 +214,6 @@ class Robot(Node):
             # "elbow_x": 10,
         }
 
-    # # d_gains
-    # @classmethod
-    # def damping(cls) -> Dict[str, float]:
-    #     return {
-    #         "hip_y": 10,
-    #         "hip_x": 10,
-    #         "hip_z": 10,
-    #         "knee": 10,
-    #         "ankle_y": 5,
-    #         # "shoulder_y": 10,
-    #         # "shoulder_z": 10,
-    #         # "shoulder_x": 10,
-    #         # "elbow_x": 10,
-    #     }
-
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:

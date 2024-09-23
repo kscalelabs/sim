@@ -28,9 +28,10 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 """
+https://github.com/kscalelabs/sim/commit/1082890d6664f6ab3a1c2ac496bd2bd57874e7f1#diff-227a6023a94553437073e5b5e4e8edd7ac4dc78d1626277e1283d15322d8e74a
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
-python sim/sim2sim.py --load_model policy_1.pt
+python sim/sim2sim.py --load_model policy_1.pt --embodiment stompypro
 """
 import argparse
 import math
@@ -50,7 +51,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.5
+    vx = 0.0
     vy = 0.0
     dyaw = 0.0
 
@@ -92,7 +93,7 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     """Calculates torques from position commands"""
-    return kp * (target_q + default - q) - kd * dq  # kp * (target_q - q) - kd * dq #
+    return kp * (target_q + default - q) - kd * dq # kp * (target_q - q) - kd * dq # 
 
 
 def run_mujoco(policy, cfg):
@@ -111,6 +112,7 @@ def run_mujoco(policy, cfg):
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = cfg.sim_config.dt
     data = mujoco.MjData(model)
+
     try:
         data.qpos = model.keyframe("default").qpos
         default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
@@ -118,7 +120,11 @@ def run_mujoco(policy, cfg):
     except:
         print("No default position found, using zero initialization")
         default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
+    # default = np.zeros(cfg.num_actions)
     mujoco.mj_step(model, data)
+
+    for ii in JOINT_NAMES:
+        print(data.joint(ii).id, data.joint(ii).qpos)
 
     data.qvel = np.zeros_like(data.qvel)
     data.qacc = np.zeros_like(data.qacc)
@@ -155,6 +161,7 @@ def run_mujoco(policy, cfg):
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
             cur_pos_obs = (q - default) * cfg.normalization.obs_scales.dof_pos
+
             cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
 
             obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
@@ -178,7 +185,6 @@ def run_mujoco(policy, cfg):
                 policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
 
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
-
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
             target_q = action * cfg.control.action_scale
 
@@ -222,16 +228,14 @@ if __name__ == "__main__":
 
         class sim_config:
             sim_duration = 60.0
-            dt = 0.001
+            dt = 0.002
             decimation = 10
 
         class robot_config:
-            tau_factor = 1  # 0.85 #* 100
-            tau_limit = (
-                np.array(list(robot.stiffness_mujoco().values()) + list(robot.stiffness_mujoco().values())) * tau_factor
-            )
+            tau_factor = 0.85
+            tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
             kps = tau_limit
-            kds = np.array(list(robot.damping_mujoco().values()) + list(robot.damping_mujoco().values()))
+            kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
 
         class normalization:
             class obs_scales:
