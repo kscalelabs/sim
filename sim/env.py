@@ -9,6 +9,8 @@ load_dotenv()
 
 
 def model_dir(robotname: str) -> Path:
+    print(os.getcwd())
+
     return Path(os.environ.get("MODEL_DIR", "sim/resources/" + robotname))
 
 
