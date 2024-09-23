@@ -106,7 +106,7 @@ class Sim2SimRobot(mjcf.Robot):
         root: ET.Element = self.tree.getroot()
 
         worldbody = root.find("worldbody")
-        new_root_body = mjcf.Body(name="root", pos=(0, 0, 0), quat=(1, 0, 0, 0)).to_xml()
+        new_root_body = mjcf.Body(name="root", pos=(0, 0, 1), quat=(1, 0, 0, 0)).to_xml()
         # add freejoint to root
         freejoint = ET.Element("freejoint", name="root")
         new_root_body.insert(0, freejoint)
