@@ -16,13 +16,13 @@ import os
 import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any, List, Union
+from typing import Any, List, Union, OrderedDict
 
 from sim.scripts import mjcf
 
 logger = logging.getLogger(__name__)
 
-DAMPING_DEFAULT = 100 # 0.01
+DAMPING_DEFAULT = 0.02
 
 
 def load_embodiment(embodiment: str) -> Any:
@@ -78,10 +78,9 @@ class Sim2SimRobot(mjcf.Robot):
                 keys = robot.damping().keys()
                 for key in keys:
                     if key in joint_name:
-                        damping = robot.damping()[key]
-                        damping = 10
-                        joint.set("damping", str(damping))
-                        print(f"Damping for {joint_name}: {damping}")
+                        joint_damping = damping
+                        joint.set("damping", str(joint_damping))
+                        print(f"Damping for {joint_name}: {joint_damping}")
                 
                 # keys = robot.stiffness().keys()
                 # for key in keys:
@@ -191,7 +190,8 @@ class Sim2SimRobot(mjcf.Robot):
         # Create motors and sensors for the joints
         joints = list(root.findall(".//joint"))
         original_joints = joints.copy()
-        for joint in robot.all_joints():
+        for joint_xml in joints: #robot.all_joints():
+            joint = joint_xml.get("name")
             if joint in robot.default_standing().keys():
                 joint_name = joint
                 limit = 1000.0 #200.0  # Ensure limit is a float
@@ -199,20 +199,19 @@ class Sim2SimRobot(mjcf.Robot):
                 for key in keys:
                     if key in joint_name:
                         limit = robot.effort()[key]
-
-                motors.append(
-                    mjcf.Motor(
+                print(f"Joint: {joint}, limit: {limit}")
+                motors.append(mjcf.Motor(
                         name=joint,
                         joint=joint,
                         gear=1,
                         ctrlrange=(-limit, limit),
                         ctrllimited=True,
-                    )
-                )
+                        ))
                 sensor_pos.append(mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"))
                 sensor_vel.append(mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"))
                 sensor_frc.append(mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001))
-
+            else: 
+                print(f"Joint: {joint} not in default_standing")
         root = self.update_joints(root)
         # Add motors and sensors
         root.append(mjcf.Actuator(motors).to_xml())

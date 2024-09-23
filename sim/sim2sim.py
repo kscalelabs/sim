@@ -133,6 +133,10 @@ def run_mujoco(policy, cfg):
 
     count_lowlevel = 0
 
+    # # Get base quaternion
+    # q, dq, quat, v, omega, gvec = get_obs(data)
+    # base_orn = R.from_quat(quat)
+
     for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
@@ -143,17 +147,15 @@ def run_mujoco(policy, cfg):
         if count_lowlevel % cfg.sim_config.decimation == 0:
             obs = np.zeros([1, cfg.env.num_single_obs], dtype=np.float32)
             eu_ang = quaternion_to_euler_array(quat)
+
+            # # Get relative orientation
+            # inv_orn = base_orn.inv()
+            # rel_orn = inv_orn.apply(eu_ang)
+
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
             cur_pos_obs = (q - default) * cfg.normalization.obs_scales.dof_pos
-            # if args.embodiment == "stompypro":
-            #     cur_pos_obs[cfg.num_actions//2:] *= -1
-            #     cur_pos_obs[:cfg.num_actions//2] *= -1
-
             cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
-            # if args.embodiment == "stompypro":
-            #     cur_vel_obs[cfg.num_actions//2:] *= -1
-            #     cur_vel_obs[:cfg.num_actions//2] *= -1
 
             obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
             obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
@@ -175,29 +177,13 @@ def run_mujoco(policy, cfg):
             for i in range(cfg.env.frame_stack):
                 policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
             
-            # print(model.joints)
-
-            # Call the model with the corrected input shape
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
 
-            # Negate the left leg actions
-            # if args.embodiment == "stompypro":
-            #     action[:cfg.num_actions//2] *= -1
-            #     action[cfg.num_actions//2:] *= -1
-
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
-            target_q = action * cfg.control.action_scale # * list(robot.isaac_to_mujoco_signs().values())
+            target_q = action * cfg.control.action_scale
 
         target_dq = np.zeros((cfg.num_actions), dtype=np.double)
-
-        # negate the left leg actions
-        # if args.embodiment == "stompypro":
-        #     target_q[:cfg.num_actions//2] *= -1
-        #     target_q[cfg.num_actions//2:] *= -1
         
-        # Force target_q to be 0
-        target_q = np.zeros_like(target_q)
-
         # Generate PD control
         tau = pd_control(
             target_q, q, cfg.robot_config.kps, target_dq, dq, cfg.robot_config.kds, default
@@ -206,17 +192,6 @@ def run_mujoco(policy, cfg):
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
         
         data.ctrl = tau
-
-        # print(f"Giving force: {tau}")
-        # print(f"Current position: {q}")
-        # print(f"Desired position: {target_q + default}")
-        print(f"PD target: {target_q + default - q}")
-        print(f"Set torques: {tau}")
-        # print(f"Position delta: {target_q - q}")
-        #print(f"Offset from default: {q - default}")
-        #data.ctrl = [0] * cfg.num_actions
-        
-        # data.qpos[-cfg.num_actions:] = default
 
         mujoco.mj_step(model, data)
         viewer.render()
@@ -251,7 +226,7 @@ if __name__ == "__main__":
             decimation = 10
 
         class robot_config:
-            tau_factor = 0.85 #* 100
+            tau_factor = 1 # 0.85 #* 100
             tau_limit = np.array(list(robot.stiffness_mujoco().values()) + list(robot.stiffness_mujoco().values())) * tau_factor
             kps = tau_limit
             kds = np.array(list(robot.damping_mujoco().values()) + list(robot.damping_mujoco().values()))

@@ -96,21 +96,6 @@ class Robot(Node):
     rotation = [0.0, 0.0, 0, 1]
 
     @classmethod
-    def isaac_to_mujoco_signs(cls) -> Dict[str, int]:
-        return {
-            Robot.legs.left.hip_pitch: 1,
-            Robot.legs.left.hip_yaw: 1,
-            Robot.legs.left.hip_roll: 1,
-            Robot.legs.left.knee_pitch: 1,
-            Robot.legs.left.ankle_pitch: 1,
-            Robot.legs.right.hip_pitch: 1,
-            Robot.legs.right.hip_yaw: 1,
-            Robot.legs.right.hip_roll: 1,
-            Robot.legs.right.knee_pitch: 1,
-            Robot.legs.right.ankle_pitch: 1,
-        }
-
-    @classmethod
     def default_positions(cls) -> Dict[str, float]:
         return {}
 
@@ -205,23 +190,11 @@ class Robot(Node):
     # For mujoco
     @classmethod
     def stiffness_mujoco(cls) -> Dict[str, float]:
-        return {
-            "hip_y": 5,
-            "hip_x": 5,
-            "hip_z": 5,
-            "knee": 5,
-            "ankle_y": 5,
-        }
+        return cls.stiffness()
 
     @classmethod
     def damping_mujoco(cls) -> Dict[str, float]:
-        return {
-            "hip_y": 1,
-            "hip_x": 1,
-            "hip_z": 1,
-            "knee": 1,
-            "ankle_y": 1,
-        }
+        return cls.damping()
 
     # d_gains
     @classmethod
