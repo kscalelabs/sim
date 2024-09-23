@@ -67,11 +67,13 @@ class RightLeg(Node):
     knee_pitch = "R_knee"
     ankle_pitch = "R_ankle_y"
 
+
 class LeftArm(Node):
     shoulder_pitch = "L_shoulder_y"
     shoulder_roll = "L_shoulder_z"
     shoulder_yaw = "L_shoulder_x"
     elbow_pitch = "L_elbow_x"
+
 
 class RightArm(Node):
     shoulder_pitch = "R_shoulder_y"
@@ -84,9 +86,11 @@ class Legs(Node):
     left = LeftLeg()
     right = RightLeg()
 
+
 class Arms(Node):
     left = LeftArm()
     right = RightArm()
+
 
 class Robot(Node):
     legs = Legs()
@@ -112,7 +116,6 @@ class Robot(Node):
             Robot.legs.right.hip_roll: 0.0314,
             Robot.legs.right.knee_pitch: 0.441,
             Robot.legs.right.ankle_pitch: -0.223,
-
             # Robot.arms.left.shoulder_pitch: 0.0,
             # Robot.arms.left.shoulder_roll: 0.0,
             # Robot.arms.left.shoulder_yaw: 0.0,
@@ -242,7 +245,6 @@ class Robot(Node):
             "shoulder_z": 5,
             "shoulder_x": 5,
             "elbow_x": 5,
-
         }
 
     @classmethod

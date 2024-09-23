@@ -16,7 +16,7 @@ import os
 import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any, List, Union, OrderedDict
+from typing import Any, List, OrderedDict, Union
 
 from sim.scripts import mjcf
 
@@ -81,7 +81,7 @@ class Sim2SimRobot(mjcf.Robot):
                         joint_damping = damping
                         joint.set("damping", str(joint_damping))
                         print(f"Damping for {joint_name}: {joint_damping}")
-                
+
                 # keys = robot.stiffness().keys()
                 # for key in keys:
                 #     if key in joint_name:
@@ -89,7 +89,7 @@ class Sim2SimRobot(mjcf.Robot):
                 #         stiffness = 0.1
                 #         joint.set("stiffness", str(stiffness))
                 #         print(f"Stiffness for {joint_name}: {stiffness}")
-                
+
                 # Check if the joint is not in default_standing
                 if joint_name not in default_standing:
                     joints_to_remove.append(joint)
@@ -190,27 +190,29 @@ class Sim2SimRobot(mjcf.Robot):
         # Create motors and sensors for the joints
         joints = list(root.findall(".//joint"))
         original_joints = joints.copy()
-        for joint_xml in joints: #robot.all_joints():
+        for joint_xml in joints:  # robot.all_joints():
             joint = joint_xml.get("name")
             if joint in robot.default_standing().keys():
                 joint_name = joint
-                limit = 1000.0 #200.0  # Ensure limit is a float
+                limit = 1000.0  # 200.0  # Ensure limit is a float
                 keys = robot.effort().keys()
                 for key in keys:
                     if key in joint_name:
                         limit = robot.effort()[key]
                 print(f"Joint: {joint}, limit: {limit}")
-                motors.append(mjcf.Motor(
+                motors.append(
+                    mjcf.Motor(
                         name=joint,
                         joint=joint,
                         gear=1,
                         ctrlrange=(-limit, limit),
                         ctrllimited=True,
-                        ))
+                    )
+                )
                 sensor_pos.append(mjcf.Actuatorpos(name=joint + "_p", actuator=joint, user="13"))
                 sensor_vel.append(mjcf.Actuatorvel(name=joint + "_v", actuator=joint, user="13"))
                 sensor_frc.append(mjcf.Actuatorfrc(name=joint + "_f", actuator=joint, user="13", noise=0.001))
-            else: 
+            else:
                 print(f"Joint: {joint} not in default_standing")
         root = self.update_joints(root)
         # Add motors and sensors
@@ -324,13 +326,13 @@ class Sim2SimRobot(mjcf.Robot):
                     join.attrib.pop("actuatorfrcrange")
 
         default_standing = robot.default_standing()
-        joint_defaults = list(default_standing.values()) # + [0.0] * (len(original_joints) - len(default_standing))
+        joint_defaults = list(default_standing.values())  # + [0.0] * (len(original_joints) - len(default_standing))
         qpos = [0, 0, robot.height] + robot.rotation + joint_defaults
-        
+
         # qpos = list(default_standing.values())
 
         # Pad qpos with zeros to match the number of joints
-        #qpos += [0.0] * (len(original_joints) - len(qpos))
+        # qpos += [0.0] * (len(original_joints) - len(qpos))
         # qpos = joint_defaults
 
         default_key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))

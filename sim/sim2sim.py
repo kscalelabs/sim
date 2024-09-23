@@ -92,7 +92,7 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     """Calculates torques from position commands"""
-    return kp * (target_q + default - q) - kd * dq # kp * (target_q - q) - kd * dq # 
+    return kp * (target_q + default - q) - kd * dq  # kp * (target_q - q) - kd * dq #
 
 
 def run_mujoco(policy, cfg):
@@ -176,21 +176,21 @@ def run_mujoco(policy, cfg):
             policy_input = np.zeros([1, cfg.env.num_observations], dtype=np.float32)
             for i in range(cfg.env.frame_stack):
                 policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
-            
+
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
 
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
             target_q = action * cfg.control.action_scale
 
         target_dq = np.zeros((cfg.num_actions), dtype=np.double)
-        
+
         # Generate PD control
         tau = pd_control(
             target_q, q, cfg.robot_config.kps, target_dq, dq, cfg.robot_config.kds, default
         )  # Calc torques
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
-        
+
         data.ctrl = tau
 
         mujoco.mj_step(model, data)
@@ -226,8 +226,10 @@ if __name__ == "__main__":
             decimation = 10
 
         class robot_config:
-            tau_factor = 1 # 0.85 #* 100
-            tau_limit = np.array(list(robot.stiffness_mujoco().values()) + list(robot.stiffness_mujoco().values())) * tau_factor
+            tau_factor = 1  # 0.85 #* 100
+            tau_limit = (
+                np.array(list(robot.stiffness_mujoco().values()) + list(robot.stiffness_mujoco().values())) * tau_factor
+            )
             kps = tau_limit
             kds = np.array(list(robot.damping_mujoco().values()) + list(robot.damping_mujoco().values()))
 
