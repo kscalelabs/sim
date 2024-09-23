@@ -114,8 +114,6 @@ class StompyMicroEnv(LeggedRobot):
         self.reset_buf |= self.time_out_buf
 
     def compute_ref_state(self):
-        print("Available leg joints:", self.legs_joints.keys())
-
         phase = self._get_phase()
         sin_pos = torch.sin(2 * torch.pi * phase)
         sin_pos_l = sin_pos.clone()
@@ -367,6 +365,12 @@ class StompyMicroEnv(LeggedRobot):
         joint_diff = self.dof_pos - self.default_joint_pd_target
         left_yaw = joint_diff[:, self.legs_joints["left_hip_roll"]]
         right_yaw = joint_diff[:, self.legs_joints["right_hip_roll"]]
+
+        # TODO: check with pawel about dimensions
+        # reshape tensors to 2D if they are 1D
+        left_yaw = left_yaw.unsqueeze(1) if left_yaw.dim() == 1 else left_yaw
+        right_yaw = right_yaw.unsqueeze(1) if right_yaw.dim() == 1 else right_yaw
+
         yaw_roll = torch.norm(left_yaw, dim=1) + torch.norm(right_yaw, dim=1)
         yaw_roll = torch.clamp(yaw_roll - 0.1, 0, 50)
 
