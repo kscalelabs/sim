@@ -166,16 +166,16 @@ class StompyProCfg(LeggedRobotCfg):
         # quite important to keep it right
         base_height_target = 0.63
         min_dist = 0.2
-        max_dist = 0.4  # 0.4
+        max_dist = 0.4
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.14  # 0.14  # rad
-        target_feet_height = 0.05  # 0.05  # m
+        target_joint_pos_scale = 0.14  # rad
+        target_feet_height = 0.05  # m
         cycle_time = 0.5  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 500  # 800  # forces above this value are penalized
+        max_contact_force = 500  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
@@ -198,8 +198,8 @@ class StompyProCfg(LeggedRobotCfg):
 
             # above this was removed
             # base pos
-            default_joint_pos = 1  # 1.0
-            orientation = 1  # 1
+            default_joint_pos = 1.0
+            orientation = 1
             base_height = 0.2
             base_acc = 0.2
             # energy
@@ -248,7 +248,7 @@ class StompyProCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 8001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations

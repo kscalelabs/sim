@@ -93,7 +93,7 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     """Calculates torques from position commands"""
-    return kp * (target_q + default - q) - kd * dq # kp * (target_q - q) - kd * dq # 
+    return kp * (target_q + default - q) - kd * dq
 
 
 def run_mujoco(policy, cfg):
@@ -136,10 +136,6 @@ def run_mujoco(policy, cfg):
 
     count_lowlevel = 0
 
-    # # Get base quaternion
-    # q, dq, quat, v, omega, gvec = get_obs(data)
-    # base_orn = R.from_quat(quat)
-
     for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
@@ -150,11 +146,6 @@ def run_mujoco(policy, cfg):
         if count_lowlevel % cfg.sim_config.decimation == 0:
             obs = np.zeros([1, cfg.env.num_single_obs], dtype=np.float32)
             eu_ang = quaternion_to_euler_array(quat)
-
-            # # Get relative orientation
-            # inv_orn = base_orn.inv()
-            # rel_orn = inv_orn.apply(eu_ang)
-
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
             cur_pos_obs = (q - default) * cfg.normalization.obs_scales.dof_pos

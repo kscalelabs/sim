@@ -329,7 +329,11 @@ class Sim2SimRobot(mjcf.Robot):
         default_standing = robot.default_standing()
         joint_defaults = list(default_standing.values())  # + [0.0] * (len(original_joints) - len(default_standing))
         # Flip the quaternion angle
-        qpos = [0, 0, robot.height] + [robot.rotation[3], robot.rotation[0], robot.rotation[1], robot.rotation[2]] + joint_defaults
+        qpos = (
+            [0, 0, robot.height]
+            + [robot.rotation[3], robot.rotation[0], robot.rotation[1], robot.rotation[2]]
+            + joint_defaults
+        )
 
         # qpos = list(default_standing.values())
 

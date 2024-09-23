@@ -116,14 +116,6 @@ class Robot(Node):
             Robot.legs.right.hip_roll: 0.0314,
             Robot.legs.right.knee_pitch: 0.441,
             Robot.legs.right.ankle_pitch: -0.223,
-            # Robot.arms.left.shoulder_pitch: 0.0,
-            # Robot.arms.left.shoulder_roll: 0.0,
-            # Robot.arms.left.shoulder_yaw: 0.0,
-            # Robot.arms.left.elbow_pitch: 0.0,
-            # Robot.arms.right.shoulder_pitch: 0.0,
-            # Robot.arms.right.shoulder_roll: 0.0,
-            # Robot.arms.right.shoulder_yaw: 0.0,
-            # Robot.arms.right.elbow_pitch: 0.0,
         }
 
     # @classmethod
@@ -184,20 +176,7 @@ class Robot(Node):
             "hip_z": 60,
             "knee": 120,
             "ankle_y": 17,
-            # "shoulder_y": 120,
-            # "shoulder_z": 60,
-            # "shoulder_x": 60,
-            # "elbow_x": 120,
         }
-
-    # For mujoco
-    @classmethod
-    def stiffness_mujoco(cls) -> Dict[str, float]:
-        return cls.stiffness()
-
-    @classmethod
-    def damping_mujoco(cls) -> Dict[str, float]:
-        return cls.damping()
 
     # d_gains
     @classmethod
@@ -208,10 +187,6 @@ class Robot(Node):
             "hip_z": 10,
             "knee": 10,
             "ankle_y": 5,
-            # "shoulder_y": 10,
-            # "shoulder_z": 10,
-            # "shoulder_x": 10,
-            # "elbow_x": 10,
         }
 
     # pos_limits
