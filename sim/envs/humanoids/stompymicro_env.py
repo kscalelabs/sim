@@ -114,6 +114,8 @@ class StompyMicroEnv(LeggedRobot):
         self.reset_buf |= self.time_out_buf
 
     def compute_ref_state(self):
+        print("Available leg joints:", self.legs_joints.keys())
+
         phase = self._get_phase()
         sin_pos = torch.sin(2 * torch.pi * phase)
         sin_pos_l = sin_pos.clone()
@@ -127,13 +129,13 @@ class StompyMicroEnv(LeggedRobot):
         sin_pos_l[sin_pos_l > 0] = 0
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_rotate"]] += sin_pos_l * scale_2
-        self.ref_dof_pos[:, self.legs_joints["left_ankle_rotate"]] += sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_foot_rotate"]] += sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
         self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] += sin_pos_r * scale_1
         self.ref_dof_pos[:, self.legs_joints["right_knee_rotate"]] += sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle_rotate"]] += sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_foot_rotate"]] += sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0

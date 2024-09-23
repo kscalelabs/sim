@@ -1,16 +1,3 @@
-"""Defines a more Pythonic interface for specifying the joint names for stompymicro."""
-
-## Print joints.py output:
-# Hip
-#   Pitch
-#     Left: Hip_Pitch_Left
-#     Right: Hip_Pitch_Right
-#   Lift_Joint_Limit_2: Hip_Lift_Joint_Limit_2
-# Foot_rotate_2: Foot_rotate_2
-# Knee_Rotate_2: Knee_Rotate_2
-# Thigh_Rotate_2: Thigh_Rotate_2
-
-
 import textwrap
 from abc import ABC
 from typing import Dict, List, Tuple, Union
