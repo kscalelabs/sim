@@ -75,12 +75,13 @@ class Sim2SimRobot(mjcf.Robot):
                     upper = str(limits.get("upper", 0.0))
                     joint.set("range", f"{lower} {upper}")
 
-                keys = robot.damping().keys()
-                for key in keys:
-                    if key in joint_name:
-                        joint_damping = damping
-                        joint.set("damping", str(joint_damping))
-                        print(f"Damping for {joint_name}: {joint_damping}")
+                # Comment to use Mujoco defaults
+                # keys = robot.damping().keys()
+                # for key in keys:
+                #     if key in joint_name:
+                #         joint_damping = damping
+                #         joint.set("damping", str(joint_damping))
+                #         print(f"Damping for {joint_name}: {joint_damping}")
 
                 # keys = robot.stiffness().keys()
                 # for key in keys:
@@ -249,7 +250,7 @@ class Sim2SimRobot(mjcf.Robot):
         root.insert(
             1,
             mjcf.Default(
-                joint=mjcf.Joint(armature=0.01, stiffness=0, damping=0.01, limited=True, frictionloss=0.01),
+                joint=mjcf.Joint(armature=0.01, damping=0.01, limited=True, frictionloss=0.01),
                 motor=mjcf.Motor(ctrllimited=True),
                 equality=mjcf.Equality(solref=(0.001, 2)),
                 geom=mjcf.Geom(
@@ -327,7 +328,8 @@ class Sim2SimRobot(mjcf.Robot):
 
         default_standing = robot.default_standing()
         joint_defaults = list(default_standing.values())  # + [0.0] * (len(original_joints) - len(default_standing))
-        qpos = [0, 0, robot.height] + robot.rotation + joint_defaults
+        # Flip the quaternion angle
+        qpos = [0, 0, robot.height] + [robot.rotation[3], robot.rotation[0], robot.rotation[1], robot.rotation[2]] + joint_defaults
 
         # qpos = list(default_standing.values())
 

@@ -123,9 +123,6 @@ def run_mujoco(policy, cfg):
     # default = np.zeros(cfg.num_actions)
     mujoco.mj_step(model, data)
 
-    for ii in JOINT_NAMES:
-        print(data.joint(ii).id, data.joint(ii).qpos)
-
     data.qvel = np.zeros_like(data.qvel)
     data.qacc = np.zeros_like(data.qacc)
     viewer = mujoco_viewer.MujocoViewer(model, data)
