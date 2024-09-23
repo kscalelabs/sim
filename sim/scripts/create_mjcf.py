@@ -290,7 +290,7 @@ class Sim2SimRobot(mjcf.Robot):
                 # Create a new geom element
                 new_geom = ET.Element("geom")
                 new_geom.set("type", geom.get("type") or "")  # Ensure type is not None
-                new_geom.set("rgba", geom.get("rgba") or "")  # Ensure rgba is not None
+                new_geom.set("rgba", geom.get("rgba") or "1 0.5 0.75 1")  # Ensure rgba is not None
 
                 # Check if geom has mesh or is a box
                 if geom.get("mesh") is None:
