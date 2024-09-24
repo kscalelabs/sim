@@ -96,6 +96,9 @@ class TaskRegistry:
         # check if there is a registered env with that name
         if name in self.task_classes:
             task_class = self.get_task_class(name)
+            # Set MODEL_DIR env variable
+            os.environ["MODEL_DIR"] = f"sim/resources/{name}"
+            print(f"Setting MODEL_DIR env variable to sim/resources/{name}")
         else:
             raise ValueError(f"Task with name: {name} was not registered")
         if env_cfg is None:

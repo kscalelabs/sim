@@ -16,6 +16,8 @@ from isaacgym import gymapi, gymtorch, gymutil
 from sim.env import robot_urdf_path
 from sim.resources.stompymini.joints import Robot as Stompy
 
+ROBOT_NAME = "stompymini"
+
 logger = logging.getLogger(__name__)
 
 Gym = NewType("Gym", Any)
@@ -117,7 +119,7 @@ def load_gym() -> GymParams:
     asset_options.collapse_fixed_joints = True
     asset_options.disable_gravity = False
     asset_options.fix_base_link = True
-    asset_path = robot_urdf_path(legs_only=True)
+    asset_path = robot_urdf_path(ROBOT_NAME, legs_only=True)
     robot_asset = gym.load_urdf(sim, str(asset_path.parent), str(asset_path.name), asset_options)
 
     # Adds the robot to the environment.

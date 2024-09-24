@@ -49,7 +49,12 @@ conda activate kscale-sim-library
 make install-dev
 ```
 
-3. Install third-party dependencies:
+3. Configure environment variables:
+```bash
+conda env config vars set MODEL_DIR=sim/resources
+```
+
+4. Install third-party dependencies:
 
 Manually download `IsaacGym_Preview_4_Package.tar.gz` from https://developer.nvidia.com/isaac-gym, and run:
 ```bash
@@ -61,11 +66,7 @@ make install-third-party-external
 ```
 
 ### Running experiments
-1. To run stompymini:
-```bash
-export MODEL_DIR=sim/resources/stompymini
-```
-2. Run training with the following command:
+1. Run training with the following command:
 ```bash
 python sim/train.py --task=stompymini --num_envs=4096 --headless
 ```
