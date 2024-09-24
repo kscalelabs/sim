@@ -2,6 +2,7 @@ import textwrap
 from abc import ABC
 from typing import Dict, List, Tuple, Union
 
+
 class Node(ABC):
     @classmethod
     def children(cls) -> List["Union[Node, str]"]:
@@ -44,13 +45,13 @@ class Node(ABC):
         return f"[{self.__class__.__name__}]{parts_str}"
 
 
-
 class Hip(Node):
     class Pitch(Node):
         Left = "Hip_Pitch_Left"
         Right = "Hip_Pitch_Right"
-    
+
     Lift_Joint_Limit_2 = "Hip_Lift_Joint_Limit_2"
+
 
 class RightLeg(Node):
     hip_pitch = "Hip_Pitch_Right"
@@ -59,6 +60,7 @@ class RightLeg(Node):
     knee_rotate = "Knee_Rotate_2"
     foot_rotate = "Foot_rotate_2"
 
+
 class LeftLeg(Node):
     hip_pitch = "Hip_Pitch_Left"
     hip_lift = "Hip_Lift_Joint_Limit"
@@ -66,9 +68,11 @@ class LeftLeg(Node):
     knee_rotate = "Knee_Rotate"
     foot_rotate = "Foot_rotate"
 
+
 class Legs(Node):
     left = LeftLeg()
     right = RightLeg()
+
 
 class Robot(Node):
     height = 0.21
@@ -199,12 +203,11 @@ class Robot(Node):
         }
 
 
-
 def print_joints() -> None:
     joints = Robot.all_joints()
     assert len(joints) == len(set(joints)), "Duplicate joint names found!"
     print(Robot())
 
+
 if __name__ == "__main__":
     print_joints()
-
