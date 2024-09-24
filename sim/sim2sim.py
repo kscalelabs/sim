@@ -119,7 +119,7 @@ def run_mujoco(policy, cfg):
     except:
         print("No default position found, using zero initialization")
         default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
-    # default = np.zeros(cfg.num_actions)
+
     mujoco.mj_step(model, data)
 
     data.qvel = np.zeros_like(data.qvel)
