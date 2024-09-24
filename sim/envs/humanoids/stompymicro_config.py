@@ -80,7 +80,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height + 0.2]  # add z value to lift the robot
+        pos = [0.0, 0.0, Robot.height]  # add z value to lift the robot
         # setting the right rotation
         # quat_from_euler_xyz(torch.tensor(1.57), torch.tensor(0), torch.tensor(-1.57))
         rot = Robot.rotation
