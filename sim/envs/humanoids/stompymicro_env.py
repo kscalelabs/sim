@@ -65,6 +65,21 @@ class StompyMicroEnv(LeggedRobot):
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
 
+        # Define initial states
+        self.initial_root_states = torch.zeros((self.num_envs, 13), device=self.device)
+        self.initial_root_states[:, 2] = 0.5  # Set initial height
+        self.initial_root_states[:, 3:7] = torch.tensor([1, 0, 0, 0])  # Set initial rotation (quaternion)
+
+        self.initial_dof_pos = torch.zeros((self.num_envs, self.num_dof), device=self.device)
+        self.initial_dof_vel = torch.zeros((self.num_envs, self.num_dof), device=self.device)
+
+        # Set initial DOF positions for an upright pose
+        # You'll need to set appropriate values for each joint
+        # Example (adjust these values as needed):
+        self.initial_dof_pos[:, self.legs_joints["left_hip_pitch"]] = 0.1
+        self.initial_dof_pos[:, self.legs_joints["right_hip_pitch"]] = 0.1
+        # ... set other joint positions ...
+
         self.compute_observations()
 
     def _push_robots(self):

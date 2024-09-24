@@ -40,8 +40,10 @@ class StompyMicroCfg(LeggedRobotCfg):
         foot_name = ["DRIVING_ROTOR_PLATE_9", "DRIVING_ROTOR_PLATE_10"]
         knee_name = ["DRIVING_ROTOR_PLATE_7", "DRIVING_ROTOR_PLATE_8"]
 
-        termination_height = 0.24
+        termination_height = 0.1
+
         default_feet_height = 0.03
+
         terminate_after_contacts_on = []
 
         penalize_contacts_on = []
