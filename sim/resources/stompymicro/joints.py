@@ -148,7 +148,7 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 250,
+            "Hip_Pitch": 250,
             "hip lift": 150,
             "hip roll": 250,
             "knee rotate": 250,
