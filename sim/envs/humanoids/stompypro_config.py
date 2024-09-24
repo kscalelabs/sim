@@ -53,6 +53,7 @@ class StompyProCfg(LeggedRobotCfg):
 
     class asset(LeggedRobotCfg.asset):
         name = "stompypro"
+
         file = str(robot_urdf_path(name))
 
         foot_name = ["L_foot", "R_foot"]
@@ -60,7 +61,7 @@ class StompyProCfg(LeggedRobotCfg):
 
         termination_height = 0.2
         default_feet_height = 0.0
-        terminate_after_contacts_on = []
+        terminate_after_contacts_on = ["base", "L_thigh", "R_thigh"]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -142,7 +143,7 @@ class StompyProCfg(LeggedRobotCfg):
         added_mass_range = [-1.0, 1.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.2
+        max_push_vel_xy = 0.3  # 0.2
         max_push_ang_vel = 0.4
         dynamic_randomization = 0.02
 
@@ -162,37 +163,37 @@ class StompyProCfg(LeggedRobotCfg):
     # b - negate target_join_pos_scale (-0.14)
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.78
+        base_height_target = 0.63
         min_dist = 0.2
-        max_dist = 0.4  # 0.4
+        max_dist = 0.4
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.14  # rad
-        target_feet_height = 0.08  # 0.05  # m
-        cycle_time = 0.7  # sec
+        target_feet_height = 0.05  # m
+        cycle_time = 0.5  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 400  # forces above this value are penalized
+        max_contact_force = 500  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
-            # joint_pos = 1.6#1.6
-            # feet_clearance = 1.0
-            # feet_contact_number = 1.2#1.2
+            # joint_pos = 1.6 #1.6
+            # feet_clearance = 1.5 # 1.0
+            # feet_contact_number = 2.1 #1.2
             # # # gait
-            # feet_air_time = 1.0 # 1.0
+            # feet_air_time = 2.5  # 1.0
             # foot_slip = -0.05
-            # feet_distance = 0.2
+            # feet_distance = 0.2 # 0.2
             # knee_distance = 0.2
             # # # contact
             # feet_contact_forces = -0.01
             # # # vel tracking
-            # tracking_lin_vel = 1.2
-            # tracking_ang_vel = 1.1
+            # tracking_lin_vel = 2
+            # tracking_ang_vel = 1.1 # 1.1
             # vel_mismatch_exp = 0.5  # lin_z; ang x,y
             # low_speed = 0.2
-            # track_vel_hard = 0.5
+            # track_vel_hard = 0.5 # 0.5
 
             # above this was removed
             # base pos

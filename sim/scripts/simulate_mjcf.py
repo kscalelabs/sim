@@ -21,6 +21,8 @@ from sim.logging import configure_logging
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_ROBOT_NAME = "stompymini"
+
 
 def simulate(model_path: Union[str, Path], duration: float, framerate: float, record_video: bool) -> None:
     frames: List[np.ndarray] = []
@@ -54,7 +56,10 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="MuJoCo Simulation")
     parser.add_argument(
-        "--model_path", type=str, default=str(robot_mjcf_path(legs_only=True)), help="Path to the MuJoCo XML file"
+        "--model_path",
+        type=str,
+        default=str(robot_mjcf_path(DEFAULT_ROBOT_NAME, legs_only=True)),
+        help="Path to the MuJoCo XML file",
     )
     parser.add_argument("--duration", type=int, default=3, help="Duration of the simulation in seconds")
     parser.add_argument("--framerate", type=int, default=30, help="Frame rate for video recording")
