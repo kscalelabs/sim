@@ -102,6 +102,23 @@ class Sim2SimRobot(mjcf.Robot):
 
         return root
 
+    def swap_bodies(self, root: ET.Element, body1_name: str, body2_name: str) -> None:
+        """Swap the positions of two bodies in the XML tree."""
+        parent_body = root.find(".//body[@name='root']")
+        if parent_body is not None:
+            body1 = parent_body.find(f".//body[@name='{body1_name}']")
+            body2 = parent_body.find(f".//body[@name='{body2_name}']")
+            if body1 is not None and body2 is not None:
+                body1_index = list(parent_body).index(body1)
+                body2_index = list(parent_body).index(body2)
+                # Swap the bodies
+                parent_body[body1_index], parent_body[body2_index] = parent_body[body2_index], parent_body[body1_index]
+                print(f"Swapped bodies: {body1_name} and {body2_name}")
+            else:
+                print(f"One or both bodies not found: {body1_name}, {body2_name}")
+        else:
+            print("Root body not found")
+
     def adapt_world(self, add_floor: bool = True, remove_frc_range: bool = True) -> None:
         root: ET.Element = self.tree.getroot()
 
@@ -327,43 +344,21 @@ class Sim2SimRobot(mjcf.Robot):
                     join.attrib.pop("actuatorfrcrange")
 
         default_standing = robot.default_standing()
-        joint_defaults = list(default_standing.values())  # + [0.0] * (len(original_joints) - len(default_standing))
-        # Flip the quaternion angle
+        joint_defaults = list(default_standing.values())
+
         qpos = (
             [0, 0, robot.height]
             + [robot.rotation[3], robot.rotation[0], robot.rotation[1], robot.rotation[2]]
             + joint_defaults
         )
 
-        # qpos = list(default_standing.values())
-
-        # Pad qpos with zeros to match the number of joints
-        # qpos += [0.0] * (len(original_joints) - len(qpos))
-        # qpos = joint_defaults
-
         default_key = mjcf.Key(name="default", qpos=" ".join(map(str, qpos)))
         keyframe = mjcf.Keyframe(keys=[default_key])
         root.append(keyframe.to_xml())
 
-        # Swap left and right leg since our setup - IDK if this is necessary (wesley)
-        # parent_body = root.find(".//body[@name='root']")
-        # if parent_body is not None:
-        #     left = parent_body.find(".//body[@name='L_clav']")
-        #     right = parent_body.find(".//body[@name='R_clav']")
-        #     print(left.get("name"))
-        #     print(right.get("name"))
-        #     if left is not None and right is not None:
-        #         left_index = list(parent_body).index(left)
-        #         right_index = list(parent_body).index(right)
-        #         # Swap the bodies
-        #         parent_body[left_index], parent_body[right_index] = parent_body[right_index], parent_body[left_index]
-
-        # # Remove the root body in the end
-        # root_body = worldbody.find("./body[@name='root']")
-        # children = list(root_body)
-        # worldbody.remove(root_body)
-        # for child in children:
-        #     worldbody.append(child)
+        # Swap left and right clavicle (not necessary for current setup - wesley)
+        if False:
+            self.swap_bodies(root, "L_clav", "R_clav")
 
     def save(self, path: Union[str, Path]) -> None:
         rough_string = ET.tostring(self.tree.getroot(), "utf-8", xml_declaration=False)

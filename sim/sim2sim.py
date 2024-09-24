@@ -28,7 +28,6 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 """
-https://github.com/kscalelabs/sim/commit/1082890d6664f6ab3a1c2ac496bd2bd57874e7f1#diff-227a6023a94553437073e5b5e4e8edd7ac4dc78d1626277e1283d15322d8e74a
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
 python sim/sim2sim.py --load_model policy_1.pt --embodiment stompypro

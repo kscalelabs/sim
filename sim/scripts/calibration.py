@@ -158,7 +158,6 @@ def load_gym() -> GymParams:
     dof_vel[:] = 0.0
     starting_positions = Stompy.default_standing()
     dof_ids: Dict[str, int] = gym.get_actor_dof_dict(env, robot)
-    breakpoint()
     print(starting_positions)
 
     for joint_name, joint_position in starting_positions.items():
