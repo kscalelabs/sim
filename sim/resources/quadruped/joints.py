@@ -120,20 +120,21 @@ class Robot(Node):
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
+        # Go to mujoco and get joint positions when standing pose
         return {
             # arms
-            Robot.arms.left.shoulder_pitch: 0.57,
-            Robot.arms.left.elbow_pitch: -1.40,
+            Robot.arms.left.shoulder_pitch: 0.409,
+            Robot.arms.left.elbow_pitch: -0.977,
         
-            Robot.arms.right.shoulder_pitch: 0.57,
-            Robot.arms.right.elbow_pitch: 1.40,
+            Robot.arms.right.shoulder_pitch: 0.312,
+            Robot.arms.right.elbow_pitch: 0.81,
 
             # legs
-            Robot.legs.left.hip_pitch: 0.90,
-            Robot.legs.left.knee_pitch: -1.40,
+            Robot.legs.left.hip_pitch: 0.55,
+            Robot.legs.left.knee_pitch: -0.684,
         
-            Robot.legs.right.hip_pitch: 0.90,
-            Robot.legs.right.knee_pitch: -1.40,
+            Robot.legs.right.hip_pitch: 0.699,
+            Robot.legs.right.knee_pitch: -1.01,
         }
 
     @classmethod

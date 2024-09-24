@@ -582,7 +582,7 @@ class LeggedRobot(BaseTask):
             self.reward_names.append(name)
             name = "_reward_" + name
             self.reward_functions.append(getattr(self, name))
-
+        
         # reward episode sums
         self.episode_sums = {
             name: torch.zeros(self.num_envs, dtype=torch.float, device=self.device, requires_grad=False)

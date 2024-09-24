@@ -5,6 +5,7 @@
 # Local files
 .env
 *.DS_Store
+isaacgym
 # Python
 *.py[oc]
 __pycache__/

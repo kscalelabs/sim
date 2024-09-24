@@ -40,9 +40,9 @@ class QuadrupedCfg(LeggedRobotCfg):
         foot_name = ["Right_Back_Lower", "Left_Back_Lower", "Right_Front_Lower", "Left_Front_Lower"]
         knee_name = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper"]
 
-        termination_height = 0.155
+        termination_height = 0.1 #use termination contacts instead
         default_feet_height = 0.05
-        terminate_after_contacts_on = []
+        terminate_after_contacts_on = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper"]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -145,50 +145,91 @@ class QuadrupedCfg(LeggedRobotCfg):
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = 0.35
-        min_dist = 0.1
-        max_dist = 0.7
-
-        # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.05  # m
-        cycle_time = 0.4  # sec
-        # if true negative total rewards are clipped at zero (avoids early termination problems)
-        only_positive_rewards = True
-        # tracking reward = exp(error*sigma)
-        tracking_sigma = 5.0
+        soft_dof_pos_limit = 0.9
+        base_height_target = 0.3 # 0.25
+        
+        # Additions from Unitree for ...
+        target_joint_pos_scale = 0.17  # rad, for compute_ref_state
+        cycle_time = 0.4  # sec, for compute_ref_state
+        tracking_sigma = 0.25 # unitree specific
         max_contact_force = 400  # forces above this value are penalized
 
-        class scales:
-            # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.6
-            feet_contact_number = 1.2
-            # gait
-            feet_air_time = 1.6
-            foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
-            # contact
-            feet_contact_forces = -0.01
-            # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5
+        class scales( LeggedRobotCfg.rewards.scales):
+            dof_pos_limits = -10.0
 
+            #Override from base class (qaudruped_robot_config)
+
+            #standing----
             # base pos
-            default_joint_pos = 0.5
+            default_joint_pos = 1 #for the new quadruped formula for standing
             orientation = 1
             base_height = 0.2
             base_acc = 0.2
+            # base_acc = 0 #  for standing policy
+
             # energy
-            action_smoothness = -0.002
+            # action_smoothness = -0.002 # not used in quadruped 
             torques = -1e-5
             dof_vel = -5e-4
             dof_acc = -1e-7
             collision = -1.0
+
+
+             # gait
+            feet_air_time = 0 
+            # contact
+            feet_contact_forces = 0
+            # vel tracking
+            tracking_lin_vel = 0 
+            tracking_ang_vel = 0
+
+            # only in unitree
+            lin_vel_z = 0
+            action_rate = 0
+
+
+
+
+            # walking --- 
+            
+            # # gait
+            # feet_air_time = 1.6 
+            # # contact
+            # feet_contact_forces = -0.01
+            # # vel tracking
+            # tracking_lin_vel = 1.2 
+            # tracking_ang_vel = 1.1
+
+            # # only in unitree
+            # lin_vel_z = -2.0
+            # action_rate = -0.01
+
+            # in unitree repo (so is in ours, but not used)---
+            # action_rate = -0.0 #used in unitree only
+            # stand_still = -0.0  #used in unitree only
+
+
+            #NOT used in unitree----
+            # joint_pos = 1.6
+            # feet_clearance = 1.6
+            # feet_contact_number = 1.2
+            #gait
+            # foot_slip = -0.05
+            # feet_distance = 0.2
+            # knee_distance = 0.2
+            #vel tracking
+            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            # low_speed = 0.2
+            # track_vel_hard = 0.5
+            # feet_stumble = -0.0 #not used at all
+
+           
+            
+            
+        
+        only_positive_rewards = (
+            True  # if true negative total rewards are clipped at zero (avoids early termination problems)
+        )
 
     class normalization:
         class obs_scales:
