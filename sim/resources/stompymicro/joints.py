@@ -1,3 +1,10 @@
+"""Defines a more Pythonic interface for specifying the joint names.
+
+The best way to re-generate this snippet for a new robot is to use the
+`sim/scripts/print_joints.py` script. This script will print out a hierarchical
+tree of the various joint names in the robot.
+"""
+
 import textwrap
 from abc import ABC
 from typing import Dict, List, Tuple, Union
