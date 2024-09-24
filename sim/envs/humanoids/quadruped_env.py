@@ -333,10 +333,15 @@ class QuadrupedFreeEnv(LeggedRobot):
         # Penalize xy axes base angular velocity
         return torch.sum(torch.square(self.base_ang_vel[:, :2]), dim=1)
 
+    # Changed from unitree repo
     def _reward_base_height(self):
-        # Penalize base height away from target
-        base_height = self.root_states[:, 2]
-        return torch.square(base_height - self.cfg.rewards.base_height_target)
+        stance_mask = self._get_gait_phase()
+        measured_heights = torch.sum(self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1) / torch.sum(
+            stance_mask, dim=1
+        )
+        base_height = self.root_states[:, 2] - (measured_heights - self.cfg.asset.default_feet_height)
+        reward = torch.exp(-torch.abs(base_height - self.cfg.rewards.base_height_target) * 10)
+        return reward
     
     def _reward_torques(self):
         # Penalize torques

@@ -36,11 +36,10 @@ class QuadrupedCfg(LeggedRobotCfg):
         name = "quadruped"
         file = str(robot_urdf_path(name))
 
-
         foot_name = ["Right_Back_Lower", "Left_Back_Lower", "Right_Front_Lower", "Left_Front_Lower"]
         knee_name = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper"]
 
-        termination_height = 0.1 #use termination contacts instead
+        termination_height = 0.13 #use termination contacts instead
         default_feet_height = 0.05
         terminate_after_contacts_on = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper"]
 
@@ -77,7 +76,7 @@ class QuadrupedCfg(LeggedRobotCfg):
             ang_vel = 0.1
             lin_vel = 0.05
             quat = 0.03
-            height_measurements = 0.1
+            height_measurements = 0.03 # was 0.1
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, Robot.height]
@@ -146,7 +145,7 @@ class QuadrupedCfg(LeggedRobotCfg):
 
     class rewards:
         soft_dof_pos_limit = 0.9
-        base_height_target = 0.3 # 0.25
+        base_height_target = 0.2 # 0.25
         
         # Additions from Unitree for ...
         target_joint_pos_scale = 0.17  # rad, for compute_ref_state
@@ -165,7 +164,6 @@ class QuadrupedCfg(LeggedRobotCfg):
             orientation = 1
             base_height = 0.2
             base_acc = 0.2
-            # base_acc = 0 #  for standing policy
 
             # energy
             # action_smoothness = -0.002 # not used in quadruped 
