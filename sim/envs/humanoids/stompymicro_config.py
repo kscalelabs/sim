@@ -164,7 +164,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         class scales:
             # reference motion tracking
             joint_pos = 1.6
-                        feet_clearance = 1.6
+            feet_clearance = 1.6
             feet_contact_number = 1.2
             # gait
             feet_air_time = 1.6
