@@ -30,7 +30,7 @@
 """
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
-python sim/sim2sim.py --load_model policy_1.pt
+python sim/sim2sim.py --load_model policy_1.pt --embodiment stompypro
 """
 import argparse
 import math
@@ -50,7 +50,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.5
+    vx = 0.0
     vy = 0.0
     dyaw = 0.0
 
@@ -107,7 +107,7 @@ def run_mujoco(policy, cfg):
         None
     """
     model_dir = os.environ.get("MODEL_DIR")
-    mujoco_model_path = f"{model_dir}/robot_fixed.xml"
+    mujoco_model_path = f"{model_dir}/{args.embodiment}/robot_fixed.xml"
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = cfg.sim_config.dt
     data = mujoco.MjData(model)
@@ -115,8 +115,11 @@ def run_mujoco(policy, cfg):
     try:
         data.qpos = model.keyframe("default").qpos
         default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
+        print("Default position:", default)
     except:
+        print("No default position found, using zero initialization")
         default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
+
     mujoco.mj_step(model, data)
 
     data.qvel = np.zeros_like(data.qvel)
@@ -144,13 +147,17 @@ def run_mujoco(policy, cfg):
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
+            cur_pos_obs = (q - default) * cfg.normalization.obs_scales.dof_pos
+
+            cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
+
             obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
             obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
-            obs[0, 5 : (cfg.num_actions + 5)] = (q - default) * cfg.normalization.obs_scales.dof_pos
-            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = dq * cfg.normalization.obs_scales.dof_vel
+            obs[0, 5 : (cfg.num_actions + 5)] = cur_pos_obs
+            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = cur_vel_obs
             obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
             obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
             obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
@@ -163,10 +170,9 @@ def run_mujoco(policy, cfg):
             policy_input = np.zeros([1, cfg.env.num_observations], dtype=np.float32)
             for i in range(cfg.env.frame_stack):
                 policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
+
             action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
-
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
-
             target_q = action * cfg.control.action_scale
 
         target_dq = np.zeros((cfg.num_actions), dtype=np.double)
@@ -190,17 +196,18 @@ def run_mujoco(policy, cfg):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--load_model", type=str, required=True, help="Run to load from.")
+    parser.add_argument("--embodiment", type=str, required=True, help="embodiment")
     parser.add_argument("--terrain", action="store_true", help="terrain or plane")
     parser.add_argument("--load_actions", action="store_true", help="saved_actions")
     args = parser.parse_args()
 
-    robot = load_embodiment()
+    robot = load_embodiment(args.embodiment)
 
     class Sim2simCfg:
         num_actions = len(robot.all_joints())
 
         class env:
-            num_actions = 12
+            num_actions = len(robot.all_joints())
             frame_stack = 15
             c_frame_stack = 3
             num_single_obs = 11 + num_actions * c_frame_stack
@@ -208,7 +215,7 @@ if __name__ == "__main__":
 
         class sim_config:
             sim_duration = 60.0
-            dt = 0.001
+            dt = 0.002
             decimation = 10
 
         class robot_config:

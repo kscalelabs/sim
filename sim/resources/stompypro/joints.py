@@ -68,13 +68,33 @@ class RightLeg(Node):
     ankle_pitch = "R_ankle_y"
 
 
+class LeftArm(Node):
+    shoulder_pitch = "L_shoulder_y"
+    shoulder_roll = "L_shoulder_z"
+    shoulder_yaw = "L_shoulder_x"
+    elbow_pitch = "L_elbow_x"
+
+
+class RightArm(Node):
+    shoulder_pitch = "R_shoulder_y"
+    shoulder_roll = "R_shoulder_z"
+    shoulder_yaw = "R_shoulder_x"
+    elbow_pitch = "R_elbow_x"
+
+
 class Legs(Node):
     left = LeftLeg()
     right = RightLeg()
 
 
+class Arms(Node):
+    left = LeftArm()
+    right = RightArm()
+
+
 class Robot(Node):
     legs = Legs()
+    # arms = Arms()
 
     height = 0.63
     rotation = [0.0, 0.0, 0, 1]
@@ -181,6 +201,10 @@ class Robot(Node):
             "hip": 5,
             "knee": 5,
             "ankle": 5,
+            "shoulder_y": 5,
+            "shoulder_z": 5,
+            "shoulder_x": 5,
+            "elbow_x": 5,
         }
 
     @classmethod
@@ -196,6 +220,7 @@ def print_joints() -> None:
     joints = Robot.all_joints()
     assert len(joints) == len(set(joints)), "Duplicate joint names found!"
     print(Robot())
+    print(len(joints))
 
 
 if __name__ == "__main__":

@@ -27,9 +27,18 @@ The best starting point would be [stompymini](https://github.com/kscalelabs/sim/
 3. Update [height](https://github.com/kscalelabs/sim/blob/aa97ddfddcaadcac64d4f83d986548cc7fc451a6/sim/resources/stompymini/joints.py#L102) and default rotation of your humanoid.
 4. Add a new embodiment configuration and environment [here](https://github.com/kscalelabs/sim/tree/master/sim/envs/humanoids).
 5. Add a new embodiment to the [registry](https://github.com/kscalelabs/sim/blob/master/sim/envs/__init__.py).
-To run things export your default path:
+To run things make sure that the robot name in your config file is the same as the folder name.
 ```
-export MODEL_DIR=sim/resources/NEW_HUMANOID
+- sim
+    - resources
+        - NEW_HUMANOID
+            - joints.py
+            - urdf
+            - ...
+    - envs
+        - humanoids
+            - NEW_HUMANOID_config.py
+            - NEW_HUMANOID_env.py
 ```
 and kick off the training:
 ```

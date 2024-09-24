@@ -120,7 +120,7 @@ def load_gym() -> GymParams:
     asset_options.collapse_fixed_joints = False
     asset_options.disable_gravity = False
     asset_options.fix_base_link = True
-    asset_path = robot_urdf_path(legs_only=True)
+    asset_path = robot_urdf_path("stompymini", legs_only=True)
     robot_asset = gym.load_urdf(sim, str(asset_path.parent), str(asset_path.name), asset_options)
 
     # Adds the robot to the environment.
@@ -151,7 +151,6 @@ def load_gym() -> GymParams:
     gym.refresh_dof_state_tensor(sim)
     dof_state = gymtorch.wrap_tensor(dof_state_tensor)
     num_dof = len(Stompy.all_joints())
-
     dof_pos = dof_state.view(1, num_dof, 2)[..., 0]
     dof_vel = dof_state.view(1, num_dof, 2)[..., 1]
 
@@ -159,7 +158,6 @@ def load_gym() -> GymParams:
     dof_vel[:] = 0.0
     starting_positions = Stompy.default_standing()
     dof_ids: Dict[str, int] = gym.get_actor_dof_dict(env, robot)
-
     print(starting_positions)
 
     for joint_name, joint_position in starting_positions.items():

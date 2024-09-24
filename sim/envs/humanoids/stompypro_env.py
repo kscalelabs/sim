@@ -256,7 +256,6 @@ class StompyProFreeEnv(LeggedRobot):
                 * self.obs_scales.height_measurements
             )
             self.privileged_obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
-
         if self.add_noise:
             obs_now = obs_buf.clone() + torch.randn_like(obs_buf) * self.noise_scale_vec * self.cfg.noise.noise_level
         else:
