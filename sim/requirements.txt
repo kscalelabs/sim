@@ -9,3 +9,5 @@ matplotlib==3.3.4
 numpy==1.19.5
 wandb
 tensorboard
+onnx
+onnxscript

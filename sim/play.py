@@ -37,6 +37,19 @@ def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> No
     traced_script_module = torch.jit.script(model)
     traced_script_module.save(path)
 
+def export_policy_as_onnx(actor_critic, path):
+    os.makedirs(path, exist_ok=True)
+    path = os.path.join(path, "policy_1.onnx")
+    model = copy.deepcopy(actor_critic.actor).to("cpu")
+    
+    # Get the input dimension from the first layer of the model
+    first_layer = next(model.parameters())
+    input_dim = first_layer.shape[1]
+    
+    # Create a dummy input tensor with the correct dimensions
+    dummy_input = torch.randn(1, input_dim)
+    
+    torch.onnx.export(model, dummy_input, path)
 
 def play(args: argparse.Namespace) -> None:
     logger.info("Configuring environment and training settings...")
@@ -76,6 +89,12 @@ def play(args: argparse.Namespace) -> None:
         path = os.path.join(".")
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
+
+    # export policy as a onnx module (used to run it on web)
+    if EXPORT_ONNX:
+        path = os.path.join('.')
+        export_policy_as_onnx(ppo_runner.alg.actor_critic, path)
+        print('Exported policy as onnx to: ', path)
 
     # Prepare for logging
     env_logger = Logger(env.dt)
@@ -227,6 +246,8 @@ def play(args: argparse.Namespace) -> None:
 if __name__ == "__main__":
     RENDER = True
     FIX_COMMAND = True
+
+    EXPORT_ONNX = True
 
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
