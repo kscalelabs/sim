@@ -26,7 +26,7 @@
     <origin xyz="-0.039182572 0.015797064 0.102876778" rpy="0.0 0.0 -1.5707963"/>
     <parent link="Body"/>
     <child link="Left_Front_Upper"/>
-    <limit effort="80" velocity="5" lower="0" upper="1.2217305"/>
+    <limit effort="24" velocity="30" lower="0" upper="1.2217305"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="Left_Front_Upper">
@@ -55,7 +55,7 @@
     <origin xyz="0.130744145 0.010805994000000001 0.088021995" rpy="0.0 0.0 -1.5707963"/>
     <parent link="Body"/>
     <child link="Left_Back_Upper"/>
-    <limit effort="80" velocity="5" lower="0" upper="1.5707963"/>
+    <limit effort="24" velocity="30" lower="0" upper="1.5707963"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="Left_Back_Upper">
@@ -84,7 +84,7 @@
     <origin xyz="0.12674414535365716 0.010805999418395659 -0.1624546223450983" rpy="-1.9615308044507174e-08 7.320510442276884e-08 -1.5707963000000018"/>
     <parent link="Body"/>
     <child link="Right_Back_Upper"/>
-    <limit effort="80" velocity="5" lower="0" upper="1.5707963"/>
+    <limit effort="24" velocity="30" lower="0" upper="1.5707963"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="Right_Back_Upper">
@@ -113,7 +113,7 @@
     <origin xyz="-0.03518256928426158 0.015797070039031802 -0.15081340916885574" rpy="-1.9615308044507174e-08 7.320510442276884e-08 -1.5707963000000018"/>
     <parent link="Body"/>
     <child link="Right_Front_Upper"/>
-    <limit effort="80" velocity="5" lower="0" upper="1.2217305"/>
+    <limit effort="24" velocity="30" lower="0" upper="1.2217305"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="Right_Front_Upper">
@@ -142,7 +142,7 @@
     <origin xyz="0.11699999999999999 -0.0002500000000000002 -0.048" rpy="0.0 0.0 0.0"/>
     <parent link="Left_Front_Upper"/>
     <child link="Left_Front_Lower"/>
-    <limit effort="80" velocity="5" lower="-1.3962634" upper="1.3962634"/>
+    <limit effort="24" velocity="30" lower="-1.3962634" upper="1.3962634"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="Left_Front_Lower">
@@ -171,7 +171,7 @@
     <origin xyz="0.11449999999999999 0.0002500000000000002 0.00945" rpy="0.0 0.0 0.0"/>
     <parent link="Left_Back_Upper"/>
     <child link="Left_Back_Lower"/>
-    <limit effort="80" velocity="5" lower="-1.3962634" upper="1.3962634"/>
+    <limit effort="24" velocity="30" lower="-1.3962634" upper="1.3962634"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="Left_Back_Lower">
@@ -200,7 +200,7 @@
     <origin xyz="0.117 0.0002500000000000002 0.041550000000000004" rpy="0.0 0.0 0.0"/>
     <parent link="Right_Back_Upper"/>
     <child link="Right_Back_Lower"/>
-    <limit effort="80" velocity="5" lower="-1.3962634" upper="1.3962634"/>
+    <limit effort="24" velocity="30" lower="-1.3962634" upper="1.3962634"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="Right_Back_Lower">
@@ -229,7 +229,7 @@
     <origin xyz="0.117 0.0002500000000000002 -5.000000000000143e-05" rpy="3.1415926071795868 0.0 0.0"/>
     <parent link="Right_Front_Upper"/>
     <child link="Right_Front_Lower"/>
-    <limit effort="80" velocity="5" lower="-1.3962634" upper="1.3962634"/>
+    <limit effort="24" velocity="30" lower="-1.3962634" upper="1.3962634"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="Right_Front_Lower">

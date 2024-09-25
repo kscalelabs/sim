@@ -67,7 +67,7 @@ class QuadrupedCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = True
+        add_noise = False
         noise_level = 0.6  # scales other values
 
         class noise_scales:
@@ -106,7 +106,7 @@ class QuadrupedCfg(LeggedRobotCfg):
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
-            solver_type = 1  # 0: pgs, 1: tgs
+            solver_type = 1 # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
             contact_offset = 0.01  # [m]
@@ -119,12 +119,12 @@ class QuadrupedCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
+        start_pos_noise = 0.00001 # changed for quad
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = True
-        added_mass_range = [-1.0, 1.0]
+        randomize_base_mass = True # changed for quad 
+        added_mass_range = [-.0, .001]
         push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
@@ -223,8 +223,7 @@ class QuadrupedCfg(LeggedRobotCfg):
 
            
             
-            
-        
+
         only_positive_rewards = (
             True  # if true negative total rewards are clipped at zero (avoids early termination problems)
         )
@@ -252,7 +251,7 @@ class QuadrupedCfgPPO(LeggedRobotCfgPPO):
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
     class policy:
-        init_noise_std = 1.0
+        init_noise_std = 0.3 # changed for quad
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [768, 256, 128]
 

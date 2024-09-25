@@ -219,50 +219,51 @@ class Robot(Node):
             }
         }
 
+    # <limit effort="24" velocity="30" lower="-6.28" upper="6.28"/> for quad
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "Elbow_Pitch": 150,
-            "Shoulder_Pitch": 250,
-            "Hip_Pitch": 250,
-            "Knee_Pitch": 150
+            "Elbow_Pitch": 20, #20 for quad
+            "Shoulder_Pitch": 20,
+            "Hip_Pitch": 20,
+            "Knee_Pitch": 20
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "Elbow_Pitch": 10,
-            "Shoulder_Pitch": 5,
-            "Hip_Pitch": 10,
-            "Knee_Pitch": 5
+            "Elbow_Pitch": 0.5, #0.5 for quad
+            "Shoulder_Pitch": 0.5,
+            "Hip_Pitch": 0.5,
+            "Knee_Pitch": 0.5
         }
 
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "Elbow_Pitch": 120,
-            "Shoulder_Pitch": 120,
-            "Hip_Pitch": 70,
-            "Knee_Pitch": 120
+            "Elbow_Pitch": 5,
+            "Shoulder_Pitch": 5,
+            "Hip_Pitch": 5,
+            "Knee_Pitch": 5
         }
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "Elbow_Pitch": 40,
-            "Shoulder_Pitch": 40,
-            "Hip_Pitch": 40,
-            "Knee_Pitch": 40,
+            "Elbow_Pitch": 5,
+            "Shoulder_Pitch": 5,
+            "Hip_Pitch": 5,
+            "Knee_Pitch": 5,
         }
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
-           "Elbow_Pitch": 0,
+            "Elbow_Pitch": 0,
             "Shoulder_Pitch": 0,
             "Hip_Pitch": 0,
             "Knee_Pitch": 0,
