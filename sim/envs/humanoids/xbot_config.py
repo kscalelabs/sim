@@ -1,4 +1,4 @@
-"""Defines the environment configuration for the Getting up task"""
+"""Defines the environment configuration for the walking task"""
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
@@ -26,7 +26,7 @@ class XBotCfg(LeggedRobotCfg):
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
-    class safety:
+    class safety(LeggedRobotCfg.safety):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0

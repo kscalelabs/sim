@@ -66,21 +66,18 @@ make install-third-party-external
 ```
 
 ### Running experiments
-1. Run training with the following command:
+1. Run walking training with the following command:
 ```bash
 python sim/train.py --task=stompymini --num_envs=4096 --headless
 ```
-or for full body:
-```bash
-python sim/train.py --task=stompymini --num_envs=4096 --headless
+or standing policy:
 ```
-
-3. Run evaluation with the following command:
+python sim/train.py --task=stompymini_standing --num_envs=4096 --headless
+```
+2. Run evaluation with the following command:
 ```bash
 python sim/play.py --task stompymini --sim_device cpu
-
 ```
-See [this doc](https://docs.google.com/document/d/1YZzBqIXO7oq7vIKu-BZr5ssNsi3nKtxpRPnfSnTXojA/edit?usp=sharing) for more beginner tips.
 
 ### Contributing
 See the [contributing guide](CONTRIBUTING.md) to get started.
