@@ -96,6 +96,8 @@ class Robot(Node):
     legs = Legs()
     # arms = Arms()
 
+    collision_links: List[str] = [] # None because StompyPro feet are boxes
+
     height = 0.63
     rotation = [0.0, 0.0, 0, 1]
 
