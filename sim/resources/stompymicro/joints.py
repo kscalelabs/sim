@@ -175,11 +175,16 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 10,
-            "hip lift": 10,
-            "hip roll": 10,
-            "knee rotate": 10,
-            "foot rotate": 10,
+            cls.legs.left.hip_pitch: 10,
+            cls.legs.right.hip_pitch: 10,
+            cls.legs.left.hip_lift: 10,
+            cls.legs.right.hip_lift: 10,
+            cls.legs.left.hip_roll: 10,
+            cls.legs.right.hip_roll: 10,
+            cls.legs.left.knee_rotate: 10,
+            cls.legs.right.knee_rotate: 10,
+            cls.legs.left.foot_rotate: 10,
+            cls.legs.right.foot_rotate: 10,
         }
 
     # pos_limits
