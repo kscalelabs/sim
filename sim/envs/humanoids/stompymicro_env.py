@@ -82,6 +82,19 @@ class StompyMicroEnv(LeggedRobot):
 
         self.compute_observations()
 
+        # TODO, tune damping
+        self.cfg.control.damping = {
+            'Hip_Pitch_Left': 0.1,
+            'Hip_Pitch_Right': 0.1,
+            'Hip_Lift_Left': 0.1,
+            'Hip_Lift_Right': 0.1,
+            'Hip_Roll_Left': 0.1,
+            'Hip_Roll_Right': 0.1,
+            'Knee_Rotate_Left': 0.1,
+            'Knee_Rotate_Right': 0.1,
+            'Foot_Rotate_Left': 0.1,
+        }
+
     def _push_robots(self):
         """Random pushes the robots. Emulates an impulse by setting a randomized base velocity."""
         max_vel = self.cfg.domain_rand.max_push_vel_xy
