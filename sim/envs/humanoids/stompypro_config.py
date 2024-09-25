@@ -114,10 +114,10 @@ class StompyProCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 10  # 100hz
+        decimation = 20  # 100hz
 
     class sim(LeggedRobotCfg.sim):
-        dt = 0.002  # 1000 Hz
+        dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
 
@@ -145,7 +145,9 @@ class StompyProCfg(LeggedRobotCfg):
         push_interval_s = 4
         max_push_vel_xy = 0.3  # 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.02
+        # dynamic randomization
+        action_delay = 0.5
+        action_noise = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -181,7 +183,7 @@ class StompyProCfg(LeggedRobotCfg):
             joint_pos = 1.6  # 1.6
             feet_clearance = 1.5  # 1.0
             feet_contact_number = 2.1  # 1.2
-            # # gait
+            # gait
             feet_air_time = 2.5  # 1.0
             foot_slip = -0.05
             feet_distance = 0.2  # 0.2

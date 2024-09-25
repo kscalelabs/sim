@@ -48,6 +48,15 @@ class LeggedRobot(BaseTask):
         Args:
             actions (torch.Tensor): Tensor of shape (num_envs, num_actions_per_env)
         """
+        if self.cfg.env.use_ref_actions:
+            actions += self.ref_action
+        actions = torch.clip(actions, -self.cfg.normalization.clip_actions, self.cfg.normalization.clip_actions)
+
+        # dynamic randomization
+        delay = torch.rand((self.num_envs, 1), device=self.device) * self.cfg.domain_rand.action_delay
+        actions = (1 - delay) * actions + delay * self.actions
+        actions += self.cfg.domain_rand.action_noise * torch.randn_like(actions) * actions
+
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
@@ -238,6 +247,9 @@ class LeggedRobot(BaseTask):
 
             for s in range(len(props)):
                 props[s].friction = self.friction_coeffs[env_id]
+
+            self.env_frictions[env_id] = self.friction_coeffs[env_id]
+
         return props
 
     def _process_dof_props(self, props, env_id):
@@ -263,6 +275,7 @@ class LeggedRobot(BaseTask):
                 self.dof_pos_limits[i, 1] = props["upper"][i].item() * self.cfg.safety.pos_limit
                 self.dof_vel_limits[i] = props["velocity"][i].item() * self.cfg.safety.vel_limit
                 self.torque_limits[i] = props["effort"][i].item() * self.cfg.safety.torque_limit
+
         return props
 
     def _process_rigid_body_props(self, props, env_id):
@@ -270,6 +283,9 @@ class LeggedRobot(BaseTask):
         if self.cfg.domain_rand.randomize_base_mass:
             rng = self.cfg.domain_rand.added_mass_range
             props[0].mass += np.random.uniform(rng[0], rng[1])
+
+        for prop in props:
+            self.body_mass[env_id] += prop.mass
 
         return props
 
