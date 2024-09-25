@@ -1,4 +1,4 @@
-"""Defines the environment configuration for the Getting up task"""
+"""Defines the environment configuration for the walking task"""
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
@@ -26,7 +26,7 @@ class StompyProCfg(LeggedRobotCfg):
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
-    class safety:
+    class safety(LeggedRobotCfg.safety):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
@@ -178,24 +178,23 @@ class StompyProCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            # joint_pos = 1.6 #1.6
-            # feet_clearance = 1.5 # 1.0
-            # feet_contact_number = 2.1 #1.2
-            # # # gait
-            # feet_air_time = 2.5  # 1.0
-            # foot_slip = -0.05
-            # feet_distance = 0.2 # 0.2
-            # knee_distance = 0.2
-            # # # contact
-            # feet_contact_forces = -0.01
-            # # # vel tracking
-            # tracking_lin_vel = 2
-            # tracking_ang_vel = 1.1 # 1.1
-            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
-            # track_vel_hard = 0.5 # 0.5
+            joint_pos = 1.6 #1.6
+            feet_clearance = 1.5 # 1.0
+            feet_contact_number = 2.1 #1.2
+            # # gait
+            feet_air_time = 2.5  # 1.0
+            foot_slip = -0.05
+            feet_distance = 0.2 # 0.2
+            knee_distance = 0.2
+            # # contact
+            feet_contact_forces = -0.01
+            # # vel tracking
+            tracking_lin_vel = 2
+            tracking_ang_vel = 1.1 # 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5 # 0.5
 
-            # above this was removed
             # base pos
             default_joint_pos = 1.0
             orientation = 1
@@ -224,6 +223,40 @@ class StompyProCfg(LeggedRobotCfg):
         ref_env = 0
         pos = [4, -4, 2]
         lookat = [0, -2, 0]
+
+
+class StompyProStandingCfg(StompyProCfg):
+    """Configuration class for the Stompy Pro humanoid robot."""
+
+    # a - normal
+    # b - negate target_join_pos_scale (-0.14)
+    class rewards:
+        # quite important to keep it right
+        base_height_target = 0.63
+        min_dist = 0.2
+        max_dist = 0.4
+        # put some settings here for LLM parameter tuning
+        target_joint_pos_scale = 0.14  # rad
+        target_feet_height = 0.05  # m
+        cycle_time = 0.5  # sec
+        # if true negative total rewards are clipped at zero (avoids early termination problems)
+        only_positive_rewards = True
+        # tracking reward = exp(error*sigma)
+        tracking_sigma = 5
+        max_contact_force = 500  # forces above this value are penalized
+
+        class scales:
+            # base pos
+            default_joint_pos = 1.0
+            orientation = 1
+            base_height = 0.2
+            base_acc = 0.2
+            # energy
+            action_smoothness = -0.002
+            torques = -1e-5
+            dof_vel = -5e-4
+            dof_acc = -1e-7
+            collision = -1.0
 
 
 class StompyProCfgPPO(LeggedRobotCfgPPO):

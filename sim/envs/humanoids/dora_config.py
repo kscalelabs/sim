@@ -1,4 +1,4 @@
-"""Defines the environment configuration for the Getting up task"""
+"""Defines the environment configuration for the walking task"""
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
@@ -32,6 +32,7 @@ class DoraCfg(LeggedRobotCfg):
         pos_limit = 1.0
         vel_limit = 1.0
         torque_limit = 0.85
+        terminate_after_contacts_on = []
 
     class asset(LeggedRobotCfg.asset):
         name = "dora"
@@ -42,7 +43,7 @@ class DoraCfg(LeggedRobotCfg):
 
         termination_height = 0.5
         default_feet_height = 0.0
-        terminate_after_contacts_on = []
+
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
