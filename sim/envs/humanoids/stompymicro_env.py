@@ -57,13 +57,21 @@ class StompyMicroEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Robot.legs.left.joints_motors():
-            print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
         for name, joint in Robot.legs.right.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
+
+        self.arms_joints = {}
+        for name, joint in Robot.left_arm.joints_motors():
+            joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
+            self.arms_joints["left_" + name] = joint_handle
+
+        for name, joint in Robot.right_arm.joints_motors():
+            joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
+            self.arms_joints["right_" + name] = joint_handle
 
         # Define initial states
         self.initial_root_states = torch.zeros((self.num_envs, 13), device=self.device)
@@ -74,8 +82,6 @@ class StompyMicroEnv(LeggedRobot):
         self.initial_dof_vel = torch.zeros((self.num_envs, self.num_dof), device=self.device)
 
         # Set initial DOF positions for an upright pose
-        # You'll need to set appropriate values for each joint
-        # Example (adjust these values as needed):
         self.initial_dof_pos[:, self.legs_joints["left_hip_pitch"]] = 0.1
         self.initial_dof_pos[:, self.legs_joints["right_hip_pitch"]] = 0.1
         # ... set other joint positions ...
@@ -93,6 +99,19 @@ class StompyMicroEnv(LeggedRobot):
             'Knee_Rotate_Left': 0.1,
             'Knee_Rotate_Right': 0.1,
             'Foot_Rotate_Left': 0.1,
+            'Foot_Rotate_Right': 0.1,
+            'Shoulder_Yaw_Left': 0.1,
+            'Shoulder_Yaw_Right': 0.1,
+            'Shoulder_Pitch_Left': 0.1,
+            'Shoulder_Pitch_Right': 0.1,
+            'Shoulder_Roll_Left': 0.1,
+            'Shoulder_Roll_Right': 0.1,
+            'Elbow_Pitch_Left': 0.1,
+            'Elbow_Pitch_Right': 0.1,
+            'Wrist_Roll_Left': 0.1,
+            'Wrist_Roll_Right': 0.1,
+            'Gripper_Left': 0.1,
+            'Gripper_Right': 0.1,
         }
 
     def _push_robots(self):
@@ -189,6 +208,10 @@ class StompyMicroEnv(LeggedRobot):
         elif mesh_type is not None:
             raise ValueError("Terrain mesh type not recognised. Allowed types are [None, plane, heightfield, trimesh]")
         self._create_envs()
+
+        # Load the URDF file
+        urdf_path = "sim/sim/resources/stompymicro/robot_fixed.urdf"
+        self.gym.load_urdf(self.sim, urdf_path, self.cfg.asset)
 
     def _get_noise_scale_vec(self, cfg):
         """Sets a vector used to scale the noise added to the observations.
