@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def model_dir(robotname: str) -> Path:
-    return Path(os.environ.get("MODEL_DIR", "sim/resources/" + robotname))
+    return Path(os.environ.get("MODEL_DIR", "sim/resources/")) / robotname
 
 
 def run_dir() -> Path:
@@ -21,7 +21,7 @@ def robot_urdf_path(robotname: str, legs_only: bool = False) -> Path:
         robot_path = model_dir(robotname) / "robot_fixed.urdf"
     else:
         robot_path = model_dir(robotname) / "robot_fixed.urdf"
-
+    print(model_dir(robotname))
     if not robot_path.exists():
         raise FileNotFoundError(f"URDF file not found: {robot_path}")
 
