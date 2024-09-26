@@ -54,26 +54,26 @@ class Node(ABC):
 
 class Hip(Node):
     class Pitch(Node):
-        Left = "Hip_Pitch_Left"
-        Right = "Hip_Pitch_Right"
+        Left = "right_hip_pitch"
+        Right = "left_hip_pitch"
 
     Lift_Joint_Limit_2 = "Hip_Lift_Joint_Limit_2"
 
 
 class RightLeg(Node):
-    hip_pitch = "Hip_Pitch_Right"
-    hip_lift = "Hip_Lift_Joint_Limit_2"
-    hip_roll = "Thigh_Rotate_2"
-    knee_rotate = "Knee_Rotate_2"
-    foot_rotate = "Foot_rotate_2"
+    hip_pitch = "right_hip_pitch"
+    hip_lift = "right_hip_yaw"
+    hip_roll = "right_hip_roll"
+    knee_rotate = "right_knee_pitch"
+    foot_rotate = "right_ankle_pitch"
 
 
 class LeftLeg(Node):
-    hip_pitch = "Hip_Pitch_Left"
-    hip_lift = "Hip_Lift_Joint_Limit"
-    hip_roll = "Thigh_Rotate"
-    knee_rotate = "Knee_Rotate"
-    foot_rotate = "Foot_rotate"
+    hip_pitch = "left_hip_pitch"
+    hip_lift = "left_hip_yaw"
+    hip_roll = "left_hip_roll"
+    knee_rotate = "left_knee_pitch"
+    foot_rotate = "left_ankle_pitch"
 
 
 class LeftHand(Node):
@@ -82,11 +82,11 @@ class LeftHand(Node):
 
 
 class LeftArm(Node):
-    shoulder_yaw = "left shoulder yaw"
-    shoulder_pitch = "left shoulder pitch"
-    shoulder_roll = "left shoulder roll"
-    elbow_pitch = "left elbow pitch"
-    hand = LeftHand()
+    shoulder_yaw = "left_shoulder_yaw"
+    shoulder_pitch = "left_shoulder_pitch"
+    shoulder_roll = "left_shoulder_roll"
+    elbow_pitch = "left_elbow_pitch"
+    # hand = LeftHand()  # Commented out
 
 
 class RightHand(Node):
@@ -95,11 +95,11 @@ class RightHand(Node):
 
 
 class RightArm(Node):
-    shoulder_yaw = "right shoulder yaw"
-    shoulder_pitch = "right shoulder pitch"
-    shoulder_roll = "right shoulder roll"
-    elbow_pitch = "right elbow pitch"
-    hand = RightHand()
+    shoulder_yaw = "right_shoulder_yaw"
+    shoulder_pitch = "right_shoulder_pitch"
+    shoulder_roll = "right_shoulder_roll"
+    elbow_pitch = "right_elbow_pitch"
+    # hand = RightHand()  # Commented out
 
 
 class Legs(Node):
@@ -142,10 +142,10 @@ class Robot(Node):
             cls.right_arm.shoulder_roll: 0,
             cls.left_arm.elbow_pitch: 0,
             cls.right_arm.elbow_pitch: 0,
-            cls.left_arm.hand.wrist_roll: 0,
-            cls.right_arm.hand.wrist_roll: 0,
-            cls.left_arm.hand.gripper: 0,
-            cls.right_arm.hand.gripper: 0,
+            # cls.left_arm.hand.wrist_roll: 0,  # Commented out
+            # cls.right_arm.hand.wrist_roll: 0,  # Commented out
+            # cls.left_arm.hand.gripper: 0,  # Commented out
+            # cls.right_arm.hand.gripper: 0,  # Commented out
         }
 
     @classmethod
@@ -210,14 +210,14 @@ class Robot(Node):
                 "lower": -1.5707963,
                 "upper": 1.5707963,
             },
-            cls.left_arm.hand.wrist_roll: {
-                "lower": -1.5707963,
-                "upper": 1.5707963,
-            },
-            cls.left_arm.hand.gripper: {
-                "lower": -1.5707963,
-                "upper": 1.5707963,
-            },
+            # cls.left_arm.hand.wrist_roll: {  # Commented out
+            #     "lower": -1.5707963,
+            #     "upper": 1.5707963,
+            # },
+            # cls.left_arm.hand.gripper: {  # Commented out
+            #     "lower": -1.5707963,
+            #     "upper": 1.5707963,
+            # },
             # right arm
             cls.right_arm.shoulder_yaw: {
                 "lower": -1.5707963,
@@ -235,14 +235,14 @@ class Robot(Node):
                 "lower": -1.5707963,
                 "upper": 1.5707963,
             },
-            cls.right_arm.hand.wrist_roll: {
-                "lower": -1.5707963,
-                "upper": 1.5707963,
-            },
-            cls.right_arm.hand.gripper: {
-                "lower": -1.5707963,
-                "upper": 1.5707963,
-            },
+            # cls.right_arm.hand.wrist_roll: {  # Commented out
+            #     "lower": -1.5707963,
+            #     "upper": 1.5707963,
+            # },
+            # cls.right_arm.hand.gripper: {  # Commented out
+            #     "lower": -1.5707963,
+            #     "upper": 1.5707963,
+            # },
         }
 
     # p_gains
@@ -267,10 +267,10 @@ class Robot(Node):
             cls.right_arm.shoulder_roll: 250,
             cls.left_arm.elbow_pitch: 250,
             cls.right_arm.elbow_pitch: 250,
-            cls.left_arm.hand.wrist_roll: 150,
-            cls.right_arm.hand.wrist_roll: 150,
-            cls.left_arm.hand.gripper: 150,
-            cls.right_arm.hand.gripper: 150,
+            # cls.left_arm.hand.wrist_roll: 150,  # Commented out
+            # cls.right_arm.hand.wrist_roll: 150,  # Commented out
+            # cls.left_arm.hand.gripper: 150,  # Commented out
+            # cls.right_arm.hand.gripper: 150,  # Commented out
         }
 
     # d_gains
@@ -295,10 +295,10 @@ class Robot(Node):
             cls.right_arm.shoulder_roll: 10,
             cls.left_arm.elbow_pitch: 10,
             cls.right_arm.elbow_pitch: 10,
-            cls.left_arm.hand.wrist_roll: 10,
-            cls.right_arm.hand.wrist_roll: 10,
-            cls.left_arm.hand.gripper: 10,
-            cls.right_arm.hand.gripper: 10,
+            # cls.left_arm.hand.wrist_roll: 10,  # Commented out
+            # cls.right_arm.hand.wrist_roll: 10,  # Commented out
+            # cls.left_arm.hand.gripper: 10,  # Commented out
+            # cls.right_arm.hand.gripper: 10,  # Commented out
         }
 
     # pos_limits
@@ -314,8 +314,8 @@ class Robot(Node):
             "shoulder pitch": 80,
             "shoulder roll": 80,
             "elbow pitch": 80,
-            "wrist roll": 80,
-            "gripper": 80,
+            # "wrist roll": 80,
+            # "gripper": 80,
         }
 
     # vel_limits
@@ -331,8 +331,8 @@ class Robot(Node):
             "shoulder pitch": 5,
             "shoulder roll": 5,
             "elbow pitch": 5,
-            "wrist roll": 5,
-            "gripper": 5,
+            # "wrist roll": 5,
+            # "gripper": 5,
         }
 
     @classmethod
@@ -347,8 +347,8 @@ class Robot(Node):
             "shoulder pitch": 0.0,
             "shoulder roll": 0.0,
             "elbow pitch": 0.0,
-            "wrist roll": 0.0,
-            "gripper": 0.0,
+            # "wrist roll": 0.0,
+            # "gripper": 0.0,
         }
 
 

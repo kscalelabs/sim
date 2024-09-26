@@ -108,10 +108,10 @@ class StompyMicroEnv(LeggedRobot):
             "Shoulder_Roll_Right": 0.1,
             "Elbow_Pitch_Left": 0.1,
             "Elbow_Pitch_Right": 0.1,
-            "Wrist_Roll_Left": 0.1,
-            "Wrist_Roll_Right": 0.1,
-            "Gripper_Left": 0.1,
-            "Gripper_Right": 0.1,
+            # "Wrist_Roll_Left": 0.1,
+            # "Wrist_Roll_Right": 0.1,
+            # "Gripper_Left": 0.1,
+            # "Gripper_Right": 0.1,
         }
 
     def _push_robots(self):
