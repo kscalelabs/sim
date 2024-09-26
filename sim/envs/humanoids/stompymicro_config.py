@@ -12,7 +12,7 @@ NUM_JOINTS = len(Robot.all_joints())  # 20
 
 class StompyMicroCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
-
+    
     class env(LeggedRobotCfg.env):
         # change the observation dim
         frame_stack = 15
@@ -99,7 +99,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 10  # 100hz
+        decimation = 4  # 250hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -121,7 +121,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
+        start_pos_noise = 0.01
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -131,7 +131,9 @@ class StompyMicroCfg(LeggedRobotCfg):
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.05
+        # dynamic randomization
+        action_delay = 0.5
+        action_noise = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
