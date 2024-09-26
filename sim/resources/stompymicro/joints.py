@@ -110,30 +110,24 @@ class Robot(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            # arms
-            Robot.left_arm.shoulder_pitch: 2.25,
-            Robot.left_arm.shoulder_yaw: 1.57,
-            # Robot.left_arm.shoulder_roll: 3.14,
-            Robot.left_arm.elbow_pitch: -1.61,
-            # Robot.left_arm.hand.wrist_roll: -1.56,
-            # Robot.left_arm.hand.gripper: -0.1,
-            Robot.right_arm.shoulder_pitch: 3.45,
-            Robot.right_arm.shoulder_yaw: -0.1,
-            # Robot.right_arm.shoulder_roll: -1.61,
-            Robot.right_arm.elbow_pitch: -1.49,
-            # Robot.right_arm.hand.wrist_roll: 0,
-            # Robot.right_arm.hand.gripper: 0.1,
-            # legs
-            Robot.legs.left.hip_pitch: 0.33,
-            Robot.legs.left.hip_roll: -1.52,
-            Robot.legs.left.hip_yaw: 4.67,
-            Robot.legs.left.knee_pitch: -0.61,
-            Robot.legs.left.ankle_pitch: 1.88,
-            Robot.legs.right.hip_pitch: 2.91,
-            Robot.legs.right.hip_roll: 3.24,
-            Robot.legs.right.hip_yaw: 3.22,
-            Robot.legs.right.knee_pitch: 0.65,
-            Robot.legs.right.ankle_pitch: -0.54,
+            # Legs
+            cls.legs.left.hip_pitch: -0.2,
+            cls.legs.left.hip_yaw: 0,
+            cls.legs.left.hip_roll: 0,
+            cls.legs.left.knee_pitch: 0.4,
+            cls.legs.left.ankle_pitch: -0.2,
+            cls.legs.right.hip_pitch: -0.2,
+            cls.legs.right.hip_yaw: 0,
+            cls.legs.right.hip_roll: 0,
+            cls.legs.right.knee_pitch: 0.4,
+            cls.legs.right.ankle_pitch: -0.2,
+            # Arms (adjust as needed)
+            cls.left_arm.shoulder_pitch: 0,
+            cls.left_arm.shoulder_yaw: 0.3,
+            cls.left_arm.elbow_pitch: -0.6,
+            cls.right_arm.shoulder_pitch: 0,
+            cls.right_arm.shoulder_yaw: -0.3,
+            cls.right_arm.elbow_pitch: -0.6,
         }
 
     @classmethod
@@ -334,17 +328,17 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 250,
-            "hip yaw": 250,
-            "hip roll": 150,
-            "knee pitch": 250,
-            "ankle pitch": 150,
-            "shoulder pitch": 150,
-            "shoulder yaw": 45,
-            "shoulder roll": 45,
-            "elbow pitch": 45,
-            "hand roll": 45,
-            "gripper": 45,
+            "hip pitch": 300,
+            "hip yaw": 200,
+            "hip roll": 300,
+            "knee pitch": 300,
+            "ankle pitch": 200,
+            "shoulder pitch": 250,
+            "shoulder yaw": 250,
+            "shoulder roll": 250,
+            "elbow pitch": 250,
+            # "hand roll": 0,
+            # "gripper": 0,
         }
 
     # d_gains
@@ -360,42 +354,42 @@ class Robot(Node):
             "shoulder yaw": 10,
             "shoulder roll": 5,
             "elbow pitch": 5,
-            "hand roll": 5,
-            "gripper": 5,
+            # "hand roll": 5,
+            # "gripper": 5,
         }
 
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 120,
-            "hip yaw": 120,
-            "hip roll": 17,
-            "knee pitch": 120,
-            "ankle pitch": 17,
-            "shoulder pitch": 120,
-            "shoulder yaw": 17,
-            "shoulder roll": 17,
-            "elbow pitch": 17,
-            "hand roll": 17,
-            "gripper": 17,
+            "hip pitch": 80,
+            "hip yaw": 80,
+            "hip roll": 80,
+            "knee pitch": 80,
+            "ankle pitch": 80,
+            "shoulder pitch": 80,
+            "shoulder yaw": 80,
+            "shoulder roll": 80,
+            "elbow pitch": 80,
+            # # "hand roll": 17,
+            # # "gripper": 17,
         }
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 40,
-            "hip yaw": 40,
-            "hip roll": 40,
-            "knee pitch": 40,
-            "ankle pitch": 40,
-            "shoulder pitch": 40,
-            "shoulder yaw": 40,
-            "shoulder roll": 40,
-            "elbow pitch": 40,
-            "hand roll": 40,
-            "gripper": 40,
+            "hip pitch": 5,
+            "hip yaw": 5,
+            "hip roll": 5,
+            "knee pitch": 5,
+            "ankle pitch": 5,
+            "shoulder pitch": 5,
+            "shoulder yaw": 5,
+            "shoulder roll": 5,
+            "elbow pitch": 5,
+            # "hand roll": 40,
+            # "gripper": 40,
         }
 
     @classmethod
@@ -406,8 +400,8 @@ class Robot(Node):
             "hip roll": 0.0,
             "knee pitch": 0.0,
             "ankle pitch": 0.0,
-            "hand roll": 0.0,
-            "gripper": 0.0,
+            # "hand roll": 0.0,
+            # "gripper": 0.0,
         }
 
 
