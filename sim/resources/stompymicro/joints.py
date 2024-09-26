@@ -116,10 +116,10 @@ class Robot(Node):
             cls.legs.left.hip_roll: 0,
             cls.legs.left.knee_pitch: 0.4,
             cls.legs.left.ankle_pitch: -0.2,
-            cls.legs.right.hip_pitch: -0.2,
+            cls.legs.right.hip_pitch: 0.0, #-0.2,
             cls.legs.right.hip_yaw: 0,
             cls.legs.right.hip_roll: 0,
-            cls.legs.right.knee_pitch: 0.4,
+            cls.legs.right.knee_pitch: 0.0,
             cls.legs.right.ankle_pitch: -0.2,
             # Arms (adjust as needed)
             cls.left_arm.shoulder_pitch: 0,
@@ -172,7 +172,7 @@ class Robot(Node):
             #     "upper": -1.979,
             # },
             Robot.right_arm.elbow_pitch: {
-                "lower": -3.319,
+                "lower": 3.319,
                 "upper": 3.321,
             },
             # Robot.right_arm.hand.wrist_roll: {
@@ -328,15 +328,15 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 300,
-            "hip yaw": 200,
-            "hip roll": 300,
-            "knee pitch": 300,
-            "ankle pitch": 200,
-            "shoulder pitch": 250,
-            "shoulder yaw": 250,
-            "shoulder roll": 250,
-            "elbow pitch": 250,
+            "hip pitch": 10,
+            "hip yaw": 10,
+            "hip roll": 10,
+            "knee pitch": 10,
+            "ankle pitch": 10,
+            "shoulder pitch": 10,
+            "shoulder yaw": 10,
+            "shoulder roll": 10,
+            "elbow pitch": 10,
             # "hand roll": 0,
             # "gripper": 0,
         }
@@ -345,15 +345,15 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip pitch": 10,
-            "hip yaw": 10,
-            "hip roll": 10,
-            "knee pitch": 10,
-            "ankle pitch": 10,
-            "shoulder pitch": 10,
-            "shoulder yaw": 10,
-            "shoulder roll": 5,
-            "elbow pitch": 5,
+            "hip pitch": 0.3,
+            "hip yaw": 0.3,
+            "hip roll": 0.3,
+            "knee pitch": 0.3,
+            "ankle pitch": 0.3,
+            "shoulder pitch": 0.3,
+            "shoulder yaw": 0.3,
+            "shoulder roll": 0.3,
+            "elbow pitch": 0.3,
             # "hand roll": 5,
             # "gripper": 5,
         }

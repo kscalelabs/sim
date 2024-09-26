@@ -38,7 +38,7 @@
     <origin xyz="0.0413138310841906 -0.023482760686076916 -0.004372827208038505" rpy="-3.1415926071795863 -1.5707963 0.0"/>
     <parent link="Base_Motor_Mount"/>
     <child link="DRIVING_ROTOR_PLATE"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE">
@@ -67,7 +67,7 @@
     <origin xyz="-0.04131383051044278 -0.023482760691961528 -0.004372827208038465" rpy="-3.1415925803846902 1.570796288901191 0.0"/>
     <parent link="Base_Motor_Mount"/>
     <child link="DRIVING_ROTOR_PLATE_2"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_2">
@@ -96,7 +96,7 @@
     <origin xyz="0.07131383054661666 -0.023482764740008488 0.10812717280524366" rpy="-3.141592653589792 -1.5707962732050302 0.0"/>
     <parent link="Base_Motor_Mount"/>
     <child link="DRIVING_ROTOR_PLATE_3"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_3">
@@ -125,7 +125,7 @@
     <origin xyz="-0.07131383054661666 -0.023482764740008488 0.10812717280524366" rpy="-3.141592653589792 1.5707962732050302 0.0"/>
     <parent link="Base_Motor_Mount"/>
     <child link="DRIVING_ROTOR_PLATE_4"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_4">
@@ -154,7 +154,7 @@
     <origin xyz="-0.007400000327569208 0.016949999801717745 0.02285000258156657" rpy="-1.5707963071795867 1.5707963196152375 0.0"/>
     <parent link="DRIVING_ROTOR_PLATE"/>
     <child link="DRIVING_ROTOR_PLATE_5"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="0.087266463"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="0.087266463"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_5">
@@ -183,7 +183,7 @@
     <origin xyz="0.007399999685828183 0.016450000198282227 0.02284999703643316" rpy="-1.5707962535897932 -1.570796273205031 0.0"/>
     <parent link="DRIVING_ROTOR_PLATE_2"/>
     <child link="DRIVING_ROTOR_PLATE_6"/>
-    <limit effort="80" velocity="5" lower="-0.087266463" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-0.087266463" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_6">
@@ -212,7 +212,7 @@
     <origin xyz="-0.018273437468083912 0.01634999951036515 0.029393121151926025" rpy="-1.5707962535897932 -1.5707962732050302 0.0"/>
     <parent link="DRIVING_ROTOR_PLATE_3"/>
     <child link="LX-16A"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="LX-16A">
@@ -241,7 +241,7 @@
     <origin xyz="0.018273437430571058 0.01494999951036515 0.029393121151926025" rpy="-1.570796253589793 1.5707962732050307 0.0"/>
     <parent link="DRIVING_ROTOR_PLATE_4"/>
     <child link="LX-16A_2"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="LX-16A_2">
@@ -270,7 +270,7 @@
     <origin xyz="-1.4993347535741108e-10 -0.07020000022229234 0.0" rpy="0.0 0.0 -3.14159264"/>
     <parent link="LX-16A"/>
     <child link="DRIVING_ROTOR_PLATE_7"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_7">
@@ -299,7 +299,7 @@
     <origin xyz="-1.5347855347735972e-09 -0.0702000019724337 -1.7232110183229565e-09" rpy="0.0 -2.220446049250313e-15 3.1415926071795868"/>
     <parent link="LX-16A_2"/>
     <child link="DRIVING_ROTOR_PLATE_8"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_8">
@@ -328,7 +328,7 @@
     <origin xyz="-2.44813840727387e-09 0.05275000029180242 -0.0070000024561768966" rpy="1.5707963999999994 0.0 -3.1415926071795863"/>
     <parent link="DRIVING_ROTOR_PLATE_5"/>
     <child link="DRIVING_ROTOR_PLATE_9"/>
-    <limit effort="80" velocity="5" lower="-0.52359878" upper="0.52359878"/>
+    <limit effort="1" velocity="20" lower="-0.52359878" upper="0.52359878"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_9">
@@ -357,7 +357,7 @@
     <origin xyz="-2.44813840727387e-09 0.05275000029180242 -0.0070000024561768966" rpy="1.5707963999999994 0.0 -3.1415926071795863"/>
     <parent link="DRIVING_ROTOR_PLATE_6"/>
     <child link="DRIVING_ROTOR_PLATE_10"/>
-    <limit effort="80" velocity="5" lower="-0.52359878" upper="0.52359878"/>
+    <limit effort="1" velocity="20" lower="-0.52359878" upper="0.52359878"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_10">
@@ -386,7 +386,7 @@
     <origin xyz="-0.01623087751044281 1.0229889869234343e-09 0.04169999999196149" rpy="1.5707963535897935 -4.641020678874952e-08 -1.5707963071795867"/>
     <parent link="DRIVING_ROTOR_PLATE_9"/>
     <child link="DRIVING_ROTOR_PLATE_11"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_11">
@@ -415,7 +415,7 @@
     <origin xyz="0.01623087751044278 -1.7762673623633596e-09 0.04169999999196149" rpy="1.5707963535897942 -4.6410206566704915e-08 1.5707963000000003"/>
     <parent link="DRIVING_ROTOR_PLATE_10"/>
     <child link="DRIVING_ROTOR_PLATE_12"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_12">
@@ -444,7 +444,7 @@
     <origin xyz="-1.204344863420248e-09 0.0552000002775737 -0.00031912410434488224" rpy="4.963083675318156e-23 -2.220446049250313e-15 4.998164106755064e-23"/>
     <parent link="DRIVING_ROTOR_PLATE_11"/>
     <child link="DRIVING_ROTOR_PLATE_13"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_13">
@@ -473,7 +473,7 @@
     <origin xyz="-1.204344863420248e-09 0.0552000002775737 -0.00031912410434488224" rpy="4.963083675318156e-23 -2.220446049250313e-15 4.998164106755064e-23"/>
     <parent link="DRIVING_ROTOR_PLATE_12"/>
     <child link="DRIVING_ROTOR_PLATE_14"/>
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="1" velocity="20" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="DRIVING_ROTOR_PLATE_14">

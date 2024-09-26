@@ -23,7 +23,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = NUM_JOINTS
         num_envs = 4096
-        episode_length_s = 24  # episode length in seconds
+        episode_length_s = 6  # episode length in seconds
         use_ref_actions = False
 
     class safety:
@@ -31,7 +31,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         pos_limit = 1.0
         vel_limit = 1.0
         torque_limit = 0.85
-        terminate_after_contacts_on = []
+        terminate_after_contacts_on = ["DRIVING_ROTOR_PLATE_3", "DRIVING_ROTOR_PLATE_4"]
 
     class asset(LeggedRobotCfg.asset):
         name = "stompymicro"
@@ -40,9 +40,8 @@ class StompyMicroCfg(LeggedRobotCfg):
         foot_name = ["DRIVING_ROTOR_PLATE_9", "DRIVING_ROTOR_PLATE_10"]
         knee_name = ["DRIVING_ROTOR_PLATE_7", "DRIVING_ROTOR_PLATE_8"]
 
-        termination_height = 0.1
-
-        default_feet_height = 0.03
+        termination_height = 0.11
+        default_feet_height = 0.02
 
         terminate_after_contacts_on = []
 
@@ -126,9 +125,9 @@ class StompyMicroCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = True
+        randomize_base_mass = False #True
         added_mass_range = [-1.0, 1.0]
-        push_robots = True
+        push_robots = False #True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -147,7 +146,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = 0.78
+        base_height_target = 0.21
         min_dist = 0.25
         max_dist = 0.5
 
@@ -159,14 +158,13 @@ class StompyMicroCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 400  # forces above this value are penalized
+        max_contact_force = 50  # forces above this value are penalized
 
         class scales:
             # # reference motion tracking
             # joint_pos = 1.6
             # feet_clearance = 1.6
             # feet_contact_number = 1.2
-            # # gait
             # feet_air_time = 1.6
             # foot_slip = -0.05
             # feet_distance = 0.2
@@ -179,21 +177,6 @@ class StompyMicroCfg(LeggedRobotCfg):
             # vel_mismatch_exp = 0.5  # lin_z; ang x,y
             # low_speed = 0.2
             # track_vel_hard = 0.5
-            # feet_clearance = 1.6
-            # feet_contact_number = 1.2
-            # gait
-            feet_air_time = 1.6
-            foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
-            # contact
-            feet_contact_forces = -0.01
-            # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 0.5
