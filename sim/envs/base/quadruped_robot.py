@@ -331,7 +331,6 @@ class LeggedRobot(BaseTask):
         # set small commands to zero
         self.commands[env_ids, :2] *= (torch.norm(self.commands[env_ids, :2], dim=1) > 0.2).unsqueeze(1)
 
-
     def _compute_torques(self, actions):
         """Compute torques from actions.
             Actions can be interpreted as position or velocity targets given to a PD controller, or directly as scaled torques.
@@ -584,7 +583,7 @@ class LeggedRobot(BaseTask):
             self.reward_names.append(name)
             name = "_reward_" + name
             self.reward_functions.append(getattr(self, name))
-        
+
         # reward episode sums
         self.episode_sums = {
             name: torch.zeros(self.num_envs, dtype=torch.float, device=self.device, requires_grad=False)

@@ -65,7 +65,7 @@ class QuadrupedFreeEnv(LeggedRobot):
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
 
-        #For quadruped, treat "arms" as legs
+        # For quadruped, treat "arms" as legs
         for name, joint in Robot.arms.left.joints_motors():
             print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
@@ -135,7 +135,7 @@ class QuadrupedFreeEnv(LeggedRobot):
         scale_1 = self.cfg.rewards.target_joint_pos_scale
         scale_2 = 2 * scale_1
         # left foot stance phase set to default joint pos
-        sin_pos_l[sin_pos_l > 0] = 0 
+        sin_pos_l[sin_pos_l > 0] = 0
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += sin_pos_l * scale_2
         self.ref_dof_pos[:, self.legs_joints["left_elbow_pitch"]] += sin_pos_l * scale_1
@@ -292,7 +292,7 @@ class QuadrupedFreeEnv(LeggedRobot):
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 15)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
         return (quat_mismatch + orientation) / 2
-    
+
     # this function was not in unitree repo, added from humanoids repo
     def _reward_default_joint_pos(self):
         """Calculates the reward for keeping joint positions close to default positions
@@ -300,10 +300,26 @@ class QuadrupedFreeEnv(LeggedRobot):
         """
         joint_diff = self.dof_pos - self.default_joint_pd_target
 
-        left_pitch = joint_diff[:, [self.legs_joints["left_hip_pitch"], self.legs_joints["left_knee_pitch"], self.legs_joints["left_elbow_pitch"], self.legs_joints["left_shoulder_pitch"] ]]
-        right_pitch = joint_diff[:, [self.legs_joints["right_hip_pitch"], self.legs_joints["right_knee_pitch"], self.legs_joints["right_elbow_pitch"], self.legs_joints["right_shoulder_pitch"] ]]
+        left_pitch = joint_diff[
+            :,
+            [
+                self.legs_joints["left_hip_pitch"],
+                self.legs_joints["left_knee_pitch"],
+                self.legs_joints["left_elbow_pitch"],
+                self.legs_joints["left_shoulder_pitch"],
+            ],
+        ]
+        right_pitch = joint_diff[
+            :,
+            [
+                self.legs_joints["right_hip_pitch"],
+                self.legs_joints["right_knee_pitch"],
+                self.legs_joints["right_elbow_pitch"],
+                self.legs_joints["right_shoulder_pitch"],
+            ],
+        ]
         pitch_dev = torch.norm(left_pitch, dim=1) + torch.norm(right_pitch, dim=1)
-        pitch_dev = torch.clamp(pitch_dev - 0.1, 0, 50) #deadzone of 0.1, max 50 min 0
+        pitch_dev = torch.clamp(pitch_dev - 0.1, 0, 50)  # deadzone of 0.1, max 50 min 0
         return torch.exp(-pitch_dev * 0.5) - 0.01 * torch.norm(joint_diff, dim=1)  #
 
     # this function was not in unitree repo, added from humanoids repo
@@ -313,13 +329,13 @@ class QuadrupedFreeEnv(LeggedRobot):
         """
         root_acc = self.last_root_vel - self.root_states[:, 7:13]
         rew = torch.exp(-torch.norm(root_acc, dim=1) * 3)
-        return rew    
+        return rew
 
     # FOR WALKING:
     def _reward_lin_vel_z(self):
         # Penalize z axis base linear velocity
         return torch.square(self.base_lin_vel[:, 2])
-    
+
     def _reward_ang_vel_xy(self):
         # Penalize xy axes base angular velocity
         return torch.sum(torch.square(self.base_ang_vel[:, :2]), dim=1)
@@ -333,7 +349,7 @@ class QuadrupedFreeEnv(LeggedRobot):
         base_height = self.root_states[:, 2] - (measured_heights - self.cfg.asset.default_feet_height)
         reward = torch.exp(-torch.abs(base_height - self.cfg.rewards.base_height_target) * 10)
         return reward
-    
+
     def _reward_torques(self):
         # Penalize torques
         return torch.sum(torch.square(self.torques), dim=1)
@@ -341,48 +357,59 @@ class QuadrupedFreeEnv(LeggedRobot):
     def _reward_dof_vel(self):
         # Penalize dof velocities
         return torch.sum(torch.square(self.dof_vel), dim=1)
-    
+
     def _reward_dof_acc(self):
         # Penalize dof accelerations
         return torch.sum(torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1)
-    
+
     def _reward_action_rate(self):
         # Penalize changes in actions
         return torch.sum(torch.square(self.last_actions - self.actions), dim=1)
-    
+
     def _reward_collision(self):
         # Penalize collisions on selected bodies
-        return torch.sum(1.*(torch.norm(self.contact_forces[:, self.penalised_contact_indices, :], dim=-1) > 0.1), dim=1)
-    
+        return torch.sum(
+            1.0 * (torch.norm(self.contact_forces[:, self.penalised_contact_indices, :], dim=-1) > 0.1), dim=1
+        )
+
     def _reward_termination(self):
         # Terminal reward / penalty
         return self.reset_buf * ~self.time_out_buf
-    
+
     def _reward_dof_pos_limits(self):
         # Penalize dof positions too close to the limit
-        out_of_limits = -(self.dof_pos - self.dof_pos_limits[:, 0]).clip(max=0.) # lower limit
-        out_of_limits += (self.dof_pos - self.dof_pos_limits[:, 1]).clip(min=0.)
+        out_of_limits = -(self.dof_pos - self.dof_pos_limits[:, 0]).clip(max=0.0)  # lower limit
+        out_of_limits += (self.dof_pos - self.dof_pos_limits[:, 1]).clip(min=0.0)
         return torch.sum(out_of_limits, dim=1)
 
     def _reward_dof_vel_limits(self):
         # Penalize dof velocities too close to the limit
         # clip to max error = 1 rad/s per joint to avoid huge penalties
-        return torch.sum((torch.abs(self.dof_vel) - self.dof_vel_limits*self.cfg.rewards.soft_dof_vel_limit).clip(min=0., max=1.), dim=1)
+        return torch.sum(
+            (torch.abs(self.dof_vel) - self.dof_vel_limits * self.cfg.rewards.soft_dof_vel_limit).clip(
+                min=0.0, max=1.0
+            ),
+            dim=1,
+        )
 
     def _reward_torque_limits(self):
         # penalize torques too close to the limit
-        return torch.sum((torch.abs(self.torques) - self.torque_limits*self.cfg.rewards.soft_torque_limit).clip(min=0.), dim=1)
+        return torch.sum(
+            (torch.abs(self.torques) - self.torque_limits * self.cfg.rewards.soft_torque_limit).clip(min=0.0), dim=1
+        )
 
     # the main walking param
     def _reward_tracking_lin_vel(self):
         # Tracking of linear velocity commands (xy axes)
-        lin_vel_error = torch.sum(torch.square(self.commands[:, :2] - self.base_lin_vel[:, :2]), dim=1) #around 11 max error
-        return torch.exp(-(lin_vel_error*self.cfg.rewards.tracking_sigma*(1/13))) #tracking_sigma = 4
-    
+        lin_vel_error = torch.sum(
+            torch.square(self.commands[:, :2] - self.base_lin_vel[:, :2]), dim=1
+        )  # around 11 max error
+        return torch.exp(-(lin_vel_error * self.cfg.rewards.tracking_sigma * (1 / 10)))  # tracking_sigma = 4
+
     def _reward_tracking_ang_vel(self):
-        # Tracking of angular velocity commands (yaw) 
-        ang_vel_error = torch.square(self.commands[:, 2] - self.base_ang_vel[:, 2]) #around 1 max error
-        return torch.exp(-(ang_vel_error*self.cfg.rewards.tracking_sigma))
+        # Tracking of angular velocity commands (yaw)
+        ang_vel_error = torch.square(self.commands[:, 2] - self.base_ang_vel[:, 2])  # around 1 max error
+        return torch.exp(-(ang_vel_error * self.cfg.rewards.tracking_sigma))
 
     def _reward_feet_air_time(self):
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
@@ -394,22 +421,31 @@ class QuadrupedFreeEnv(LeggedRobot):
         air_time = self.feet_air_time.clamp(0, 0.5) * first_contact
         self.feet_air_time *= ~self.contact_filt
         return air_time.sum(dim=1)
-    
+
     def _reward_stumble(self):
         # Penalize feet hitting vertical surfaces
-        return torch.any(torch.norm(self.contact_forces[:, self.feet_indices, :2], dim=2) >\
-             5 *torch.abs(self.contact_forces[:, self.feet_indices, 2]), dim=1)
-        
+        return torch.any(
+            torch.norm(self.contact_forces[:, self.feet_indices, :2], dim=2)
+            > 5 * torch.abs(self.contact_forces[:, self.feet_indices, 2]),
+            dim=1,
+        )
+
     def _reward_stand_still(self):
         # Penalize motion at zero commands
-        return torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1) * (torch.norm(self.commands[:, :2], dim=1) < 0.1)
+        return torch.sum(torch.abs(self.dof_pos - self.default_dof_pos), dim=1) * (
+            torch.norm(self.commands[:, :2], dim=1) < 0.1
+        )
 
     def _reward_feet_contact_forces(self):
         # penalize high contact forces
-        return torch.sum((torch.norm(self.contact_forces[:, self.feet_indices, :], dim=-1) -  self.cfg.rewards.max_contact_force).clip(min=0.), dim=1)
+        return torch.sum(
+            (
+                torch.norm(self.contact_forces[:, self.feet_indices, :], dim=-1) - self.cfg.rewards.max_contact_force
+            ).clip(min=0.0),
+            dim=1,
+        )
 
-
-    # #Added from humanoids 
+    # #Added from humanoids
 
     # def _reward_low_speed(self):
     #     """Rewards or penalizes the robot based on its speed relative to the commanded speed.
@@ -432,7 +468,7 @@ class QuadrupedFreeEnv(LeggedRobot):
 
     #     # Assign rewards based on conditions
     #     # Speed too low
-    #     reward[speed_too_low] = 1.0 #-1.0 
+    #     reward[speed_too_low] = 1.0 #-1.0
     #     # Speed too high
     #     reward[speed_too_high] = 1.5 #0.0
     #     # Speed within desired range
@@ -442,7 +478,7 @@ class QuadrupedFreeEnv(LeggedRobot):
 
     #     return reward * (self.commands[:, 0].abs() > 0.1)
 
-    # #Added from humanoids 
+    # #Added from humanoids
     # def _reward_feet_clearance(self):
     #     """Calculates reward based on the clearance of the swing leg from the ground during movement.
     #     Encourages appropriate lift of the feet during the swing phase of the gait.

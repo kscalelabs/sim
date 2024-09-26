@@ -19,7 +19,7 @@ class QuadrupedCfg(LeggedRobotCfg):
         c_frame_stack = 3
         num_single_obs = 11 + NUM_JOINTS * 3
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 25 + NUM_JOINTS * 4 + 4 #WHY THIS WORK???
+        single_num_privileged_obs = 25 + NUM_JOINTS * 4 + 4  # The +4 added for quadruped...why?
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = NUM_JOINTS
         num_envs = 4096
@@ -39,9 +39,15 @@ class QuadrupedCfg(LeggedRobotCfg):
         foot_name = ["Right_Back_Lower", "Left_Back_Lower", "Right_Front_Lower", "Left_Front_Lower"]
         knee_name = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper"]
 
-        termination_height = 0.13 #use termination contacts instead
+        termination_height = 0.13  # use termination contacts instead
         default_feet_height = 0.05
-        terminate_after_contacts_on = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper", "Body"]
+        terminate_after_contacts_on = [
+            "Right_Back_Upper",
+            "Left_Back_Upper",
+            "Right_Front_Upper",
+            "Left_Front_Upper",
+            "Body",
+        ]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -76,7 +82,7 @@ class QuadrupedCfg(LeggedRobotCfg):
             ang_vel = 0.1
             lin_vel = 0.05
             quat = 0.03
-            height_measurements = 0.03 # was 0.1
+            height_measurements = 0.03  # was 0.1
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, Robot.height]
@@ -106,7 +112,7 @@ class QuadrupedCfg(LeggedRobotCfg):
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
-            solver_type = 1 # 0: pgs, 1: tgs
+            solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
             contact_offset = 0.01  # [m]
@@ -119,12 +125,12 @@ class QuadrupedCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.00001 # changed for quad
+        start_pos_noise = 0.00001  # changed for quad
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = True # changed for quad 
-        added_mass_range = [-.0, .001]
+        randomize_base_mass = True  # changed for quad
+        added_mass_range = [-0.0, 0.001]
         push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
@@ -145,46 +151,42 @@ class QuadrupedCfg(LeggedRobotCfg):
 
     class rewards:
         soft_dof_pos_limit = 0.9
-        base_height_target = 0.3 # 0.25
+        base_height_target = 0.4  # 0.25
         target_feet_height = 0.05  # m
-        
+
         # Additions from Unitree for ...
         target_joint_pos_scale = 0.17  # rad, for compute_ref_state
         cycle_time = 0.4  # sec, for compute_ref_state
-        tracking_sigma =  4 #0.25 for unitree (but they used divide by tracking sigma)
+        tracking_sigma = 4  # 0.25 for unitree (but they used divide by tracking sigma)
         max_contact_force = 100  # forces above this value are penalized
 
-        class scales( LeggedRobotCfg.rewards.scales):
+        class scales(LeggedRobotCfg.rewards.scales):
             dof_pos_limits = -10.0
 
-            #Override from base class (qaudruped_robot_config)
+            # Override from base class (qaudruped_robot_config)
 
-            #standing----
+            # standing----
             # base pos
-            default_joint_pos = 0.1 #1 for the new quadruped formula for standing
-            orientation = 0.25 #1 for standing
+            default_joint_pos = 0.1  # 1 for the new quadruped formula for standing
+            orientation = 0.25  # 1 for standing
             base_height = 0.2
             base_acc = 0.01
 
             # energy
-            # action_smoothness = -0.002 # not used in quadruped 
+            # action_smoothness = -0.002 # not used in quadruped
             torques = -1e-5
             dof_vel = -5e-4
             dof_acc = -1e-7
             collision = -1.0
 
-            # walking --- 
+            # walking ---
             # gait
-            feet_air_time = 5 #2.5
+            feet_air_time = 7  # 2.5
             # contact
             feet_contact_forces = -0.01
             # vel tracking , main driver of forward motion!!!
-            tracking_lin_vel = 3 # 1.0
-            tracking_ang_vel = 0.5 #0.5
-
-            #added from humanoid
-            # low_speed = 1.0
-            # feet_clearance = 1.6
+            tracking_lin_vel = 3  # 1.0
+            tracking_ang_vel = 0.5  # 0.5
 
             # only in unitree
             lin_vel_z = -2.0
@@ -194,22 +196,18 @@ class QuadrupedCfg(LeggedRobotCfg):
             # action_rate = -0.0 #used in unitree only
             # stand_still = -0.0  #used in unitree only
 
-
-            #NOT used in unitree----
+            # NOT used in unitree----
             # joint_pos = 1.6
             # feet_clearance = 1.6
             # feet_contact_number = 1.2
-            #gait
+            # gait
             # foot_slip = -0.05
             # feet_distance = 0.2
             # knee_distance = 0.2
-            #vel tracking
+            # vel tracking
             # vel_mismatch_exp = 0.5  # lin_z; ang x,y
             # track_vel_hard = 0.5
             # feet_stumble = -0.0 #not used at all
-
-           
-            
 
         only_positive_rewards = (
             True  # if true negative total rewards are clipped at zero (avoids early termination problems)
@@ -238,7 +236,7 @@ class QuadrupedCfgPPO(LeggedRobotCfgPPO):
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
     class policy:
-        init_noise_std = 0.3 # changed for quad
+        init_noise_std = 0.3  # changed for quad
         actor_hidden_dims = [512, 256, 128]
         critic_hidden_dims = [768, 256, 128]
 

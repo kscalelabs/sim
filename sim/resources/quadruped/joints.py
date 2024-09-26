@@ -3,10 +3,8 @@
 The best way to re-generate this snippet for a new robot is to use the
 `sim/scripts/print_joints.py` script. This script will print out a hierarchical
 tree of the various joint names in the robot.
-"""
-"""
-The OUTPUT:
 
+The OUTPUT:
 Left
   Elbow_Pitch: Left_Elbow_Pitch
   Hip_Pitch: Left_Hip_Pitch
@@ -17,7 +15,6 @@ Right
   Hip_Pitch: Right_Hip_Pitch
   Knee_Pitch: Right_Knee_Pitch
   Shoulder_Pitch: Right_Shoulder_Pitch
-
 """
 
 import textwrap
@@ -101,6 +98,7 @@ class Legs(Node):
     left = LeftLeg()
     right = RightLeg()
 
+
 class Arms(Node):
     left = LeftArm()
     right = RightArm()
@@ -109,11 +107,11 @@ class Arms(Node):
 class Robot(Node):
     # STEP TWO
     height = 0.256
-    rotation = [0.5000, -0.4996, -0.5000, 0.5004] #Which orientation the robot itself is
+    rotation = [0.5000, -0.4996, -0.5000, 0.5004]  # Which orientation the robot itself is
     collision_links = [
         "lower_half_assembly_1_left_leg_1_foot_pad_1_simple",
         "lower_half_assembly_1_right_leg_1_foot_pad_1_simple",
-    ] #not important/ no need to update?
+    ]  # not important/ no need to update?
 
     arms = Arms()
     legs = Legs()
@@ -125,14 +123,11 @@ class Robot(Node):
             # arms
             Robot.arms.left.shoulder_pitch: 0.409,
             Robot.arms.left.elbow_pitch: -0.977,
-        
             Robot.arms.right.shoulder_pitch: 0.312,
             Robot.arms.right.elbow_pitch: 0.81,
-
             # legs
             Robot.legs.left.hip_pitch: 0.55,
             Robot.legs.left.knee_pitch: -0.684,
-        
             Robot.legs.right.hip_pitch: 0.699,
             Robot.legs.right.knee_pitch: -1.01,
         }
@@ -150,17 +145,17 @@ class Robot(Node):
                 "upper": 1.40,
             },
             # right arm
-            Robot.arms.right.Right_Shoulder_Pitch:  {
+            Robot.arms.right.Right_Shoulder_Pitch: {
                 "lower": 0,
                 "upper": 1.22,
             },
-            Robot.arms.right.Right_Elbow_Pitch:  {
+            Robot.arms.right.Right_Elbow_Pitch: {
                 "lower": -1.40,
                 "upper": 1.40,
             },
             # left leg
-            Robot.legs.left.Left_Hip_Pitch:  {
-                "lower": 0, 
+            Robot.legs.left.Left_Hip_Pitch: {
+                "lower": 0,
                 "upper": 1.57,
             },
             Robot.legs.left.Left_Knee_Pitch: {
@@ -175,12 +170,12 @@ class Robot(Node):
             Robot.legs.right.Right_Knee_Pitch: {
                 "lower": -1.40,
                 "upper": 1.40,
-            }
+            },
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
-         return {
+        return {
             # left arm
             Robot.arms.left.Left_Shoulder_Pitch: {
                 "lower": 0,
@@ -191,16 +186,16 @@ class Robot(Node):
                 "upper": 1.40,
             },
             # right arm
-            Robot.arms.right.Right_Shoulder_Pitch:  {
+            Robot.arms.right.Right_Shoulder_Pitch: {
                 "lower": 0,
                 "upper": 1.22,
             },
-            Robot.arms.right.Right_Elbow_Pitch:  {
+            Robot.arms.right.Right_Elbow_Pitch: {
                 "lower": -1.40,
                 "upper": 1.40,
             },
             # left leg
-            Robot.legs.left.Left_Hip_Pitch:  {
+            Robot.legs.left.Left_Hip_Pitch: {
                 "lower": 0,
                 "upper": 1.22,
             },
@@ -216,39 +211,24 @@ class Robot(Node):
             Robot.legs.right.Right_Knee_Pitch: {
                 "lower": -1.40,
                 "upper": 1.40,
-            }
+            },
         }
 
     # <limit effort="24" velocity="30" lower="-6.28" upper="6.28"/> for quad
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
-        return {
-            "Elbow_Pitch": 20, #20 for quad
-            "Shoulder_Pitch": 20,
-            "Hip_Pitch": 20,
-            "Knee_Pitch": 20
-        }
+        return {"Elbow_Pitch": 20, "Shoulder_Pitch": 20, "Hip_Pitch": 20, "Knee_Pitch": 20}  # 20 for quad
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
-        return {
-            "Elbow_Pitch": 0.5, #0.5 for quad
-            "Shoulder_Pitch": 0.5,
-            "Hip_Pitch": 0.5,
-            "Knee_Pitch": 0.5
-        }
+        return {"Elbow_Pitch": 0.5, "Shoulder_Pitch": 0.5, "Hip_Pitch": 0.5, "Knee_Pitch": 0.5}  # 0.5 for quad
 
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
-        return {
-            "Elbow_Pitch": 5,
-            "Shoulder_Pitch": 5,
-            "Hip_Pitch": 5,
-            "Knee_Pitch": 5
-        }
+        return {"Elbow_Pitch": 5, "Shoulder_Pitch": 5, "Hip_Pitch": 5, "Knee_Pitch": 5}
 
     # vel_limits
     @classmethod
@@ -268,6 +248,7 @@ class Robot(Node):
             "Hip_Pitch": 0,
             "Knee_Pitch": 0,
         }
+
 
 def print_joints() -> None:
     joints = Robot.all_joints()

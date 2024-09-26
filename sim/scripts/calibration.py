@@ -16,9 +16,9 @@ import numpy as np
 
 # Importing torch down here to avoid gymtorch issues.
 import torch  # noqa: E402 #  type: ignore[import]
-from isaacgym import gymapi, gymtorch, gymutil
 from matplotlib import pyplot as plt
 
+from isaacgym import gymapi, gymtorch, gymutil
 from sim.env import robot_urdf_path
 from sim.resources.stompymini.joints import Robot as Stompy
 

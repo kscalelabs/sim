@@ -30,6 +30,7 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
 import numpy as np
+
 from isaacgym import terrain_utils
 
 

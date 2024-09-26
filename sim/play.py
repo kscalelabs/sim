@@ -17,8 +17,9 @@ from typing import Any, Union
 import cv2
 import h5py
 import numpy as np
-from isaacgym import gymapi
 from tqdm import tqdm
+
+from isaacgym import gymapi
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +151,7 @@ def play(args: argparse.Namespace) -> None:
             dset_actions[t] = actions.detach().numpy()
 
         if FIX_COMMAND:
-            env.commands[:, 0] = 0.5 # 0 for standing policy
+            env.commands[:, 0] = 0.5  # 0 for standing policy
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
