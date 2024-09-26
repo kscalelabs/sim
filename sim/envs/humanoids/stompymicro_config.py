@@ -1,21 +1,20 @@
-"""Defines the environment configuration for the walking task"""
+"""Defines the environment configuration for the Getting up task"""
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.dora.joints import Robot
+from sim.resources.stompymicro.joints import Robot
 
-NUM_JOINTS = len(Robot.all_joints())  # 12
+NUM_JOINTS = len(Robot.all_joints())  # 20
 
 
-class DoraCfg(LeggedRobotCfg):
+class StompyMicroCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-
         frame_stack = 15
         c_frame_stack = 3
         num_single_obs = 11 + NUM_JOINTS * 3
@@ -35,14 +34,17 @@ class DoraCfg(LeggedRobotCfg):
         terminate_after_contacts_on = []
 
     class asset(LeggedRobotCfg.asset):
-        name = "dora"
+        name = "stompymicro"
         file = str(robot_urdf_path(name))
 
-        foot_name = "leg_ankle_roll_Link"
-        knee_name = "leg_knee_Link"
+        foot_name = ["DRIVING_ROTOR_PLATE_9", "DRIVING_ROTOR_PLATE_10"]
+        knee_name = ["DRIVING_ROTOR_PLATE_7", "DRIVING_ROTOR_PLATE_8"]
 
-        termination_height = 0.5
-        default_feet_height = 0.0
+        termination_height = 0.1
+
+        default_feet_height = 0.03
+
+        terminate_after_contacts_on = []
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -80,8 +82,11 @@ class DoraCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height]
+        pos = [0.0, 0.0, Robot.height]  # add z value to lift the robot
+        # setting the right rotation
+        # quat_from_euler_xyz(torch.tensor(1.57), torch.tensor(0), torch.tensor(-1.57))
         rot = Robot.rotation
+
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
         default_positions = Robot.default_standing()
@@ -95,15 +100,15 @@ class DoraCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 4  # 100hz
+        decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
-        dt = 0.002  # 1000 Hz
+        dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
 
         class physx(LeggedRobotCfg.sim.physx):
-            num_threads = 12
+            num_threads = 10
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
             num_velocity_iterations = 1
@@ -117,6 +122,7 @@ class DoraCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
+        start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -126,9 +132,7 @@ class DoraCfg(LeggedRobotCfg):
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        # dynamic randomization
-        action_delay = 0.5
-        action_noise = 0.02
+        dynamic_randomization = 0.05
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -140,30 +144,45 @@ class DoraCfg(LeggedRobotCfg):
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
             lin_vel_y = [-0.3, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-0.14, 0.14]
+            heading = [-3.14, 3.14]
 
     class rewards:
-        # quite important to keep it right
-        base_height_target = 0.75
-        min_dist = 0.3
+        base_height_target = 0.78
+        min_dist = 0.25
         max_dist = 0.5
+
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.14  # rad
+        target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.05  # m
-        cycle_time = 0.5  # sec
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
-        tracking_sigma = 5
-        max_contact_force = 100  # forces above this value are penalized
+        tracking_sigma = 5.0
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
-            # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.0
-            feet_contact_number = 1.2
+            # # reference motion tracking
+            # joint_pos = 1.6
+            # feet_clearance = 1.6
+            # feet_contact_number = 1.2
+            # # gait
+            # feet_air_time = 1.6
+            # foot_slip = -0.05
+            # feet_distance = 0.2
+            # knee_distance = 0.2
+            # # contact
+            # feet_contact_forces = -0.01
+            # # vel tracking
+            # tracking_lin_vel = 1.2
+            # tracking_ang_vel = 1.1
+            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            # low_speed = 0.2
+            # track_vel_hard = 0.5
+            # feet_clearance = 1.6
+            # feet_contact_number = 1.2
             # gait
-            feet_air_time = 1.0
+            feet_air_time = 1.6
             foot_slip = -0.05
             feet_distance = 0.2
             knee_distance = 0.2
@@ -176,7 +195,6 @@ class DoraCfg(LeggedRobotCfg):
             low_speed = 0.2
             track_vel_hard = 0.5
 
-            # above this was removed
             # base pos
             default_joint_pos = 0.5
             orientation = 1
@@ -207,7 +225,7 @@ class DoraCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class DoraCfgPPO(LeggedRobotCfgPPO):
+class StompyMicroCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -228,11 +246,11 @@ class DoraCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 5001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "dora"
+        experiment_name = "StompyMicro"
         run_name = ""
         # load and resume
         resume = False

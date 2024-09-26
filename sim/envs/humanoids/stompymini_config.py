@@ -1,4 +1,4 @@
-"""Defines the environment configuration for the Getting up task"""
+"""Defines the environment configuration for the walking task"""
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
@@ -26,7 +26,7 @@ class MiniCfg(LeggedRobotCfg):
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
-    class safety:
+    class safety(LeggedRobotCfg.safety):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
@@ -41,7 +41,6 @@ class MiniCfg(LeggedRobotCfg):
 
         termination_height = 0.24
         default_feet_height = 0.03
-        terminate_after_contacts_on = []
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -129,7 +128,9 @@ class MiniCfg(LeggedRobotCfg):
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.05
+        # dynamic randomization
+        action_delay = 0.5
+        action_noise = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -159,6 +160,18 @@ class MiniCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
+            # base pos
+            default_joint_pos = 0.5
+            orientation = 1
+            base_height = 0.2
+            base_acc = 0.2
+            # energy
+            action_smoothness = -0.002
+            torques = -1e-5
+            dof_vel = -5e-4
+            dof_acc = -1e-7
+            collision = -1.0
+
             # reference motion tracking
             joint_pos = 1.6
             feet_clearance = 1.6
@@ -177,18 +190,6 @@ class MiniCfg(LeggedRobotCfg):
             low_speed = 0.2
             track_vel_hard = 0.5
 
-            # base pos
-            default_joint_pos = 0.5
-            orientation = 1
-            base_height = 0.2
-            base_acc = 0.2
-            # energy
-            action_smoothness = -0.002
-            torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
-            collision = -1.0
-
     class normalization:
         class obs_scales:
             lin_vel = 2.0
@@ -205,6 +206,38 @@ class MiniCfg(LeggedRobotCfg):
         ref_env = 0
         pos = [4, -4, 2]
         lookat = [0, -2, 0]
+
+
+class MiniStandingCfg(MiniCfg):
+    """Configuration class for the Legs humanoid robot."""
+
+    class rewards:
+        base_height_target = 0.78
+        min_dist = 0.25
+        max_dist = 0.5
+
+        # put some settings here for LLM parameter tuning
+        target_joint_pos_scale = 0.17  # rad
+        target_feet_height = 0.05  # m
+        cycle_time = 0.4  # sec
+        # if true negative total rewards are clipped at zero (avoids early termination problems)
+        only_positive_rewards = True
+        # tracking reward = exp(error*sigma)
+        tracking_sigma = 5.0
+        max_contact_force = 400  # forces above this value are penalized
+
+        class scales:
+            # base pos
+            default_joint_pos = 0.5
+            orientation = 1
+            base_height = 0.2
+            base_acc = 0.2
+            # energy
+            action_smoothness = -0.002
+            torques = -1e-5
+            dof_vel = -5e-4
+            dof_acc = -1e-7
+            collision = -1.0
 
 
 class MiniCfgPPO(LeggedRobotCfgPPO):

@@ -50,7 +50,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.0
+    vx = 0.5
     vy = 0.0
     dyaw = 0.0
 
@@ -141,7 +141,7 @@ def run_mujoco(policy, cfg):
         q = q[-cfg.num_actions :]
         dq = dq[-cfg.num_actions :]
 
-        # 1000hz -> 100hz
+        # 1000hz -> 50hz
         if count_lowlevel % cfg.sim_config.decimation == 0:
             obs = np.zeros([1, cfg.env.num_single_obs], dtype=np.float32)
             eu_ang = quaternion_to_euler_array(quat)
@@ -183,7 +183,7 @@ def run_mujoco(policy, cfg):
         )  # Calc torques
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
-
+        print(tau)
         data.ctrl = tau
 
         mujoco.mj_step(model, data)
@@ -215,8 +215,8 @@ if __name__ == "__main__":
 
         class sim_config:
             sim_duration = 60.0
-            dt = 0.002
-            decimation = 10
+            dt = 0.001
+            decimation = 20
 
         class robot_config:
             tau_factor = 0.85

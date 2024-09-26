@@ -6,7 +6,7 @@ unzip meshes.zip -d sim/resources/stompymini/
 rm meshes.zip
 
 # Stompypro
-gdown --folder https://drive.google.com/drive/folders/1r5zXvk_ufl0tF2Kc19evrwtUbgX4bgdx -O sim/resources/stompypro/
+gdown --folder https://drive.google.com/drive/folders/1-iIqy8j4gF6JeuMc_MjxkRe4vSZl8Ozp -O sim/resources/stompypro/
 
 # Xbot
 gdown --id 1tpl95OdUhg9VL88FhKWMReY4qtLHHKoh
@@ -23,3 +23,6 @@ gdown --folder https://drive.google.com/drive/folders/1OxYcIJpeih89NY5auRayxCXpn
 gdown --id 19ih7zG6Ky8xJVJD5M1th2hmqtxaNiZyh
 tar -xzvf meshes.zip -C sim/resources/h1_2/
 rm meshes.zip
+
+# Stompymicro
+gdown --folder https://drive.google.com/drive/folders/1mTMP_7HJfT6Wr2xrY4MmbEkuAKtLKZSe -O sim/resources/stompymicro/

@@ -2,7 +2,7 @@
 """Defines the environment for training the humanoid."""
 
 from sim.envs.base.legged_robot import LeggedRobot
-from sim.resources.stompymini.joints import Robot
+from sim.resources.stompymicro.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
@@ -12,7 +12,7 @@ from isaacgym.torch_utils import *  # isort: skip
 import torch  # isort:skip
 
 
-class MiniFreeEnv(LeggedRobot):
+class StompyMicroEnv(LeggedRobot):
     """StompyFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
@@ -188,6 +188,15 @@ class MiniFreeEnv(LeggedRobot):
         )  # euler x,y
         return noise_vec
 
+    def step(self, actions):
+        if self.cfg.env.use_ref_actions:
+            actions += self.ref_action
+        # dynamic randomization
+        delay = torch.rand((self.num_envs, 1), device=self.device)
+        actions = (1 - delay) * actions + delay * self.actions
+        actions += self.cfg.domain_rand.dynamic_randomization * torch.randn_like(actions) * actions
+        return super().step(actions)
+
     def compute_observations(self):
         phase = self._get_phase()
         self.compute_ref_state()
@@ -301,7 +310,7 @@ class MiniFreeEnv(LeggedRobot):
         with the ground. The speed of the foot is calculated and scaled by the contact condition.
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
-        foot_speed_norm = torch.norm(self.rigid_state[:, self.feet_indices, 7:9], dim=2)
+        foot_speed_norm = torch.norm(self.rigid_state[:, self.feet_indices, 10:12], dim=2)
         rew = torch.sqrt(foot_speed_norm)
         rew *= contact
         return torch.sum(rew, dim=1)

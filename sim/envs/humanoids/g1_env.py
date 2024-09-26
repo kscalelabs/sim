@@ -186,15 +186,6 @@ class G1FreeEnv(LeggedRobot):
         )  # euler x,y
         return noise_vec
 
-    def step(self, actions):
-        if self.cfg.env.use_ref_actions:
-            actions += self.ref_action
-        # dynamic randomization
-        delay = torch.rand((self.num_envs, 1), device=self.device)
-        actions = (1 - delay) * actions + delay * self.actions
-        actions += self.cfg.domain_rand.dynamic_randomization * torch.randn_like(actions) * actions
-        return super().step(actions)
-
     def compute_observations(self):
         phase = self._get_phase()
         self.compute_ref_state()
@@ -308,7 +299,7 @@ class G1FreeEnv(LeggedRobot):
         with the ground. The speed of the foot is calculated and scaled by the contact condition.
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
-        foot_speed_norm = torch.norm(self.rigid_state[:, self.feet_indices, 10:12], dim=2)
+        foot_speed_norm = torch.norm(self.rigid_state[:, self.feet_indices, 7:9], dim=2)
         rew = torch.sqrt(foot_speed_norm)
         rew *= contact
         return torch.sum(rew, dim=1)
