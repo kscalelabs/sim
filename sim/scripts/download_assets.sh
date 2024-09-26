@@ -23,3 +23,6 @@ gdown --folder https://drive.google.com/drive/folders/1OxYcIJpeih89NY5auRayxCXpn
 gdown --id 19ih7zG6Ky8xJVJD5M1th2hmqtxaNiZyh
 tar -xzvf meshes.zip -C sim/resources/h1_2/
 rm meshes.zip
+
+# Stompymicro
+gdown --folder https://drive.google.com/drive/folders/1mTMP_7HJfT6Wr2xrY4MmbEkuAKtLKZSe -O sim/resources/stompymicro/

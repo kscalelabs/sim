@@ -43,6 +43,7 @@ module = [
 [tool.isort]
 
 profile = "black"
+known_third_party = ["wandb"]
 
 [tool.ruff]
 
