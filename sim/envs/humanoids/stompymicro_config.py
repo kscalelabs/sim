@@ -69,14 +69,14 @@ class StompyMicroCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = True
+        add_noise = False # pfb30 bring it back
         noise_level = 0.6  # scales other values
 
-        class noise_scales:
-            dof_pos = 0.05
-            dof_vel = 0.5
-            ang_vel = 0.1
-            lin_vel = 0.05
+        class noise_scales: # pfb30 bring it back
+            dof_pos = 0.01
+            dof_vel = 0.01
+            ang_vel = 0.01
+            lin_vel = 0.01
             quat = 0.03
             height_measurements = 0.1
 
@@ -121,7 +121,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.01
+        start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -160,7 +160,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 50  # forces above this value are penalized
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales:
             # # reference motion tracking
