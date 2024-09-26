@@ -190,9 +190,9 @@ class StompyProFreeEnv(LeggedRobot):
         )  # euler x,y
         return noise_vec
 
-    # def _compute_torques(self, actions):
-    #     # Override the default torque computation so that the actions are interpreted as torques directly.
-    #     return torch.clip(actions, -self.torque_limits, self.torque_limits)
+    def _compute_torques(self, actions):
+        # Override the default torque computation so that the actions are interpreted as torques directly.
+        return torch.clip(actions, -self.torque_limits, self.torque_limits)
 
     def _compute_torques(self, actions):
         # Override the default torque computation so that the actions are interpreted as torques directly.
