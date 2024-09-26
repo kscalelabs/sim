@@ -219,7 +219,7 @@ class StompyProCfg(LeggedRobotCfg):
             height_measurements = 5.0
 
         clip_observations = 18.0
-        clip_actions = 10000.0
+        clip_actions = 200.0
 
     class viewer:
         ref_env = 0

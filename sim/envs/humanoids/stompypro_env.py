@@ -192,6 +192,9 @@ class StompyProFreeEnv(LeggedRobot):
 
     def _compute_torques(self, actions):
         # Override the default torque computation so that the actions are interpreted as torques directly.
+        # TODO - move this to conifg
+        action_scale = 20
+        actions = actions * action_scale
         return torch.clip(actions, -self.torque_limits, self.torque_limits)
 
     def compute_observations(self):
