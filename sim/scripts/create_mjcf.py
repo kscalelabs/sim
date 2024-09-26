@@ -123,7 +123,7 @@ class Sim2SimRobot(mjcf.Robot):
         root: ET.Element = self.tree.getroot()
 
         worldbody = root.find("worldbody")
-        new_root_body = mjcf.Body(name="root", pos=(0, 0, 1), quat=(1, 0, 0, 0)).to_xml()
+        new_root_body = mjcf.Body(name="root", pos=(0, 0, 1), quat=(0, 0, 0, 1)).to_xml()
         # add freejoint to root
         freejoint = ET.Element("freejoint", name="root")
         new_root_body.insert(0, freejoint)
@@ -324,8 +324,8 @@ class Sim2SimRobot(mjcf.Robot):
                 if geom.get("quat"):
                     new_geom.set("quat", geom.get("quat") or "")
                 try:
-                    # Exclude collision meshes
-                    if geom.get("mesh") not in robot.collision_links:
+                    # Exclude collision meshes when setting contact
+                    if geom.get("mesh") not in robot.collision_links and geom.get("mesh") is not None:
                         new_geom.set("contype", "0")
                         new_geom.set("conaffinity", "0")
                         new_geom.set("group", "1")
