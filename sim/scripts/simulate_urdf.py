@@ -12,7 +12,6 @@ from dataclasses import dataclass
 from typing import Any, Dict, Literal, NewType
 
 from isaacgym import gymapi, gymtorch, gymutil
-
 from sim.env import robot_urdf_path
 from sim.resources.stompymini.joints import Robot as Stompy
 

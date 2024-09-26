@@ -61,7 +61,7 @@ class LeftArm(Node):
     shoulder_yaw = "left_shoulder_yaw"
     shoulder_pitch = "left_shoulder_pitch"
     # shoulder_roll = "left_shoulder_roll"
-    elbow_pitch = "left_elbow_yaw" # FIXME: yaw vs pitch
+    elbow_pitch = "left_elbow_yaw"  # FIXME: yaw vs pitch
     # hand = LeftHand()
 
 
@@ -83,7 +83,7 @@ class LeftLeg(Node):
     hip_yaw = "left_hip_yaw"
     hip_pitch = "left_hip_pitch"
     knee_pitch = "left_knee_pitch"
-    ankle_pitch = "left_ankle_pitch" 
+    ankle_pitch = "left_ankle_pitch"
 
 
 class RightLeg(Node):
@@ -91,7 +91,7 @@ class RightLeg(Node):
     hip_yaw = "right_hip_yaw"
     hip_pitch = "right_hip_pitch"
     knee_pitch = "right_knee_pitch"
-    ankle_pitch = "right_ankle_pitch" 
+    ankle_pitch = "right_ankle_pitch"
 
 
 class Legs(Node):
