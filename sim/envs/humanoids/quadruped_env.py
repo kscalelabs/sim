@@ -291,9 +291,6 @@ class QuadrupedFreeEnv(LeggedRobot):
     def _reward_orientation(self):
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 15)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
-
-        # print("quat_mismatch: ", quat_mismatch)
-        # print("orientaiton reward: ", (quat_mismatch + orientation) / 2)
         return (quat_mismatch + orientation) / 2
     
     # this function was not in unitree repo, added from humanoids repo
@@ -306,13 +303,7 @@ class QuadrupedFreeEnv(LeggedRobot):
         left_pitch = joint_diff[:, [self.legs_joints["left_hip_pitch"], self.legs_joints["left_knee_pitch"], self.legs_joints["left_elbow_pitch"], self.legs_joints["left_shoulder_pitch"] ]]
         right_pitch = joint_diff[:, [self.legs_joints["right_hip_pitch"], self.legs_joints["right_knee_pitch"], self.legs_joints["right_elbow_pitch"], self.legs_joints["right_shoulder_pitch"] ]]
         pitch_dev = torch.norm(left_pitch, dim=1) + torch.norm(right_pitch, dim=1)
-        pitch_dev = torch.clamp(pitch_dev - 0.05, 0, 50) #deadzone of 0.1, max 50 min 0
-
-        # org torch.exp(-yaw_roll * 100) - 0.01 * torch.norm(joint_diff, dim=1) 
-        # print("moving pos diff:",  torch.exp(-pitch_dev * 0.5))
-        # print("over all diff: ",  - 0.01 * torch.norm(joint_diff, dim=1))
-        # print("def joint pos: ", 0.5*torch.exp(-pitch_dev * 0.5) - 0.01 * torch.norm(joint_diff, dim=1))
-        
+        pitch_dev = torch.clamp(pitch_dev - 0.1, 0, 50) #deadzone of 0.1, max 50 min 0
         return torch.exp(-pitch_dev * 0.5) - 0.01 * torch.norm(joint_diff, dim=1)  #
 
     # this function was not in unitree repo, added from humanoids repo
@@ -382,28 +373,27 @@ class QuadrupedFreeEnv(LeggedRobot):
         # penalize torques too close to the limit
         return torch.sum((torch.abs(self.torques) - self.torque_limits*self.cfg.rewards.soft_torque_limit).clip(min=0.), dim=1)
 
+    # the main walking param
     def _reward_tracking_lin_vel(self):
         # Tracking of linear velocity commands (xy axes)
-        lin_vel_error = torch.sum(torch.square(self.commands[:, :2] - self.base_lin_vel[:, :2]), dim=1)
-        return torch.exp(-lin_vel_error/self.cfg.rewards.tracking_sigma)
+        lin_vel_error = torch.sum(torch.square(self.commands[:, :2] - self.base_lin_vel[:, :2]), dim=1) #around 11 max error
+        return torch.exp(-(lin_vel_error*self.cfg.rewards.tracking_sigma*(1/13))) #tracking_sigma = 4
     
     def _reward_tracking_ang_vel(self):
         # Tracking of angular velocity commands (yaw) 
-        ang_vel_error = torch.square(self.commands[:, 2] - self.base_ang_vel[:, 2])
-        return torch.exp(-ang_vel_error/self.cfg.rewards.tracking_sigma)
+        ang_vel_error = torch.square(self.commands[:, 2] - self.base_ang_vel[:, 2]) #around 1 max error
+        return torch.exp(-(ang_vel_error*self.cfg.rewards.tracking_sigma))
 
     def _reward_feet_air_time(self):
-        # Reward long steps
-        # Need to filter the contacts because the contact reporting of PhysX is unreliable on meshes
-        contact = self.contact_forces[:, self.feet_indices, 2] > 1.
-        contact_filt = torch.logical_or(contact, self.last_contacts) 
+        contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
+        stance_mask = self._get_gait_phase()
+        self.contact_filt = torch.logical_or(torch.logical_or(contact, stance_mask), self.last_contacts)
         self.last_contacts = contact
-        first_contact = (self.feet_air_time > 0.) * contact_filt
+        first_contact = (self.feet_air_time > 0.0) * self.contact_filt
         self.feet_air_time += self.dt
-        rew_airTime = torch.sum((self.feet_air_time - 0.5) * first_contact, dim=1) # reward only on first contact with the ground
-        rew_airTime *= torch.norm(self.commands[:, :2], dim=1) > 0.1 #no reward for zero command
-        self.feet_air_time *= ~contact_filt
-        return rew_airTime
+        air_time = self.feet_air_time.clamp(0, 0.5) * first_contact
+        self.feet_air_time *= ~self.contact_filt
+        return air_time.sum(dim=1)
     
     def _reward_stumble(self):
         # Penalize feet hitting vertical surfaces
@@ -417,3 +407,61 @@ class QuadrupedFreeEnv(LeggedRobot):
     def _reward_feet_contact_forces(self):
         # penalize high contact forces
         return torch.sum((torch.norm(self.contact_forces[:, self.feet_indices, :], dim=-1) -  self.cfg.rewards.max_contact_force).clip(min=0.), dim=1)
+
+
+    # #Added from humanoids 
+
+    # def _reward_low_speed(self):
+    #     """Rewards or penalizes the robot based on its speed relative to the commanded speed.
+    #     This function checks if the robot is moving too slow, too fast, or at the desired speed,
+    #     and if the movement direction matches the command.
+    #     """
+    #     # Calculate the absolute value of speed and command for comparison
+    #     absolute_speed = torch.abs(self.base_lin_vel[:, 0])
+    #     absolute_command = torch.abs(self.commands[:, 0])
+    #     # Define speed criteria for desired range
+    #     speed_too_low = absolute_speed < 0.5 * absolute_command
+    #     speed_too_high = absolute_speed > 1.2 * absolute_command
+    #     speed_desired = ~(speed_too_low | speed_too_high)
+
+    #     # Check if the speed and command directions are mismatched
+    #     sign_mismatch = torch.sign(self.base_lin_vel[:, 0]) != torch.sign(self.commands[:, 0])
+
+    #     # Initialize reward tensor
+    #     reward = torch.zeros_like(self.base_lin_vel[:, 0])
+
+    #     # Assign rewards based on conditions
+    #     # Speed too low
+    #     reward[speed_too_low] = 1.0 #-1.0 
+    #     # Speed too high
+    #     reward[speed_too_high] = 1.5 #0.0
+    #     # Speed within desired range
+    #     reward[speed_desired] = 3.0 #1.2
+    #     # Sign mismatch has the highest priority
+    #     reward[sign_mismatch] = 0.0 #-2.0
+
+    #     return reward * (self.commands[:, 0].abs() > 0.1)
+
+    # #Added from humanoids 
+    # def _reward_feet_clearance(self):
+    #     """Calculates reward based on the clearance of the swing leg from the ground during movement.
+    #     Encourages appropriate lift of the feet during the swing phase of the gait.
+    #     """
+    #     # Compute feet contact mask
+    #     contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
+
+    #     # Get the z-position of the feet and compute the change in z-position
+    #     feet_z = self.rigid_state[:, self.feet_indices, 2] - self.cfg.asset.default_feet_height
+    #     delta_z = feet_z - self.last_feet_z
+    #     self.feet_height += delta_z
+    #     self.last_feet_z = feet_z
+
+    #     # Compute swing mask
+    #     swing_mask = 1 - self._get_gait_phase()
+
+    #     # feet height should be closed to target feet height at the peak
+    #     rew_pos = torch.abs(self.feet_height - self.cfg.rewards.target_feet_height) < 0.02
+    #     rew_pos = torch.sum(rew_pos * swing_mask, dim=1)
+    #     self.feet_height *= ~contact
+
+    #     return rew_pos

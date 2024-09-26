@@ -93,9 +93,9 @@ class LeggedRobotCfg(BaseConfig):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-1.0, 1.0]  # min max [m/s]
-            lin_vel_y = [-1.0, 1.0]  # min max [m/s]
-            ang_vel_yaw = [-1, 1]  # min max [rad/s]
+            lin_vel_x = [0.5, 10.0] # [-1.0, 1.0]  # min max [m/s]
+            lin_vel_y = [0.3, 10.0]  # min max [m/s]
+            ang_vel_pitch = [-1, 1]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class init_state:
@@ -170,8 +170,6 @@ class LeggedRobotCfg(BaseConfig):
         only_positive_rewards = (
             True  # if true negative total rewards are clipped at zero (avoids early termination problems)
         )
-        tracking_sigma = 0.25  # tracking reward = exp(-error^2/sigma)
-        max_contact_force = 100.0  # forces above this value are penalized
 
     class normalization:
         class obs_scales:

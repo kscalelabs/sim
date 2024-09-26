@@ -41,7 +41,7 @@ class QuadrupedCfg(LeggedRobotCfg):
 
         termination_height = 0.13 #use termination contacts instead
         default_feet_height = 0.05
-        terminate_after_contacts_on = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper"]
+        terminate_after_contacts_on = ["Right_Back_Upper", "Left_Back_Upper", "Right_Front_Upper", "Left_Front_Upper", "Body"]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -138,20 +138,21 @@ class QuadrupedCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.3, 0.6]  # min max [m/s]
+            lin_vel_x = [1.5, 5]  # min max [m/s]
             lin_vel_y = [-0.3, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
         soft_dof_pos_limit = 0.9
-        base_height_target = 0.2 # 0.25
+        base_height_target = 0.3 # 0.25
+        target_feet_height = 0.05  # m
         
         # Additions from Unitree for ...
         target_joint_pos_scale = 0.17  # rad, for compute_ref_state
         cycle_time = 0.4  # sec, for compute_ref_state
-        tracking_sigma = 0.25 # unitree specific
-        max_contact_force = 400  # forces above this value are penalized
+        tracking_sigma =  4 #0.25 for unitree (but they used divide by tracking sigma)
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales( LeggedRobotCfg.rewards.scales):
             dof_pos_limits = -10.0
@@ -160,10 +161,10 @@ class QuadrupedCfg(LeggedRobotCfg):
 
             #standing----
             # base pos
-            default_joint_pos = 1 #for the new quadruped formula for standing
-            orientation = 1
+            default_joint_pos = 0.1 #1 for the new quadruped formula for standing
+            orientation = 0.25 #1 for standing
             base_height = 0.2
-            base_acc = 0.2
+            base_acc = 0.01
 
             # energy
             # action_smoothness = -0.002 # not used in quadruped 
@@ -172,37 +173,24 @@ class QuadrupedCfg(LeggedRobotCfg):
             dof_acc = -1e-7
             collision = -1.0
 
-
-             # gait
-            feet_air_time = 0 
+            # walking --- 
+            # gait
+            feet_air_time = 5 #2.5
             # contact
-            feet_contact_forces = 0
-            # vel tracking
-            tracking_lin_vel = 0 
-            tracking_ang_vel = 0
+            feet_contact_forces = -0.01
+            # vel tracking , main driver of forward motion!!!
+            tracking_lin_vel = 3 # 1.0
+            tracking_ang_vel = 0.5 #0.5
+
+            #added from humanoid
+            # low_speed = 1.0
+            # feet_clearance = 1.6
 
             # only in unitree
-            lin_vel_z = 0
-            action_rate = 0
+            lin_vel_z = -2.0
+            action_rate = -0.01
 
-
-
-
-            # walking --- 
-            
-            # # gait
-            # feet_air_time = 1.6 
-            # # contact
-            # feet_contact_forces = -0.01
-            # # vel tracking
-            # tracking_lin_vel = 1.2 
-            # tracking_ang_vel = 1.1
-
-            # # only in unitree
-            # lin_vel_z = -2.0
-            # action_rate = -0.01
-
-            # in unitree repo (so is in ours, but not used)---
+            # in unitree repo (so is in our base file, but not used)---
             # action_rate = -0.0 #used in unitree only
             # stand_still = -0.0  #used in unitree only
 
@@ -217,7 +205,6 @@ class QuadrupedCfg(LeggedRobotCfg):
             # knee_distance = 0.2
             #vel tracking
             # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
             # track_vel_hard = 0.5
             # feet_stumble = -0.0 #not used at all
 
