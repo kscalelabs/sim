@@ -12,7 +12,7 @@ NUM_JOINTS = len(Robot.all_joints())  # 20
 
 class StompyMicroCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
-
+    
     class env(LeggedRobotCfg.env):
         # change the observation dim
         frame_stack = 15
@@ -37,14 +37,19 @@ class StompyMicroCfg(LeggedRobotCfg):
         name = "stompymicro"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["DRIVING_ROTOR_PLATE_9", "DRIVING_ROTOR_PLATE_10"]
-        knee_name = ["DRIVING_ROTOR_PLATE_7", "DRIVING_ROTOR_PLATE_8"]
+        foot_name = ["DRIVING_ROTOR_PLATE_14", "DRIVING_ROTOR_PLATE_13"]
+        knee_name = ["DRIVING_ROTOR_PLATE_12", "DRIVING_ROTOR_PLATE_11"]
 
-        termination_height = 0.1
+        termination_height = 0.05
+        default_feet_height = 0.01
 
-        default_feet_height = 0.03
-
-        terminate_after_contacts_on = []
+        terminate_after_contacts_on = [
+            "base",
+            "DRIVING_ROTOR_PLATE_3",
+            "DRIVING_ROTOR_PLATE_4",
+            "DRIVING_ROTOR_PLATE_7",
+            "DRIVING_ROTOR_PLATE_8"
+        ]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -70,14 +75,14 @@ class StompyMicroCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = True
+        add_noise = False # pfb30 bring it back
         noise_level = 0.6  # scales other values
 
-        class noise_scales:
-            dof_pos = 0.05
-            dof_vel = 0.5
-            ang_vel = 0.1
-            lin_vel = 0.05
+        class noise_scales: # pfb30 bring it back
+            dof_pos = 0.01
+            dof_vel = 0.01
+            ang_vel = 0.01
+            lin_vel = 0.01
             quat = 0.03
             height_measurements = 0.1
 
@@ -100,7 +105,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 10  # 100hz
+        decimation = 4  # 250hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -122,17 +127,19 @@ class StompyMicroCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
-        randomize_friction = True
+        start_pos_noise = 0.01
+        randomize_friction = False
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = True
+        randomize_base_mass = False #True
         added_mass_range = [-1.0, 1.0]
-        push_robots = True
+        push_robots = False #True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.05
+        # dynamic randomization
+        action_delay = 0.5
+        action_noise = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -147,26 +154,25 @@ class StompyMicroCfg(LeggedRobotCfg):
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = 0.78
-        min_dist = 0.25
-        max_dist = 0.5
+        base_height_target = Robot.height
+        min_dist = 0.07
+        max_dist = 0.14
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.05  # m
-        cycle_time = 0.4  # sec
+        target_feet_height = 0.02  # m
+        cycle_time = 0.2  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 400  # forces above this value are penalized
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales:
             # # reference motion tracking
             # joint_pos = 1.6
             # feet_clearance = 1.6
             # feet_contact_number = 1.2
-            # # gait
             # feet_air_time = 1.6
             # foot_slip = -0.05
             # feet_distance = 0.2
@@ -179,21 +185,6 @@ class StompyMicroCfg(LeggedRobotCfg):
             # vel_mismatch_exp = 0.5  # lin_z; ang x,y
             # low_speed = 0.2
             # track_vel_hard = 0.5
-            # feet_clearance = 1.6
-            # feet_contact_number = 1.2
-            # gait
-            feet_air_time = 1.6
-            foot_slip = -0.05
-            feet_distance = 0.2
-            knee_distance = 0.2
-            # contact
-            feet_contact_forces = -0.01
-            # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
-            track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 0.5
@@ -246,7 +237,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 5001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
