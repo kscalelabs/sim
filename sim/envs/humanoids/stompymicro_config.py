@@ -121,8 +121,8 @@ class StompyMicroCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
-        randomize_friction = True
+        start_pos_noise = 0.01
+        randomize_friction = False
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = False #True

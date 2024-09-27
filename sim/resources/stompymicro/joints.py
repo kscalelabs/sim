@@ -52,30 +52,16 @@ class Node(ABC):
         return f"[{self.__class__.__name__}]{parts_str}"
 
 
-# class LeftHand(Node):
-#     wrist_roll = "left hand roll"
-#     gripper = "left hand gripper"
-
-
 class LeftArm(Node):
     shoulder_yaw = "left_shoulder_yaw"
     shoulder_pitch = "left_shoulder_pitch"
-    # shoulder_roll = "left_shoulder_roll"
     elbow_pitch = "left_elbow_yaw" # FIXME: yaw vs pitch
-    # hand = LeftHand()
-
-
-# class RightHand(Node):
-#     wrist_roll = "right hand roll"
-#     gripper = "right hand gripper"
 
 
 class RightArm(Node):
     shoulder_yaw = "right_shoulder_yaw"
     shoulder_pitch = "right_shoulder_pitch"
-    # shoulder_roll = "right_shoulder_roll"
     elbow_pitch = "right_elbow_yaw"  # FIXME: yaw vs pitch
-    # hand = RightHand()
 
 
 class LeftLeg(Node):
@@ -142,22 +128,10 @@ class Robot(Node):
                 "lower": 1.56,
                 "upper": 1.58,
             },
-            # Robot.left_arm.shoulder_roll: {
-            #     "lower": 3.13,
-            #     "upper": 3.14,
-            # },
             Robot.left_arm.elbow_pitch: {
-                "lower": -1.56,
-                "upper": -1.58,
+                "lower": -1.58,
+                "upper": -1.56,
             },
-            # Robot.left_arm.hand.wrist_roll: {
-            #     "lower": -1.56,
-            #     "upper": -1.58,
-            # },
-            # Robot.left_arm.hand.gripper: {
-            #     "lower": 0,
-            #     "upper": 1.57,
-            # },
             # right arm
             Robot.right_arm.shoulder_pitch: {
                 "lower": 3.119,
@@ -167,23 +141,10 @@ class Robot(Node):
                 "lower": 1.981,
                 "upper": 1.979,
             },
-            # Robot.right_arm.shoulder_roll: {
-            #     "lower": -1.381,
-            #     "upper": -1.979,
-            # },
             Robot.right_arm.elbow_pitch: {
                 "lower": 3.319,
                 "upper": 3.321,
             },
-            # Robot.right_arm.hand.wrist_roll: {
-            #     "lower": -0.001,
-            #     "upper": 0.001,
-            # },
-            # Robot.right_arm.hand.gripper: {
-            #     "lower": 0,
-            #     "upper": 1.57,
-            # },
-            # left leg
             Robot.legs.left.hip_pitch: {
                 "lower": -1.14,
                 "upper": 1.14,
@@ -239,22 +200,10 @@ class Robot(Node):
                 "lower": -1,
                 "upper": 2,
             },
-            # Robot.left_arm.shoulder_roll: {
-            #     "lower": 2.63,
-            #     "upper": 3.64,
-            # },
             Robot.left_arm.elbow_pitch: {
                 "lower": -2.06,
                 "upper": -1.08,
             },
-            # Robot.left_arm.hand.wrist_roll: {
-            #     "lower": -2.06,
-            #     "upper": -1.08,
-            # },
-            # Robot.left_arm.hand.gripper: {
-            #     "lower": -0.5,
-            #     "upper": 2.07,
-            # },
             # right arm
             Robot.right_arm.shoulder_pitch: {
                 "lower": 2.619,
@@ -264,22 +213,10 @@ class Robot(Node):
                 "lower": -1.481,
                 "upper": 1,
             },
-            # Robot.right_arm.shoulder_roll: {
-            #     "lower": -1.881,
-            #     "upper": -1.479,
-            # },
             Robot.right_arm.elbow_pitch: {
                 "lower": -3.819,
                 "upper": 3.821,
             },
-            # Robot.right_arm.hand.wrist_roll: {
-            #     "lower": -0.501,
-            #     "upper": 0.501,
-            # },
-            # Robot.right_arm.hand.gripper: {
-            #     "lower": -0.5,
-            #     "upper": 2.07,
-            # },
             # left leg
             Robot.legs.left.hip_pitch: {
                 "lower": -1.64,
@@ -396,8 +333,8 @@ class Robot(Node):
             "hip_roll": 0.0,
             "knee_pitch": 0.0,
             "ankle_pitch": 0.0,
-            "elbow_yaw": 0.3,
-            "elbow_pitch": 0.3,
+            "elbow_yaw": 0.0,
+            "elbow_pitch": 0.0,
         }
 
 def print_joints() -> None:
