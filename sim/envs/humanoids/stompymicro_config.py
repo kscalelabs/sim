@@ -23,7 +23,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = NUM_JOINTS
         num_envs = 4096
-        episode_length_s = 6  # episode length in seconds
+        episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
     class safety:
@@ -31,19 +31,19 @@ class StompyMicroCfg(LeggedRobotCfg):
         pos_limit = 1.0
         vel_limit = 1.0
         torque_limit = 0.85
-        terminate_after_contacts_on = ["DRIVING_ROTOR_PLATE_3", "DRIVING_ROTOR_PLATE_4"]
+        terminate_after_contacts_on = []
 
     class asset(LeggedRobotCfg.asset):
         name = "stompymicro"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["DRIVING_ROTOR_PLATE_9", "DRIVING_ROTOR_PLATE_10"]
-        knee_name = ["DRIVING_ROTOR_PLATE_7", "DRIVING_ROTOR_PLATE_8"]
+        foot_name = ["DRIVING_ROTOR_PLATE_14", "DRIVING_ROTOR_PLATE_13"]
+        knee_name = ["DRIVING_ROTOR_PLATE_12", "DRIVING_ROTOR_PLATE_11"]
 
-        termination_height = 0.11
+        termination_height = 0.05
         default_feet_height = 0.02
 
-        terminate_after_contacts_on = []
+        terminate_after_contacts_on = ["base", "DRIVING_ROTOR_PLATE_3", "DRIVING_ROTOR_PLATE_4", "DRIVING_ROTOR_PLATE_7", "DRIVING_ROTOR_PLATE_8"]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
