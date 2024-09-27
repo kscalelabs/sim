@@ -41,9 +41,15 @@ class StompyMicroCfg(LeggedRobotCfg):
         knee_name = ["DRIVING_ROTOR_PLATE_12", "DRIVING_ROTOR_PLATE_11"]
 
         termination_height = 0.05
-        default_feet_height = 0.02
+        default_feet_height = 0.01
 
-        terminate_after_contacts_on = ["base", "DRIVING_ROTOR_PLATE_3", "DRIVING_ROTOR_PLATE_4", "DRIVING_ROTOR_PLATE_7", "DRIVING_ROTOR_PLATE_8"]
+        terminate_after_contacts_on = [
+            "base",
+            "DRIVING_ROTOR_PLATE_3",
+            "DRIVING_ROTOR_PLATE_4",
+            "DRIVING_ROTOR_PLATE_7",
+            "DRIVING_ROTOR_PLATE_8"
+        ]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -148,14 +154,14 @@ class StompyMicroCfg(LeggedRobotCfg):
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = 0.21
-        min_dist = 0.25
-        max_dist = 0.5
+        base_height_target = Robot.height
+        min_dist = 0.07
+        max_dist = 0.14
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.05  # m
-        cycle_time = 0.4  # sec
+        target_feet_height = 0.02  # m
+        cycle_time = 0.2  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -231,7 +237,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 5001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
