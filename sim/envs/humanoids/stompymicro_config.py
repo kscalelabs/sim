@@ -169,7 +169,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         max_contact_force = 100  # forces above this value are penalized
 
         class scales:
-            # # reference motion tracking
+            # reference motion tracking
             joint_pos = 1.6
             feet_clearance = 1.6
             feet_contact_number = 1.2
