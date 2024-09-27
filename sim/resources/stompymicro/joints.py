@@ -89,8 +89,8 @@ class Robot(Node):
     height = 0.21
     rotation = [0.0, 0.0, 0, 1]
 
-    left_arm = LeftArm()
-    right_arm = RightArm()
+    # left_arm = LeftArm()
+    # right_arm = RightArm()
     legs = Legs()
 
     @classmethod
@@ -108,84 +108,12 @@ class Robot(Node):
             cls.legs.right.knee_pitch: 0.0,
             cls.legs.right.ankle_pitch: -0.2,
             # Arms (adjust as needed)
-            cls.left_arm.shoulder_pitch: 0,
-            cls.left_arm.shoulder_yaw: 0.3,
-            cls.left_arm.elbow_pitch: -0.6,
-            cls.right_arm.shoulder_pitch: 0,
-            cls.right_arm.shoulder_yaw: -0.3,
-            cls.right_arm.elbow_pitch: -0.6,
-        }
-
-    @classmethod
-    def default_limits2(cls) -> Dict[str, Dict[str, float]]:
-        return {
-            # left arm
-            Robot.left_arm.shoulder_pitch: {
-                "lower": 2.54,
-                "upper": 2.56,
-            },
-            Robot.left_arm.shoulder_yaw: {
-                "lower": 1.56,
-                "upper": 1.58,
-            },
-            Robot.left_arm.elbow_pitch: {
-                "lower": -1.58,
-                "upper": -1.56,
-            },
-            # right arm
-            Robot.right_arm.shoulder_pitch: {
-                "lower": 3.119,
-                "upper": 3.121,
-            },
-            Robot.right_arm.shoulder_yaw: {
-                "lower": 1.981,
-                "upper": 1.979,
-            },
-            Robot.right_arm.elbow_pitch: {
-                "lower": 3.319,
-                "upper": 3.321,
-            },
-            Robot.legs.left.hip_pitch: {
-                "lower": -1.14,
-                "upper": 1.14,
-            },
-            Robot.legs.left.hip_roll: {
-                "lower": -3.5,
-                "upper": 0.5,
-            },
-            Robot.legs.left.hip_yaw: {
-                "lower": 3.14,
-                "upper": 5.14,
-            },
-            Robot.legs.left.knee_pitch: {
-                "lower": -2,
-                "upper": 0,
-            },
-            Robot.legs.left.ankle_pitch: {
-                "lower": 1.4,
-                "upper": 2.2,
-            },
-            # right leg
-            Robot.legs.right.hip_pitch: {
-                "lower": 0.55,
-                "upper": 3.55,
-            },
-            Robot.legs.right.hip_roll: {
-                "lower": 2.75,
-                "upper": 3.99,
-            },
-            Robot.legs.right.hip_yaw: {
-                "lower": 2.24,
-                "upper": 4.24,
-            },
-            Robot.legs.right.knee_pitch: {
-                "lower": 0,
-                "upper": 2,
-            },
-            Robot.legs.right.ankle_pitch: {
-                "lower": -1.0,
-                "upper": 0.2,
-            },
+            # cls.left_arm.shoulder_pitch: 0,
+            # cls.left_arm.shoulder_yaw: 0.3,
+            # cls.left_arm.elbow_pitch: -0.6,
+            # cls.right_arm.shoulder_pitch: 0,
+            # cls.right_arm.shoulder_yaw: -0.3,
+            # cls.right_arm.elbow_pitch: -0.6,
         }
 
     @classmethod
@@ -217,7 +145,6 @@ class Robot(Node):
                 "lower": -3.819,
                 "upper": 3.821,
             },
-            # left leg
             Robot.legs.left.hip_pitch: {
                 "lower": -1.64,
                 "upper": 1.64,
@@ -235,8 +162,8 @@ class Robot(Node):
                 "upper": 0.5,
             },
             Robot.legs.left.ankle_pitch: {
-                "lower": 0.9,
-                "upper": 2.7,
+                "lower": -0.3,
+                "upper": 0.3,
             },
             # right leg
             Robot.legs.right.hip_pitch: {
@@ -256,8 +183,8 @@ class Robot(Node):
                 "upper": 2.5,
             },
             Robot.legs.right.ankle_pitch: {
-                "lower": -1.5,
-                "upper": 0.7,
+                "lower": -0.3,
+                "upper": 0.3,
             },
         }
 
@@ -292,6 +219,21 @@ class Robot(Node):
             "elbow_pitch": 0.3,
             "elbow_yaw": 0.3,
         }
+
+    # @classmethod
+    # def damping(cls) -> Dict[str, float]:
+    #     return {
+    #         "hip_pitch": 0.03,
+    #         "hip_yaw": 0.03,
+    #         "hip_roll": 0.03,
+    #         "knee_pitch": 0.03,
+    #         "ankle_pitch": 0.03,
+    #         "shoulder_pitch": 0.03,
+    #         "shoulder_yaw": 0.03,
+    #         "shoulder_roll": 0.03,
+    #         "elbow_pitch": 0.03,
+    #         "elbow_yaw": 0.03,
+    #     }
 
     # pos_limits
     @classmethod

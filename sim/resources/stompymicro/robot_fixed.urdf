@@ -92,7 +92,7 @@
       <origin xyz="-0.007392120408765606 0.00032656634051300194 0.019957405295933567" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_shoulder_pitch" type="revolute">
+  <joint name="left_shoulder_pitch" type="fixed">
     <origin xyz="0.07131383054661666 -0.023482764740008488 0.10812717280524366" rpy="-3.141592653589792 -1.5707962732050302 0.0"/>
     <parent link="Base_Motor_Mount"/>
     <child link="DRIVING_ROTOR_PLATE_3"/>
@@ -121,7 +121,7 @@
       <origin xyz="-0.0023907961919948637 -0.0009028980436851127 0.015410917096522989" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_shoulder_pitch" type="revolute">
+  <joint name="right_shoulder_pitch" type="fixed">
     <origin xyz="-0.07131383054661666 -0.023482764740008488 0.10812717280524366" rpy="-3.141592653589792 1.5707962732050302 0.0"/>
     <parent link="Base_Motor_Mount"/>
     <child link="DRIVING_ROTOR_PLATE_4"/>
@@ -208,7 +208,7 @@
       <origin xyz="-1.5178600846538283e-06 0.03205306838749962 -0.03250030770987955" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_shoulder_yaw" type="revolute">
+  <joint name="left_shoulder_yaw" type="fixed">
     <origin xyz="-0.018273437468083912 0.01634999951036515 0.029393121151926025" rpy="-1.5707962535897932 -1.5707962732050302 0.0"/>
     <parent link="DRIVING_ROTOR_PLATE_3"/>
     <child link="LX-16A"/>
@@ -237,7 +237,7 @@
       <origin xyz="6.617968479801436e-11 -0.035130554047994006 -0.016172896106230548" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_shoulder_yaw" type="revolute">
+  <joint name="right_shoulder_yaw" type="fixed">
     <origin xyz="0.018273437430571058 0.01494999951036515 0.029393121151926025" rpy="-1.570796253589793 1.5707962732050307 0.0"/>
     <parent link="DRIVING_ROTOR_PLATE_4"/>
     <child link="LX-16A_2"/>
@@ -266,7 +266,7 @@
       <origin xyz="-4.3086370670521697e-10 -0.035130554915159456 -0.01617289663503479" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_elbow_yaw" type="revolute">
+  <joint name="left_elbow_yaw" type="fixed">
     <origin xyz="-1.4993347535741108e-10 -0.07020000022229234 0.0" rpy="0.0 0.0 -3.14159264"/>
     <parent link="LX-16A"/>
     <child link="DRIVING_ROTOR_PLATE_7"/>
@@ -295,7 +295,7 @@
       <origin xyz="0.019591879748340407 0.013718381430064363 -0.016897508396865997" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_elbow_yaw" type="revolute">
+  <joint name="right_elbow_yaw" type="fixed">
     <origin xyz="-1.5347855347735972e-09 -0.0702000019724337 -1.7232110183229565e-09" rpy="0.0 -2.220446049250313e-15 3.1415926071795868"/>
     <parent link="LX-16A_2"/>
     <child link="DRIVING_ROTOR_PLATE_8"/>
