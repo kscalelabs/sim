@@ -10,7 +10,37 @@ from sim.resources.stompymicro.joints import Robot
 NUM_JOINTS = len(Robot.all_joints())  # 20
 
 
-class StompyMicroCfg(LeggedRobotCfg):
+class ConfigMixin:
+    @classmethod
+    def _update_recursive(cls, base_config, updates):
+        for key, value in updates.items():
+            if isinstance(value, dict) and hasattr(base_config, key):
+                setattr(base_config, key, 
+                        cls._update_recursive(getattr(base_config, key), value))
+            else:
+                setattr(base_config, key, value)
+        return base_config
+
+    @classmethod
+    def get_updated_config(cls, updates = None):
+        config = cls()
+        if updates:
+            config = cls._update_recursive(config, updates)
+        return config
+
+    def __new__(cls, *args, **kwargs):
+        if kwargs.get('_skip_new', False):
+            return super().__new__(cls)
+        if hasattr(cls, 'get_config'):
+            return cls.get_config()
+        return super().__new__(cls)
+
+    def __init__(self, *args, **kwargs):
+        if not kwargs.get('_skip_new', False):
+            super().__init__(*args, **kwargs)
+
+
+class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
     """Configuration class for the Legs humanoid robot."""
     
     class env(LeggedRobotCfg.env):
