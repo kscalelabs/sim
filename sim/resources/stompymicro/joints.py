@@ -255,13 +255,13 @@ class Robot(Node):
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 0.0,
-            "hip_yaw": 0.0,
-            "hip_roll": 0.0,
-            "knee_pitch": 0.0,
-            "ankle_pitch": 0.0,
-            "elbow_yaw": 0.0,
-            "elbow_pitch": 0.0,
+            "hip_pitch": 10.0,
+            "hip_yaw": 10.0,
+            "hip_roll": 10.0,
+            "knee_pitch": 10.0,
+            "ankle_pitch": 10.0,
+            "elbow_yaw": 10.0,
+            "elbow_pitch": 10.0,
         }
 
 def print_joints() -> None:
