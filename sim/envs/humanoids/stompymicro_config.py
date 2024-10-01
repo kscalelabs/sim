@@ -244,19 +244,23 @@ class StompyMicroWalkingCfg(StompyMicroCfg):
     UPDATES = dict({
         "rewards": {
             "scales": {
+                # reference motion tracking
                 "joint_pos": 1.6,
                 "feet_clearance": 1.6,
                 "feet_contact_number": 1.2,
+                # gait
                 "feet_air_time": 1.6,
                 "foot_slip": -0.05,
                 "feet_distance": 0.2,
                 "knee_distance": 0.2,
+                # contact
                 "feet_contact_forces": -0.01,
+                # vel tracking
                 "tracking_lin_vel": 1.2,
                 "tracking_ang_vel": 1.1,
                 "vel_mismatch_exp": 0.5,
                 "low_speed": 0.2,
-                "track_vel_hard": 0.5
+                "track_vel_hard": 0.5,
             }
         }
     }, **NO_RAND)
@@ -283,7 +287,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO, ConfigMixin):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 1001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
@@ -291,6 +295,6 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO, ConfigMixin):
         run_name = ""
         # load and resume
         resume = False
-        load_run = -1  # -1 = last run
-        checkpoint = -1  # -1 = last saved model
+        load_run = -1  # last run
+        checkpoint = -1  # last saved model
         resume_path = None  # updated from load_run and chkpt
