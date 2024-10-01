@@ -78,7 +78,10 @@ python sim/train.py --task=stompymini_standing --num_envs=4096 --headless
 ```bash
 python sim/play.py --task stompymini --sim_device cpu
 ```
-
+3. You can also run the Mujoco sim2sim example:
+```bash
+python sim/sim2sim.py --load_model examples/standing.pt --embodiment stompypro
+```
 ### Contributing
 See the [contributing guide](CONTRIBUTING.md) to get started.
 
