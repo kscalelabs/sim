@@ -1,5 +1,7 @@
 """Defines the environment configuration for the Getting up task"""
 
+from typing import Any, Dict
+
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
@@ -11,6 +13,8 @@ NUM_JOINTS = len(Robot.all_joints())  # 20
 
 
 class ConfigMixin:
+    UPDATES: Dict[str, Any] = {}
+
     @classmethod
     def _update_recursive(cls, base_config, updates):
         for key, value in updates.items():
@@ -21,23 +25,13 @@ class ConfigMixin:
                 setattr(base_config, key, value)
         return base_config
 
-    @classmethod
-    def get_updated_config(cls, updates = None):
-        config = cls()
+    def __new__(cls, updates: Dict[str, Any] = None):
+        config = super().__new__(cls)
+        config.__init__()
+        cls._update_recursive(config, cls.UPDATES)
         if updates:
-            config = cls._update_recursive(config, updates)
+            cls._update_recursive(config, updates)
         return config
-
-    def __new__(cls, *args, **kwargs):
-        if kwargs.get('_skip_new', False):
-            return super().__new__(cls)
-        if hasattr(cls, 'get_config'):
-            return cls.get_config()
-        return super().__new__(cls)
-
-    def __init__(self, *args, **kwargs):
-        if not kwargs.get('_skip_new', False):
-            super().__init__(*args, **kwargs)
 
 
 class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
@@ -105,7 +99,7 @@ class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
         restitution = 0.0
 
     class noise:
-        add_noise = False # pfb30 bring it back
+        add_noise = True
         noise_level = 0.6  # scales other values
 
         class noise_scales: # pfb30 bring it back
@@ -158,12 +152,12 @@ class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
 
     class domain_rand(LeggedRobotCfg.domain_rand):
         start_pos_noise = 0.01
-        randomize_friction = False
+        randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False #True
+        randomize_base_mass = True
         added_mass_range = [-1.0, 1.0]
-        push_robots = False #True
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -199,23 +193,6 @@ class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
         max_contact_force = 100  # forces above this value are penalized
 
         class scales:
-            # # reference motion tracking
-            # joint_pos = 1.6
-            # feet_clearance = 1.6
-            # feet_contact_number = 1.2
-            # feet_air_time = 1.6
-            # foot_slip = -0.05
-            # feet_distance = 0.2
-            # knee_distance = 0.2
-            # # contact
-            # feet_contact_forces = -0.01
-            # # vel tracking
-            # tracking_lin_vel = 1.2
-            # tracking_ang_vel = 1.1
-            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
-            # track_vel_hard = 0.5
-
             # base pos
             default_joint_pos = 0.5
             orientation = 1
@@ -246,7 +223,46 @@ class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
         lookat = [0, -2, 0]
 
 
-class StompyMicroCfgPPO(LeggedRobotCfgPPO):
+NO_RAND = {
+    "domain_rand": {
+        "add_noise": False,
+        "randomize_friction": False,
+        "randomize_base_mass": False,
+        "push_robots": False,
+        "action_delay": 0.0,
+    }
+}
+
+
+class StompyMicroStandingCfg(StompyMicroCfg):
+    """Configuration for StompyMicro standing task."""
+    UPDATES = NO_RAND
+
+
+class StompyMicroWalkingCfg(StompyMicroCfg):
+    """Configuration for StompyMicro walking task."""
+    UPDATES = dict({
+        "rewards": {
+            "scales": {
+                "joint_pos": 1.6,
+                "feet_clearance": 1.6,
+                "feet_contact_number": 1.2,
+                "feet_air_time": 1.6,
+                "foot_slip": -0.05,
+                "feet_distance": 0.2,
+                "knee_distance": 0.2,
+                "feet_contact_forces": -0.01,
+                "tracking_lin_vel": 1.2,
+                "tracking_ang_vel": 1.1,
+                "vel_mismatch_exp": 0.5,
+                "low_speed": 0.2,
+                "track_vel_hard": 0.5
+            }
+        }
+    }, **NO_RAND)
+
+
+class StompyMicroCfgPPO(LeggedRobotCfgPPO, ConfigMixin):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
