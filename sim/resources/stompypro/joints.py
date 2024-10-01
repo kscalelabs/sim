@@ -180,6 +180,16 @@ class Robot(Node):
             "knee": 150,
             "ankle_y": 75,
         }
+    
+    @classmethod
+    def stiffness_mujoco(cls) -> Dict[str, float]:
+        return {
+            "hip_y": 120,
+            "hip_x": 60,
+            "hip_z": 60,
+            "knee": 120,
+            "ankle_y": 17,
+        }
 
     # d_gains
     @classmethod
@@ -192,23 +202,34 @@ class Robot(Node):
             "ankle_y": 5,
         }
 
-    # pos_limits
-    @classmethod
-    def effort(cls) -> Dict[str, float]:
-        return {}
 
-    # vel_limits
     @classmethod
-    def velocity(cls) -> Dict[str, float]:
+    def damping_mujoco(cls) -> Dict[str, float]:
         return {
-            "hip": 5,
+            "hip_y": 5,
+            "hip_x": 5,
+            "hip_z": 5,
             "knee": 5,
-            "ankle": 5,
-            "shoulder_y": 5,
-            "shoulder_z": 5,
-            "shoulder_x": 5,
-            "elbow_x": 5,
+            "ankle_y": 5,
         }
+
+    # # pos_limits
+    # @classmethod
+    # def effort(cls) -> Dict[str, float]:
+    #     return {}
+
+    # # vel_limits
+    # @classmethod
+    # def velocity(cls) -> Dict[str, float]:
+    #     return {
+    #         "hip": 5,
+    #         "knee": 5,
+    #         "ankle": 5,
+    #         "shoulder_y": 5,
+    #         "shoulder_z": 5,
+    #         "shoulder_x": 5,
+    #         "elbow_x": 5,
+    #     }
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
