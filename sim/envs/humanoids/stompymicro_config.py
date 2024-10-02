@@ -223,25 +223,27 @@ class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
         lookat = [0, -2, 0]
 
 
-NO_RAND = {
-    "domain_rand": {
-        "add_noise": False,
-        "randomize_friction": False,
-        "randomize_base_mass": False,
-        "push_robots": False,
-        "action_delay": 0.0,
-    }
-}
-
-
 class StompyMicroStandingCfg(StompyMicroCfg):
     """Configuration for StompyMicro standing task."""
-    UPDATES = NO_RAND
+    UPDATES = {
+        "domain_rand": {
+            "add_noise": False,
+            "randomize_friction": False,
+            "randomize_base_mass": False,
+            "push_robots": False,
+        }
+    }
 
 
 class StompyMicroWalkingCfg(StompyMicroCfg):
     """Configuration for StompyMicro walking task."""
-    UPDATES = dict({
+    UPDATES = {
+        "domain_rand": {
+            "add_noise": False,
+            "randomize_friction": False,
+            "randomize_base_mass": False,
+            "push_robots": False,
+        },
         "rewards": {
             "scales": {
                 # reference motion tracking
@@ -263,7 +265,7 @@ class StompyMicroWalkingCfg(StompyMicroCfg):
                 "track_vel_hard": 0.5,
             }
         }
-    }, **NO_RAND)
+    }
 
 
 class StompyMicroCfgPPO(LeggedRobotCfgPPO, ConfigMixin):
