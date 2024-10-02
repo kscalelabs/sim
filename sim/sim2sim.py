@@ -44,6 +44,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
+from sim.envs.humanoids.stompymicro_config import StompyMicroCfg
 from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
@@ -92,13 +93,13 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     """Calculates torques from position commands"""
-    print("kp shape:", kp.shape)
-    print("kd shape:", kd.shape)
-    print("target_q shape:", target_q.shape)
-    print("default shape:", default.shape)
-    print("q shape:", q.shape)
-    print("dq shape:", dq.shape)
-    print("target_dq shape:", target_dq.shape)
+    # print("kp shape:", kp.shape)
+    # print("kd shape:", kd.shape)
+    # print("target_q shape:", target_q.shape)
+    # print("default shape:", default.shape)
+    # print("q shape:", q.shape)
+    # print("dq shape:", dq.shape)
+    # print("target_dq shape:", target_dq.shape)
     return kp * (target_q + default - q) - kd * dq
 
 
@@ -120,8 +121,8 @@ def run_mujoco(policy, cfg):
     data = mujoco.MjData(model)
 
     try:
-        data.qpos = model.keyframe("default").qpos
-        default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
+        data.qpos = model.keyframe("initial").qpos
+        default = deepcopy(model.keyframe("initial").qpos)[-cfg.num_actions:]
         print("Default position:", default)
     except:
         print("No default position found, using zero initialization")
@@ -155,7 +156,6 @@ def run_mujoco(policy, cfg):
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
             cur_pos_obs = (q - default) * cfg.normalization.obs_scales.dof_pos
-
             cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
 
             obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
@@ -183,6 +183,7 @@ def run_mujoco(policy, cfg):
             target_q = action * cfg.control.action_scale
 
         target_dq = np.zeros((cfg.num_actions), dtype=np.double)
+        # target_q = np.zeros_like(target_q)
 
         # Generate PD control
         tau = pd_control(
@@ -192,8 +193,7 @@ def run_mujoco(policy, cfg):
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
         data.ctrl = tau
 
-        print(f"Step {step}: Control signals (tau): {tau}")
-
+        # print(f"Step {step}: Control signals (tau): {tau}")
 
         mujoco.mj_step(model, data)
         viewer.render()
@@ -211,6 +211,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     robot = load_embodiment(args.embodiment)
+    policy = torch.jit.load(args.load_model)
 
     class Sim2simCfg:
         num_actions = len(robot.all_joints())
@@ -223,18 +224,16 @@ if __name__ == "__main__":
             num_observations = int(frame_stack * num_single_obs)
 
         class sim_config:
-            sim_duration = 60.0
+            sim_duration = 2.0
             dt = 0.001
             decimation = 20
 
         class robot_config:
             tau_factor = 0.85
-            # tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
-            tau_limit = np.array( list(robot.stiffness().values())) * tau_factor
+            tau_limit = np.array(list(robot.stiffness_mujoco().values())) * tau_factor
 
             kps = tau_limit
-            #kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
-            kds = np.array(list(robot.damping().values()))
+            kds = np.array(list(robot.damping_mujoco().values()))
 
         class normalization:
             class obs_scales:
@@ -249,5 +248,32 @@ if __name__ == "__main__":
         class control:
             action_scale = 0.25
 
-    policy = torch.jit.load(args.load_model)
-    run_mujoco(policy, Sim2simCfg())
+    class StompyMicroSim2simCfg(StompyMicroCfg):
+        """Configuration for StompyMicro walking task."""
+        _tau_factor = 0.85
+
+        class sim_config:
+            pass
+            
+        class robot_config:
+            pass
+
+        UPDATES = {
+            "num_actions": len(robot.all_joints()),
+            "sim_config": {
+                "sim_duration": 2.0,
+                "dt": 0.001,
+                "decimation": 20,
+            },
+            "robot_config": {
+                "tau_limit": np.array(list(robot.stiffness_mujoco().values())) * _tau_factor,
+                "kps": np.array(list(robot.stiffness_mujoco().values())) * _tau_factor,
+                "kds": np.array(list(robot.damping_mujoco().values())) * _tau_factor,
+            },
+            
+        }
+    
+    cfg = StompyMicroSim2simCfg()  # Sim2simCfg()
+    print(cfg)
+
+    run_mujoco(policy, cfg)
