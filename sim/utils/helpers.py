@@ -108,20 +108,27 @@ def parse_sim_params(args, cfg):
 
 
 def get_load_path(root, load_run=-1, checkpoint=-1):
+    def month_to_number(month):
+        return datetime.datetime.strptime(month, "%b").month
+
     try:
         runs = os.listdir(root)
-        # TODO sort by date to handle change of month
-        runs.sort()
+        try:
+            runs.sort(key=lambda x: (month_to_number(x[:3]), int(x[3:5]), x[6:]))
+        except ValueError as e:
+            print("WARNING - Could not sort runs by month: " + str(e))
+            runs.sort()
         if "exported" in runs:
             runs.remove("exported")
         last_run = os.path.join(root, runs[-1])
-    except:
+    except Exception as e:
+        # print exceptio type and message
+        print(type(e).__name__, e)
         raise ValueError("No runs in this directory: " + root)
     if load_run == -1:
         load_run = last_run
     else:
         load_run = os.path.join(root, load_run)
-
     if checkpoint == -1:
         models = [file for file in os.listdir(load_run) if "model" in file]
         models.sort(key=lambda m: "{0:0>15}".format(m))
