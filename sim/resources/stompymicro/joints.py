@@ -64,6 +64,11 @@ class RightArm(Node):
     elbow_pitch = "right_elbow_yaw"  # FIXME: yaw vs pitch
 
 
+class Arms(Node):
+    left = LeftArm()
+    right = RightArm()
+
+
 class LeftLeg(Node):
     hip_roll = "left_hip_roll"
     hip_yaw = "left_hip_yaw"
@@ -86,11 +91,12 @@ class Legs(Node):
 
 
 class Robot(Node):
-    height = 0.21
-    rotation = [0.0, 0.0, 0, 1]
+    height = 0.188
+    # rotation = [0., 0., -0.7071068, 0.7071068]
+    rotation = [0., 0., 0.7071068, 0.7071068]
+    # rotation = [0., 0., 0., 1.]
 
-    # left_arm = LeftArm()
-    # right_arm = RightArm()
+    # arms = Arms()
     legs = Legs()
 
     @classmethod
@@ -108,81 +114,81 @@ class Robot(Node):
             cls.legs.right.knee_pitch: 0,
             cls.legs.right.ankle_pitch: 0,
             # Arms (adjust as needed)
-            # cls.left_arm.shoulder_pitch: 0,
-            # cls.left_arm.shoulder_yaw: 0.3,
-            # cls.left_arm.elbow_pitch: -0.6,
-            # cls.right_arm.shoulder_pitch: 0,
-            # cls.right_arm.shoulder_yaw: -0.3,
-            # cls.right_arm.elbow_pitch: -0.6,
+            # cls.arms.left.shoulder_pitch: 0,
+            # cls.arms.left.shoulder_yaw: 0.3,
+            # cls.arms.left.elbow_pitch: -0.6,
+            # cls.arms.right.shoulder_pitch: 0,
+            # cls.arms.right.shoulder_yaw: -0.3,
+            # cls.arms.right.elbow_pitch: -0.6,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
             # left arm
-            Robot.left_arm.shoulder_pitch: {
+            cls.arms.left.shoulder_pitch: {
                 "lower": 2.04,
                 "upper": 3.06,
             },
-            Robot.left_arm.shoulder_yaw: {
+            cls.arms.left.shoulder_yaw: {
                 "lower": -1,
                 "upper": 2,
             },
-            Robot.left_arm.elbow_pitch: {
+            cls.arms.left.elbow_pitch: {
                 "lower": -2.06,
                 "upper": -1.08,
             },
             # right arm
-            Robot.right_arm.shoulder_pitch: {
+            cls.arms.right.shoulder_pitch: {
                 "lower": 2.619,
                 "upper": 3.621,
             },
-            Robot.right_arm.shoulder_yaw: {
+            cls.arms.right.shoulder_yaw: {
                 "lower": -1.481,
                 "upper": 1,
             },
-            Robot.right_arm.elbow_pitch: {
+            cls.arms.right.elbow_pitch: {
                 "lower": -3.819,
                 "upper": 3.821,
             },
-            Robot.legs.left.hip_pitch: {
+            cls.legs.left.hip_pitch: {
                 "lower": -1.64,
                 "upper": 1.64,
             },
-            Robot.legs.left.hip_roll: {
+            cls.legs.left.hip_roll: {
                 "lower": -4.0,
                 "upper": 1.0,
             },
-            Robot.legs.left.hip_yaw: {
+            cls.legs.left.hip_yaw: {
                 "lower": 2.64,
                 "upper": 5.64,
             },
-            Robot.legs.left.knee_pitch: {
+            cls.legs.left.knee_pitch: {
                 "lower": -2.5,
                 "upper": 0.5,
             },
-            Robot.legs.left.ankle_pitch: {
+            cls.legs.left.ankle_pitch: {
                 "lower": -0.3,
                 "upper": 0.3,
             },
             # right leg
-            Robot.legs.right.hip_pitch: {
+            cls.legs.right.hip_pitch: {
                 "lower": 0.05,
                 "upper": 4.05,
             },
-            Robot.legs.right.hip_roll: {
+            cls.legs.right.hip_roll: {
                 "lower": 2.25,
                 "upper": 4.49,
             },
-            Robot.legs.right.hip_yaw: {
+            cls.legs.right.hip_yaw: {
                 "lower": 1.74,
                 "upper": 4.74,
             },
-            Robot.legs.right.knee_pitch: {
+            cls.legs.right.knee_pitch: {
                 "lower": -0.5,
                 "upper": 2.5,
             },
-            Robot.legs.right.ankle_pitch: {
+            cls.legs.right.ankle_pitch: {
                 "lower": -0.3,
                 "upper": 0.3,
             },
