@@ -114,15 +114,23 @@ def get_load_path(root, load_run=-1, checkpoint=-1):
     try:
         runs = os.listdir(root)
         try:
-            runs.sort(key=lambda x: (month_to_number(x[:3]), int(x[3:5]), x[6:]))
+            # Handle both new format "YYYY_MMMDD_HH-MM-SS" and old format "MMMDD_HH-MM-SS"
+            def parse_run(run):
+                try:
+                    # New format
+                    return datetime.datetime.strptime(run[:20], "%Y_%b%d_%H-%M-%S")
+                except ValueError:
+                    # Old format
+                    return datetime.datetime.strptime(run[:15], "%b%d_%H-%M-%S")
+
+            runs.sort(key=parse_run)
         except ValueError as e:
-            print("WARNING - Could not sort runs by month: " + str(e))
+            print("WARNING - Could not sort runs by date and time: " + str(e))
             runs.sort()
         if "exported" in runs:
             runs.remove("exported")
         last_run = os.path.join(root, runs[-1])
     except Exception as e:
-        # print exceptio type and message
         print(type(e).__name__, e)
         raise ValueError("No runs in this directory: " + root)
     if load_run == -1:
