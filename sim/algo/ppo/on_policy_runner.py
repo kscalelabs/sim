@@ -53,11 +53,10 @@ class OnPolicyRunner:
         self.policy_cfg = train_cfg["policy"]
         self.all_cfg = train_cfg
         self.wandb_run_name = (
-            datetime.now().strftime("%b%d_%H-%M-%S")
-            + "_"
             + train_cfg["runner"]["experiment_name"]
             + "_"
-            + train_cfg["runner"]["run_name"]
+            + datetime.now().strftime("%b%d_%H-%M-%S")
+            + ("_" + train_cfg["runner"]["run_name"]) if train_cfg["runner"]["run_name"] else ""
         )
         self.device = device
         self.env = env
@@ -265,6 +264,8 @@ class OnPolicyRunner:
         )
 
     def load(self, path: str, load_optimizer: bool = True) -> dict:
+        # path = "examples/standing.pt"
+        # loaded_dict = torch.jit.load(path)
         loaded_dict = torch.load(path)
         self.alg.actor_critic.load_state_dict(loaded_dict["model_state_dict"])
         if load_optimizer:
