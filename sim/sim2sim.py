@@ -122,11 +122,11 @@ def run_mujoco(policy, cfg):
 
     try:
         data.qpos = model.keyframe("initial").qpos
-        default = deepcopy(model.keyframe("initial").qpos)[-cfg.num_actions:]
+        default = deepcopy(model.keyframe("initial").qpos)[-cfg.env.num_actions:]
         print("Default position:", default)
     except:
         print("No default position found, using zero initialization")
-        default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
+        default = np.zeros(cfg.env.num_actions)  # 3 for pos, 4 for quat, cfg.env.num_actions for joints
 
     mujoco.mj_step(model, data)
 
@@ -134,8 +134,8 @@ def run_mujoco(policy, cfg):
     data.qacc = np.zeros_like(data.qacc)
     viewer = mujoco_viewer.MujocoViewer(model, data)
 
-    target_q = np.zeros((cfg.num_actions), dtype=np.double)
-    action = np.zeros((cfg.num_actions), dtype=np.double)
+    target_q = np.zeros((cfg.env.num_actions), dtype=np.double)
+    action = np.zeros((cfg.env.num_actions), dtype=np.double)
 
     hist_obs = deque()
     for _ in range(cfg.env.frame_stack):
@@ -146,8 +146,8 @@ def run_mujoco(policy, cfg):
     for step in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
-        q = q[-cfg.num_actions :]
-        dq = dq[-cfg.num_actions :]
+        q = q[-cfg.env.num_actions :]
+        dq = dq[-cfg.env.num_actions :]
 
         # 1000hz -> 50hz
         if count_lowlevel % cfg.sim_config.decimation == 0:
@@ -163,11 +163,11 @@ def run_mujoco(policy, cfg):
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
-            obs[0, 5 : (cfg.num_actions + 5)] = cur_pos_obs
-            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = cur_vel_obs
-            obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
-            obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
-            obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
+            obs[0, 5 : (cfg.env.num_actions + 5)] = cur_pos_obs
+            obs[0, (cfg.env.num_actions + 5) : (2 * cfg.env.num_actions + 5)] = cur_vel_obs
+            obs[0, (2 * cfg.env.num_actions + 5) : (3 * cfg.env.num_actions + 5)] = action
+            obs[0, (3 * cfg.env.num_actions + 5) : (3 * cfg.env.num_actions + 5) + 3] = omega
+            obs[0, (3 * cfg.env.num_actions + 5) + 3 : (3 * cfg.env.num_actions + 5) + 2 * 3] = eu_ang
 
             obs = np.clip(obs, -cfg.normalization.clip_observations, cfg.normalization.clip_observations)
 
@@ -182,7 +182,7 @@ def run_mujoco(policy, cfg):
             action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
             target_q = action * cfg.control.action_scale
 
-        target_dq = np.zeros((cfg.num_actions), dtype=np.double)
+        target_dq = np.zeros((cfg.env.num_actions), dtype=np.double)
         # target_q = np.zeros_like(target_q)
 
         # Generate PD control
@@ -214,8 +214,6 @@ if __name__ == "__main__":
     policy = torch.jit.load(args.load_model)
 
     class Sim2simCfg:
-        num_actions = len(robot.all_joints())
-
         class env:
             num_actions = len(robot.all_joints())
             frame_stack = 15
@@ -226,7 +224,7 @@ if __name__ == "__main__":
         class sim_config:
             sim_duration = 2.0
             dt = 0.001
-            decimation = 20
+            decimation = 4
 
         class robot_config:
             tau_factor = 0.85
@@ -259,7 +257,6 @@ if __name__ == "__main__":
             pass
 
         UPDATES = {
-            "num_actions": len(robot.all_joints()),
             "sim_config": {
                 "sim_duration": 2.0,
                 "dt": 0.001,
