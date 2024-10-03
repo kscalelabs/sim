@@ -1,7 +1,7 @@
-# Use the official Ubuntu 20.04 LTS image
 # docker build -t fbx_image .
 # docker run -it fbx_image
-FROM ubuntu:20.04 AS base
+ARG TARGETPLATFORM
+FROM --platform=${TARGETPLATFORM:-linux/amd64} ubuntu:20.04 AS base
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -14,7 +14,6 @@ ENV FBX_PYTHON_BINDING_PATH="$HOME/fbx_setup/fbx_python_bindings"
 ENV SIP_ROOT="$HOME/fbx_setup/sip"
 ENV FBXSDK_ROOT="$FBX_SDK_PATH"
 ENV SIP_PATH="$SIP_ROOT/sip-$SIP_VERSION"
-# pfb30 fix this
 ENV PYTHON_EXECUTABLE="/home/user/miniconda/envs/humanoid/bin/python"
 
 # Update and install dependencies
@@ -37,11 +36,10 @@ RUN mkdir -p $FBX_SDK_PATH && \
     mkdir -p $FBX_PYTHON_BINDING_PATH && \
     mkdir -p $SIP_ROOT
 
-# Install Conda
 RUN wget -qO- https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
-bash miniconda.sh -b -p $HOME/miniconda && \
-# rm miniconda.sh \
-$HOME/miniconda/bin/conda init bash
+    /bin/bash miniconda.sh -b -p $HOME/miniconda && \
+    rm miniconda.sh && \
+    $HOME/miniconda/bin/conda init bash
 
 FROM base AS install_fbx
 
@@ -56,9 +54,8 @@ conda install -y pytorch==1.10.0 torchvision==0.11.1 torchaudio==0.10.0 cudatool
 conda install -y 'numpy<1.24' && \
 conda install -c conda-forge gxx_linux-64=12.1.0 -y && \
 pip install pydelatin wandb tqdm opencv-python ipdb pyfqmr flask dill gdown pandas matplotlib ruamel.yaml xlrd scipy"
-# conda install -c conda-forge gxx_linux-64=12.1.0 -y && \
-FROM install_fbx AS base_conda
 
+FROM install_fbx AS base_conda
 # Install FBX SDK
 WORKDIR $FBX_SDK_PATH
 
@@ -102,32 +99,14 @@ FROM sip AS build_fbx
 
 # Build the SDK
 WORKDIR $FBX_PYTHON_BINDING_PATH
-
 RUN $PYTHON_EXECUTABLE PythonBindings.py "Python3_x64" buildsip
-
-# Install git
-RUN apt-get update && apt-get install -y git
-
-RUN git clone https://github.com/Ke-Wang1017/expressive_humanoid.git expressive_humanoid
-# RUN mkdir -p $HOME/expressive_humanoid
-# COPY repo_copy/ $HOME/expressive_humanoid/
-
-FROM build_fbx AS rebuild_fbx
-
-WORKDIR $HOME/expressive_humanoid/
-
-# RUN cp CMU_fbx.zip ASE/ase/poselib/data/
-# # # # Clone the repository
-# # # RUN git clone https://github.com/Ke-Wang1017/expressive_humanoid.git
-# # # # sentence-transformers
-
-RUN apt-get update && apt-get install -y unzip
 
 # Modify the Makefile to fix linking order
 WORKDIR $FBX_PYTHON_BINDING_PATH/build/Python38_x64
 
 RUN make clean && \
     sed -i 's|\(LIBS = -L[^ ]*\) -lz -lxml2 \([^ ]*\)|\1 \2 -lz -lxml2|' Makefile
+
 # Build and install
 RUN make install
 
@@ -135,27 +114,28 @@ RUN make install
 WORKDIR $FBX_PYTHON_BINDING_PATH
 RUN $PYTHON_EXECUTABLE PythonBindings.py "Python3_x64" buildsip
 
+FROM build_fbx AS rebuild_fbx
 
-# # RUN PYTHON_SITE_PACKAGES=$($PYTHON_EXECUTABLE -c "import site; print(site.getsitepackages()[0])") && \
-# #     mkdir -p $PYTHON_SITE_PACKAGES/fbx && \
-# #     cp $FBX_PYTHON_BINDING_PATH/build/Distrib/site-packages/fbx/* $PYTHON_SITE_PACKAGES/fbx/
+# Install git
+WORKDIR $HOME
+RUN apt-get update && apt-get install -y git unzip
+RUN git clone https://github.com/Ke-Wang1017/expressive_humanoid.git expressive_humanoid
 
 FROM rebuild_fbx AS final
 
-COPY test_fbx.py .
+WORKDIR $HOME/expressive_humanoid/ASE/ase/poselib/data/
+COPY CMU_fbx.zip .
+RUN mkdir -p cmu_fbx_all
+RUN unzip CMU_fbx.zip -d cmu_fbx_all/
 
-RUN $PYTHON_EXECUTABLE test_fbx.py
+WORKDIR $HOME/expressive_humanoid/ASE/ase/poselib/
+COPY test_fbx.py .
+RUN $PYTHON_EXECUTABLE test_fbx.py && echo "FBX works"
+
 # Set the default command to bash
 COPY parse_cmu_mocap_all_2.py $HOME/expressive_humanoid/ASE/ase/poselib/
 COPY fbx_importer_all_2.py $HOME/expressive_humanoid/ASE/ase/poselib/
-# RUN python parse_cmu_mocap_all_2.py
-# python fbx_importer_all_2.py
-# RUN /bin/bash -c "source ~/.bashrc && conda activate humanoid && pip install scipy"
-# Copy fbx modules to site-packages
+
+FROM final AS final2
 
 CMD ["/bin/bash"]
-
-
-
-
-
