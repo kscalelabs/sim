@@ -108,9 +108,9 @@ RUN $PYTHON_EXECUTABLE PythonBindings.py "Python3_x64" buildsip
 # Install git
 RUN apt-get update && apt-get install -y git
 
-# RUN git clone https://github.com/Ke-Wang1017/expressive_humanoid.git
-RUN mkdir -p $HOME/expressive_humanoid
-COPY repo_copy/ $HOME/expressive_humanoid/
+RUN git clone https://github.com/Ke-Wang1017/expressive_humanoid.git expressive_humanoid
+# RUN mkdir -p $HOME/expressive_humanoid
+# COPY repo_copy/ $HOME/expressive_humanoid/
 
 FROM build_fbx AS rebuild_fbx
 
@@ -154,3 +154,8 @@ COPY fbx_importer_all_2.py $HOME/expressive_humanoid/ASE/ase/poselib/
 # Copy fbx modules to site-packages
 
 CMD ["/bin/bash"]
+
+
+
+
+
