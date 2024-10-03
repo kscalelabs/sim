@@ -1,0 +1,163 @@
+<mujoco model="torso">
+  <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true"/>
+  <default>
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01"/>
+    <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2"/>
+    <motor ctrllimited="true"/>
+    <equality solref="0.001 2"/>
+    <default class="visualgeom">
+      <geom material="visualgeom" condim="1" contype="0" conaffinity="0"/>
+    </default>
+  </default>
+  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81"/>
+  <asset>
+    <mesh name="Base_Motor_Mount_List_cGDi0X0HPtm1lf=Default" file="Base_Motor_Mount_List_cGDi0X0HPtm1lf=Default.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE" file="DRIVING_ROTOR_PLATE.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_2" file="DRIVING_ROTOR_PLATE_2.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_3" file="DRIVING_ROTOR_PLATE_3.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_4" file="DRIVING_ROTOR_PLATE_4.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_5" file="DRIVING_ROTOR_PLATE_5.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_6" file="DRIVING_ROTOR_PLATE_6.stl"/>
+    <mesh name="LX-16A" file="LX-16A.stl"/>
+    <mesh name="LX-16A_2" file="LX-16A_2.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_7" file="DRIVING_ROTOR_PLATE_7.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_8" file="DRIVING_ROTOR_PLATE_8.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_9" file="DRIVING_ROTOR_PLATE_9.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_10" file="DRIVING_ROTOR_PLATE_10.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_11" file="DRIVING_ROTOR_PLATE_11.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_12" file="DRIVING_ROTOR_PLATE_12.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_13" file="DRIVING_ROTOR_PLATE_13.stl"/>
+    <mesh name="DRIVING_ROTOR_PLATE_14" file="DRIVING_ROTOR_PLATE_14.stl"/>
+    <texture name="texplane" type="2d" builtin="checker" rgb1=".0 .0 .0" rgb2=".8 .8 .8" width="100" height="108"/>
+    <material name="matplane" reflectance="0." texture="texplane" texrepeat="1 1" texuniform="true"/>
+    <material name="visualgeom" rgba="0.5 0.9 0.2 1"/>
+
+  </asset>
+
+  <worldbody>
+    <geom name="ground" type="plane" pos="0.001 0 0" quat="1 0 0 0" material="matplane" condim="1" conaffinity="15" size="0 0 1"/>
+    <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
+    <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false"/>
+
+    <body name="torso" pos="0 0 0.2">
+      <joint type="free" name="root_joint"/>
+
+      <geom type="mesh" rgba="0.909804 0.572549 0.164706 1" mesh="Base_Motor_Mount_List_cGDi0X0HPtm1lf=Default"/>
+      <geom pos="0.0713138 -0.0234828 0.108127" quat="0 -0.707107 0 -0.707107" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_3"/>
+      <geom pos="0.100707 -0.0398328 0.0898537" quat="-0.707107 -0.707107 0 0" type="mesh" rgba="0.498039 0.498039 0.498039 1" mesh="LX-16A"/>
+      <geom pos="0.100707 -0.0398328 0.0196537" quat="-4.80472e-09 -4.80472e-09 -0.707107 0.707107" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_7"/>
+      <geom pos="-0.0713138 -0.0234828 0.108127" quat="0 -0.707107 0 0.707107" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_4"/>
+      <geom pos="-0.100707 -0.0384328 0.0898537" quat="-0.707107 -0.707107 0 0" type="mesh" rgba="0.498039 0.498039 0.498039 1" mesh="LX-16A_2"/>
+      <geom pos="-0.100707 -0.0384328 0.0196537" quat="-1.64085e-08 -1.64085e-08 0.707107 -0.707107" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_8"/>
+      <site name="imu" size="0.01" pos="0 0 0"/>
+      <body name="DRIVING_ROTOR_PLATE" pos="0.0413138 -0.0234828 -0.00437283" quat="1.64085e-08 -0.707107 -1.64085e-08 -0.707107">
+        <inertial pos="0.00739899 0.000707591 0.0199583" quat="0.575948 0.426026 0.459929 0.524643" mass="0.0679127" diaginertia="2.06887e-05 1.87407e-05 1.38506e-05"/>
+        <joint name="left_hip_pitch" pos="0 0 0" axis="0 0 -1" range="-1.5708 1.5708" actuatorfrcrange="-1 1"/>
+        <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE"/>
+        <body name="DRIVING_ROTOR_PLATE_5" pos="-0.0074 0.01695 0.02285" quat="0.5 -0.5 0.5 0.5">
+          <inertial pos="-1.51786e-06 0.0320531 -0.0325003" quat="0.706299 0.707914 -9.78407e-05 0.000106782" mass="0.19606" diaginertia="8.94807e-05 6.54785e-05 5.49377e-05"/>
+          <joint name="left_hip_yaw" pos="0 0 0" axis="0 0 -1" range="-1.5708 0.0872665" actuatorfrcrange="-1 1"/>
+          <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_5"/>
+          <body name="DRIVING_ROTOR_PLATE_9" pos="-2.44814e-09 0.05275 -0.007" quat="1.64085e-08 1.64085e-08 -0.707107 -0.707107">
+            <inertial pos="-0.000259815 8.18298e-06 0.0247536" quat="0.707123 0.000568123 7.48082e-05 0.707091" mass="0.0598571" diaginertia="2.09913e-05 1.82322e-05 8.4096e-06"/>
+            <joint name="left_hip_roll" pos="0 0 0" axis="0 0 -1" range="-0.523599 0.523599" actuatorfrcrange="-1 1"/>
+            <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_9"/>
+            <body name="DRIVING_ROTOR_PLATE_11" pos="-0.0162309 1.02299e-09 0.0417" quat="0.5 0.5 -0.5 -0.5">
+              <inertial pos="1.53986e-05 0.0349186 -0.0157451" quat="0.730936 0.682446 0.000438709 0.000357984" mass="0.0704091" diaginertia="3.03594e-05 2.47989e-05 1.35071e-05"/>
+              <joint name="left_knee_pitch" pos="0 0 0" axis="0 0 -1" range="-1.5708 1.5708" actuatorfrcrange="-1 1"/>
+              <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_11"/>
+              <body name="DRIVING_ROTOR_PLATE_13" pos="-1.20434e-09 0.0552 -0.000319124" quat="1 0 0 0">
+                <inertial pos="-0.003644 0.0159002 -0.0152307" quat="0.500833 0.501995 0.497696 0.499466" mass="0.0450745" diaginertia="4.03647e-05 2.90427e-05 1.60029e-05"/>
+                <joint name="left_ankle_pitch" pos="0 0 0" axis="0 0 -1" range="-1.5708 1.5708" actuatorfrcrange="-1 1"/>
+                <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_13"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="DRIVING_ROTOR_PLATE_2" pos="-0.0413138 -0.0234828 -0.00437283" quat="2.58819e-08 -0.707107 2.58819e-08 0.707107">
+        <inertial pos="-0.00739212 0.000326566 0.0199574" quat="0.451732 0.537528 0.56406 0.434555" mass="0.0678925" diaginertia="2.06635e-05 1.87261e-05 1.38335e-05"/>
+        <joint name="right_hip_pitch" pos="0 0 0" axis="0 0 -1" range="-1.5708 1.5708" actuatorfrcrange="-1 1"/>
+        <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_2"/>
+        <body name="DRIVING_ROTOR_PLATE_6" pos="0.0074 0.01645 0.02285" quat="0.5 -0.5 -0.5 -0.5">
+          <inertial pos="-1.51786e-06 0.0320531 -0.0325003" quat="0.706299 0.707914 -9.78407e-05 0.000106782" mass="0.19606" diaginertia="8.94807e-05 6.54785e-05 5.49377e-05"/>
+          <joint name="right_hip_yaw" pos="0 0 0" axis="0 0 -1" range="-0.0872665 1.5708" actuatorfrcrange="-1 1"/>
+          <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_6"/>
+          <body name="DRIVING_ROTOR_PLATE_10" pos="-2.44814e-09 0.05275 -0.007" quat="1.64085e-08 1.64085e-08 -0.707107 -0.707107">
+            <inertial pos="0.000259815 -8.18299e-06 0.0247536" quat="0.707123 -0.000568123 -7.48082e-05 0.707091" mass="0.0598571" diaginertia="2.09913e-05 1.82322e-05 8.4096e-06"/>
+            <joint name="right_hip_roll" pos="0 0 0" axis="0 0 -1" range="-0.523599 0.523599" actuatorfrcrange="-1 1"/>
+            <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_10"/>
+            <body name="DRIVING_ROTOR_PLATE_12" pos="0.0162309 -1.77627e-09 0.0417" quat="0.5 0.5 0.5 0.5">
+              <inertial pos="1.53986e-05 0.0349186 -0.0157451" quat="0.730936 0.682446 0.000438709 0.000357984" mass="0.0704091" diaginertia="3.03594e-05 2.47989e-05 1.35071e-05"/>
+              <joint name="right_knee_pitch" pos="0 0 0" axis="0 0 -1" range="-1.5708 1.5708" actuatorfrcrange="-1 1"/>
+              <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_12"/>
+              <body name="DRIVING_ROTOR_PLATE_14" pos="-1.20434e-09 0.0552 -0.000319124" quat="1 0 0 0">
+                <inertial pos="0.00362763 0.0158996 -0.0152306" quat="0.4977 0.499471 0.500827 0.501992" mass="0.0450552" diaginertia="4.03232e-05 2.90112e-05 1.59929e-05"/>
+                <joint name="right_ankle_pitch" pos="0 0 0" axis="0 0 -1" range="-1.5708 1.5708" actuatorfrcrange="-1 1"/>
+                <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="DRIVING_ROTOR_PLATE_14"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <sensor>
+    <actuatorpos name="left_hip_pitch_p" actuator="left_hip_pitch_motor" user="13"/>
+    <actuatorpos name="right_hip_pitch_p" actuator="right_hip_pitch_motor" user="13"/>
+    <actuatorpos name="left_hip_yaw_p" actuator="left_hip_yaw_motor" user="13"/>
+    <actuatorpos name="right_hip_yaw_p" actuator="right_hip_yaw_motor" user="13"/>
+    <actuatorpos name="left_hip_roll_p" actuator="left_hip_roll_motor" user="13"/>
+    <actuatorpos name="right_hip_roll_p" actuator="right_hip_roll_motor" user="13"/>
+    <actuatorpos name="left_knee_pitch_p" actuator="left_knee_pitch_motor" user="13"/>
+    <actuatorpos name="right_knee_pitch_p" actuator="right_knee_pitch_motor" user="13"/>
+    <actuatorpos name="left_ankle_pitch_p" actuator="left_ankle_pitch_motor" user="13"/>
+    <actuatorpos name="right_ankle_pitch_p" actuator="right_ankle_pitch_motor" user="13"/>
+
+    <!-- Actuator Velocity Sensors -->
+    <actuatorvel name="left_hip_pitch_v" actuator="left_hip_pitch_motor" user="13"/>
+    <actuatorvel name="right_hip_pitch_v" actuator="right_hip_pitch_motor" user="13"/>
+    <actuatorvel name="left_hip_yaw_v" actuator="left_hip_yaw_motor" user="13"/>
+    <actuatorvel name="right_hip_yaw_v" actuator="right_hip_yaw_motor" user="13"/>
+    <actuatorvel name="left_hip_roll_v" actuator="left_hip_roll_motor" user="13"/>
+    <actuatorvel name="right_hip_roll_v" actuator="right_hip_roll_motor" user="13"/>
+    <actuatorvel name="left_knee_pitch_v" actuator="left_knee_pitch_motor" user="13"/>
+    <actuatorvel name="right_knee_pitch_v" actuator="right_knee_pitch_motor" user="13"/>
+    <actuatorvel name="left_ankle_pitch_v" actuator="left_ankle_pitch_motor" user="13"/>
+    <actuatorvel name="right_ankle_pitch_v" actuator="right_ankle_pitch_motor" user="13"/>
+
+    <!-- Actuator Force Sensors -->
+    <actuatorfrc name="left_hip_pitch_f" actuator="left_hip_pitch_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="right_hip_pitch_f" actuator="right_hip_pitch_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="left_hip_yaw_f" actuator="left_hip_yaw_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="right_hip_yaw_f" actuator="right_hip_yaw_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="left_hip_roll_f" actuator="left_hip_roll_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="right_hip_roll_f" actuator="right_hip_roll_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="left_knee_pitch_f" actuator="left_knee_pitch_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="right_knee_pitch_f" actuator="right_knee_pitch_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="left_ankle_pitch_f" actuator="left_ankle_pitch_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="right_ankle_pitch_f" actuator="right_ankle_pitch_motor" user="13" noise="0.001"/>
+
+    <!-- Attach sensors to the torso body -->
+    <framequat name="orientation" objtype="site" noise="0.001" objname="imu"/>
+    <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9"/>
+  </sensor>
+
+  <actuator>
+    <motor name="left_hip_pitch_motor" joint="left_hip_pitch" ctrlrange="-100 100"/>
+    <motor name="right_hip_pitch_motor" joint="right_hip_pitch" ctrlrange="-100 100"/>
+    <motor name="left_hip_yaw_motor" joint="left_hip_yaw" ctrlrange="-100 100"/>
+    <motor name="right_hip_yaw_motor" joint="right_hip_yaw" ctrlrange="-100 100"/>
+    <motor name="left_hip_roll_motor" joint="left_hip_roll" ctrlrange="-100 100"/>
+    <motor name="right_hip_roll_motor" joint="right_hip_roll" ctrlrange="-100 100"/>
+    <motor name="left_knee_pitch_motor" joint="left_knee_pitch" ctrlrange="-100 100"/>
+    <motor name="right_knee_pitch_motor" joint="right_knee_pitch" ctrlrange="-100 100"/>
+    <motor name="left_ankle_pitch_motor" joint="left_ankle_pitch" ctrlrange="-100 100"/>
+    <motor name="right_ankle_pitch_motor" joint="right_ankle_pitch" ctrlrange="-100 100"/>
+  </actuator>
+
+  <keyframe>
+    <key name="initial" qpos="0 0 0.1 1 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+</keyframe>
+
+</mujoco>
