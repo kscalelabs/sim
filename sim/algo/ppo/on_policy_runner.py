@@ -53,11 +53,12 @@ class OnPolicyRunner:
         self.policy_cfg = train_cfg["policy"]
         self.all_cfg = train_cfg
         self.wandb_run_name = (
-            + train_cfg["runner"]["experiment_name"]
+            train_cfg["runner"]["experiment_name"]
             + "_"
             + datetime.now().strftime("%b%d_%H-%M-%S")
-            + ("_" + train_cfg["runner"]["run_name"]) if train_cfg["runner"]["run_name"] else ""
         )
+        if train_cfg["runner"]["run_name"]:
+            self.wandb_run_name += "_" + train_cfg["runner"]["run_name"]
         self.device = device
         self.env = env
         if self.env.num_privileged_obs is not None:
