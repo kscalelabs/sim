@@ -121,7 +121,7 @@ WORKDIR $HOME
 RUN apt-get update && apt-get install -y git unzip
 RUN git clone https://github.com/Ke-Wang1017/expressive_humanoid.git expressive_humanoid
 
-FROM rebuild_fbx AS final
+
 
 WORKDIR $HOME/expressive_humanoid/ASE/ase/poselib/data/
 COPY CMU_fbx.zip .
@@ -136,6 +136,23 @@ RUN $PYTHON_EXECUTABLE test_fbx.py && echo "FBX works"
 COPY parse_cmu_mocap_all_2.py $HOME/expressive_humanoid/ASE/ase/poselib/
 COPY fbx_importer_all_2.py $HOME/expressive_humanoid/ASE/ase/poselib/
 
-FROM final AS final2
+FROM rebuild_fbx AS final
+
+RUN $PYTHON_EXECUTABLE parse_cmu_mocap_all_2.py
+RUN $PYTHON_EXECUTABLE fbx_importer_all_2.py
+RUN mkdir -p pkl retarget_npy
+RUN $PYTHON_EXECUTABLE retarget_motion_stompy_all.py
+
+WORKDIR $HOME/expressive_humanoid/legged_gym/legged_gym/scripts
+# Train for 1 iteration and kill the program to have a dummy model to load.
+RUN $PYTHON_EXECUTABLE train.py debug --task stompy_view --motion_name motions_debug.yaml --debug
+
+# Run the play script to visualize the motion
+RUN $PYTHON_EXECUTABLE play.py debug --task stompy_view --motion_name motions_debug.yaml
+
+RUN $PYTHON_EXECUTABLE train.py 060-40-some_descriptions_of_run --device cuda:0 --entity WANDB_ENTITY
+RUN $PYTHON_EXECUTABLE play.py 060-40 --task stompy_mimic --record_video
+
+FROM final AS amp
 
 CMD ["/bin/bash"]
