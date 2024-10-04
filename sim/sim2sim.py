@@ -121,8 +121,8 @@ def run_mujoco(policy, cfg):
     data = mujoco.MjData(model)
 
     try:
-        data.qpos = model.keyframe("initial").qpos
-        default = deepcopy(model.keyframe("initial").qpos)[-cfg.env.num_actions:]
+        data.qpos = model.keyframe("default").qpos
+        default = deepcopy(model.keyframe("defaul").qpos)[-cfg.env.num_actions:]
         print("Default position:", default)
     except:
         print("No default position found, using zero initialization")
