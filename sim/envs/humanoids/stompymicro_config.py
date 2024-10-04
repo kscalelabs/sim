@@ -75,14 +75,14 @@ class StompyMicroCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = False  # pfb30 bring it back
+        add_noise = True
         noise_level = 0.6  # scales other values
 
-        class noise_scales:  # pfb30 bring it back
-            dof_pos = 0.01
-            dof_vel = 0.01
-            ang_vel = 0.01
-            lin_vel = 0.01
+        class noise_scales:
+            dof_pos = 0.05
+            dof_vel = 0.5
+            ang_vel = 0.1
+            lin_vel = 0.05
             quat = 0.03
             height_measurements = 0.1
 
@@ -105,7 +105,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 4  # 250hz
+        decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -127,12 +127,12 @@ class StompyMicroCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.01
-        randomize_friction = False
+        start_pos_noise = 0.05
+        randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False  # True
-        added_mass_range = [-1.0, 1.0]
+        randomize_base_mass = True  # True
+        added_mass_range = [-0.05, 0.05]
         push_robots = False  # True
         push_interval_s = 4
         max_push_vel_xy = 0.2
