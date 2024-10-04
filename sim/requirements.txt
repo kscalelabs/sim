@@ -1,14 +1,13 @@
 # requirements.txt
 
-gdown
-h5py
-matplotlib==3.3.4
 mediapy
+torch
+python-dotenv
+h5py
+gdown
+matplotlib==3.3.4
 numpy==1.19.5
-opencv-python==4.10.0.84
+wandb
+tensorboard==2.14.0
 onnx
 onnxscript
-python-dotenv
-tensorboard==2.14.0
-torch
-wandb

@@ -12,7 +12,7 @@ from sim.utils.helpers import get_args  # noqa: E402
 def train(args: argparse.Namespace) -> None:
     env, _ = task_registry.make_env(name=args.task, args=args)
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args)
-    ppo_runner.learn(name=args.task, num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True)
+    ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True)
 
 
 # Puts this import down here so that the environments are registered
