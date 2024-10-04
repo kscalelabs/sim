@@ -102,11 +102,11 @@ class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
         add_noise = True
         noise_level = 0.6  # scales other values
 
-        class noise_scales: # pfb30 bring it back
-            dof_pos = 0.01
-            dof_vel = 0.01
-            ang_vel = 0.01
-            lin_vel = 0.01
+        class noise_scales:
+            dof_pos = 0.05
+            dof_vel = 0.5
+            ang_vel = 0.1
+            lin_vel = 0.05
             quat = 0.03
             height_measurements = 0.1
 
@@ -199,11 +199,11 @@ class StompyMicroCfg(LeggedRobotCfg, ConfigMixin):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.002
+            action_smoothness = -0.005
             torques = -1e-5
             dof_vel = -5e-4
             dof_acc = -1e-7
-            collision = -1.0
+            collision = -0.5  # -5.0
 
     class normalization:
         class obs_scales:
