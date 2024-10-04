@@ -12,7 +12,7 @@ NUM_JOINTS = len(Robot.all_joints())  # 20
 
 class StompyMicroCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
-    
+
     class env(LeggedRobotCfg.env):
         # change the observation dim
         frame_stack = 15
@@ -48,7 +48,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             "DRIVING_ROTOR_PLATE_3",
             "DRIVING_ROTOR_PLATE_4",
             "DRIVING_ROTOR_PLATE_7",
-            "DRIVING_ROTOR_PLATE_8"
+            "DRIVING_ROTOR_PLATE_8",
         ]
 
         penalize_contacts_on = []
@@ -75,10 +75,10 @@ class StompyMicroCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = False # pfb30 bring it back
+        add_noise = False  # pfb30 bring it back
         noise_level = 0.6  # scales other values
 
-        class noise_scales: # pfb30 bring it back
+        class noise_scales:  # pfb30 bring it back
             dof_pos = 0.01
             dof_vel = 0.01
             ang_vel = 0.01
@@ -131,9 +131,9 @@ class StompyMicroCfg(LeggedRobotCfg):
         randomize_friction = False
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False #True
+        randomize_base_mass = False  # True
         added_mass_range = [-1.0, 1.0]
-        push_robots = False #True
+        push_robots = False  # True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4

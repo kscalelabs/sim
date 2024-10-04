@@ -55,7 +55,7 @@ class Node(ABC):
 class LeftArm(Node):
     shoulder_yaw = "left_shoulder_yaw"
     shoulder_pitch = "left_shoulder_pitch"
-    elbow_pitch = "left_elbow_yaw" # FIXME: yaw vs pitch
+    elbow_pitch = "left_elbow_yaw"  # FIXME: yaw vs pitch
 
 
 class RightArm(Node):
@@ -69,7 +69,7 @@ class LeftLeg(Node):
     hip_yaw = "left_hip_yaw"
     hip_pitch = "left_hip_pitch"
     knee_pitch = "left_knee_pitch"
-    ankle_pitch = "left_ankle_pitch" 
+    ankle_pitch = "left_ankle_pitch"
 
 
 class RightLeg(Node):
@@ -77,7 +77,7 @@ class RightLeg(Node):
     hip_yaw = "right_hip_yaw"
     hip_pitch = "right_hip_pitch"
     knee_pitch = "right_knee_pitch"
-    ankle_pitch = "right_ankle_pitch" 
+    ankle_pitch = "right_ankle_pitch"
 
 
 class Legs(Node):
@@ -263,6 +263,7 @@ class Robot(Node):
             "elbow_yaw": 0.0,
             "elbow_pitch": 0.0,
         }
+
 
 def print_joints() -> None:
     joints = Robot.all_joints()

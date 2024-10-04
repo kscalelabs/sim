@@ -96,5 +96,5 @@ static-checks:
 
 test:
 # 	python -m pytest
-	@echo "Unit tests not implemented"
+	@python -m unittest discover -s sim/utils -p '*_test.py'
 .PHONY: test

@@ -18,7 +18,11 @@ from sim.envs.humanoids.stompymicro_config import StompyMicroCfg, StompyMicroCfg
 from sim.envs.humanoids.stompymicro_env import StompyMicroEnv
 from sim.envs.humanoids.stompymini_config import MiniCfg, MiniCfgPPO
 from sim.envs.humanoids.stompymini_env import MiniFreeEnv
-from sim.envs.humanoids.stompypro_config import StompyProCfg, StompyProStandingCfg, StompyProCfgPPO
+from sim.envs.humanoids.stompypro_config import (
+    StompyProCfg,
+    StompyProCfgPPO,
+    StompyProStandingCfg,
+)
 from sim.envs.humanoids.stompypro_env import StompyProFreeEnv
 from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
 from sim.envs.humanoids.xbot_env import XBotLFreeEnv
