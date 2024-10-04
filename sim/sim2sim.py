@@ -50,7 +50,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.5
+    vx = 0.0
     vy = 0.0
     dyaw = 0.0
 
@@ -216,13 +216,13 @@ if __name__ == "__main__":
         class sim_config:
             sim_duration = 60.0
             dt = 0.001
-            decimation = 20
+            decimation = 4
 
         class robot_config:
             tau_factor = 0.85
-            tau_limit = np.array(list(robot.stiffness().values()))
+            tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
             kps = tau_limit
-            kds = np.array(list(robot.damping().values()))
+            kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
 
         class normalization:
             class obs_scales:

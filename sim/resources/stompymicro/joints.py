@@ -97,7 +97,7 @@ class Robot(Node):
     def default_standing(cls) -> Dict[str, float]:
         return {
             # Legs
-            cls.legs.left.hip_pitch: 0,
+            cls.legs.left.hip_pitch: 0.0,
             cls.legs.left.hip_yaw: 0,
             cls.legs.left.hip_roll: 0,
             cls.legs.left.knee_pitch: 0,
@@ -192,16 +192,16 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 10,
-            "hip_yaw": 10,
-            "hip_roll": 10,
-            "knee_pitch": 10,
-            "ankle_pitch": 10,
-            "shoulder_pitch": 10,
-            "shoulder_yaw": 10,
-            "shoulder_roll": 10,
-            "elbow_pitch": 10,
-            "elbow_yaw": 10,
+            "hip_pitch": 5,
+            "hip_yaw": 5,
+            "hip_roll": 5,
+            "knee_pitch": 5,
+            "ankle_pitch": 5,
+            # "shoulder_pitch": 5,
+            # "shoulder_yaw": 5,
+            # "shoulder_roll": 5,
+            # "elbow_pitch": 5,
+            # "elbow_yaw": 5,
         }
 
     # d_gains
@@ -213,27 +213,27 @@ class Robot(Node):
             "hip_roll": 0.3,
             "knee_pitch": 0.3,
             "ankle_pitch": 0.3,
-            "shoulder_pitch": 0.3,
-            "shoulder_yaw": 0.3,
-            "shoulder_roll": 0.3,
-            "elbow_pitch": 0.3,
-            "elbow_yaw": 0.3,
+            # "shoulder_pitch": 0.3,
+            # "shoulder_yaw": 0.3,
+            # "shoulder_roll": 0.3,
+            # "elbow_pitch": 0.3,
+            # "elbow_yaw": 0.3,
         }
 
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 2,
-            "hip_yaw": 2,
-            "hip_roll": 2,
-            "knee_pitch": 2,
-            "ankle_pitch": 2,
-            "shoulder_pitch": 2,
-            "shoulder_yaw": 2,
-            "shoulder_roll": 2,
-            "elbow_pitch": 2,
-            "elbow_yaw": 2,
+            "hip_pitch": 1,
+            "hip_yaw": 1,
+            "hip_roll": 1,
+            "knee_pitch": 1,
+            "ankle_pitch": 1,
+            # "shoulder_pitch": 1,
+            # "shoulder_yaw": 1,
+            # "shoulder_roll": 1,
+            # "elbow_pitch": 1,
+            # "elbow_yaw": 1,
         }
 
     # vel_limits
@@ -245,23 +245,23 @@ class Robot(Node):
             "hip_roll": 20,
             "knee_pitch": 20,
             "ankle_pitch": 20,
-            "shoulder_pitch": 20,
-            "shoulder_yaw": 20,
-            "shoulder_roll": 20,
-            "elbow_pitch": 20,
-            "elbow_yaw": 20,
+            # "shoulder_pitch": 20,
+            # "shoulder_yaw": 20,
+            # "shoulder_roll": 20,
+            # "elbow_pitch": 20,
+            # "elbow_yaw": 20,
         }
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 0.0,
-            "hip_yaw": 0.0,
-            "hip_roll": 0.0,
-            "knee_pitch": 0.0,
-            "ankle_pitch": 0.0,
-            "elbow_yaw": 0.0,
-            "elbow_pitch": 0.0,
+            "hip_pitch": 0.05,
+            "hip_yaw": 0.05,
+            "hip_roll": 0.05,
+            "knee_pitch": 0.05,
+            "ankle_pitch": 0.05,
+            # "elbow_yaw": 0.05,
+            # "elbow_pitch": 0.05,
         }
 
 
