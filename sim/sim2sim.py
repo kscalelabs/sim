@@ -92,13 +92,6 @@ def get_obs(data):
 
 def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     """Calculates torques from position commands"""
-    print("kp shape:", kp.shape)
-    print("kd shape:", kd.shape)
-    print("target_q shape:", target_q.shape)
-    print("default shape:", default.shape)
-    print("q shape:", q.shape)
-    print("dq shape:", dq.shape)
-    print("target_dq shape:", target_dq.shape)
     return kp * (target_q + default - q) - kd * dq
 
 
@@ -142,7 +135,7 @@ def run_mujoco(policy, cfg):
 
     count_lowlevel = 0
 
-    for step in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
+    for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
         q = q[-cfg.num_actions :]
@@ -190,10 +183,8 @@ def run_mujoco(policy, cfg):
         )  # Calc torques
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
+        print(tau)
         data.ctrl = tau
-
-        print(f"Step {step}: Control signals (tau): {tau}")
-
 
         mujoco.mj_step(model, data)
         viewer.render()
@@ -229,12 +220,9 @@ if __name__ == "__main__":
 
         class robot_config:
             tau_factor = 0.85
-            # tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
-            tau_limit = np.array( list(robot.stiffness().values())) * tau_factor
-
+            tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
             kps = tau_limit
-            #kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
-            kds = np.array(list(robot.damping().values()))
+            kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
 
         class normalization:
             class obs_scales:

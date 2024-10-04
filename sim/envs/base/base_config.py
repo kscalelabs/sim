@@ -55,34 +55,3 @@ class BaseConfig:
                 setattr(obj, key, i_var)
                 # recursively init members of the attribute
                 BaseConfig.init_member_classes(i_var)
-
-    def __str__(self):
-        def format_value(value, indent=0):
-            if isinstance(value, (int, float, str, bool)):
-                return str(value)
-            elif isinstance(value, list):
-                return str(value)
-            elif isinstance(value, dict):
-                return "\n" + "\n".join(
-                    f"{'  ' * (indent + 1)}{k}: {format_value(v, indent + 1)}" for k, v in value.items()
-                )
-            elif hasattr(value, "__dict__"):
-                return "\n" + "\n".join(
-                    f"{'  ' * (indent + 1)}{k}: {format_value(getattr(value, k), indent + 1)}"
-                    for k in dir(value)
-                    if not k.startswith("__") and not callable(getattr(value, k))
-                )
-            else:
-                return str(value)
-
-        output = []
-        for attr in dir(self):
-            if not attr.startswith("__") and not callable(getattr(self, attr)):
-                value = getattr(self, attr)
-                formatted_value = format_value(value)
-                output.append(f"{attr}: {formatted_value}")
-
-        return "\n".join(output)
-
-    def __repr__(self):
-        return self.__str__()
