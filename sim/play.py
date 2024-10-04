@@ -175,7 +175,8 @@ def play(args: argparse.Namespace) -> None:
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
-        obs, _, _, _, infos = env.step(actions.detach())
+        obs, critic_obs, rews, dones, infos = env.step(actions.detach())
+        print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
         if RENDER:
             env.gym.fetch_results(env.sim, True)
