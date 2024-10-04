@@ -145,7 +145,7 @@ class MiniCfg(LeggedRobotCfg):
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = 0.78
+        base_height_target = Robot.height
         min_dist = 0.25
         max_dist = 0.5
 
@@ -212,7 +212,7 @@ class MiniStandingCfg(MiniCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class rewards:
-        base_height_target = 0.78
+        base_height_target = Robot.height
         min_dist = 0.25
         max_dist = 0.5
 
