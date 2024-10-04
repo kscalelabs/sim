@@ -220,9 +220,9 @@ if __name__ == "__main__":
 
         class robot_config:
             tau_factor = 0.85
-            tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
+            tau_limit = np.array(list(robot.stiffness().values()))
             kps = tau_limit
-            kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
+            kds = np.array(list(robot.damping().values()))
 
         class normalization:
             class obs_scales:
