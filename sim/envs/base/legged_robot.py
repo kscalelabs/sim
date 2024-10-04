@@ -6,7 +6,7 @@ import numpy as np
 from sim import ROOT_DIR
 from sim.envs.base.base_task import BaseTask
 from sim.utils.helpers import class_to_dict
-from sim.utils.math import get_euler_xyz_tensor, quat_apply_yaw, wrap_to_pi
+from sim.utils.math_sim import get_euler_xyz_tensor, quat_apply_yaw, wrap_to_pi
 
 # fmt: off
 from isaacgym import gymapi, gymtorch, gymutil # isort: skip
