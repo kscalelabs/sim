@@ -71,7 +71,7 @@ make install-third-party-external
 python sim/train.py --task=stompymini --num_envs=4096 --headless
 ```
 or standing policy:
-```
+```bash
 python sim/train.py --task=stompymini_standing --num_envs=4096 --headless
 ```
 2. Run evaluation with the following command:
