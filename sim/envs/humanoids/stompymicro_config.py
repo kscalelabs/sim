@@ -87,9 +87,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height]  # add z value to lift the robot
-        # setting the right rotation
-        # quat_from_euler_xyz(torch.tensor(1.57), torch.tensor(0), torch.tensor(-1.57))
+        pos = [0.0, 0.0, Robot.height]
         rot = Robot.rotation
 
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
@@ -127,7 +125,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.05
+        start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -170,21 +168,21 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         class scales:
             # # reference motion tracking
-            # joint_pos = 1.6
-            # feet_clearance = 1.6
-            # feet_contact_number = 1.2
-            # feet_air_time = 1.6
-            # foot_slip = -0.05
-            # feet_distance = 0.2
-            # knee_distance = 0.2
-            # # contact
-            # feet_contact_forces = -0.01
-            # # vel tracking
-            # tracking_lin_vel = 1.2
-            # tracking_ang_vel = 1.1
-            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
-            # track_vel_hard = 0.5
+            joint_pos = 1.6
+            feet_clearance = 1.2
+            feet_contact_number = 1.2
+            feet_air_time = 1.2
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
+            # contact
+            feet_contact_forces = -0.01
+            # vel tracking
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 0.5

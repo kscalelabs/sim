@@ -179,12 +179,6 @@ class Robot(Node):
             "hip_z": 60,
             "knee": 120,
             "ankle_y": 17,
-            # FIXME. Warning todo. Dict wrong shape
-            "hip_y_b": 120,
-            "hip_x_b": 60,
-            "hip_z_b": 60,
-            "knee_b": 120,
-            "ankle_y_b": 17,
         }
 
     # d_gains
@@ -196,12 +190,6 @@ class Robot(Node):
             "hip_z": 10,
             "knee": 10,
             "ankle_y": 5,
-            # FIXME. Warning todo. Dict wrong shape
-            "hip_y_b": 10,
-            "hip_x_b": 10,
-            "hip_z_b": 10,
-            "knee_b": 10,
-            "ankle_y_b": 5,
         }
 
     # pos_limits
