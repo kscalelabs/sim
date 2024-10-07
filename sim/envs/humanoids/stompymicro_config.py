@@ -161,7 +161,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         target_feet_height = 0.02  # m
         cycle_time = 0.2  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
-        only_positive_rewards = True
+        only_positive_rewards = False
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
         max_contact_force = 100  # forces above this value are penalized
@@ -181,11 +181,11 @@ class StompyMicroCfg(LeggedRobotCfg):
             tracking_lin_vel = 1.2
             tracking_ang_vel = 1.1
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.2
+            low_speed = 0.4
             track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 0.5
+            default_joint_pos = 0.01
             orientation = 1
             base_height = 0.2
             base_acc = 0.2
@@ -235,10 +235,10 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 1500  # number of policy updates
 
         # logging
-        save_interval = 100  # check for potential saves every this many iterations
+        save_interval = 300  # check for potential saves every this many iterations
         experiment_name = "StompyMicro"
         run_name = ""
         # load and resume
