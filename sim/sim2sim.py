@@ -50,7 +50,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.5
+    vx = 0.0
     vy = 0.0
     dyaw = 0.0
 
@@ -216,7 +216,7 @@ if __name__ == "__main__":
         class sim_config:
             sim_duration = 60.0
             dt = 0.001
-            decimation = 20
+            decimation = 10
 
         class robot_config:
             tau_factor = 0.85
