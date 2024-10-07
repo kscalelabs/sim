@@ -13,31 +13,34 @@ def plot_trajectories(sim_log: str, real_log: str) -> None:
     sim_df['Step'] = sim_df['Step'].astype(int)
     real_df['Step'] = real_df['Step'].astype(int)
 
-    # Clip data to the first 10,000 steps
-    sim_df = sim_df[sim_df['Step'] < 10000]
-    real_df = real_df[real_df['Step'] < 10000]
-
-    # Get actual positions
-    sim_actual_position = sim_df['Actual Position']
-    real_actual_position = real_df['Actual Position']
-
-    # Get desired positions
-    sim_desired_position = sim_df['Desired Position']
-    real_desired_position = real_df['Desired Position']
+    # Clip data to the first 5000 steps
+    sim_df = sim_df[sim_df['Step'] < 5000]
+    real_df = real_df[real_df['Step'] < 5000]
 
     # Plot actual and desired positions
     plt.figure(figsize=(10, 6))
-    plt.plot(sim_df['Step'].to_numpy(), sim_actual_position.to_numpy(), label='Simulated Actual Position', color='blue')
-    plt.plot(real_df['Step'].to_numpy(), real_actual_position.to_numpy(), label='Real Actual Position', color='red')
-    # plt.plot(sim_df['Step'].to_numpy(), sim_desired_position.to_numpy(), label='Simulated Desired Position', color='cyan', linestyle='--')
-    # plt.plot(real_df['Step'].to_numpy(), real_desired_position.to_numpy(), label='Real Desired Position', color='magenta', linestyle='--')
+    plt.plot(sim_df['Step'].to_numpy(),
+             sim_df['Actual Position'].to_numpy(),
+             label='Simulated Actual Position', color='blue')
+
+    plt.plot(real_df['Step'].to_numpy(),
+             real_df['Actual Position'].to_numpy(),
+             label='Real Actual Position', color='red')
+
+    # plt.plot(sim_df['Step'].to_numpy(),
+    #          sim_df['Desired Position'].to_numpy(),
+    #          label='Simulated Desired Position', color='cyan', linestyle='--')
+
+    # plt.plot(real_df['Step'].to_numpy(),
+    #          real_df['Desired Position'].to_numpy(),
+    #          label='Real Desired Position', color='magenta', linestyle='--')
+
     plt.xlabel('Step')
     plt.ylabel('Position')
     plt.title('Trajectory Comparison')
     plt.legend()
     plt.grid(True)
 
-    # Save plot to file
     plt.savefig('profile_comparison.png')
 
 if __name__ == "__main__":
