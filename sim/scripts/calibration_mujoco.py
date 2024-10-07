@@ -1,59 +1,36 @@
-""" Calibrate the joint position of the robot.
+"""Calibrate the joint position of the robot.
 
 Run:
     python sim/scripts/calibration_mujoco.py --embodiment stompypro
 """
+
 import argparse
 import math
 import os
-from collections import deque
 from copy import deepcopy
+from typing import Any
 
 import matplotlib.pyplot as plt  # Add this import for plotting
-
-
 import mujoco
 import mujoco_viewer
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-from tqdm import tqdm
 
 from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
 
 
-class cmd:
-    vx = 0.5
-    vy = 0.0
-    dyaw = 0.0
+def get_obs(data: mujoco.MjData) -> tuple:
+    """Extracts an observation from the mujoco data structure.
 
+    Args:
+        data: The mujoco data structure.
 
-def quaternion_to_euler_array(quat):
-    # Ensure quaternion is in the correct format [x, y, z, w]
-    x, y, z, w = quat
-
-    # Roll (x-axis rotation)
-    t0 = +2.0 * (w * x + y * z)
-    t1 = +1.0 - 2.0 * (x * x + y * y)
-    roll_x = np.arctan2(t0, t1)
-
-    # Pitch (y-axis rotation)
-    t2 = +2.0 * (w * y - z * x)
-    t2 = np.clip(t2, -1.0, 1.0)
-    pitch_y = np.arcsin(t2)
-
-    # Yaw (z-axis rotation)
-    t3 = +2.0 * (w * z + x * y)
-    t4 = +1.0 - 2.0 * (y * y + z * z)
-    yaw_z = np.arctan2(t3, t4)
-
-    # Returns roll, pitch, yaw in a NumPy array in radians
-    return np.array([roll_x, pitch_y, yaw_z])
-
-
-def get_obs(data):
-    """Extracts an observation from the mujoco data structure"""
+    Returns:
+        A tuple containing the joint positions, velocities,
+        quaternions, linear velocities, angular velocities, and gravity vector.
+    """
     q = data.qpos.astype(np.double)
     dq = data.qvel.astype(np.double)
     quat = data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double)
@@ -64,17 +41,39 @@ def get_obs(data):
     return (q, dq, quat, v, omega, gvec)
 
 
-def pd_control(target_q, q, kp, target_dq, dq, kd, default):
-    """Calculates torques from position commands"""
+def pd_control(
+    target_q: np.ndarray,
+    q: np.ndarray,
+    kp: np.ndarray,
+    target_dq: np.ndarray,
+    dq: np.ndarray,
+    kd: np.ndarray,
+    default: np.ndarray,
+) -> np.ndarray:
+    """Calculates torques from position commands.
+
+    Args:
+        target_q: The target joint positions.
+        q: The current joint positions.
+        kp: The position gain.
+        target_dq: The target joint velocities.
+        dq: The current joint velocities.
+        kd: The velocity gain.
+        default: The default joint positions.
+
+    Returns:
+        The calculated torques.
+    """
     return kp * (target_q + default - q) - kd * dq
 
 
-def run_mujoco(cfg, joint_id=0, steps=1000):
-    """
-    Run the Mujoco motor identification.
+def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa: ANN401
+    """Run the Mujoco motor identification.
 
     Args:
         cfg: The configuration object containing simulation settings.
+        joint_id: The joint id to calibrate.
+        steps: The number of steps to run the simulation.
 
     Returns:
         None
@@ -91,7 +90,7 @@ def run_mujoco(cfg, joint_id=0, steps=1000):
         data.qpos = model.keyframe("default").qpos
         default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
         print("Default position:", default)
-    except:
+    except Exception as _:
         print("No default position found, using zero initialization")
         default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
 
@@ -112,34 +111,31 @@ def run_mujoco(cfg, joint_id=0, steps=1000):
     position_data = []
 
     while step < steps:
-        q, dq, quat, v, omega, gvec = get_obs(data)
+        q, dq, _, _, _, _ = get_obs(data)
         q = q[-cfg.num_actions :]
         dq = dq[-cfg.num_actions :]
 
         sin_pos = torch.tensor(math.sin(2 * math.pi * step * dt / cfg.sim_config.cycle_time))
-        
+
         # N hz control loop
         if step % cfg.sim_config.decimation == 0:
             target_q = default
             target_q[joint_id] = sin_pos
 
         time_data.append(step)
-        position_data.append(q - default)
+        position_data.append(q[joint_id] - default[joint_id])
 
         # Generate PD control
-        tau = pd_control(
-            target_q, q, cfg.robot_config.kps, default, dq, cfg.robot_config.kds, default
-        )  # Calc torques
+        tau = pd_control(target_q, q, cfg.robot_config.kps, default, dq, cfg.robot_config.kds, default)  # Calc torques
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
-        
+
         data.ctrl = tau
 
         mujoco.mj_step(model, data)
         step += 1
         viewer.render()
-        
-    
+
     # Create the plot
     plt.figure(figsize=(10, 6))
     plt.plot(time_data, position_data)
@@ -164,27 +160,27 @@ if __name__ == "__main__":
     class Sim2simCfg:
         num_actions = len(robot.all_joints())
 
-        class env:
+        class env:  # noqa: N801
             num_actions = len(robot.all_joints())
             frame_stack = 15
             c_frame_stack = 3
             num_single_obs = 11 + num_actions * c_frame_stack
             num_observations = int(frame_stack * num_single_obs)
 
-        class sim_config:
+        class sim_config:  # noqa: N801
             sim_duration = 60.0
             dt = 0.001
             decimation = 20
             cycle_time = 0.64
 
-        class robot_config:
+        class robot_config:  # noqa: N801
             tau_factor = 0.85
             tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
             kps = tau_limit
             kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
 
-        class normalization:
-            class obs_scales:
+        class normalization:  # noqa: N801
+            class obs_scales:  # noqa: N801
                 lin_vel = 2.0
                 ang_vel = 1.0
                 dof_pos = 1.0
@@ -193,7 +189,7 @@ if __name__ == "__main__":
             clip_observations = 18.0
             clip_actions = 18.0
 
-        class control:
+        class control:  # noqa: N801
             action_scale = 0.25
 
     run_mujoco(Sim2simCfg(), joint_id=0)
