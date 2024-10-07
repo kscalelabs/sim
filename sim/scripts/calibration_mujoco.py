@@ -67,13 +67,14 @@ def pd_control(
     return kp * (target_q + default - q) - kd * dq
 
 
-def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa: ANN401
+def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 10000, save_to_file: bool = False) -> None:  # noqa: ANN401
     """Run the Mujoco motor identification.
 
     Args:
         cfg: The configuration object containing simulation settings.
         joint_id: The joint id to calibrate.
         steps: The number of steps to run the simulation.
+        save_to_file: Whether to save the desired and actual positions to a file.
 
     Returns:
         None
@@ -102,28 +103,37 @@ def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa:
 
     target_q = np.zeros((cfg.num_actions), dtype=np.double)
 
+    # Define constants for sine wave period and amplitude
+    sin_period = 5.0
+    sin_amplitude = math.pi / 2
+
     # Parameters for calibration
     step = 0
     dt = cfg.sim_config.dt
+    dt = 1/250 # Override for comparison with real
     joint_id = 0
-    # Lists to store time and position data for plotting
+    # Lists to store time, desired position, and actual position data
     time_data = []
-    position_data = []
+    desired_position_data = []
+    actual_position_data = []
 
     while step < steps:
         q, dq, _, _, _, _ = get_obs(data)
         q = q[-cfg.num_actions :]
         dq = dq[-cfg.num_actions :]
 
-        sin_pos = torch.tensor(math.sin(2 * math.pi * step * dt / cfg.sim_config.cycle_time))
+        # Calculate sine wave position
+        sin_pos = torch.tensor(
+            sin_amplitude * math.sin(2 * math.pi * step * dt / sin_period)
+        )
 
         # N hz control loop
         if step % cfg.sim_config.decimation == 0:
-            target_q = default
             target_q[joint_id] = sin_pos
 
         time_data.append(step)
-        position_data.append(q[joint_id] - default[joint_id])
+        desired_position_data.append(target_q[joint_id])
+        actual_position_data.append(q[joint_id])
 
         # Generate PD control
         tau = pd_control(target_q, q, cfg.robot_config.kps, default, dq, cfg.robot_config.kds, default)  # Calc torques
@@ -136,11 +146,18 @@ def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa:
         step += 1
         viewer.render()
 
+    # Save the data to a file if requested
+    if save_to_file:
+        with open("sim_log.csv", "w") as file:
+            file.write("Step,Desired Position,Actual Position\n")
+            for step, desired, actual in zip(time_data, desired_position_data, actual_position_data):
+                file.write(f"{step},{desired},{actual}\n")
+
     # Create the plot
     plt.figure(figsize=(10, 6))
-    plt.plot(time_data, position_data)
+    plt.plot(time_data, actual_position_data)
     plt.title("Joint Position over Time")
-    plt.xlabel("Step (10hz)")
+    plt.xlabel("Step (1000hz)")
     plt.ylabel("Joint Position")
     plt.grid(True)
     plt.savefig("joint_position_plot.png")
@@ -152,7 +169,8 @@ def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--embodiment", type=str, required=True, help="embodiment")
-    parser.add_argument("--joint_id", type=int, default=1, help="joint_id")
+    parser.add_argument("--joint_id", type=int, default=0, help="joint_id")
+    parser.add_argument("--save", action="store_true", help="save to file")
     args = parser.parse_args()
 
     robot = load_embodiment(args.embodiment)
@@ -192,4 +210,4 @@ if __name__ == "__main__":
         class control:  # noqa: N801
             action_scale = 0.25
 
-    run_mujoco(Sim2simCfg(), joint_id=0)
+    run_mujoco(Sim2simCfg(), joint_id=args.joint_id, save_to_file=args.save)
