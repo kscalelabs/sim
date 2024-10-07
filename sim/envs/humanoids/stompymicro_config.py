@@ -235,7 +235,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 1500  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 300  # check for potential saves every this many iterations
