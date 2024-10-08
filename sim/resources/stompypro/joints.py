@@ -67,13 +67,11 @@ class RightLeg(Node):
     knee_pitch = "R_knee"
     ankle_pitch = "R_ankle_y"
 
-
 class LeftArm(Node):
     shoulder_pitch = "L_shoulder_y"
     shoulder_roll = "L_shoulder_z"
     shoulder_yaw = "L_shoulder_x"
     elbow_pitch = "L_elbow_x"
-
 
 class RightArm(Node):
     shoulder_pitch = "R_shoulder_y"
@@ -86,21 +84,31 @@ class Legs(Node):
     left = LeftLeg()
     right = RightLeg()
 
-
 class Arms(Node):
     left = LeftArm()
     right = RightArm()
-
 
 class Robot(Node):
     legs = Legs()
     # arms = Arms()
 
-    # NOTE: THIS IS VERY IMPORTANT FOR URDF to MJCF CONVERSION
-    collision_links: List[str] = []  # None because StompyPro feet are boxes
-
     height = 0.63
     rotation = [0.0, 0.0, 0, 1]
+
+    @classmethod
+    def isaac_to_mujoco_signs(cls) -> Dict[str, int]:
+        return {
+            Robot.legs.left.hip_pitch: 1,
+            Robot.legs.left.hip_yaw: 1,
+            Robot.legs.left.hip_roll: 1,
+            Robot.legs.left.knee_pitch: 1,
+            Robot.legs.left.ankle_pitch: 1,
+            Robot.legs.right.hip_pitch: 1,
+            Robot.legs.right.hip_yaw: 1,
+            Robot.legs.right.hip_roll: 1,
+            Robot.legs.right.knee_pitch: 1,
+            Robot.legs.right.ankle_pitch: 1,
+        }
 
     @classmethod
     def default_positions(cls) -> Dict[str, float]:
@@ -119,6 +127,15 @@ class Robot(Node):
             Robot.legs.right.hip_roll: 0.0314,
             Robot.legs.right.knee_pitch: 0.441,
             Robot.legs.right.ankle_pitch: -0.223,
+
+            # Robot.arms.left.shoulder_pitch: 0.0,
+            # Robot.arms.left.shoulder_roll: 0.0,
+            # Robot.arms.left.shoulder_yaw: 0.0,
+            # Robot.arms.left.elbow_pitch: 0.0,
+            # Robot.arms.right.shoulder_pitch: 0.0,
+            # Robot.arms.right.shoulder_roll: 0.0,
+            # Robot.arms.right.shoulder_yaw: 0.0,
+            # Robot.arms.right.elbow_pitch: 0.0,
         }
 
     # @classmethod
@@ -178,58 +195,57 @@ class Robot(Node):
             "hip_x": 150,
             "hip_z": 100,
             "knee": 150,
-            "ankle_y": 75,
-        }
-
-    @classmethod
-    def stiffness_mujoco(cls) -> Dict[str, float]:
-        return {
-            "hip_y": 120,
-            "hip_x": 60,
-            "hip_z": 60,
-            "knee": 120,
-            "ankle_y": 17,
+            "ankle_y": 50,
+            # "shoulder_y": 120,
+            # "shoulder_z": 60,
+            # "shoulder_x": 60,
+            # "elbow_x": 120,
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_y": 7,
-            "hip_x": 7,
-            "hip_z": 7,
-            "knee": 7,
-            "ankle_y": 5,
+            "hip_y": 10,
+            "hip_x": 10,
+            "hip_z": 10,
+            "knee": 10,
+            "ankle_y": 10,
+            # "shoulder_y": 10,
+            # "shoulder_z": 10,
+            # "shoulder_x": 10,
+            # "elbow_x": 10,
         }
 
-
+    # pos_limits
     @classmethod
-    def damping_mujoco(cls) -> Dict[str, float]:
+    def effort(cls) -> Dict[str, float]:
         return {
-            "hip_y": 5,
-            "hip_x": 5,
-            "hip_z": 5,
-            "knee": 5,
-            "ankle_y": 5,
+            "hip_y": 150,
+            "hip_x": 150,
+            "hip_z": 100,
+            "knee": 150,
+            "ankle_y": 50,
+            # "shoulder_y": 120,
+            # "shoulder_z": 60,
+            # "shoulder_x": 60,
+            # "elbow_x": 120,
         }
 
-    # # pos_limits
-    # @classmethod
-    # def effort(cls) -> Dict[str, float]:
-    #     return {}
-
-    # # vel_limits
-    # @classmethod
-    # def velocity(cls) -> Dict[str, float]:
-    #     return {
-    #         "hip": 5,
-    #         "knee": 5,
-    #         "ankle": 5,
-    #         "shoulder_y": 5,
-    #         "shoulder_z": 5,
-    #         "shoulder_x": 5,
-    #         "elbow_x": 5,
-    #     }
+    # vel_limits
+    @classmethod
+    def velocity(cls) -> Dict[str, float]:
+        return {
+            "hip_y": 10,
+            "hip_x": 10,
+            "hip_z": 10,
+            "knee": 10,
+            "ankle_y": 10,
+            # "shoulder_y": 10,
+            # "shoulder_z": 10,
+            # "shoulder_x": 10,
+            # "elbow_x": 10,
+        }
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
