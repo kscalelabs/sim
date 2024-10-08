@@ -15,7 +15,6 @@
 [![ruff](https://img.shields.io/badge/Linter-Ruff-red.svg?labelColor=gray)](https://github.com/charliermarsh/ruff)
 <br />
 [![Python Checks](https://github.com/kscalelabs/sim/actions/workflows/test.yml/badge.svg)](https://github.com/kscalelabs/sim/actions/workflows/test.yml)
-[![Update Stompy S3 Model](https://github.com/kscalelabs/sim/actions/workflows/update_stompy_s3.yml/badge.svg)](https://github.com/kscalelabs/sim/actions/workflows/update_stompy_s3.yml)
 
 </div>
 
@@ -71,14 +70,17 @@ make install-third-party-external
 python sim/train.py --task=stompymini --num_envs=4096 --headless
 ```
 or standing policy:
-```
+```bash
 python sim/train.py --task=stompymini_standing --num_envs=4096 --headless
 ```
 2. Run evaluation with the following command:
 ```bash
 python sim/play.py --task stompymini --sim_device cpu
 ```
-
+3. You can also run the Mujoco sim2sim example:
+```bash
+python sim/sim2sim.py --load_model examples/standing.pt --embodiment stompypro
+```
 ### Contributing
 See the [contributing guide](CONTRIBUTING.md) to get started.
 
