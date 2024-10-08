@@ -108,9 +108,6 @@ class StompyProFreeEnv(LeggedRobot):
             torch.norm(self.contact_forces[:, self.termination_contact_indices, :], dim=-1) > 1.0,
             dim=1,
         )
-        self.reset_buf |= torch.any(
-            self.rigid_state[:, self.safety_termination_contact_indices, 2] < self.cfg.safety.termination_height, dim=1
-        )
         self.reset_buf |= self.root_states[:, 2] < self.cfg.asset.termination_height
         self.time_out_buf = self.episode_length_buf > self.max_episode_length  # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
@@ -129,13 +126,13 @@ class StompyProFreeEnv(LeggedRobot):
         sin_pos_l[sin_pos_l > 0] = 0
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += sin_pos_l * scale_2
-        self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += 1 * sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
         self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] += sin_pos_r * scale_1
         self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] += sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += 1 * sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -190,9 +187,14 @@ class StompyProFreeEnv(LeggedRobot):
         )  # euler x,y
         return noise_vec
 
-    # def _compute_torques(self, actions):
-    #     # Override the default torque computation so that the actions are interpreted as torques directly.
-    #     return torch.clip(actions, -self.torque_limits, self.torque_limits)
+    def step(self, actions):
+        if self.cfg.env.use_ref_actions:
+            actions += self.ref_action
+        # dynamic randomization
+        delay = torch.rand((self.num_envs, 1), device=self.device)
+        actions = (1 - delay) * actions + delay * self.actions
+        actions += self.cfg.domain_rand.dynamic_randomization * torch.randn_like(actions) * actions
+        return super().step(actions)
 
     def compute_observations(self):
         phase = self._get_phase()
@@ -306,7 +308,7 @@ class StompyProFreeEnv(LeggedRobot):
         with the ground. The speed of the foot is calculated and scaled by the contact condition.
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
-        foot_speed_norm = torch.norm(self.rigid_state[:, self.feet_indices, 7:9], dim=2)
+        foot_speed_norm = torch.norm(self.rigid_state[:, self.feet_indices, 10:12], dim=2)
         rew = torch.sqrt(foot_speed_norm)
         rew *= contact
         return torch.sum(rew, dim=1)

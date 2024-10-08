@@ -8,10 +8,10 @@ from pathlib import Path
 from sim.scripts.create_mjcf import load_embodiment
 
 
-def update_urdf(model_path: str) -> None:
+def update_urdf(model_path: str, embodiment: str) -> None:
     tree = ET.parse(Path(model_path) / "robot.urdf")
     root = tree.getroot()
-    robot = load_embodiment()
+    robot = load_embodiment(embodiment)
     print(robot.default_standing())
     revolute_joints = set(robot.default_standing().keys())
 
@@ -53,11 +53,12 @@ def update_urdf(model_path: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Update URDF file to fix robot joints.")
     parser.add_argument(
-        "--model_path", type=str, help="Path to the model directory", default="sim/resources/stompymini"
+        "--model_path", type=str, help="Path to the model directory", default="sim/resources/stompypro"
     )
+    parser.add_argument("--embodiment", type=str, help="Embodiment to use", default="stompypro")
     args = parser.parse_args()
 
-    update_urdf(args.model_path)
+    update_urdf(args.model_path, args.embodiment)
     # create_mjcf(Path(args.model_path) / "robot")
 
 
