@@ -146,25 +146,25 @@ class StompyProCfg(LeggedRobotCfg):
     class rewards:
         # quite important to keep it right
         base_height_target = 0.63
-        min_dist = 0.25
+        min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.05  # m
-        cycle_time = 0.4  # sec # pfb30 - that should be longer and more stable
+        target_feet_height = 0.07  # m
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 400  # forces above this value are penalized
+        max_contact_force = 400  # forces above this value are penalize d
 
         class scales:
             # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.6
-            feet_contact_number = 1.5
+            joint_pos = 1.8
+            feet_clearance = 1.8
+            feet_contact_number = 1.3
             # gait
-            feet_air_time = 1.6
+            feet_air_time = 1.8
             foot_slip = -0.05
             feet_distance = 0.2
             knee_distance = 0.2
@@ -172,14 +172,14 @@ class StompyProCfg(LeggedRobotCfg):
             feet_contact_forces = -0.01
             # vel tracking
             tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.3
+            tracking_ang_vel = 1.1
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 0.2
             track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 0.5
-            orientation = 1
+            orientation = 1.2
             base_height = 0.2
             base_acc = 0.2
             # energy

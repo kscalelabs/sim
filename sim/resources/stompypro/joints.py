@@ -180,7 +180,7 @@ class Robot(Node):
             "knee": 150,
             "ankle_y": 75,
         }
-    
+
     @classmethod
     def stiffness_mujoco(cls) -> Dict[str, float]:
         return {
