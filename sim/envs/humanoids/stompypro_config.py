@@ -31,6 +31,7 @@ class StompyProCfg(LeggedRobotCfg):
         pos_limit = 1.0
         vel_limit = 1.0
         torque_limit = 0.85#0.85
+        terminate_after_contacts_on = ["base", "L_thigh", "R_thigh"]
 
     class asset(LeggedRobotCfg.asset):
         name = "stompypro"
@@ -42,8 +43,6 @@ class StompyProCfg(LeggedRobotCfg):
 
         termination_height = 0.2
         default_feet_height = 0.0
-        terminate_after_contacts_on = ["base", "L_thigh", "R_thigh"]
-        # terminate_after_contacts_on = []
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -128,6 +127,8 @@ class StompyProCfg(LeggedRobotCfg):
         max_push_vel_xy = 0.3 # 0.2
         max_push_ang_vel = 0.4
         dynamic_randomization = 0.02
+        action_noise = 0.02
+        action_delay = 0.5
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
