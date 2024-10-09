@@ -61,7 +61,7 @@ class TestHelpers(unittest.TestCase):
     @patch("os.path.exists")
     @patch("builtins.open", new_callable=mock_open)
     @patch("os.listdir")
-    def test_get_load_path(self, mock_listdir, mock_open, mock_exists, mock_makedirs) -> None:
+    def test_get_load_path(self, mock_listdir: MagicMock, mock_open: MagicMock, mock_exists: MagicMock, mock_makedirs: MagicMock) -> None:
         root = "test_runs"
         mock_exists.return_value = True
         mock_listdir.return_value = ["2023_Jan01_00-00-00", "2023_Mar15_12-30-45", "2023_Dec31_23-59-59"]
@@ -111,7 +111,7 @@ class TestHelpers(unittest.TestCase):
     @patch("os.makedirs")
     @patch("os.path.exists")
     @patch("torch.jit.save")
-    def test_export_policy_as_jit(self, mock_jit_save, mock_exists, mock_makedirs) -> None:
+    def test_export_policy_as_jit(self, mock_jit_save: MagicMock, mock_exists: MagicMock, mock_makedirs: MagicMock) -> None:
         class MockActorCritic:
             def __init__(self) -> None:
                 self.actor = torch.nn.Linear(10, 2)
@@ -126,7 +126,7 @@ class TestHelpers(unittest.TestCase):
     @patch("os.makedirs")
     @patch("os.path.exists")
     @patch("torch.onnx.export")
-    def test_export_policy_as_onnx(self, mock_onnx_export, mock_exists, mock_makedirs) -> None:
+    def test_export_policy_as_onnx(self, mock_onnx_export: MagicMock, mock_exists: MagicMock, mock_makedirs: MagicMock) -> None:
         class MockActorCritic:
             def __init__(self) -> None:
                 self.actor = torch.nn.Linear(10, 2)
