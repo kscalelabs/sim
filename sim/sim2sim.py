@@ -151,8 +151,8 @@ def run_mujoco(policy, cfg):
 
             cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
 
-            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.4)
-            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.4)
+            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / cfg.rewards.cycle_time)
+            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / cfg.rewards.cycle_time)
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
@@ -216,7 +216,7 @@ if __name__ == "__main__":
 
         class sim_config:
             sim_duration = 60.0
-            dt = 0.002
+            dt = 0.001
             decimation = 10
   
         class rewards:
@@ -224,8 +224,7 @@ if __name__ == "__main__":
 
         class robot_config:
             tau_factor = 0.85
-            # pfb30 - bring back the original setup but fix the logic or call effort to have the same logic as in the script
-            tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
+            tau_limit = np.array(list(robot.effort().values()) + list(robot.effort().values())) * tau_factor
             kps = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values()))
             kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
 
