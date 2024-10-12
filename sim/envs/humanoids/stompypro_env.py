@@ -108,9 +108,6 @@ class StompyProFreeEnv(LeggedRobot):
             torch.norm(self.contact_forces[:, self.termination_contact_indices, :], dim=-1) > 1.0,
             dim=1,
         )
-        self.reset_buf |= torch.any(
-            self.rigid_state[:, self.safety_termination_contact_indices, 2] < self.cfg.safety.termination_height, dim=1
-        )
         self.reset_buf |= self.root_states[:, 2] < self.cfg.asset.termination_height
         self.time_out_buf = self.episode_length_buf > self.max_episode_length  # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
@@ -129,13 +126,13 @@ class StompyProFreeEnv(LeggedRobot):
         sin_pos_l[sin_pos_l > 0] = 0
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += sin_pos_l * scale_2
-        self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += sin_pos_l * scale_1
+        self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += 1 * sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
         self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] += sin_pos_r * scale_1
         self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] += sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += 1 * sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -189,10 +186,6 @@ class StompyProFreeEnv(LeggedRobot):
             noise_scales.quat * self.obs_scales.quat
         )  # euler x,y
         return noise_vec
-
-    # def _compute_torques(self, actions):
-    #     # Override the default torque computation so that the actions are interpreted as torques directly.
-    #     return torch.clip(actions, -self.torque_limits, self.torque_limits)
 
     def compute_observations(self):
         phase = self._get_phase()

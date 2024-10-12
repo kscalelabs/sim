@@ -50,7 +50,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.0
+    vx = 0.5
     vy = 0.0
     dyaw = 0.0
 
@@ -151,8 +151,8 @@ def run_mujoco(policy, cfg):
 
             cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
 
-            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
-            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / 0.64)
+            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / cfg.rewards.cycle_time)
+            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / cfg.rewards.cycle_time)
             obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
             obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
             obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
@@ -184,6 +184,7 @@ def run_mujoco(policy, cfg):
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
         print(tau)
+        # breakpoint()
         data.ctrl = tau
 
         mujoco.mj_step(model, data)
@@ -217,11 +218,14 @@ if __name__ == "__main__":
             sim_duration = 60.0
             dt = 0.001
             decimation = 10
+  
+        class rewards:
+            cycle_time = 0.4
 
         class robot_config:
             tau_factor = 0.85
-            tau_limit = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values())) * tau_factor
-            kps = tau_limit
+            tau_limit = np.array(list(robot.effort().values()) + list(robot.effort().values())) * tau_factor
+            kps = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values()))
             kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
 
         class normalization:

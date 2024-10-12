@@ -15,7 +15,6 @@
 [![ruff](https://img.shields.io/badge/Linter-Ruff-red.svg?labelColor=gray)](https://github.com/charliermarsh/ruff)
 <br />
 [![Python Checks](https://github.com/kscalelabs/sim/actions/workflows/test.yml/badge.svg)](https://github.com/kscalelabs/sim/actions/workflows/test.yml)
-[![Update Stompy S3 Model](https://github.com/kscalelabs/sim/actions/workflows/update_stompy_s3.yml/badge.svg)](https://github.com/kscalelabs/sim/actions/workflows/update_stompy_s3.yml)
 
 </div>
 
