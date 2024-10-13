@@ -122,70 +122,71 @@ class Robot(Node):
         return {
             # left arm
             Robot.left_arm.shoulder_pitch: {
-                "lower": 2.04,
-                "upper": 3.06,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
             Robot.left_arm.shoulder_yaw: {
-                "lower": -1,
-                "upper": 2,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
             Robot.left_arm.elbow_pitch: {
-                "lower": -2.06,
-                "upper": -1.08,
+                "lower": -1.2217305,
+                "upper": 1.2217305,
             },
             # right arm
             Robot.right_arm.shoulder_pitch: {
-                "lower": 2.619,
-                "upper": 3.621,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
             Robot.right_arm.shoulder_yaw: {
-                "lower": -1.481,
-                "upper": 1,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
             Robot.right_arm.elbow_pitch: {
-                "lower": -3.819,
-                "upper": 3.821,
+                "lower": -1.2217305,
+                "upper": 1.2217305,
             },
+            # left leg
             Robot.legs.left.hip_pitch: {
-                "lower": -1.64,
-                "upper": 1.64,
-            },
-            Robot.legs.left.hip_roll: {
-                "lower": -4.0,
-                "upper": 1.0,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
             Robot.legs.left.hip_yaw: {
-                "lower": 2.64,
-                "upper": 5.64,
+                "lower": -1.5707963,
+                "upper": 0.087266463,
+            },
+            Robot.legs.left.hip_roll: {
+                "lower": -0.78539816,
+                "upper": 0.78539816,
             },
             Robot.legs.left.knee_pitch: {
-                "lower": -2.5,
-                "upper": 0.5,
+                "lower": -1.0471976,
+                "upper": 1.0471976,
             },
             Robot.legs.left.ankle_pitch: {
-                "lower": -0.3,
-                "upper": 0.3,
+                "lower": -1.0471976,
+                "upper": 1.0471976,
             },
             # right leg
             Robot.legs.right.hip_pitch: {
-                "lower": 0.05,
-                "upper": 4.05,
-            },
-            Robot.legs.right.hip_roll: {
-                "lower": 2.25,
-                "upper": 4.49,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
             Robot.legs.right.hip_yaw: {
-                "lower": 1.74,
-                "upper": 4.74,
+                "lower": -0.087266463,
+                "upper": 1.5707963,
+            },
+            Robot.legs.right.hip_roll: {
+                "lower": -0.78539816,
+                "upper": 0.78539816,
             },
             Robot.legs.right.knee_pitch: {
-                "lower": -0.5,
-                "upper": 2.5,
+                "lower": -1.0471976,
+                "upper": 1.0471976,
             },
             Robot.legs.right.ankle_pitch: {
-                "lower": -0.3,
-                "upper": 0.3,
+                "lower": -1.0471976,
+                "upper": 1.0471976,
             },
         }
 
