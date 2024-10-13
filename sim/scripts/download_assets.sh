@@ -26,3 +26,4 @@ rm meshes.zip
 
 # Stompymicro
 gdown --folder https://drive.google.com/drive/folders/1tBiCs3MVzJiMCei72VtVh9GD3x7Zs0XS -O sim/resources/stompymicro/
+
