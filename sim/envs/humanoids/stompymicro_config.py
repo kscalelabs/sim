@@ -37,8 +37,8 @@ class StompyMicroCfg(LeggedRobotCfg):
         name = "stompymicro"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["DRIVING_ROTOR_PLATE_14", "DRIVING_ROTOR_PLATE_13"]
-        knee_name = ["DRIVING_ROTOR_PLATE_12", "DRIVING_ROTOR_PLATE_11"]
+        foot_name = ["foot_left", "foot_right"]
+        knee_name = ["ankle_pitch_left", "ankle_pitch_right"]
 
         termination_height = 0.05
         default_feet_height = 0.01
