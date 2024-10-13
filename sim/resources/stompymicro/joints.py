@@ -89,8 +89,8 @@ class Robot(Node):
     height = 0.21
     rotation = [0, 0, 0.707, 0.707]
 
-    # left_arm = LeftArm()
-    # right_arm = RightArm()
+    left_arm = LeftArm()
+    right_arm = RightArm()
     legs = Legs()
 
     @classmethod
@@ -108,14 +108,15 @@ class Robot(Node):
             cls.legs.right.knee_pitch: 0,
             cls.legs.right.ankle_pitch: 0,
             # Arms (adjust as needed)
-            # cls.left_arm.shoulder_pitch: 0,
-            # cls.left_arm.shoulder_yaw: 0.3,
-            # cls.left_arm.elbow_pitch: -0.6,
-            # cls.right_arm.shoulder_pitch: 0,
-            # cls.right_arm.shoulder_yaw: -0.3,
-            # cls.right_arm.elbow_pitch: -0.6,
+            cls.left_arm.shoulder_pitch: 0,
+            cls.left_arm.shoulder_yaw: 0.3,
+            cls.left_arm.elbow_pitch: -0.6,
+            cls.right_arm.shoulder_pitch: 0,
+            cls.right_arm.shoulder_yaw: -0.3,
+            cls.right_arm.elbow_pitch: -0.6,
         }
 
+    # FIXME: these limits are not correct
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
@@ -197,11 +198,11 @@ class Robot(Node):
             "hip_roll": 5,
             "knee_pitch": 5,
             "ankle_pitch": 5,
-            # "shoulder_pitch": 5,
-            # "shoulder_yaw": 5,
-            # "shoulder_roll": 5,
-            # "elbow_pitch": 5,
-            # "elbow_yaw": 5,
+            "shoulder_pitch": 5,
+            "shoulder_yaw": 5,
+            "shoulder_roll": 5,
+            "elbow_pitch": 5,
+            "elbow_yaw": 5,
         }
 
     # d_gains
@@ -229,11 +230,11 @@ class Robot(Node):
             "hip_roll": 1,
             "knee_pitch": 1,
             "ankle_pitch": 1,
-            # "shoulder_pitch": 1,
-            # "shoulder_yaw": 1,
-            # "shoulder_roll": 1,
-            # "elbow_pitch": 1,
-            # "elbow_yaw": 1,
+            "shoulder_pitch": 1,
+            "shoulder_yaw": 1,
+            "shoulder_roll": 1,
+            "elbow_pitch": 1,
+            "elbow_yaw": 1,
         }
 
     # vel_limits
@@ -245,11 +246,11 @@ class Robot(Node):
             "hip_roll": 20,
             "knee_pitch": 20,
             "ankle_pitch": 20,
-            # "shoulder_pitch": 20,
-            # "shoulder_yaw": 20,
-            # "shoulder_roll": 20,
-            # "elbow_pitch": 20,
-            # "elbow_yaw": 20,
+            "shoulder_pitch": 20,
+            "shoulder_yaw": 20,
+            "shoulder_roll": 20,
+            "elbow_pitch": 20,
+            "elbow_yaw": 20,
         }
 
     @classmethod
@@ -260,8 +261,8 @@ class Robot(Node):
             "hip_roll": 0.05,
             "knee_pitch": 0.05,
             "ankle_pitch": 0.05,
-            # "elbow_yaw": 0.05,
-            # "elbow_pitch": 0.05,
+            "elbow_yaw": 0.05,
+            "elbow_pitch": 0.05,
         }
 
 
