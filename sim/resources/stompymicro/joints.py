@@ -214,11 +214,11 @@ class Robot(Node):
             "hip_roll": 0.3,
             "knee_pitch": 0.3,
             "ankle_pitch": 0.3,
-            # "shoulder_pitch": 0.3,
-            # "shoulder_yaw": 0.3,
-            # "shoulder_roll": 0.3,
-            # "elbow_pitch": 0.3,
-            # "elbow_yaw": 0.3,
+            "shoulder_pitch": 0.3,
+            "shoulder_yaw": 0.3,
+            "shoulder_roll": 0.3,
+            "elbow_pitch": 0.3,
+            "elbow_yaw": 0.3,
         }
 
     # pos_limits
