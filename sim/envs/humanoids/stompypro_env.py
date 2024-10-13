@@ -430,6 +430,7 @@ class StompyProFreeEnv(LeggedRobot):
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
 
         # Get the z-position of the feet and compute the change in z-position
+
         feet_z = self.rigid_state[:, self.feet_indices, 2] - self.cfg.asset.default_feet_height
         delta_z = feet_z - self.last_feet_z
         self.feet_height += delta_z

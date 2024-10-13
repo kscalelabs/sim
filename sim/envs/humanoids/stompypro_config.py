@@ -42,7 +42,7 @@ class StompyProCfg(LeggedRobotCfg):
         knee_name = ["L_calf", "R_calf"]
 
         termination_height = 0.2
-        default_feet_height = 0.0
+        default_feet_height = 0.05
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -124,7 +124,7 @@ class StompyProCfg(LeggedRobotCfg):
         added_mass_range = [-1.0, 1.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.3 # 0.2
+        max_push_vel_xy = 0.3g
         max_push_ang_vel = 0.4
         # dynamic randomization
         action_noise = 0.02
@@ -140,7 +140,7 @@ class StompyProCfg(LeggedRobotCfg):
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
             lin_vel_y = [-0.3, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-0.14, 0.14]
+            heading = [-3.14, 3.14]
 
     # a - normal
     # b - negate target_join_pos_scale (-0.14)
@@ -151,7 +151,7 @@ class StompyProCfg(LeggedRobotCfg):
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.06  # m
+        target_feet_height = 0.1  # m
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
@@ -220,7 +220,7 @@ class StompyProStandingCfg(StompyProCfg):
         max_dist = 0.4
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.14  # rad
-        target_feet_height = 0.05  # m
+        target_feet_height = 0.09  # m
         cycle_time = 0.5  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
