@@ -50,7 +50,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.6
+    vx = 0.7
     vy = 0.0
     dyaw = 0.0
 
@@ -225,7 +225,7 @@ if __name__ == "__main__":
         class robot_config:
             tau_factor = 0.85
             # pfb30 - bring back the original setup but fix the logic or call effort to have the same logic as in the script
-            tau_limit = np.array(list(robot.effort().values()) + list(robot.effort().values())) * tau_factor
+            tau_limit = np.ones(len(robot.stiffness()) + len(robot.stiffness())) *300 * tau_factor
             kps = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values()))
             kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
 
