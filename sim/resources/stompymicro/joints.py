@@ -107,16 +107,16 @@ class Robot(Node):
             cls.legs.right.hip_roll: 0,
             cls.legs.right.knee_pitch: 0,
             cls.legs.right.ankle_pitch: 0,
-            # Arms (adjust as needed)
+
+            # Arms
             cls.left_arm.shoulder_pitch: 0,
-            cls.left_arm.shoulder_yaw: 0.3,
-            cls.left_arm.elbow_pitch: -0.6,
+            cls.left_arm.shoulder_yaw: 0,
+            cls.left_arm.elbow_pitch: 0,
             cls.right_arm.shoulder_pitch: 0,
-            cls.right_arm.shoulder_yaw: -0.3,
-            cls.right_arm.elbow_pitch: -0.6,
+            cls.right_arm.shoulder_yaw: 0,
+            cls.right_arm.elbow_pitch: 0,
         }
 
-    # FIXME: these limits are not correct
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
