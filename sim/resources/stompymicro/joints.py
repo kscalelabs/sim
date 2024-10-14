@@ -89,8 +89,8 @@ class Robot(Node):
     height = 0.31
     rotation = [0, 0, 0.707, 0.707]
 
-    left_arm = LeftArm()
-    right_arm = RightArm()
+    # left_arm = LeftArm()
+    # right_arm = RightArm()
     legs = Legs()
 
     @classmethod
@@ -108,13 +108,14 @@ class Robot(Node):
             cls.legs.right.knee_pitch: 0,
             cls.legs.right.ankle_pitch: 0,
 
+            # TODO: fixing this for debugging
             # Arms
-            cls.left_arm.shoulder_pitch: 0,
-            cls.left_arm.shoulder_yaw: 0,
-            cls.left_arm.elbow_pitch: 0,
-            cls.right_arm.shoulder_pitch: 0,
-            cls.right_arm.shoulder_yaw: 0,
-            cls.right_arm.elbow_pitch: 0,
+            # cls.left_arm.shoulder_pitch: 0,
+            # cls.left_arm.shoulder_yaw: 0,
+            # cls.left_arm.elbow_pitch: 0,
+            # cls.right_arm.shoulder_pitch: 0,
+            # cls.right_arm.shoulder_yaw: 0,
+            # cls.right_arm.elbow_pitch: 0,
         }
 
     @classmethod
