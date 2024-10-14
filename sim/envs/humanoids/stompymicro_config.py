@@ -190,7 +190,7 @@ class StompyMicroCfg(LeggedRobotCfg):
                 track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 0.01
+            default_joint_pos = 1.0
             orientation = 1
             base_height = 0.2
             base_acc = 0.2
