@@ -6,7 +6,7 @@
       <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
       </inertial>
     </link>
-  <joint name="floating_base" type="fixed" dont_collapse="true">
+  <joint name="floating_base" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0.0" />
     <parent link="base" />
     <child link="trunk" />
@@ -292,7 +292,7 @@
         </geometry>
       </collision>
     </link>
-  <joint name="L_shoulder_y" type="fixed" dont_collapse="true">
+  <joint name="L_shoulder_y" type="fixed">
     <origin rpy="0 0 0" xyz="0 0.255 0.45" />
     <parent link="trunk" />
     <child link="L_clav" />
@@ -319,7 +319,7 @@
         </geometry>
       </collision>
     </link>
-  <joint name="L_shoulder_x" type="fixed" dont_collapse="true">
+  <joint name="L_shoulder_x" type="fixed">
     <origin rpy="0.0 0.0 0.0" xyz="0 0 0" />
     <parent link="L_clav" />
     <child link="L_scapula" />
@@ -344,7 +344,7 @@
         </geometry>
       </collision>
     </link>
-  <joint name="L_shoulder_z" type="fixed" dont_collapse="true">
+  <joint name="L_shoulder_z" type="fixed">
     <origin rpy="0.0 0.0 0.0" xyz="0 0 0" />
     <parent link="L_scapula" />
     <child link="L_uarm" />
@@ -369,7 +369,7 @@
         </geometry>
       </collision>
     </link>
-  <joint name="L_elbow_x" type="fixed" dont_collapse="true">
+  <joint name="L_elbow_x" type="fixed">
     <origin rpy="0.0 0.0 0.0" xyz="0 0 -0.23" />
     <parent link="L_uarm" />
     <child link="L_farm" />
@@ -394,7 +394,7 @@
         </geometry>
       </collision>
     </link>
-  <joint name="R_shoulder_y" type="fixed" dont_collapse="true">
+  <joint name="R_shoulder_y" type="fixed">
     <origin rpy="0 0 0" xyz="0 -0.255 0.45" />
     <parent link="trunk" />
     <child link="R_clav" />
@@ -421,7 +421,7 @@
         </geometry>
       </collision>
     </link>
-  <joint name="R_shoulder_x" type="fixed" dont_collapse="true">
+  <joint name="R_shoulder_x" type="fixed">
     <origin rpy="0.0 0.0 0.0" xyz="0 0 0" />
     <parent link="R_clav" />
     <child link="R_scapula" />
@@ -446,7 +446,7 @@
         </geometry>
       </collision>
     </link>
-  <joint name="R_shoulder_z" type="fixed" dont_collapse="true">
+  <joint name="R_shoulder_z" type="fixed">
     <origin rpy="0.0 0.0 0.0" xyz="0 0 0" />
     <parent link="R_scapula" />
     <child link="R_uarm" />
@@ -471,7 +471,7 @@
         </geometry>
       </collision>
     </link>
-  <joint name="R_elbow_x" type="fixed" dont_collapse="true">
+  <joint name="R_elbow_x" type="fixed">
     <origin rpy="0.0 0.0 0.0" xyz="0 0 -0.23" />
     <parent link="R_uarm" />
     <child link="R_farm" />

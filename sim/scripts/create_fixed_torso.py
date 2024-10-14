@@ -11,7 +11,7 @@ from sim.scripts.create_mjcf import load_embodiment
 def update_urdf(model_path: str) -> None:
     tree = ET.parse(Path(model_path) / "robot.urdf")
     root = tree.getroot()
-    robot = load_embodiment()
+    robot = load_embodiment("stompypro")
     print(robot.default_standing())
     revolute_joints = set(robot.default_standing().keys())
 

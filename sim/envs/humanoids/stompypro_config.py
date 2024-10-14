@@ -26,11 +26,11 @@ class StompyProCfg(LeggedRobotCfg):
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
-    class safety:
+    class safety(LeggedRobotCfg.safety):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 0.85#0.85
+        torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
         name = "stompypro"
@@ -128,6 +128,8 @@ class StompyProCfg(LeggedRobotCfg):
         max_push_vel_xy = 0.3 # 0.2
         max_push_ang_vel = 0.4
         dynamic_randomization = 0.02
+        action_noise = 0.02
+        action_delay = 0.5
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -206,6 +208,10 @@ class StompyProCfg(LeggedRobotCfg):
         pos = [4, -4, 2]
         lookat = [0, -2, 0]
 
+
+class StompyProStandingCfg(StompyProCfg):
+    class init_state(StompyProCfg.init_state):
+        default_positions = Robot.default_standing()
 
 class StompyProCfgPPO(LeggedRobotCfgPPO):
     seed = 5
