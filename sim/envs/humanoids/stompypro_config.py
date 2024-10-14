@@ -124,7 +124,7 @@ class StompyProCfg(LeggedRobotCfg):
         added_mass_range = [-1.0, 1.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.3g
+        max_push_vel_xy = 0.3
         max_push_ang_vel = 0.4
         # dynamic randomization
         action_noise = 0.02
