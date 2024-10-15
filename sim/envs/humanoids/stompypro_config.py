@@ -1,4 +1,4 @@
-"""Defines the environment configuration for the walking task"""
+"""Defines the environment configuration for the Getting up task"""
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
@@ -42,7 +42,6 @@ class StompyProCfg(LeggedRobotCfg):
 
         termination_height = 0.2
         default_feet_height = 0.0
-        terminate_after_contacts_on = ["base", "L_thigh", "R_thigh"]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -151,7 +150,8 @@ class StompyProCfg(LeggedRobotCfg):
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.05  # m
+        target_feet_height = 0.06  # m
+
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
@@ -190,6 +190,24 @@ class StompyProCfg(LeggedRobotCfg):
             dof_acc = -1e-7
             collision = -1.0
 
+            # reference motion tracking
+            joint_pos = 1.6
+            feet_clearance = 1.6
+            feet_contact_number = 1.2
+            # gait
+            feet_air_time = 1.6
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
+            # contact
+            feet_contact_forces = -0.01
+            # vel tracking
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5
+
     class normalization:
         class obs_scales:
             lin_vel = 2.0
@@ -209,8 +227,38 @@ class StompyProCfg(LeggedRobotCfg):
 
 
 class StompyProStandingCfg(StompyProCfg):
-    class init_state(StompyProCfg.init_state):
-        default_positions = Robot.default_standing()
+    """Configuration class for the Stompy Pro humanoid robot."""
+
+    # a - normal
+    # b - negate target_join_pos_scale (-0.14)
+    class rewards:
+        # quite important to keep it right
+        base_height_target = 0.63
+        min_dist = 0.2
+        max_dist = 0.4
+        # put some settings here for LLM parameter tuning
+        target_joint_pos_scale = 0.14  # rad
+        target_feet_height = 0.05  # m
+        cycle_time = 0.5  # sec
+        # if true negative total rewards are clipped at zero (avoids early termination problems)
+        only_positive_rewards = True
+        # tracking reward = exp(error*sigma)
+        tracking_sigma = 5
+        max_contact_force = 500  # forces above this value are penalized
+
+        class scales:
+            # base pos
+            default_joint_pos = 1.0
+            orientation = 1
+            base_height = 0.2
+            base_acc = 0.2
+            # energy
+            action_smoothness = -0.002
+            torques = -1e-5
+            dof_vel = -5e-4
+            dof_acc = -1e-7
+            collision = -1.0
+
 
 class StompyProCfgPPO(LeggedRobotCfgPPO):
     seed = 5

@@ -12,7 +12,7 @@ NUM_JOINTS = len(Robot.all_joints())  # 20
 
 class StompyMicroCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
-    
+
     class env(LeggedRobotCfg.env):
         # change the observation dim
         frame_stack = 15
@@ -48,7 +48,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             "DRIVING_ROTOR_PLATE_3",
             "DRIVING_ROTOR_PLATE_4",
             "DRIVING_ROTOR_PLATE_7",
-            "DRIVING_ROTOR_PLATE_8"
+            "DRIVING_ROTOR_PLATE_8",
         ]
 
         penalize_contacts_on = []
@@ -75,21 +75,19 @@ class StompyMicroCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = False # pfb30 bring it back
+        add_noise = True
         noise_level = 0.6  # scales other values
 
-        class noise_scales: # pfb30 bring it back
-            dof_pos = 0.01
-            dof_vel = 0.01
-            ang_vel = 0.01
-            lin_vel = 0.01
+        class noise_scales:
+            dof_pos = 0.05
+            dof_vel = 0.5
+            ang_vel = 0.1
+            lin_vel = 0.05
             quat = 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height]  # add z value to lift the robot
-        # setting the right rotation
-        # quat_from_euler_xyz(torch.tensor(1.57), torch.tensor(0), torch.tensor(-1.57))
+        pos = [0.0, 0.0, Robot.height]
         rot = Robot.rotation
 
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
@@ -105,7 +103,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 4  # 250hz
+        decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -127,13 +125,13 @@ class StompyMicroCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.01
-        randomize_friction = False
+        start_pos_noise = 0.1
+        randomize_friction = True
         friction_range = [0.1, 2.0]
 
-        randomize_base_mass = False #True
-        added_mass_range = [-1.0, 1.0]
-        push_robots = False #True
+        randomize_base_mass = True  # True
+        added_mass_range = [-0.05, 0.05]
+        push_robots = False  # True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -170,21 +168,21 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         class scales:
             # # reference motion tracking
-            # joint_pos = 1.6
-            # feet_clearance = 1.6
-            # feet_contact_number = 1.2
-            # feet_air_time = 1.6
-            # foot_slip = -0.05
-            # feet_distance = 0.2
-            # knee_distance = 0.2
-            # # contact
-            # feet_contact_forces = -0.01
-            # # vel tracking
-            # tracking_lin_vel = 1.2
-            # tracking_ang_vel = 1.1
-            # vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            # low_speed = 0.2
-            # track_vel_hard = 0.5
+            joint_pos = 1.6
+            feet_clearance = 1.2
+            feet_contact_number = 1.2
+            feet_air_time = 1.2
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
+            # contact
+            feet_contact_forces = -0.01
+            # vel tracking
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 0.5

@@ -67,13 +67,11 @@ class RightLeg(Node):
     knee_pitch = "R_knee"
     ankle_pitch = "R_ankle_y"
 
-
 class LeftArm(Node):
     shoulder_pitch = "L_shoulder_y"
     shoulder_roll = "L_shoulder_z"
     shoulder_yaw = "L_shoulder_x"
     elbow_pitch = "L_elbow_x"
-
 
 class RightArm(Node):
     shoulder_pitch = "R_shoulder_y"
@@ -86,21 +84,31 @@ class Legs(Node):
     left = LeftLeg()
     right = RightLeg()
 
-
 class Arms(Node):
     left = LeftArm()
     right = RightArm()
-
 
 class Robot(Node):
     legs = Legs()
     # arms = Arms()
 
-    # NOTE: THIS IS VERY IMPORTANT FOR URDF to MJCF CONVERSION
-    collision_links: List[str] = []  # None because StompyPro feet are boxes
-
     height = 0.63
     rotation = [0.0, 0.0, 0, 1]
+
+    @classmethod
+    def isaac_to_mujoco_signs(cls) -> Dict[str, int]:
+        return {
+            Robot.legs.left.hip_pitch: 1,
+            Robot.legs.left.hip_yaw: 1,
+            Robot.legs.left.hip_roll: 1,
+            Robot.legs.left.knee_pitch: 1,
+            Robot.legs.left.ankle_pitch: 1,
+            Robot.legs.right.hip_pitch: 1,
+            Robot.legs.right.hip_yaw: 1,
+            Robot.legs.right.hip_roll: 1,
+            Robot.legs.right.knee_pitch: 1,
+            Robot.legs.right.ankle_pitch: 1,
+        }
 
     @classmethod
     def default_positions(cls) -> Dict[str, float]:
