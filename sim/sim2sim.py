@@ -50,7 +50,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.4
+    vx = 0.5
     vy = 0.0
     dyaw = 0.0
 
