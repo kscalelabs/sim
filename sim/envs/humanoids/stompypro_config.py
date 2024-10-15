@@ -150,7 +150,7 @@ class StompyProCfg(LeggedRobotCfg):
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.14  # rad
+        target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.05  # m
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
