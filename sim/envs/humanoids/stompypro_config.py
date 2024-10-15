@@ -99,7 +99,7 @@ class StompyProCfg(LeggedRobotCfg):
         decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
-        dt = 0.002  # 1000 Hz
+        dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
 
