@@ -122,10 +122,10 @@ class StompyProCfg(LeggedRobotCfg):
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-1.0, 1.0]
+        added_mass_range = [-3.0, 3.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.3 # 0.2
+        max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
         dynamic_randomization = 0.02
         action_noise = 0.02
@@ -141,7 +141,7 @@ class StompyProCfg(LeggedRobotCfg):
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
             lin_vel_y = [-0.3, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-0.14, 0.14]
+            heading = [-3.14, 3.14]
 
     # a - normal
     # b - negate target_join_pos_scale (-0.14)
