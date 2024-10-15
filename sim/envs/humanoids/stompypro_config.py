@@ -1,4 +1,4 @@
-"""Defines the environment configuration for the Getting up task"""
+"""Defines the environment configuration for the walking task"""
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
@@ -43,7 +43,6 @@ class StompyProCfg(LeggedRobotCfg):
         termination_height = 0.2
         default_feet_height = 0.0
         terminate_after_contacts_on = ["base", "L_thigh", "R_thigh"]
-        # terminate_after_contacts_on = []
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -122,12 +121,12 @@ class StompyProCfg(LeggedRobotCfg):
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-3.0, 3.0]
+        added_mass_range = [-5.0, 5.0]
         push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
-        dynamic_randomization = 0.02
+        # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
 
@@ -148,12 +147,12 @@ class StompyProCfg(LeggedRobotCfg):
     class rewards:
         # quite important to keep it right
         base_height_target = 0.63
-        min_dist = 0.25
+        min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.17  # rad
+        target_joint_pos_scale = 0.14  # rad
         target_feet_height = 0.05  # m
-        cycle_time = 0.4  # sec # pfb30 - that should be longer and more stable
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -234,7 +233,7 @@ class StompyProCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 8001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
