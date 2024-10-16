@@ -50,7 +50,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.5
+    vx = 0.4
     vy = 0.0
     dyaw = 0.0
 
@@ -184,7 +184,7 @@ def run_mujoco(policy, cfg):
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
         print(tau)
-        # breakpoint()
+
         data.ctrl = tau
 
         mujoco.mj_step(model, data)
@@ -223,7 +223,7 @@ if __name__ == "__main__":
             cycle_time = 0.4
 
         class robot_config:
-            tau_factor = 0.85
+            tau_factor = 2
             tau_limit = np.array(list(robot.effort().values()) + list(robot.effort().values())) * tau_factor
             kps = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values()))
             kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))

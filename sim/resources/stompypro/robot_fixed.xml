@@ -140,16 +140,16 @@
     </body>
   </worldbody>
   <actuator>
-    <motor name="L_hip_y" joint="L_hip_y" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="L_hip_x" joint="L_hip_x" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="L_hip_z" joint="L_hip_z" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="L_knee" joint="L_knee" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="L_ankle_y" joint="L_ankle_y" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="R_hip_y" joint="R_hip_y" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="R_hip_x" joint="R_hip_x" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="R_hip_z" joint="R_hip_z" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="R_knee" joint="R_knee" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
-    <motor name="R_ankle_y" joint="R_ankle_y" ctrllimited="true" ctrlrange="-1000.0 1000.0" gear="1"/>
+    <motor name="L_hip_y" joint="L_hip_y" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="L_hip_x" joint="L_hip_x" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="L_hip_z" joint="L_hip_z" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="L_knee" joint="L_knee" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="L_ankle_y" joint="L_ankle_y" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="R_hip_y" joint="R_hip_y" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="R_hip_x" joint="R_hip_x" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="R_hip_z" joint="R_hip_z" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="R_knee" joint="R_knee" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
+    <motor name="R_ankle_y" joint="R_ankle_y" ctrllimited="true" ctrlrange="-200.0 200.0" gear="1"/>
   </actuator>
   <sensor>
     <actuatorpos name="L_hip_y_p" actuator="L_hip_y" user="13"/>
@@ -186,6 +186,6 @@
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9"/>
   </sensor>
   <keyframe>
-    <key name="default" qpos="0 0 0.63 1 0.0 0.0 0 -0.157 0.0394 0.0628 0.441 -0.258 -0.22 0.026 0.0314 0.441 -0.223"/>
+        <key name="default" qpos="0 0 0.63 0. 0.0 0.0 1.0 -0.23 0.0 0.0 0.441 -0.258 -0.23 0.0 0.0 0.441 -0.258"/>
   </keyframe>
 </mujoco>

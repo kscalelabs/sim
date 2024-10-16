@@ -117,25 +117,16 @@ class Robot(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            Robot.legs.left.hip_pitch: -0.157,
-            Robot.legs.left.hip_yaw: 0.0394,
-            Robot.legs.left.hip_roll: 0.0628,
+            Robot.legs.left.hip_pitch: -0.23,
+            Robot.legs.left.hip_yaw: 0.0,
+            Robot.legs.left.hip_roll: 0.0 ,
             Robot.legs.left.knee_pitch: 0.441,
             Robot.legs.left.ankle_pitch: -0.258,
-            Robot.legs.right.hip_pitch: -0.22,
-            Robot.legs.right.hip_yaw: 0.026,
-            Robot.legs.right.hip_roll: 0.0314,
+            Robot.legs.right.hip_pitch: -0.23,
+            Robot.legs.right.hip_yaw: 0.0,
+            Robot.legs.right.hip_roll: 0.0,
             Robot.legs.right.knee_pitch: 0.441,
-            Robot.legs.right.ankle_pitch: -0.223,
-
-            # Robot.arms.left.shoulder_pitch: 0.0,
-            # Robot.arms.left.shoulder_roll: 0.0,
-            # Robot.arms.left.shoulder_yaw: 0.0,
-            # Robot.arms.left.elbow_pitch: 0.0,
-            # Robot.arms.right.shoulder_pitch: 0.0,
-            # Robot.arms.right.shoulder_roll: 0.0,
-            # Robot.arms.right.shoulder_yaw: 0.0,
-            # Robot.arms.right.elbow_pitch: 0.0,
+            Robot.legs.right.ankle_pitch: -0.258,
         }
 
     @classmethod
@@ -146,17 +137,13 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_y": 150,
-            "hip_x": 150,
-            "hip_z": 100,
-            "knee": 150,
-            "ankle_y": 25,
-            # "shoulder_y": 120,
-            # "shoulder_z": 60,
-            # "shoulder_x": 60,
-            # "elbow_x": 120,
+            "hip_y": 300,
+            "hip_x": 200,
+            "hip_z": 200,
+            "knee": 300,
+            "ankle_y": 300,
         }
-
+    
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
@@ -166,40 +153,26 @@ class Robot(Node):
             "hip_z": 10,
             "knee": 10,
             "ankle_y": 10,
-            # "shoulder_y": 10,
-            # "shoulder_z": 10,
-            # "shoulder_x": 10,
-            # "elbow_x": 10,
         }
 
-    # pos_limits
+    # # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_y": 150,
-            "hip_x": 150,
+            "hip_y": 250,
+            "hip_x": 100,
             "hip_z": 100,
-            "knee": 150,
-            "ankle_y": 25,
-            # "shoulder_y": 120,
-            # "shoulder_z": 60,
-            # "shoulder_x": 60,
-            # "elbow_x": 120,
+            "knee": 250,
+            "ankle_y": 17,
         }
 
-    # vel_limits
+    # # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "hip_y": 10,
-            "hip_x": 10,
-            "hip_z": 10,
+            "hip": 10,
             "knee": 10,
-            "ankle_y": 10,
-            # "shoulder_y": 10,
-            # "shoulder_z": 10,
-            # "shoulder_x": 10,
-            # "elbow_x": 10,
+            "ankle": 10
         }
 
     @classmethod
@@ -207,7 +180,7 @@ class Robot(Node):
         return {
             "hip": 0,
             "knee": 0,
-            "ankle": 0,
+            "ankle": 0.01,
         }
 
 

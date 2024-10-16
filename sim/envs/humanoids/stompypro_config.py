@@ -26,12 +26,11 @@ class StompyProCfg(LeggedRobotCfg):
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
-    class safety:
+    class safety(LeggedRobotCfg.safety):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 0.85#0.85
-        terminate_after_contacts_on = ["base", "L_thigh", "R_thigh"]
+        torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
         name = "stompypro"
@@ -121,10 +120,10 @@ class StompyProCfg(LeggedRobotCfg):
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-1.0, 1.0]
+        added_mass_range = [-5.0, 5.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.3 # 0.2
+        max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
         # dynamic randomization
         action_noise = 0.02
@@ -140,7 +139,7 @@ class StompyProCfg(LeggedRobotCfg):
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
             lin_vel_y = [-0.3, 0.3]  # min max [m/s]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
-            heading = [-0.14, 0.14]
+            heading = [-3.14, 3.14]
 
     # a - normal
     # b - negate target_join_pos_scale (-0.14)
@@ -152,18 +151,37 @@ class StompyProCfg(LeggedRobotCfg):
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.06  # m
+
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 400  # forces above this value are penalize d
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
+            # reference motion tracking
+            joint_pos = 1.6
+            feet_clearance = 1.6
+            feet_contact_number = 1.5
+            # gait
+            feet_air_time = 1.6
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
+            # contact
+            feet_contact_forces = -0.01
+            # vel tracking
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.3
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.2
+            track_vel_hard = 0.5
+
             # base pos
             default_joint_pos = 0.5
-            orientation = 1.2
-            base_height = 0.4
+            orientation = 1
+            base_height = 0.2
             base_acc = 0.2
             # energy
             action_smoothness = -0.002
@@ -240,6 +258,7 @@ class StompyProStandingCfg(StompyProCfg):
             dof_vel = -5e-4
             dof_acc = -1e-7
             collision = -1.0
+
 
 class StompyProCfgPPO(LeggedRobotCfgPPO):
     seed = 5
