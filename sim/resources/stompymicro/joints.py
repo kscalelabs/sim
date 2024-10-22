@@ -200,11 +200,11 @@ class Robot(Node):
             "hip_roll": 5,
             "knee_pitch": 5,
             "ankle_pitch": 5,
-            "shoulder_pitch": 5,
-            "shoulder_yaw": 5,
-            "shoulder_roll": 5,
-            "elbow_pitch": 5,
-            "elbow_yaw": 5,
+            # "shoulder_pitch": 5,
+            # "shoulder_yaw": 5,
+            # "shoulder_roll": 5,
+            # "elbow_pitch": 5,
+            # "elbow_yaw": 5,
         }
 
     # d_gains
@@ -216,11 +216,11 @@ class Robot(Node):
             "hip_roll": 0.3,
             "knee_pitch": 0.3,
             "ankle_pitch": 0.3,
-            "shoulder_pitch": 0.3,
-            "shoulder_yaw": 0.3,
-            "shoulder_roll": 0.3,
-            "elbow_pitch": 0.3,
-            "elbow_yaw": 0.3,
+            # "shoulder_pitch": 0.3,
+            # "shoulder_yaw": 0.3,
+            # "shoulder_roll": 0.3,
+            # "elbow_pitch": 0.3,
+            # "elbow_yaw": 0.3,
         }
 
     # pos_limits
@@ -232,11 +232,11 @@ class Robot(Node):
             "hip_roll": 1,
             "knee_pitch": 1,
             "ankle_pitch": 1,
-            "shoulder_pitch": 1,
-            "shoulder_yaw": 1,
-            "shoulder_roll": 1,
-            "elbow_pitch": 1,
-            "elbow_yaw": 1,
+            # "shoulder_pitch": 1,
+            # "shoulder_yaw": 1,
+            # "shoulder_roll": 1,
+            # "elbow_pitch": 1,
+            # "elbow_yaw": 1,
         }
 
     # vel_limits
@@ -248,23 +248,25 @@ class Robot(Node):
             "hip_roll": 10,
             "knee_pitch": 10,
             "ankle_pitch": 10,
-            "shoulder_pitch": 10,
-            "shoulder_yaw": 10,
-            "shoulder_roll": 10,
-            "elbow_pitch": 10,
-            "elbow_yaw": 10,
+            # "shoulder_pitch": 10,
+            # "shoulder_yaw": 10,
+            # "shoulder_roll": 10,
+            # "elbow_pitch": 10,
+            # "elbow_yaw": 10,
         }
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
+            # pfb30 todo
             "hip_pitch": 0.05,
             "hip_yaw": 0.05,
             "hip_roll": 0.05,
             "knee_pitch": 0.05,
             "ankle_pitch": 0.05,
-            "elbow_yaw": 0.05,
-            "elbow_pitch": 0.05,
+            # "ankle_pitch": 0.05,
+            # "elbow_yaw": 0.05,
+            # "elbow_pitch": 0.05,
         }
 
 
