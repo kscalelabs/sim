@@ -128,13 +128,12 @@ class StompyMicroCfg(LeggedRobotCfg):
         start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
-
         randomize_base_mass = True  # True
-        added_mass_range = [-0.05, 0.05]
+        added_mass_range = [-0.1, 0.1]
         push_robots = False  # True
         push_interval_s = 4
-        max_push_vel_xy = 0.2
-        max_push_ang_vel = 0.4
+        max_push_vel_xy = 0.05
+        max_push_ang_vel = 0.3
         # dynamic randomization
         action_delay = 0.5
         action_noise = 0.02
