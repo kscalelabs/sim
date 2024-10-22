@@ -17,6 +17,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 
 from sim.scripts.create_mjcf import load_embodiment
+from csv import writer
 
 import torch  # isort: skip
 
@@ -85,6 +86,10 @@ def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa:
     data = mujoco.MjData(model)
     joint_names = [model.joint(joint_id).name for joint_id in range(model.njnt)]
     print("Joint names:", joint_names)
+    
+    f = open('obs.csv', 'w')
+    w = writer(f, delimiter=',')
+    w.writerow(['target_pos_real', 'target_pos_sim', 'pos_sim'])
 
     try:
         data.qpos = model.keyframe("default").qpos
@@ -115,15 +120,17 @@ def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa:
         q = q[-cfg.num_actions :]
         dq = dq[-cfg.num_actions :]
 
-        sin_pos = torch.tensor(math.sin(2 * math.pi * step * dt / cfg.sim_config.cycle_time))
+        # sin_pos = torch.tensor(math.sin(2 * math.pi * step * dt / cfg.sim_config.cycle_time))
+        sin_pos = (torch.tensor(math.sin(2 * math.pi * (step + 1880) * dt / cfg.sim_config.cycle_time)) + 1) / 2
 
         # N hz control loop
         if step % cfg.sim_config.decimation == 0:
-            target_q = default
             target_q[joint_id] = sin_pos
+            w.writerow([int(target_q[joint_id] * 1024 + 1024), target_q[joint_id], q[joint_id]])
+            print(int(target_q[joint_id] * 1024 + 1024), ',', target_q[joint_id], q[joint_id])
 
         time_data.append(step)
-        position_data.append(q[joint_id] - default[joint_id])
+        position_data.append(q[joint_id])
 
         # Generate PD control
         tau = pd_control(target_q, q, cfg.robot_config.kps, default, dq, cfg.robot_config.kds, default)  # Calc torques
@@ -136,6 +143,7 @@ def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa:
         step += 1
         viewer.render()
 
+    f.close()
     # Create the plot
     plt.figure(figsize=(10, 6))
     plt.plot(time_data, position_data)
@@ -171,7 +179,7 @@ if __name__ == "__main__":
             sim_duration = 60.0
             dt = 0.001
             decimation = 20
-            cycle_time = 0.64
+            cycle_time = 2.5
 
         class robot_config:  # noqa: N801
             tau_factor = 0.85
@@ -192,4 +200,4 @@ if __name__ == "__main__":
         class control:  # noqa: N801
             action_scale = 0.25
 
-    run_mujoco(Sim2simCfg(), joint_id=0)
+    run_mujoco(Sim2simCfg(), joint_id=0, steps=1000*20)

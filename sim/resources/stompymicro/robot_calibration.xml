@@ -39,7 +39,7 @@
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false"/>
 
-    <body name="torso" pos="0 0 0.2" quat="0.0 0.0 0 1">
+    <body name="torso" pos="0 0 0.4" quat="0.0 0.0 0 1">
       <!-- <joint type="free" name="root_joint"/> -->
 
       <geom type="mesh" mesh="Base_Motor_Mount_List_cGDi0X0HPtm1lf=Default" class="visualgeom"/>
@@ -145,16 +145,16 @@
     <actuatorvel name="right_ankle_pitch_v" actuator="right_ankle_pitch_motor" user="13"/>
 
     <!-- Actuator Force Sensors -->
-    <actuatorfrc name="left_hip_pitch_f" actuator="left_hip_pitch_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="right_hip_pitch_f" actuator="right_hip_pitch_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="left_hip_yaw_f" actuator="left_hip_yaw_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="right_hip_yaw_f" actuator="right_hip_yaw_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="left_hip_roll_f" actuator="left_hip_roll_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="right_hip_roll_f" actuator="right_hip_roll_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="left_knee_pitch_f" actuator="left_knee_pitch_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="right_knee_pitch_f" actuator="right_knee_pitch_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="left_ankle_pitch_f" actuator="left_ankle_pitch_motor" user="13" noise="0.001"/>
-    <actuatorfrc name="right_ankle_pitch_f" actuator="right_ankle_pitch_motor" user="13" noise="0.001"/>
+    <actuatorfrc name="left_hip_pitch_f" actuator="left_hip_pitch_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="right_hip_pitch_f" actuator="right_hip_pitch_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="left_hip_yaw_f" actuator="left_hip_yaw_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="right_hip_yaw_f" actuator="right_hip_yaw_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="left_hip_roll_f" actuator="left_hip_roll_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="right_hip_roll_f" actuator="right_hip_roll_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="left_knee_pitch_f" actuator="left_knee_pitch_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="right_knee_pitch_f" actuator="right_knee_pitch_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="left_ankle_pitch_f" actuator="left_ankle_pitch_motor" user="13" noise="0.000"/>
+    <actuatorfrc name="right_ankle_pitch_f" actuator="right_ankle_pitch_motor" user="13" noise="0.000"/>
 
     <!-- Attach sensors to the torso body -->
     <framequat name="orientation" objtype="site" noise="0.001" objname="imu"/>
