@@ -51,7 +51,7 @@ import torch  # isort: skip
 
 
 class cmd:
-    vx = 0.0
+    vx = 0.4
     vy = 0.0
     dyaw = 0.0
 
@@ -148,7 +148,7 @@ def run_mujoco(policy, cfg):
             obs = np.zeros([1, cfg.env.num_single_obs], dtype=np.float32)
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
-            print(eu_ang)
+
             cur_pos_obs = (q - default) * cfg.normalization.obs_scales.dof_pos
 
             cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
@@ -185,7 +185,7 @@ def run_mujoco(policy, cfg):
         )  # Calc torques
 
         tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
-        # print(tau)
+        print(tau)
 
         data.ctrl = tau
 
@@ -222,10 +222,10 @@ if __name__ == "__main__":
             decimation = 10
   
         class rewards:
-            cycle_time = 0.2
+            cycle_time = 0.4
 
         class robot_config:
-            tau_factor = 10
+            tau_factor = 2
             tau_limit = np.array(list(robot.effort().values()) + list(robot.effort().values())) * tau_factor
             kps = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values()))
             kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
