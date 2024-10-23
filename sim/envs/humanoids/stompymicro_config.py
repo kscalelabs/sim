@@ -44,11 +44,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         default_feet_height = 0.01
 
         terminate_after_contacts_on = [
-            "base",
-            "DRIVING_ROTOR_PLATE_3",
-            "DRIVING_ROTOR_PLATE_4",
-            "DRIVING_ROTOR_PLATE_7",
-            "DRIVING_ROTOR_PLATE_8",
+            "torso"
         ]
 
         penalize_contacts_on = []
@@ -128,13 +124,12 @@ class StompyMicroCfg(LeggedRobotCfg):
         start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
-
         randomize_base_mass = True  # True
-        added_mass_range = [-0.05, 0.05]
-        push_robots = False  # True
+        added_mass_range = [-0.5, 0.5]
+        push_robots = True  # True
         push_interval_s = 4
-        max_push_vel_xy = 0.2
-        max_push_ang_vel = 0.4
+        max_push_vel_xy = 0.05
+        max_push_ang_vel = 0.1
         # dynamic randomization
         action_delay = 0.5
         action_noise = 0.02
@@ -164,7 +159,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         only_positive_rewards = True 
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 100  # forces above this value are penalized
+        max_contact_force = 50  # forces above this value are penalized
 
         class scales:
             

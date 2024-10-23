@@ -30,7 +30,8 @@
 """
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
-python sim/sim2sim.py --load_model policy_1.pt --embodiment stompypro
+python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompypro
+python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
 """
 import argparse
 import math
@@ -47,6 +48,58 @@ from tqdm import tqdm
 from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
+
+
+class Sim2simCfg:
+    def __init__(
+        self,
+        embodiment,
+        frame_stack=15,
+        c_frame_stack=3,
+        sim_duration=60.0,
+        dt=0.001,
+        decimation=10,
+        cycle_time=0.4,
+        tau_factor=3,
+        lin_vel=2.0,
+        ang_vel=1.0,
+        dof_pos=1.0,
+        dof_vel=0.05,
+        clip_observations=18.0,
+        clip_actions=18.0,
+        action_scale=0.25,
+    ):
+        self.robot = load_embodiment(embodiment)
+
+        self.num_actions = len(self.robot.all_joints())
+
+        self.frame_stack = frame_stack
+        self.c_frame_stack = c_frame_stack
+        self.num_single_obs = 11 + self.num_actions * self.c_frame_stack
+        self.num_observations = int(self.frame_stack * self.num_single_obs)
+
+        self.sim_duration = sim_duration
+        self.dt = dt
+        self.decimation = decimation
+
+        self.cycle_time = cycle_time
+
+        self.tau_factor = tau_factor
+        self.tau_limit = (
+            np.array(list(self.robot.effort().values()) + list(self.robot.effort().values())) * self.tau_factor
+        )
+        self.kps = np.array(list(self.robot.stiffness().values()) + list(self.robot.stiffness().values()))
+        self.kds = np.array(list(self.robot.damping().values()) + list(self.robot.damping().values()))
+
+        self.lin_vel = lin_vel
+        self.ang_vel = ang_vel
+        self.dof_pos = dof_pos
+        self.dof_vel = dof_vel
+
+        self.clip_observations = clip_observations
+        self.clip_actions = clip_actions
+
+        self.action_scale = action_scale
 
 
 class cmd:
@@ -108,8 +161,9 @@ def run_mujoco(policy, cfg):
     """
     model_dir = os.environ.get("MODEL_DIR")
     mujoco_model_path = f"{model_dir}/{args.embodiment}/robot_fixed.xml"
+
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
-    model.opt.timestep = cfg.sim_config.dt
+    model.opt.timestep = cfg.dt
     data = mujoco.MjData(model)
 
     try:
@@ -130,59 +184,58 @@ def run_mujoco(policy, cfg):
     action = np.zeros((cfg.num_actions), dtype=np.double)
 
     hist_obs = deque()
-    for _ in range(cfg.env.frame_stack):
-        hist_obs.append(np.zeros([1, cfg.env.num_single_obs], dtype=np.double))
+    for _ in range(cfg.frame_stack):
+        hist_obs.append(np.zeros([1, cfg.num_single_obs], dtype=np.double))
 
     count_lowlevel = 0
 
-    for _ in tqdm(range(int(cfg.sim_config.sim_duration / cfg.sim_config.dt)), desc="Simulating..."):
+    for _ in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
         q = q[-cfg.num_actions :]
         dq = dq[-cfg.num_actions :]
 
         # 1000hz -> 50hz
-        if count_lowlevel % cfg.sim_config.decimation == 0:
-            obs = np.zeros([1, cfg.env.num_single_obs], dtype=np.float32)
+        if count_lowlevel % cfg.decimation == 0:
+            obs = np.zeros([1, cfg.num_single_obs], dtype=np.float32)
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
-            cur_pos_obs = (q - default) * cfg.normalization.obs_scales.dof_pos
+            cur_pos_obs = (q - default) * cfg.dof_pos
 
-            cur_vel_obs = dq * cfg.normalization.obs_scales.dof_vel
+            cur_vel_obs = dq * cfg.dof_vel
 
-            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.sim_config.dt / cfg.rewards.cycle_time)
-            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.sim_config.dt / cfg.rewards.cycle_time)
-            obs[0, 2] = cmd.vx * cfg.normalization.obs_scales.lin_vel
-            obs[0, 3] = cmd.vy * cfg.normalization.obs_scales.lin_vel
-            obs[0, 4] = cmd.dyaw * cfg.normalization.obs_scales.ang_vel
+            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
+            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
+            obs[0, 2] = cmd.vx * cfg.lin_vel
+            obs[0, 3] = cmd.vy * cfg.lin_vel
+            obs[0, 4] = cmd.dyaw * cfg.ang_vel
             obs[0, 5 : (cfg.num_actions + 5)] = cur_pos_obs
             obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = cur_vel_obs
             obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
             obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
             obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
 
-            obs = np.clip(obs, -cfg.normalization.clip_observations, cfg.normalization.clip_observations)
+            obs = np.clip(obs, -cfg.clip_observations, cfg.clip_observations)
 
             hist_obs.append(obs)
             hist_obs.popleft()
 
-            policy_input = np.zeros([1, cfg.env.num_observations], dtype=np.float32)
-            for i in range(cfg.env.frame_stack):
-                policy_input[0, i * cfg.env.num_single_obs : (i + 1) * cfg.env.num_single_obs] = hist_obs[i][0, :]
+            policy_input = np.zeros([1, cfg.num_observations], dtype=np.float32)
+            for i in range(cfg.frame_stack):
+                policy_input[0, i * cfg.num_single_obs : (i + 1) * cfg.num_single_obs] = hist_obs[i][0, :]
 
-            action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
-            action = np.clip(action, -cfg.normalization.clip_actions, cfg.normalization.clip_actions)
-            target_q = action * cfg.control.action_scale
+            action[:] = get_policy_output(policy, policy_input)
+            # action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
+            action = np.clip(action, -cfg.clip_actions, cfg.clip_actions)
+            target_q = action * cfg.action_scale
 
         target_dq = np.zeros((cfg.num_actions), dtype=np.double)
 
         # Generate PD control
-        tau = pd_control(
-            target_q, q, cfg.robot_config.kps, target_dq, dq, cfg.robot_config.kds, default
-        )  # Calc torques
+        tau = pd_control(target_q, q, cfg.kps, target_dq, dq, cfg.kds, default)  # Calc torques
 
-        tau = np.clip(tau, -cfg.robot_config.tau_limit, cfg.robot_config.tau_limit)  # Clamp torques
+        tau = np.clip(tau, -cfg.tau_limit, cfg.tau_limit)  # Clamp torques
         print(tau)
 
         data.ctrl = tau
@@ -202,44 +255,18 @@ if __name__ == "__main__":
     parser.add_argument("--load_actions", action="store_true", help="saved_actions")
     args = parser.parse_args()
 
-    robot = load_embodiment(args.embodiment)
+    if "pt" in args.load_model:
+        policy = torch.jit.load(args.load_model)
+    elif "onnx" in args.load_model:
+        import onnxruntime as ort
 
-    class Sim2simCfg:
-        num_actions = len(robot.all_joints())
+        policy = ort.InferenceSession(args.load_model)
 
-        class env:
-            num_actions = len(robot.all_joints())
-            frame_stack = 15
-            c_frame_stack = 3
-            num_single_obs = 11 + num_actions * c_frame_stack
-            num_observations = int(frame_stack * num_single_obs)
+    def get_policy_output(policy, input_data):
+        if isinstance(policy, torch.jit._script.RecursiveScriptModule):
+            return policy(torch.tensor(input_data))[0].detach().numpy()
+        else:
+            ort_inputs = {policy.get_inputs()[0].name: input_data}
+            return policy.run(None, ort_inputs)[0][0]
 
-        class sim_config:
-            sim_duration = 60.0
-            dt = 0.001
-            decimation = 10
-  
-        class rewards:
-            cycle_time = 0.4
-
-        class robot_config:
-            tau_factor = 2
-            tau_limit = np.array(list(robot.effort().values()) + list(robot.effort().values())) * tau_factor
-            kps = np.array(list(robot.stiffness().values()) + list(robot.stiffness().values()))
-            kds = np.array(list(robot.damping().values()) + list(robot.damping().values()))
-
-        class normalization:
-            class obs_scales:
-                lin_vel = 2.0
-                ang_vel = 1.0
-                dof_pos = 1.0
-                dof_vel = 0.05
-
-            clip_observations = 18.0
-            clip_actions = 18.0
-
-        class control:
-            action_scale = 0.25
-
-    policy = torch.jit.load(args.load_model)
-    run_mujoco(policy, Sim2simCfg())
+    run_mujoco(policy, Sim2simCfg(args.embodiment))
