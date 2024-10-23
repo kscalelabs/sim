@@ -25,4 +25,5 @@ tar -xzvf meshes.zip -C sim/resources/h1_2/
 rm meshes.zip
 
 # Stompymicro
-gdown --folder https://drive.google.com/drive/folders/1mTMP_7HJfT6Wr2xrY4MmbEkuAKtLKZSe -O sim/resources/stompymicro/
+gdown --folder https://drive.google.com/drive/folders/1C_v0FKoc6um0tUK2f1e6cWXtfvuc-xsD -O sim/resources/stompymicro/
+

@@ -30,7 +30,8 @@
 """
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
-python sim/sim2sim.py --load_model policy_1.pt --embodiment stompypro
+python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompypro
+python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
 """
 import argparse
 import math
@@ -160,6 +161,7 @@ def run_mujoco(policy, cfg):
     """
     model_dir = os.environ.get("MODEL_DIR")
     mujoco_model_path = f"{model_dir}/{args.embodiment}/robot_fixed.xml"
+
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = cfg.dt
     data = mujoco.MjData(model)
