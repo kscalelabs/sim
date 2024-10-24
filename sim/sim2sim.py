@@ -175,6 +175,8 @@ def run_mujoco(policy, cfg):
         default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
 
     mujoco.mj_step(model, data)
+    for ii in range(len(data.ctrl) + 1):
+        print(data.joint(ii).id, data.joint(ii).name)
 
     data.qvel = np.zeros_like(data.qvel)
     data.qacc = np.zeros_like(data.qacc)
@@ -269,4 +271,23 @@ if __name__ == "__main__":
             ort_inputs = {policy.get_inputs()[0].name: input_data}
             return policy.run(None, ort_inputs)[0][0]
 
-    run_mujoco(policy, Sim2simCfg(args.embodiment))
+    if args.embodiment == "stompypro":
+        cfg = Sim2simCfg(
+            args.embodiment,
+            sim_duration=60.0,
+            dt=0.001,
+            decimation=10,
+            cycle_time=0.4,
+            tau_factor=2,
+        )
+    elif args.embodiment == "stompymicro":
+        cfg = Sim2simCfg(
+            args.embodiment,
+            sim_duration=60.0,
+            dt=0.001,
+            decimation=10,
+            cycle_time=0.2,
+            tau_factor=2,
+        )
+
+    run_mujoco(policy, cfg)
