@@ -123,19 +123,7 @@
   </worldbody>
 
   <actuator>
-    <position kp="5" kv="0.3" name="left_hip_pitch" joint="left_hip_pitch" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-    <position kp="5" kv="0.3" name="left_hip_yaw" joint="left_hip_yaw" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-    <position kp="5" kv="0.3" name="left_hip_roll" joint="left_hip_roll" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-    <position kp="5" kv="0.3" name="left_knee_pitch" joint="left_knee_pitch" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-    <position kp="5" kv="0.3" name="left_ankle_pitch" joint="left_ankle_pitch" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-
-    <position kp="5" kv="0.3" name="right_hip_pitch" joint="right_hip_pitch" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-    <position kp="5" kv="0.3" name="right_hip_yaw" joint="right_hip_yaw" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-    <position kp="5" kv="0.3" name="right_hip_roll" joint="right_hip_roll" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-    <position kp="5" kv="0.3" name="right_knee_pitch" joint="right_knee_pitch" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-    <position kp="5" kv="0.3" name="right_ankle_pitch" joint="right_ankle_pitch" gear="1" forcerange="-23.7 23.7" ctrlrange="-30 30"/>
-
-    <!-- <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-20 20" gear="1" />
+    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-20 20" gear="1" />
     <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-20 20" gear="1" />
     <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-20 20" gear="1" />
     <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-20 20" gear="1" />
@@ -145,11 +133,11 @@
     <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-20 20" gear="1" />
     <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-20 20" gear="1" />
     <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-20 20" gear="1" />
-    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-20 20" gear="1" /> -->
+    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-20 20" gear="1" />
   </actuator>
 
   <sensor>
-    <!-- <actuatorpos name="right_hip_pitch_p" actuator="right_hip_pitch" />
+    <actuatorpos name="right_hip_pitch_p" actuator="right_hip_pitch" />
     <actuatorvel name="right_hip_pitch_v" actuator="right_hip_pitch" />
     <actuatorfrc name="right_hip_pitch_f" actuator="right_hip_pitch" noise="0.001" />
     <actuatorpos name="right_hip_yaw_p" actuator="right_hip_yaw" />
@@ -178,7 +166,7 @@
     <actuatorfrc name="left_knee_pitch_f" actuator="left_knee_pitch" noise="0.001" />
     <actuatorpos name="left_ankle_pitch_p" actuator="left_ankle_pitch" />
     <actuatorvel name="left_ankle_pitch_v" actuator="left_ankle_pitch" />
-    <actuatorfrc name="left_ankle_pitch_f" actuator="left_ankle_pitch" noise="0.001" /> -->
+    <actuatorfrc name="left_ankle_pitch_f" actuator="left_ankle_pitch" noise="0.001" />
     <framequat name="orientation" objtype="site" noise="0.001" objname="imu" />
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
   </sensor>

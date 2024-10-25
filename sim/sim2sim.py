@@ -38,7 +38,6 @@ import math
 import os
 from collections import deque
 from copy import deepcopy
-from threading import Thread
 
 import mujoco
 import mujoco_viewer
@@ -50,16 +49,6 @@ from tqdm import tqdm
 from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
-
-
-x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.0, 0.0, 0.0
-keyboard_use = True  # Changed from joystick_use
-
-if keyboard_use:
-    pygame.init()
-    screen = pygame.display.set_mode((400, 300))
-    pygame.display.set_caption("Simulation Control")
-    exit_flag = False
 
 
 def handle_keyboard_input():
@@ -176,7 +165,7 @@ def pd_control(target_q, q, kp, target_dq, dq, kd, default):
     return kp * (target_q + default - q) - kd * dq
 
 
-def run_mujoco(policy, cfg):
+def run_mujoco(policy, cfg, keyboard_use=False):
     """
     Run the Mujoco simulation using the provided policy and configuration.
 
@@ -220,12 +209,9 @@ def run_mujoco(policy, cfg):
     count_lowlevel = 0
 
     for _ in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
+        if keyboard_use:
+            handle_keyboard_input()
 
-        handle_keyboard_input()
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
         q = q[-cfg.num_actions :]
@@ -262,7 +248,6 @@ def run_mujoco(policy, cfg):
                 policy_input[0, i * cfg.num_single_obs : (i + 1) * cfg.num_single_obs] = hist_obs[i][0, :]
 
             action[:] = get_policy_output(policy, policy_input)
-            # action[:] = policy(torch.tensor(policy_input))[0].detach().numpy()
             action = np.clip(action, -cfg.clip_actions, cfg.clip_actions)
             target_q = action * cfg.action_scale
 
@@ -291,8 +276,16 @@ if __name__ == "__main__":
     parser.add_argument("--embodiment", type=str, required=True, help="embodiment")
     parser.add_argument("--terrain", action="store_true", help="terrain or plane")
     parser.add_argument("--load_actions", action="store_true", help="saved_actions")
+    parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
     args = parser.parse_args()
-
+            
+    if args.keyboard_use:
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.0, 0.0, 0.0
+        pygame.init()
+        pygame.display.set_caption("Simulation Control")
+    else:
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
+            
     if "pt" in args.load_model:
         policy = torch.jit.load(args.load_model)
     elif "onnx" in args.load_model:
@@ -326,4 +319,4 @@ if __name__ == "__main__":
             tau_factor=2,
         )
 
-    run_mujoco(policy, cfg)
+    run_mujoco(policy, cfg, args.keyboard_use)

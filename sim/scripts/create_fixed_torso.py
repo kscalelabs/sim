@@ -52,9 +52,7 @@ def update_urdf(model_path: str, embodiment: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Update URDF file to fix robot joints.")
-    parser.add_argument(
-        "--model_path", type=str, help="Path to the model directory", default="sim/resources/stompypro"
-    )
+    parser.add_argument("--model_path", type=str, help="Path to the model directory", default="sim/resources/stompypro")
     parser.add_argument("--embodiment", type=str, help="Embodiment to use", default="stompypro")
     args = parser.parse_args()
 
