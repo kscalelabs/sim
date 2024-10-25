@@ -43,9 +43,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         termination_height = 0.05
         default_feet_height = 0.01
 
-        terminate_after_contacts_on = [
-            "torso"
-        ]
+        terminate_after_contacts_on = ["torso"]
 
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
@@ -156,14 +154,14 @@ class StompyMicroCfg(LeggedRobotCfg):
         target_feet_height = 0.02  # m
         cycle_time = 0.2  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
-        only_positive_rewards = True 
+        only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
         max_contact_force = 50  # forces above this value are penalized
 
         class scales:
-            
-            # TODO: add an argument 
+
+            # TODO: add an argument
             walking = False
 
             if walking == True:
