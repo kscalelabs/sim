@@ -107,7 +107,6 @@ class Robot(Node):
             cls.legs.right.hip_roll: 0,
             cls.legs.right.knee_pitch: 0,
             cls.legs.right.ankle_pitch: 0,
-
             # TODO: fixing this for debugging
             # Arms
             # cls.left_arm.shoulder_pitch: 0,

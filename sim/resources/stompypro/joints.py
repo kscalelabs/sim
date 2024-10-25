@@ -67,11 +67,13 @@ class RightLeg(Node):
     knee_pitch = "R_knee"
     ankle_pitch = "R_ankle_y"
 
+
 class LeftArm(Node):
     shoulder_pitch = "L_shoulder_y"
     shoulder_roll = "L_shoulder_z"
     shoulder_yaw = "L_shoulder_x"
     elbow_pitch = "L_elbow_x"
+
 
 class RightArm(Node):
     shoulder_pitch = "R_shoulder_y"
@@ -84,9 +86,11 @@ class Legs(Node):
     left = LeftLeg()
     right = RightLeg()
 
+
 class Arms(Node):
     left = LeftArm()
     right = RightArm()
+
 
 class Robot(Node):
     legs = Legs()
@@ -119,7 +123,7 @@ class Robot(Node):
         return {
             Robot.legs.left.hip_pitch: -0.23,
             Robot.legs.left.hip_yaw: 0.0,
-            Robot.legs.left.hip_roll: 0.0 ,
+            Robot.legs.left.hip_roll: 0.0,
             Robot.legs.left.knee_pitch: 0.441,
             Robot.legs.left.ankle_pitch: -0.258,
             Robot.legs.right.hip_pitch: -0.23,
@@ -143,7 +147,7 @@ class Robot(Node):
             "knee": 300,
             "ankle_y": 300,
         }
-    
+
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
@@ -169,11 +173,7 @@ class Robot(Node):
     # # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
-        return {
-            "hip": 10,
-            "knee": 10,
-            "ankle": 10
-        }
+        return {"hip": 10, "knee": 10, "ankle": 10}
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
