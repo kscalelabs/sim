@@ -45,7 +45,7 @@ import numpy as np
 import pygame
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
-
+import onnxruntime as ort
 from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
@@ -73,6 +73,7 @@ def handle_keyboard_input():
         yaw_vel_cmd -= 0.001
 
 
+# Wesley - this should be handled by model_export
 class Sim2simCfg:
     def __init__(
         self,
@@ -227,26 +228,8 @@ def run_mujoco(policy, cfg, keyboard_use=False):
 
             cur_vel_obs = dq * cfg.dof_vel
 
-            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
-            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
-            obs[0, 2] = x_vel_cmd * cfg.lin_vel
-            obs[0, 3] = y_vel_cmd * cfg.lin_vel
-            obs[0, 4] = yaw_vel_cmd * cfg.ang_vel
-            obs[0, 5 : (cfg.num_actions + 5)] = cur_pos_obs
-            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = cur_vel_obs
-            obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
-            obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
-            obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
-
-            obs = np.clip(obs, -cfg.clip_observations, cfg.clip_observations)
-
-            hist_obs.append(obs)
-            hist_obs.popleft()
-
-            policy_input = np.zeros([1, cfg.num_observations], dtype=np.float32)
-            for i in range(cfg.frame_stack):
-                policy_input[0, i * cfg.num_single_obs : (i + 1) * cfg.num_single_obs] = hist_obs[i][0, :]
-
+            # TODO Wesley - policy input should be sent to the onnx module
+            policy_input = 
             action[:] = get_policy_output(policy, policy_input)
             action = np.clip(action, -cfg.clip_actions, cfg.clip_actions)
             target_q = action * cfg.action_scale
@@ -285,20 +268,8 @@ if __name__ == "__main__":
         pygame.display.set_caption("Simulation Control")
     else:
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
-            
-    if "pt" in args.load_model:
-        policy = torch.jit.load(args.load_model)
-    elif "onnx" in args.load_model:
-        import onnxruntime as ort
 
-        policy = ort.InferenceSession(args.load_model)
-
-    def get_policy_output(policy, input_data):
-        if isinstance(policy, torch.jit._script.RecursiveScriptModule):
-            return policy(torch.tensor(input_data))[0].detach().numpy()
-        else:
-            ort_inputs = {policy.get_inputs()[0].name: input_data}
-            return policy.run(None, ort_inputs)[0][0]
+    policy = ort.InferenceSession(args.load_model)
 
     if args.embodiment == "stompypro":
         cfg = Sim2simCfg(

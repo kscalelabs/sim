@@ -94,6 +94,7 @@ def play(args: argparse.Namespace) -> None:
 
     # export policy as a onnx module (used to run it on web)
     if EXPORT_ONNX:
+        # TODO: wesley: the onnx export convert should be called here instead of export_policy_as_onnx
         path = os.path.join(".")
         export_policy_as_onnx(ppo_runner.alg.actor_critic, path)
         print("Exported policy as onnx to: ", path)
