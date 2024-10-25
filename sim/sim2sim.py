@@ -38,16 +38,50 @@ import math
 import os
 from collections import deque
 from copy import deepcopy
+from threading import Thread
 
 import mujoco
 import mujoco_viewer
 import numpy as np
+import pygame
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
+
+
+x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.0, 0.0, 0.0
+keyboard_use = True  # Changed from joystick_use
+
+if keyboard_use:
+    pygame.init()
+    screen = pygame.display.set_mode((400, 300))
+    pygame.display.set_caption("Simulation Control")
+    exit_flag = False
+
+
+def handle_keyboard_input():
+    global x_vel_cmd, y_vel_cmd, yaw_vel_cmd
+
+    keys = pygame.key.get_pressed()
+
+    # Update movement commands based on arrow keys
+    if keys[pygame.K_UP]:
+        x_vel_cmd += 0.0005
+    if keys[pygame.K_DOWN]:
+        x_vel_cmd -= 0.0005
+    if keys[pygame.K_LEFT]:
+        y_vel_cmd += 0.0005
+    if keys[pygame.K_RIGHT]:
+        y_vel_cmd -= 0.0005
+
+    # Yaw control
+    if keys[pygame.K_a]:
+        yaw_vel_cmd += 0.001
+    if keys[pygame.K_z]:
+        yaw_vel_cmd -= 0.001
 
 
 class Sim2simCfg:
@@ -100,12 +134,6 @@ class Sim2simCfg:
         self.clip_actions = clip_actions
 
         self.action_scale = action_scale
-
-
-class cmd:
-    vx = 0.4
-    vy = 0.0
-    dyaw = 0.0
 
 
 def quaternion_to_euler_array(quat):
@@ -192,6 +220,12 @@ def run_mujoco(policy, cfg):
     count_lowlevel = 0
 
     for _ in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+        handle_keyboard_input()
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
         q = q[-cfg.num_actions :]
@@ -209,9 +243,9 @@ def run_mujoco(policy, cfg):
 
             obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
             obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
-            obs[0, 2] = cmd.vx * cfg.lin_vel
-            obs[0, 3] = cmd.vy * cfg.lin_vel
-            obs[0, 4] = cmd.dyaw * cfg.ang_vel
+            obs[0, 2] = x_vel_cmd * cfg.lin_vel
+            obs[0, 3] = y_vel_cmd * cfg.lin_vel
+            obs[0, 4] = yaw_vel_cmd * cfg.ang_vel
             obs[0, 5 : (cfg.num_actions + 5)] = cur_pos_obs
             obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = cur_vel_obs
             obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
@@ -238,7 +272,9 @@ def run_mujoco(policy, cfg):
         tau = pd_control(target_q, q, cfg.kps, target_dq, dq, cfg.kds, default)  # Calc torques
 
         tau = np.clip(tau, -cfg.tau_limit, cfg.tau_limit)  # Clamp torques
-        print(tau)
+        # print(tau)
+        # print(eu_ang)
+        print(x_vel_cmd, y_vel_cmd, yaw_vel_cmd)
 
         data.ctrl = tau
 
@@ -278,7 +314,7 @@ if __name__ == "__main__":
             dt=0.001,
             decimation=10,
             cycle_time=0.4,
-            tau_factor=2,
+            tau_factor=3.0,
         )
     elif args.embodiment == "stompymicro":
         cfg = Sim2simCfg(
