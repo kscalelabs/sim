@@ -51,7 +51,6 @@ from sim.scripts.create_mjcf import load_embodiment
 from model_export import ActorCfg, convert
 
 import torch  # isort: skip
-import matplotlib.pyplot as plt  # Add this import
 
 
 def handle_keyboard_input() -> None:
@@ -81,11 +80,11 @@ class Sim2simCfg:
     def __init__(
         self,
         embodiment: str,
-        frame_stack: int = 15,
-        c_frame_stack: int = 3,
         sim_duration: float = 60.0,
         dt: float = 0.001,
         decimation: int = 10,
+        frame_stack: int = 15,
+        c_frame_stack: int = 3,
         cycle_time: float = 0.4,
         tau_factor: float = 3,
         lin_vel: float = 2.0,
@@ -168,13 +167,6 @@ def pd_control(target_q: np.ndarray, q: np.ndarray, kp: np.ndarray, target_dq: n
     """Calculates torques from position commands"""
     return kp * (target_q + default - q) - kd * dq
 
-def get_policy_output(policy: Any, input_data: Any) -> np.ndarray:
-    if isinstance(policy, torch.jit._script.RecursiveScriptModule):
-        return policy(torch.tensor(input_data))[0].detach().numpy()
-    else:
-        ort_inputs = {policy.get_inputs()[0].name: input_data}
-        return policy.run(None, ort_inputs)[0][0]
-
 def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
@@ -227,8 +219,6 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
         "buffer.1": np.zeros(cfg.num_observations).astype(np.float32),
     }       
 
-    positions_list = []  # List to store positions
-
     for _  in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
         if keyboard_use:
             handle_keyboard_input()
@@ -238,50 +228,14 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
         q = q[-cfg.num_actions :]
         dq = dq[-cfg.num_actions :]
 
-        # hist_obs = deque()
-        # for _ in range(cfg.frame_stack):
-            # hist_obs.append(np.zeros([1, cfg.num_single_obs], dtype=np.double))
-
         # 1000hz -> 50hz
         if count_lowlevel % cfg.decimation == 0:
-            # obs = np.zeros([1, cfg.num_single_obs], dtype=np.float32)
-            # eu_ang = quaternion_to_euler_array(quat)
-            # eu_ang[eu_ang > math.pi] -= 2 * math.pi
-
-            # cur_pos_obs = (q - default) * cfg.dof_pos
-
-            # cur_vel_obs = dq * cfg.dof_vel
-
-            # obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
-            # obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
-            # obs[0, 2] = x_vel_cmd * cfg.lin_vel
-            # obs[0, 3] = y_vel_cmd * cfg.lin_vel
-            # obs[0, 4] = yaw_vel_cmd * cfg.ang_vel
-            # obs[0, 5 : (cfg.num_actions + 5)] = cur_pos_obs
-            # obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = cur_vel_obs
-            # obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
-            # obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
-            # obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
-
-            # obs = np.clip(obs, -cfg.clip_observations, cfg.clip_observations)
-
-            # hist_obs.append(obs)
-            # hist_obs.popleft()
-
-            # policy_input = np.zeros([1, cfg.num_observations], dtype=np.float32)
-            # for i in range(cfg.frame_stack):
-            #     policy_input[0, i * cfg.num_single_obs : (i + 1) * cfg.num_single_obs] = hist_obs[i][0, :]
-
-            # action[:] = get_policy_output(policy, policy_input)
-            # action = np.clip(action, -cfg.clip_actions, cfg.clip_actions)
-            # target_q = action * cfg.action_scale
-            positions, actions, hist_obs, input = policy.run(None, input_data)
-            positions_list.append(positions)  # Store positions
+            positions, actions, hist_obs = policy.run(None, input_data)
 
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
-            cur_pos_obs = (q - default) * cfg.dof_pos
+            cur_pos_obs = q - default
 
             cur_vel_obs = dq * cfg.dof_vel
 
@@ -320,17 +274,6 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
 
     viewer.close()
 
-    # Plot the positions
-    plt.figure(figsize=(10, 6))
-    plt.plot(positions_list)
-    plt.title("Joint Positions Over Time")
-    plt.xlabel("Time Steps")
-    plt.ylabel("Joint Positions")
-    plt.legend([f"Joint {i}" for i in range(cfg.num_actions)])
-    plt.grid(True)
-    plt.show()
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--load_model", type=str, required=True, help="Run to load from.")
@@ -352,14 +295,7 @@ if __name__ == "__main__":
     if args.embodiment == "stompypro":
         policy_cfg.cycle_time = 0.4
         policy_cfg.policy_dt = 1
-    elif args.embodiment == "stompymicro":
-        policy_cfg.cycle_time = 0.2
 
-    policy = convert(args.load_model, policy_cfg)
-
-    # policy = torch.jit.load(args.load_model)
-
-    if args.embodiment == "stompypro":
         cfg = Sim2simCfg(
             args.embodiment,
             sim_duration=60.0,
@@ -368,7 +304,9 @@ if __name__ == "__main__":
             cycle_time=0.4,
             tau_factor=3.0,
         )
+
     elif args.embodiment == "stompymicro":
+        policy_cfg.cycle_time = 0.2
         cfg = Sim2simCfg(
             args.embodiment,
             sim_duration=60.0,
@@ -377,6 +315,8 @@ if __name__ == "__main__":
             cycle_time=0.2,
             tau_factor=2,
         )
+
+    policy = convert(args.load_model, policy_cfg)
 
     run_mujoco(policy, cfg, args.keyboard_use)
 

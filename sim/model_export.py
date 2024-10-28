@@ -17,7 +17,6 @@ from torch.distributions import Normal
 class ActorCfg:
     embodiment: str = "stompypro"
     cycle_time: float = 0.4
-    policy_dt: float = 1.0/50.0
     action_scale: float = 0.25
     lin_vel_scale: float = 2.0
     ang_vel_scale: float = 1.0
@@ -82,14 +81,7 @@ class Actor(nn.Module):
 
     Parameters:
         policy: The policy network.
-        cycle_time: The cycle time of the model, in seconds.
-        policy_dt: The time step of the policy, in seconds.
-        action_scale: The scale of the actions.
-        lin_vel_scale: The scale of the linear velocity.
-        ang_vel_scale: The scale of the angular velocity.
-        quat_scale: The scale of the quaternion.
-        dof_pos_scale: The scale of the DoF positions.
-        dof_vel_scale: The scale of the DoF velocities.
+        cfg: The configuration for the actor.
     """
     def __init__(self, policy: nn.Module, cfg: ActorCfg) -> None:
         super().__init__()
@@ -109,6 +101,7 @@ class Actor(nn.Module):
         self.policy = policy
 
         # This is the policy reference joint positions and should be the same order as the policy and mjcf file.
+        # CURRENTLY NOT USED IN FORWARD PASS TO MAKE MORE GENERALIZEABLE FOR REAL AND SIM
         self.default_dof_pos = torch.tensor(list(default_dof_pos_dict.values()))
 
         self.action_scale = cfg.action_scale
@@ -122,7 +115,6 @@ class Actor(nn.Module):
         self.clip_actions = cfg.clip_actions
 
         self.cycle_time = cfg.cycle_time
-        self.policy_dt = cfg.policy_dt
 
     def get_init_buffer(self) -> Tensor:
         return torch.zeros(self.num_observations)
@@ -139,7 +131,7 @@ class Actor(nn.Module):
         imu_ang_vel: Tensor,
         imu_euler_xyz: Tensor,
         buffer: Tensor,
-    ) -> Tuple[Tensor, Tensor, Tensor, int]:
+    ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
 
         Args:
@@ -179,7 +171,7 @@ class Actor(nn.Module):
         )
 
         # Calculate current position and velocity observations
-        q = (dof_pos - self.default_dof_pos) * self.dof_pos_scale
+        q = dof_pos * self.dof_pos_scale
         dq = dof_vel * self.dof_vel_scale
 
         # Construct new observation
@@ -203,18 +195,13 @@ class Actor(nn.Module):
         x = x[self.num_single_obs:]
 
         policy_input = x.unsqueeze(0)
-        # policy_input: np. = np.zeros([1, np.array(self.num_observations)], dtype=np.float32)
-        # for i in range(self.frame_stack):
-        #     start_index = i * self.num_single_obs
-        #     end_index = (i + 1) * self.num_single_obs
-        #     policy_input[0, start_index : end_index] = x[start_index : end_index]
 
         # Get actions from the policy
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale
 
 
-        return actions_scaled, actions, x, self.policy_dt
+        return actions_scaled, actions, x
 
 
 """Converts a PyTorch model to a ONNX format."""
