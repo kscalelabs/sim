@@ -5,7 +5,6 @@ from dataclasses import dataclass, fields
 from io import BytesIO
 from typing import List, Optional, Tuple
 
-import numpy as np
 import onnx
 import onnxruntime as ort
 import torch

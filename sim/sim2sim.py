@@ -34,11 +34,11 @@ python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompyp
 python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
 """
 import argparse
-from dataclasses import dataclass
 import math
 import os
 from collections import deque
 from copy import deepcopy
+from dataclasses import dataclass
 from typing import Any, Dict, List, Tuple, Union
 
 import mujoco
@@ -75,6 +75,7 @@ def handle_keyboard_input() -> None:
         yaw_vel_cmd += 0.001
     if keys[pygame.K_z]:
         yaw_vel_cmd -= 0.001
+
 
 @dataclass
 class Sim2simCfg:
@@ -132,7 +133,12 @@ def pd_control(
     return kp * (target_q + default - q) - kd * dq
 
 
-def run_mujoco(policy: ort.InferenceSession, cfg: Sim2simCfg, model_info: Dict[str, Union[float, List[float], str]], keyboard_use: bool = False) -> None:
+def run_mujoco(
+    policy: ort.InferenceSession,
+    cfg: Sim2simCfg,
+    model_info: Dict[str, Union[float, List[float], str]],
+    keyboard_use: bool = False,
+) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
 
@@ -313,4 +319,3 @@ if __name__ == "__main__":
     print("Model metadata: ", model_info)
 
     run_mujoco(policy, cfg, model_info, args.keyboard_use)
-
