@@ -16,16 +16,16 @@ from torch.distributions import Normal
 @dataclass
 class ActorCfg:
     embodiment: str = "stompypro"
-    cycle_time: float = 0.4
-    action_scale: float = 0.25
-    lin_vel_scale: float = 2.0
-    ang_vel_scale: float = 1.0
-    quat_scale: float = 1.0
-    dof_pos_scale: float = 1.0
-    dof_vel_scale: float = 0.05
-    frame_stack: int = 15
-    clip_observations: float = 18.0
-    clip_actions: float = 18.0
+    cycle_time: float = 0.4 # Cycle time for sinusoidal command input
+    action_scale: float = 0.25 # Scale for actions
+    lin_vel_scale: float = 2.0 # Scale for linear velocity
+    ang_vel_scale: float = 1.0 # Scale for angular velocity
+    quat_scale: float = 1.0 # Scale for quaternion
+    dof_pos_scale: float = 1.0 # Scale for joint positions
+    dof_vel_scale: float = 0.05 # Scale for joint velocities
+    frame_stack: int = 15 # Number of frames to stack for the policy input
+    clip_observations: float = 18.0 # Clip observations to this value
+    clip_actions: float = 18.0 # Clip actions to this value
 
 
 class ActorCritic(nn.Module):
@@ -122,16 +122,16 @@ class Actor(nn.Module):
 
     def forward(
         self,
-        x_vel: Tensor,
-        y_vel: Tensor,
-        rot: Tensor,
-        t: Tensor,
-        dof_pos: Tensor,
-        dof_vel: Tensor,
-        prev_actions: Tensor,
-        imu_ang_vel: Tensor,
-        imu_euler_xyz: Tensor,
-        buffer: Tensor,
+        x_vel: Tensor, # x-coordinate of the target velocity
+        y_vel: Tensor, # y-coordinate of the target velocity
+        rot: Tensor, # target angular velocity
+        t: Tensor, # current policy time (sec)
+        dof_pos: Tensor, # current angular position of the DoFs relative to default
+        dof_vel: Tensor, # current angular velocity of the DoFs
+        prev_actions: Tensor, # previous actions taken by the model
+        imu_ang_vel: Tensor, # angular velocity of the IMU
+        imu_euler_xyz: Tensor, # euler angles of the IMU
+        buffer: Tensor, # buffer of previous observations
     ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
 
@@ -140,7 +140,7 @@ class Actor(nn.Module):
             y_vel: The y-coordinate of the target velocity, with shape (1).
             rot: The target angular velocity, with shape (1).
             t: The current policy time step, with shape (1).
-            dof_pos: The current angular position of the DoFs, with shape (num_actions).
+            dof_pos: The current angular position of the DoFs relative to default, with shape (num_actions).
             dof_vel: The current angular velocity of the DoFs, with shape (num_actions).
             prev_actions: The previous actions taken by the model, with shape (num_actions).
             imu_ang_vel: The angular velocity of the IMU, with shape (3),
@@ -205,8 +205,6 @@ class Actor(nn.Module):
 
 
 """Converts a PyTorch model to a ONNX format."""
-
-
 def convert(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
     all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
     weights = all_weights["model_state_dict"]
@@ -243,11 +241,10 @@ def convert(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> 
     torch.onnx.export(jit_model, input_tensors, buffer)
     buffer.seek(0)
 
-    # Load the model into an onnx ModelProto
+    # Load the model as an onnx model
     model_proto = onnx.load_model(buffer)
 
     # Add sim2sim metadata
-
     robot_effort = list(a_model.robot.effort().values())
     robot_stiffness = list(a_model.robot.stiffness().values())
     robot_damping = list(a_model.robot.damping().values())
@@ -267,12 +264,10 @@ def convert(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> 
 
     for field in fields(cfg):
         value = getattr(cfg, field.name)
-        # Create a new StringStringEntryProto
         meta = model_proto.metadata_props.add()
         meta.key = field.name
         meta.value = str(value)
 
-    # Save the modified model
     if save_path:
         onnx.save_model(model_proto, save_path)
 

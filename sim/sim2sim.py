@@ -36,7 +36,6 @@ python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stomp
 import argparse
 import math
 import os
-from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Dict, List, Tuple, Union
@@ -50,9 +49,6 @@ from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from sim.model_export import ActorCfg, convert
-from sim.scripts.create_mjcf import load_embodiment
-
-import torch  # isort: skip
 
 
 def handle_keyboard_input() -> None:
@@ -216,6 +212,7 @@ def run_mujoco(
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
+            # Convert sim coordinates to policy coordinates
             cur_pos_obs = q - default
 
             cur_vel_obs = dq
@@ -243,9 +240,6 @@ def run_mujoco(
         tau = pd_control(target_q, q, kps, target_dq, dq, kds, default)  # Calc torques
 
         tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
-        # print(tau)
-        # print(eu_ang)
-        # print(x_vel_cmd, y_vel_cmd, yaw_vel_cmd)
 
         data.ctrl = tau
 
