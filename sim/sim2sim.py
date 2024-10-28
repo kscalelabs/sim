@@ -284,7 +284,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
             
     if "pt" in args.load_model:
         policy = torch.jit.load(args.load_model)
@@ -315,7 +315,7 @@ if __name__ == "__main__":
             sim_duration=60.0,
             dt=0.001,
             decimation=10,
-            cycle_time=0.2,
+            cycle_time=0.4,
             tau_factor=2,
         )
 
