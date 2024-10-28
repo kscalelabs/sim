@@ -52,6 +52,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         fix_base_link = False
 
         # BAM parameters
+        # TODO update effort to larger one
         friction = 0.013343597773929877
         armature = 0.008793405204572328
 
@@ -61,8 +62,8 @@ class StompyMicroCfg(LeggedRobotCfg):
         curriculum = False
         # rough terrain only:
         measure_heights = False
-        static_friction = 1.0
-        dynamic_friction = 1.0
+        static_friction = 0.6
+        dynamic_friction = 0.6
         terrain_length = 8.0
         terrain_width = 8.0
         num_rows = 10  # number of terrain rows (levels)
@@ -156,7 +157,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.02  # m
-        cycle_time = 0.2  # sec
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -169,7 +170,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             feet_clearance = 1.2
             feet_contact_number = 1.2
             feet_air_time = 1.2
-            foot_slip = -0.05
+            foot_slip = -0.1
             feet_distance = 0.2
             knee_distance = 0.2
             # contact
