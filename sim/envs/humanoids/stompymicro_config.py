@@ -51,14 +51,18 @@ class StompyMicroCfg(LeggedRobotCfg):
         replace_cylinder_with_capsule = False
         fix_base_link = False
 
+        # BAM parameters
+        friction = 0.013343597773929877
+        armature = 0.008793405204572328
+
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"
         # mesh_type = 'trimesh'
         curriculum = False
         # rough terrain only:
         measure_heights = False
-        static_friction = 0.6
-        dynamic_friction = 0.6
+        static_friction = 1.0
+        dynamic_friction = 1.0
         terrain_length = 8.0
         terrain_width = 8.0
         num_rows = 10  # number of terrain rows (levels)
