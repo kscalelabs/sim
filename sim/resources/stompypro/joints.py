@@ -118,6 +118,8 @@ class Robot(Node):
     def default_positions(cls) -> Dict[str, float]:
         return {}
 
+    """This should be ordered according to how the policy is trained. E.g. the first
+    entry should be the angle of the first joint in the policy."""
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
