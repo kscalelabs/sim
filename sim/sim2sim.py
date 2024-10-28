@@ -48,7 +48,7 @@ from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 import onnxruntime as ort
 from sim.scripts.create_mjcf import load_embodiment
-from model_export import ActorCfg, convert
+from sim.model_export import ActorCfg, convert
 
 import torch  # isort: skip
 
