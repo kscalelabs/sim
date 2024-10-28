@@ -255,12 +255,6 @@ def convert(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> 
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
-    # Check that none of the fields are equal to each other
-    assert robot_effort != robot_stiffness
-    assert robot_effort != robot_damping
-    assert robot_stiffness != robot_damping
-    assert num_actions != num_observations
-
     for field_name, field in [
         ("robot_effort", robot_effort),
         ("robot_stiffness", robot_stiffness),

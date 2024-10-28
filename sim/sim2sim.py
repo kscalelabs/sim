@@ -258,8 +258,11 @@ def parse_modelmeta(modelmeta: List[Tuple[str, str]]) -> Dict[str, Union[float, 
         else:
             try:
                 parsed_meta[key] = float(value)
-                if int(value) == parsed_meta[key]:
-                    parsed_meta[key] = int(value)
+                try:
+                    if int(value) == parsed_meta[key]:
+                        parsed_meta[key] = int(value)
+                except ValueError:
+                    pass
             except ValueError:
                 print(f"Failed to convert {value} to float")
                 parsed_meta[key] = value
@@ -303,8 +306,8 @@ if __name__ == "__main__":
             tau_factor=2,
         )
 
-    policy = convert(args.load_model, policy_cfg)
-
+    policy = convert(args.load_model, policy_cfg, save_path="policy.onnx")
+    # policy = ort.InferenceSession("policy.onnx")
     model_info = parse_modelmeta(policy.get_modelmeta().custom_metadata_map.items())
 
     print("Model metadata: ", model_info)
