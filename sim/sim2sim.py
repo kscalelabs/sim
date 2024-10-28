@@ -34,6 +34,7 @@ python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompyp
 python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
 """
 import argparse
+from dataclasses import dataclass
 import math
 import os
 from collections import deque
@@ -75,21 +76,12 @@ def handle_keyboard_input() -> None:
     if keys[pygame.K_z]:
         yaw_vel_cmd -= 0.001
 
-
+@dataclass
 class Sim2simCfg:
-    def __init__(
-        self,
-        sim_duration: float = 60.0,
-        dt: float = 0.001,
-        decimation: int = 10,
-        tau_factor: float = 3,
-    ) -> None:
-
-        self.sim_duration = sim_duration
-        self.dt = dt
-        self.decimation = decimation
-
-        self.tau_factor = tau_factor
+    sim_duration: float = 60.0
+    dt: float = 0.001
+    decimation: int = 10
+    tau_factor: float = 3
 
 
 def quaternion_to_euler_array(quat: np.ndarray) -> np.ndarray:
