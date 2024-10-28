@@ -1,11 +1,12 @@
 """Script to convert weights to Rust-compatible format."""
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from io import BytesIO
 from typing import List, Optional, Tuple
 
 import numpy as np
+import onnx
 import onnxruntime as ort
 import torch
 from scripts.create_mjcf import load_embodiment
@@ -83,6 +84,7 @@ class Actor(nn.Module):
         policy: The policy network.
         cfg: The configuration for the actor.
     """
+
     def __init__(self, policy: nn.Module, cfg: ActorCfg) -> None:
         super().__init__()
 
@@ -155,7 +157,7 @@ class Actor(nn.Module):
             The torques to apply to the DoFs, the actions taken, and the
             next buffer.
         """
-        sin_pos = torch.sin(2 * torch.pi * t  / self.cycle_time)
+        sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
         cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
 
         # Construct command input
@@ -192,7 +194,7 @@ class Actor(nn.Module):
 
         # Add the new frame to the buffer and pop the oldest frame
         x = torch.cat((buffer, new_x), dim=0)
-        x = x[self.num_single_obs:]
+        x = x[self.num_single_obs :]
 
         policy_input = x.unsqueeze(0)
 
@@ -200,11 +202,12 @@ class Actor(nn.Module):
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale
 
-
         return actions_scaled, actions, x
 
 
 """Converts a PyTorch model to a ONNX format."""
+
+
 def convert(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
     all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
     weights = all_weights["model_state_dict"]
@@ -236,14 +239,56 @@ def convert(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> 
 
     jit_model = torch.jit.script(a_model)
 
-    if save_path:
-        torch.onnx.export(jit_model, input_tensors, save_path)
-
+    # Export the model to a buffer
     buffer = BytesIO()
     torch.onnx.export(jit_model, input_tensors, buffer)
     buffer.seek(0)
 
-    return ort.InferenceSession(buffer.read())
+    # Load the model into an onnx ModelProto
+    model_proto = onnx.load_model(buffer)
+
+    # Add sim2sim metadata
+
+    robot_effort = list(a_model.robot.effort().values())
+    robot_stiffness = list(a_model.robot.stiffness().values())
+    robot_damping = list(a_model.robot.damping().values())
+    num_actions = a_model.num_actions
+    num_observations = a_model.num_observations
+
+    # Check that none of the fields are equal to each other
+    assert robot_effort != robot_stiffness
+    assert robot_effort != robot_damping
+    assert robot_stiffness != robot_damping
+    assert num_actions != num_observations
+
+    for field_name, field in [
+        ("robot_effort", robot_effort),
+        ("robot_stiffness", robot_stiffness),
+        ("robot_damping", robot_damping),
+        ("num_actions", num_actions),
+        ("num_observations", num_observations),
+    ]:
+        meta = model_proto.metadata_props.add()
+        meta.key = field_name
+        meta.value = str(field)
+
+    for field in fields(cfg):
+        value = getattr(cfg, field.name)
+        # Create a new StringStringEntryProto
+        meta = model_proto.metadata_props.add()
+        meta.key = field.name
+        meta.value = str(value)
+
+    # Save the modified model
+    if save_path:
+        onnx.save_model(model_proto, save_path)
+
+    # Convert model to bytes
+    buffer2 = BytesIO()
+    onnx.save_model(model_proto, buffer2)
+    buffer2.seek(0)
+
+    return ort.InferenceSession(buffer2.read())
 
 
 if __name__ == "__main__":

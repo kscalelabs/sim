@@ -38,17 +38,18 @@ import math
 import os
 from collections import deque
 from copy import deepcopy
-from typing import Any, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import mujoco
 import mujoco_viewer
 import numpy as np
+import onnxruntime as ort
 import pygame
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
-import onnxruntime as ort
-from sim.scripts.create_mjcf import load_embodiment
+
 from sim.model_export import ActorCfg, convert
+from sim.scripts.create_mjcf import load_embodiment
 
 import torch  # isort: skip
 
@@ -75,57 +76,20 @@ def handle_keyboard_input() -> None:
         yaw_vel_cmd -= 0.001
 
 
-# Wesley - this should be handled by model_export
 class Sim2simCfg:
     def __init__(
         self,
-        embodiment: str,
         sim_duration: float = 60.0,
         dt: float = 0.001,
         decimation: int = 10,
-        frame_stack: int = 15,
-        c_frame_stack: int = 3,
-        cycle_time: float = 0.4,
         tau_factor: float = 3,
-        lin_vel: float = 2.0,
-        ang_vel: float = 1.0,
-        dof_pos: float = 1.0,
-        dof_vel: float = 0.05,
-        clip_observations: float = 18.0,
-        clip_actions: float = 18.0,
-        action_scale: float = 0.25,
     ) -> None:
-        self.robot = load_embodiment(embodiment)
-
-        self.num_actions = len(self.robot.all_joints())
-
-        self.frame_stack = frame_stack
-        self.c_frame_stack = c_frame_stack
-        self.num_single_obs = 11 + self.num_actions * self.c_frame_stack
-        self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.sim_duration = sim_duration
         self.dt = dt
         self.decimation = decimation
 
-        self.cycle_time = cycle_time
-
         self.tau_factor = tau_factor
-        self.tau_limit = (
-            np.array(list(self.robot.effort().values()) + list(self.robot.effort().values())) * self.tau_factor
-        )
-        self.kps = np.array(list(self.robot.stiffness().values()) + list(self.robot.stiffness().values()))
-        self.kds = np.array(list(self.robot.damping().values()) + list(self.robot.damping().values()))
-
-        self.lin_vel = lin_vel
-        self.ang_vel = ang_vel
-        self.dof_pos = dof_pos
-        self.dof_vel = dof_vel
-
-        self.clip_observations = clip_observations
-        self.clip_actions = clip_actions
-
-        self.action_scale = action_scale
 
 
 def quaternion_to_euler_array(quat: np.ndarray) -> np.ndarray:
@@ -163,11 +127,20 @@ def get_obs(data: mujoco.MjData) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np
     return (q, dq, quat, v, omega, gvec)
 
 
-def pd_control(target_q: np.ndarray, q: np.ndarray, kp: np.ndarray, target_dq: np.ndarray, dq: np.ndarray, kd: np.ndarray, default: np.ndarray) -> np.ndarray:
+def pd_control(
+    target_q: np.ndarray,
+    q: np.ndarray,
+    kp: np.ndarray,
+    target_dq: np.ndarray,
+    dq: np.ndarray,
+    kd: np.ndarray,
+    default: np.ndarray,
+) -> np.ndarray:
     """Calculates torques from position commands"""
     return kp * (target_q + default - q) - kd * dq
 
-def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None:
+
+def run_mujoco(policy: ort.InferenceSession, cfg: Sim2simCfg, model_info: Dict[str, Union[float, List[float], str]], keyboard_use: bool = False) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
 
@@ -185,13 +158,23 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
     model.opt.timestep = cfg.dt
     data = mujoco.MjData(model)
 
+    assert isinstance(model_info["num_actions"], int)
+    assert isinstance(model_info["num_observations"], int)
+    assert isinstance(model_info["robot_effort"], list)
+    assert isinstance(model_info["robot_stiffness"], list)
+    assert isinstance(model_info["robot_damping"], list)
+
+    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * cfg.tau_factor
+    kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
+    kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
+
     try:
         data.qpos = model.keyframe("default").qpos
-        default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
+        default = deepcopy(model.keyframe("default").qpos)[-model_info["num_actions"] :]
         print("Default position:", default)
     except:
         print("No default position found, using zero initialization")
-        default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
+        default = np.zeros(model_info["num_actions"])  # 3 for pos, 4 for quat, cfg.num_actions for joints
 
     mujoco.mj_step(model, data)
     for ii in range(len(data.ctrl) + 1):
@@ -201,8 +184,8 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
     data.qacc = np.zeros_like(data.qacc)
     viewer = mujoco_viewer.MujocoViewer(model, data)
 
-    target_q = np.zeros((cfg.num_actions), dtype=np.double)
-    action = np.zeros((cfg.num_actions), dtype=np.double)
+    target_q = np.zeros((model_info["num_actions"]), dtype=np.double)
+    action = np.zeros((model_info["num_actions"]), dtype=np.double)
 
     count_lowlevel = 0
 
@@ -211,22 +194,22 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
         "y_vel.1": np.zeros(1).astype(np.float32),
         "rot.1": np.zeros(1).astype(np.float32),
         "t.1": np.zeros(1).astype(np.float32),
-        "dof_pos.1": np.zeros(cfg.num_actions).astype(np.float32),
-        "dof_vel.1": np.zeros(cfg.num_actions).astype(np.float32),
-        "prev_actions.1": np.zeros(cfg.num_actions).astype(np.float32),
+        "dof_pos.1": np.zeros(model_info["num_actions"]).astype(np.float32),
+        "dof_vel.1": np.zeros(model_info["num_actions"]).astype(np.float32),
+        "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
-        "buffer.1": np.zeros(cfg.num_observations).astype(np.float32),
-    }       
+        "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
+    }
 
-    for _  in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
+    for _ in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
         if keyboard_use:
             handle_keyboard_input()
 
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
-        q = q[-cfg.num_actions :]
-        dq = dq[-cfg.num_actions :]
+        q = q[-model_info["num_actions"] :]
+        dq = dq[-model_info["num_actions"] :]
 
         # 1000hz -> 50hz
         if count_lowlevel % cfg.decimation == 0:
@@ -237,7 +220,7 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
 
             cur_pos_obs = q - default
 
-            cur_vel_obs = dq * cfg.dof_vel
+            cur_vel_obs = dq
 
             input_data["x_vel.1"] = np.array([x_vel_cmd], dtype=np.float32)
             input_data["y_vel.1"] = np.array([y_vel_cmd], dtype=np.float32)
@@ -256,12 +239,12 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
             target_q = positions
-        target_dq = np.zeros((cfg.num_actions), dtype=np.double)
+        target_dq = np.zeros((model_info["num_actions"]), dtype=np.double)
 
         # Generate PD control
-        tau = pd_control(target_q, q, cfg.kps, target_dq, dq, cfg.kds, default)  # Calc torques
+        tau = pd_control(target_q, q, kps, target_dq, dq, kds, default)  # Calc torques
 
-        tau = np.clip(tau, -cfg.tau_limit, cfg.tau_limit)  # Clamp torques
+        tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
         # print(tau)
         # print(eu_ang)
         # print(x_vel_cmd, y_vel_cmd, yaw_vel_cmd)
@@ -274,6 +257,23 @@ def run_mujoco(policy: Any, cfg: Sim2simCfg, keyboard_use: bool = False) -> None
 
     viewer.close()
 
+
+def parse_modelmeta(modelmeta: List[Tuple[str, str]]) -> Dict[str, Union[float, List[float], str]]:
+    parsed_meta: Dict[str, Union[float, List[float], str]] = {}
+    for key, value in modelmeta:
+        if value.startswith("[") and value.endswith("]"):
+            parsed_meta[key] = list(map(float, value.strip("[]").split(",")))
+        else:
+            try:
+                parsed_meta[key] = float(value)
+                if int(value) == parsed_meta[key]:
+                    parsed_meta[key] = int(value)
+            except ValueError:
+                print(f"Failed to convert {value} to float")
+                parsed_meta[key] = value
+    return parsed_meta
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--load_model", type=str, required=True, help="Run to load from.")
@@ -282,7 +282,7 @@ if __name__ == "__main__":
     parser.add_argument("--load_actions", action="store_true", help="saved_actions")
     parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
     args = parser.parse_args()
-            
+
     if args.keyboard_use:
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.0, 0.0, 0.0
         pygame.init()
@@ -294,29 +294,28 @@ if __name__ == "__main__":
 
     if args.embodiment == "stompypro":
         policy_cfg.cycle_time = 0.4
-        policy_cfg.policy_dt = 1
 
         cfg = Sim2simCfg(
-            args.embodiment,
             sim_duration=60.0,
             dt=0.001,
             decimation=10,
-            cycle_time=0.4,
             tau_factor=3.0,
         )
 
     elif args.embodiment == "stompymicro":
         policy_cfg.cycle_time = 0.2
         cfg = Sim2simCfg(
-            args.embodiment,
             sim_duration=60.0,
             dt=0.001,
             decimation=10,
-            cycle_time=0.2,
             tau_factor=2,
         )
 
     policy = convert(args.load_model, policy_cfg)
 
-    run_mujoco(policy, cfg, args.keyboard_use)
+    model_info = parse_modelmeta(policy.get_modelmeta().custom_metadata_map.items())
+
+    print("Model metadata: ", model_info)
+
+    run_mujoco(policy, cfg, model_info, args.keyboard_use)
 
