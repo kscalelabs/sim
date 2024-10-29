@@ -102,11 +102,14 @@ class LeggedRobot(BaseTask):
         # TODO(pfb30) - debug this
         origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
         origin = quat_conjugate(origin)
-        self.base_quat[:] = quat_mul(origin, self.root_states[:, 3:7])
+
+        self.base_quat = self.root_states[:, 3:7]
+        self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])   
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
 
         self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 7:10])
         self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
+
         self.projected_gravity[:] = quat_rotate_inverse(self.base_quat, self.gravity_vec)
 
         self._post_physics_step_callback()
@@ -363,7 +366,8 @@ class LeggedRobot(BaseTask):
         torques = p_gains * (actions_scaled + self.default_dof_pos - self.dof_pos) - d_gains * self.dof_vel
 
         res = torch.clip(torques, -self.torque_limits, self.torque_limits)
-
+        # breakpoint()
+        print(self.root_states[0, :7])
         return res
 
     def _reset_dofs(self, env_ids):
@@ -592,6 +596,7 @@ class LeggedRobot(BaseTask):
         # prepare list of functions
         self.reward_functions = []
         self.reward_names = []
+
         for name, scale in self.reward_scales.items():
             if name == "termination":
                 continue
@@ -696,6 +701,8 @@ class LeggedRobot(BaseTask):
         self.num_dofs = len(self.dof_names)
         feet_names = [s for s in body_names if s in self.cfg.asset.foot_name]
         knee_names = [s for s in body_names if s in self.cfg.asset.knee_name]
+        imu_names = [s for s in body_names if s in self.cfg.asset.imu_name]
+
         penalized_contact_names = []
         for name in self.cfg.asset.penalize_contacts_on:
             penalized_contact_names.extend([s for s in body_names if name in s])
@@ -740,6 +747,8 @@ class LeggedRobot(BaseTask):
             self.gym.set_actor_dof_properties(env_handle, actor_handle, dof_props)
             body_props = self.gym.get_actor_rigid_body_properties(env_handle, actor_handle)
             body_props = self._process_rigid_body_props(body_props, i)
+            # pfb30
+            root_body_handle = self.gym.get_actor_root_rigid_body_handle(env_handle, actor_handle)
 
             self.gym.set_actor_rigid_body_properties(env_handle, actor_handle, body_props, recomputeInertia=False)
             self.envs.append(env_handle)
@@ -753,14 +762,19 @@ class LeggedRobot(BaseTask):
         print("feet", self.feet_indices)
         print(f"Processed body properties for env {i}:")
         for j, prop in enumerate(body_props):
-            print(f"  Body {j} mass: {prop.mass}")
-            # prop.mass = prop.mass * 1e7
+            print(f" Body {j} mass: {prop.mass}")
             print(f" Body {j} inertia: {prop.inertia.x}, {prop.inertia.y}, {prop.inertia.z}")
 
         self.knee_indices = torch.zeros(len(knee_names), dtype=torch.long, device=self.device, requires_grad=False)
         for i in range(len(knee_names)):
             self.knee_indices[i] = self.gym.find_actor_rigid_body_handle(
                 self.envs[0], self.actor_handles[0], knee_names[i]
+            )
+
+        self.imu_indices = torch.zeros(len(imu_names), dtype=torch.long, device=self.device, requires_grad=False)
+        for i in range(len(imu_names)):
+            self.imu_indices[i] = self.gym.find_actor_rigid_body_handle(
+                self.envs[0], self.actor_handles[0], imu_names[i]
             )
 
         self.penalised_contact_indices = torch.zeros(

@@ -39,10 +39,11 @@ class StompyProCfg(LeggedRobotCfg):
 
         foot_name = ["L_foot", "R_foot"]
         knee_name = ["L_calf", "R_calf"]
-
+        imu_name = ["imu_link"]
         termination_height = 0.2
         default_feet_height = 0.0
 
+        collapse_fixed_joints = True
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
