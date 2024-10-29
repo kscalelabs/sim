@@ -144,15 +144,15 @@ class StompyMicroCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.02, 0.1]  # min max [m/s]
+            lin_vel_x = [-0.05, 0.2]  # min max [m/s]
             lin_vel_y = [-0.04, 0.04]  # min max [m/s]
             ang_vel_yaw = [-0.1, 0.1]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
         base_height_target = Robot.height
-        min_dist = 0.02
-        max_dist = 0.09
+        min_dist = 0.03
+        max_dist = 0.1
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
@@ -162,7 +162,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 50  # forces above this value are penalized
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
@@ -176,8 +176,8 @@ class StompyMicroCfg(LeggedRobotCfg):
             # contact
             feet_contact_forces = -0.01
             # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
+            tracking_lin_vel = 1.6
+            tracking_ang_vel = 1.6
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 0.4
             track_vel_hard = 0.5
