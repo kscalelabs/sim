@@ -204,8 +204,21 @@ class Actor(nn.Module):
         return actions_scaled, actions, x
 
 
-"""Converts a PyTorch model to a ONNX format."""
-def convert(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
+def convert_model_to_onnx(
+        model_path: str,
+        cfg: ActorCfg,
+        save_path: Optional[str] = None
+    ) -> ort.InferenceSession:
+    """Converts a PyTorch model to a ONNX format.
+    
+    Args:
+        model_path: Path to the PyTorch model.
+        cfg: The configuration for the actor.
+        save_path: Path to save the ONNX model.
+
+    Returns:
+        An ONNX inference session.
+    """
     all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
     weights = all_weights["model_state_dict"]
     num_actor_obs = weights["actor.0.weight"].shape[1]
@@ -280,4 +293,4 @@ def convert(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> 
 
 
 if __name__ == "__main__":
-    convert("position_control.pt", ActorCfg(), "position_control.onnx")
+    convert_model_to_onnx("model_3000.pt", ActorCfg(), "position_control.onnx")

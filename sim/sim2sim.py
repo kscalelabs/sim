@@ -48,7 +48,7 @@ import pygame
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
-from sim.model_export import ActorCfg, convert
+from sim.model_export import ActorCfg, convert_model_to_onnx
 
 
 def handle_keyboard_input() -> None:
@@ -271,11 +271,10 @@ def parse_modelmeta(modelmeta: List[Tuple[str, str]]) -> Dict[str, Union[float, 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
-    parser.add_argument("--load_model", type=str, required=True, help="Run to load from.")
-    parser.add_argument("--embodiment", type=str, required=True, help="embodiment")
-    parser.add_argument("--terrain", action="store_true", help="terrain or plane")
-    parser.add_argument("--load_actions", action="store_true", help="saved_actions")
+    parser.add_argument("--embodiment", type=str, required=True, help="Embodiment name.")
+    parser.add_argument("--load_model", type=str, required=True, help="Path to run to load from.")
     parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
+
     args = parser.parse_args()
 
     if args.keyboard_use:
@@ -286,17 +285,14 @@ if __name__ == "__main__":
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
-
     if args.embodiment == "stompypro":
         policy_cfg.cycle_time = 0.4
-
         cfg = Sim2simCfg(
             sim_duration=60.0,
             dt=0.001,
             decimation=10,
-            tau_factor=3.0,
+            tau_factor=10.0,
         )
-
     elif args.embodiment == "stompymicro":
         policy_cfg.cycle_time = 0.2
         cfg = Sim2simCfg(
@@ -306,10 +302,14 @@ if __name__ == "__main__":
             tau_factor=2,
         )
 
-    policy = convert(args.load_model, policy_cfg, save_path="policy.onnx")
-    # policy = ort.InferenceSession("policy.onnx")
-    model_info = parse_modelmeta(policy.get_modelmeta().custom_metadata_map.items())
+    if args.load_model.endswith(".onnx"):
+        policy = ort.InferenceSession(args.load_model)
+    else:
+        policy = convert_model_to_onnx(
+            args.load_model, policy_cfg, save_path="policy.onnx"
+        )
 
+    model_info = parse_modelmeta(policy.get_modelmeta().custom_metadata_map.items())
     print("Model metadata: ", model_info)
 
     run_mujoco(policy, cfg, model_info, args.keyboard_use)
