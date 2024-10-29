@@ -83,7 +83,6 @@ class Actor(nn.Module):
         policy: The policy network.
         cfg: The configuration for the actor.
     """
-
     def __init__(self, policy: nn.Module, cfg: ActorCfg) -> None:
         super().__init__()
 
@@ -153,8 +152,9 @@ class Actor(nn.Module):
                 pass, it should be all zeros.
 
         Returns:
-            The torques to apply to the DoFs, the actions taken, and the
-            next buffer.
+            actions_scaled: The actions to take, with shape (num_actions), scaled by the action_scale.
+            actions: The actions to take, with shape (num_actions).
+            x: The new buffer of observations, with shape (frame_stack * num_single_obs).
         """
         sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
         cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
@@ -191,8 +191,9 @@ class Actor(nn.Module):
         # Clip the inputs
         new_x = torch.clamp(new_x, -self.clip_observations, self.clip_observations)
 
-        # Add the new frame to the buffer and pop the oldest frame
+        # Add the new frame to the buffer
         x = torch.cat((buffer, new_x), dim=0)
+        # Pop the oldest frame
         x = x[self.num_single_obs :]
 
         policy_input = x.unsqueeze(0)
@@ -275,6 +276,7 @@ def convert_model_to_onnx(
         meta.key = field_name
         meta.value = str(field)
 
+    # Add the configuration of the model
     for field in fields(cfg):
         value = getattr(cfg, field.name)
         meta = model_proto.metadata_props.add()
@@ -293,4 +295,4 @@ def convert_model_to_onnx(
 
 
 if __name__ == "__main__":
-    convert_model_to_onnx("model_3000.pt", ActorCfg(), "position_control.onnx")
+    convert_model_to_onnx("model_3000.pt", ActorCfg(), "policy.onnx")
