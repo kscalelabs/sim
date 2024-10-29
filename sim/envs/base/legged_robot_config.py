@@ -124,7 +124,10 @@ class LeggedRobotCfg(BaseConfig):
     class asset:
         file = ""
         name = "legged_robot"  # actor name
-        foot_name = "None"  # name of the feet bodies, used to index body state and contact force tensors
+        foot_name = ["None"]  # name of the feet bodies, used to index body state and contact force tensors
+        knee_name = ["None"]
+        imu_name = None
+
         penalize_contacts_on = []
         terminate_after_contacts_on = []
         disable_gravity = False

@@ -40,6 +40,7 @@ class StompyProCfg(LeggedRobotCfg):
         foot_name = ["L_foot", "R_foot"]
         knee_name = ["L_calf", "R_calf"]
 
+
         termination_height = 0.2
         default_feet_height = 0.0
 
