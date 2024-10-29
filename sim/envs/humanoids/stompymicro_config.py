@@ -41,7 +41,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         knee_name = ["ankle_pitch_left", "ankle_pitch_right"]
 
         termination_height = 0.05
-        default_feet_height = 0.01
+        default_feet_height = 0.02
 
         terminate_after_contacts_on = ["torso"]
 
@@ -132,7 +132,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         push_robots = True  # True
         push_interval_s = 4
         max_push_vel_xy = 0.05
-        max_push_ang_vel = 0.1
+        max_push_ang_vel = 0.05
         # dynamic randomization
         action_delay = 0.5
         action_noise = 0.02
@@ -144,20 +144,20 @@ class StompyMicroCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.08, 0.2]  # min max [m/s]
-            lin_vel_y = [-0.08, 0.08]  # min max [m/s]
-            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
+            lin_vel_x = [-0.02, 0.1]  # min max [m/s]
+            lin_vel_y = [-0.04, 0.04]  # min max [m/s]
+            ang_vel_yaw = [-0.1, 0.1]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
         base_height_target = Robot.height
-        min_dist = 0.07
-        max_dist = 0.14
+        min_dist = 0.02
+        max_dist = 0.09
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.02  # m
-        cycle_time = 0.4  # sec
+        cycle_time = 0.6  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -167,9 +167,9 @@ class StompyMicroCfg(LeggedRobotCfg):
         class scales:
             # reference motion tracking
             joint_pos = 1.6
-            feet_clearance = 1.2
-            feet_contact_number = 1.2
-            feet_air_time = 1.2
+            feet_clearance = 1.5
+            feet_contact_number = 1.5
+            feet_air_time = 1.4
             foot_slip = -0.1
             feet_distance = 0.2
             knee_distance = 0.2
