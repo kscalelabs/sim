@@ -103,13 +103,16 @@ class LeggedRobot(BaseTask):
         origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
         origin = quat_conjugate(origin)
 
-        self.base_quat = self.root_states[:, 3:7]
-        self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])   
+        if self.imu_indices:
+            self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])
+            self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 7:10])
+            self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 10:13]) 
+        else:
+            self.base_quat = self.root_states[:, 3:7]
+            self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 7:10])
+            self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
+
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
-
-        self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 7:10])
-        self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
-
         self.projected_gravity[:] = quat_rotate_inverse(self.base_quat, self.gravity_vec)
 
         self._post_physics_step_callback()
@@ -193,7 +196,10 @@ class LeggedRobot(BaseTask):
         # TODO(pfb30) - debug this
         origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
         origin = quat_conjugate(origin)
-        self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.root_states[env_ids, 3:7])
+        if self.imu_indices:
+            self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.rigid_state[env_ids, self.imu_indices, 3:7])
+        else:
+            self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.root_states[env_ids, 3:7])
 
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
         self.projected_gravity[env_ids] = quat_rotate_inverse(self.base_quat[env_ids], self.gravity_vec[env_ids])
@@ -366,8 +372,6 @@ class LeggedRobot(BaseTask):
         torques = p_gains * (actions_scaled + self.default_dof_pos - self.dof_pos) - d_gains * self.dof_vel
 
         res = torch.clip(torques, -self.torque_limits, self.torque_limits)
-        # breakpoint()
-        print(self.root_states[0, :7])
         return res
 
     def _reset_dofs(self, env_ids):
@@ -485,17 +489,25 @@ class LeggedRobot(BaseTask):
         self.dof_state = gymtorch.wrap_tensor(dof_state_tensor)
         self.dof_pos = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
-        # self.base_quat = self.root_states[:, 3:7]
+
+        self.rigid_state = gymtorch.wrap_tensor(rigid_body_state)#.view(self.num_envs, -1, 13)
+        self.rigid_state = self.rigid_state.view(self.num_envs, -1, 13)
         # TODO(pfb30): debug this
+        # self.base_quat = self.root_states[:, 3:7]
         origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
         origin = quat_conjugate(origin)
-        self.base_quat = quat_mul(origin, self.root_states[:, 3:7])
+
+        if self.imu_indices:
+            self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])   
+        else:
+            self.base_quat = quat_mul(origin, self.root_states[:, 3:7])
+
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
 
         self.contact_forces = gymtorch.wrap_tensor(net_contact_forces).view(
             self.num_envs, -1, 3
         )  # shape: num_envs, num_bodies, xyz axis
-        self.rigid_state = gymtorch.wrap_tensor(rigid_body_state).view(self.num_envs, -1, 13)
+
 
         # initialize some data used later on
         self.common_step_counter = 0
@@ -541,8 +553,13 @@ class LeggedRobot(BaseTask):
         self.last_contacts = torch.zeros(
             self.num_envs, len(self.feet_indices), dtype=torch.bool, device=self.device, requires_grad=False
         )
-        self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.root_states[:, 7:10])
-        self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
+        if self.imu_indices:
+            self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 7:10])
+            self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 10:13])
+        else:
+            self.base_lin_vel = quat_rotate_inverse(self.base_quat, self.root_states[:, 7:10])
+            self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
+
         self.projected_gravity = quat_rotate_inverse(self.base_quat, self.gravity_vec)
         if self.cfg.terrain.measure_heights:
             self.height_points = self._init_height_points()
@@ -701,7 +718,6 @@ class LeggedRobot(BaseTask):
         self.num_dofs = len(self.dof_names)
         feet_names = [s for s in body_names if s in self.cfg.asset.foot_name]
         knee_names = [s for s in body_names if s in self.cfg.asset.knee_name]
-        imu_names = [s for s in body_names if s in self.cfg.asset.imu_name]
 
         penalized_contact_names = []
         for name in self.cfg.asset.penalize_contacts_on:
@@ -747,8 +763,6 @@ class LeggedRobot(BaseTask):
             self.gym.set_actor_dof_properties(env_handle, actor_handle, dof_props)
             body_props = self.gym.get_actor_rigid_body_properties(env_handle, actor_handle)
             body_props = self._process_rigid_body_props(body_props, i)
-            # pfb30
-            root_body_handle = self.gym.get_actor_root_rigid_body_handle(env_handle, actor_handle)
 
             self.gym.set_actor_rigid_body_properties(env_handle, actor_handle, body_props, recomputeInertia=False)
             self.envs.append(env_handle)
@@ -771,11 +785,11 @@ class LeggedRobot(BaseTask):
                 self.envs[0], self.actor_handles[0], knee_names[i]
             )
 
-        self.imu_indices = torch.zeros(len(imu_names), dtype=torch.long, device=self.device, requires_grad=False)
-        for i in range(len(imu_names)):
-            self.imu_indices[i] = self.gym.find_actor_rigid_body_handle(
-                self.envs[0], self.actor_handles[0], imu_names[i]
-            )
+        self.imu_indices = self.gym.find_actor_rigid_body_handle(
+            self.envs[0], self.actor_handles[0], self.cfg.asset.imu_name
+        )
+        if self.imu_indices == -1:
+            self.imu_indices = None
 
         self.penalised_contact_indices = torch.zeros(
             len(penalized_contact_names), dtype=torch.long, device=self.device, requires_grad=False
