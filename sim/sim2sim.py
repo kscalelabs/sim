@@ -26,6 +26,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
+
 """
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
@@ -50,14 +51,6 @@ from tqdm import tqdm
 from sim.model_export import ActorCfg, convert_model_to_onnx
 
 
-@dataclass
-class Sim2simCfg:
-    sim_duration: float = 60.0
-    dt: float = 0.001
-    decimation: int = 10
-    tau_factor: float = 3
-
-
 def handle_keyboard_input() -> None:
     global x_vel_cmd, y_vel_cmd, yaw_vel_cmd
 
@@ -78,6 +71,14 @@ def handle_keyboard_input() -> None:
         yaw_vel_cmd += 0.001
     if keys[pygame.K_z]:
         yaw_vel_cmd -= 0.001
+
+
+@dataclass
+class Sim2simCfg:
+    sim_duration: float = 60.0
+    dt: float = 0.001
+    decimation: int = 10
+    tau_factor: float = 3
 
 
 def quaternion_to_euler_array(quat: np.ndarray) -> np.ndarray:
@@ -119,6 +120,7 @@ def pd_control(
     target_q: np.ndarray,
     q: np.ndarray,
     kp: np.ndarray,
+    target_dq: np.ndarray,
     dq: np.ndarray,
     kd: np.ndarray,
     default: np.ndarray,
@@ -212,6 +214,7 @@ def run_mujoco(
 
             # Convert sim coordinates to policy coordinates
             cur_pos_obs = q - default
+
             cur_vel_obs = dq
 
             input_data["x_vel.1"] = np.array([x_vel_cmd], dtype=np.float32)
@@ -232,24 +235,23 @@ def run_mujoco(
 
             positions, actions, hist_obs = policy.run(None, input_data)
             target_q = positions
+        target_dq = np.zeros((model_info["num_actions"]), dtype=np.double)
 
         # Generate PD control
-        tau = pd_control(target_q, q, kps, dq, kds, default)  # Calc torques
+        tau = pd_control(target_q, q, kps, target_dq, dq, kds, default)  # Calc torques
+
         tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
 
         data.ctrl = tau
-        mujoco.mj_step(model, data)
 
+        mujoco.mj_step(model, data)
         viewer.render()
         count_lowlevel += 1
 
     viewer.close()
 
 
-def parse_modelmeta(
-    modelmeta: List[Tuple[str, str]],
-    verbose: bool = False,
-) -> Dict[str, Union[float, List[float], str]]:
+def parse_modelmeta(modelmeta: List[Tuple[str, str]]) -> Dict[str, Union[float, List[float], str]]:
     parsed_meta: Dict[str, Union[float, List[float], str]] = {}
     for key, value in modelmeta:
         if value.startswith("[") and value.endswith("]"):
@@ -265,9 +267,6 @@ def parse_modelmeta(
             except ValueError:
                 print(f"Failed to convert {value} to float")
                 parsed_meta[key] = value
-    if verbose:
-        for key, value in parsed_meta.items():
-            print(f"{key}: {value}")
     return parsed_meta
 
 
@@ -311,9 +310,7 @@ if __name__ == "__main__":
             args.load_model, policy_cfg, save_path="policy.onnx"
         )
 
-    model_info = parse_modelmeta(
-        policy.get_modelmeta().custom_metadata_map.items(),
-        verbose=True,
-    )
+    model_info = parse_modelmeta(policy.get_modelmeta().custom_metadata_map.items())
+    print("Model metadata: ", model_info)
 
     run_mujoco(policy, cfg, model_info, args.keyboard_use)
