@@ -277,9 +277,10 @@ class LeggedRobot(BaseTask):
                 self.dof_vel_limits[i] = props["velocity"][i].item() * self.cfg.safety.vel_limit
                 self.torque_limits[i] = props["effort"][i].item() * self.cfg.safety.torque_limit
 
-        for i, dof_name in enumerate(self.dof_names):
-            props["friction"][i] = self.cfg.asset.friction
-            props["armature"][i] = self.cfg.asset.armature
+        # pfb30
+        # for i, dof_name in enumerate(self.dof_names):
+        #     props["friction"][i] = self.cfg.asset.friction
+        #     props["armature"][i] = self.cfg.asset.armature
 
         return props
 

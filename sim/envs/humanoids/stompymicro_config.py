@@ -75,7 +75,7 @@ class StompyMicroCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.0  # scales other values
+        noise_level = 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
