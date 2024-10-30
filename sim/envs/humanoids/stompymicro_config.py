@@ -75,14 +75,15 @@ class StompyMicroCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.6  # scales other values
+        noise_level = 1.0  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 0.5
-            ang_vel = 0.1
-            lin_vel = 0.05
-            quat = 0.03
+            dof_vel = 1.5
+            lin_vel = 0.1
+            ang_vel = 0.2
+            quat = 0.1
+            gravity = 0.05
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -113,7 +114,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             num_threads = 10
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 1
+            num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
