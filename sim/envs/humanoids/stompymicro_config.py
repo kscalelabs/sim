@@ -52,9 +52,9 @@ class StompyMicroCfg(LeggedRobotCfg):
         fix_base_link = False
 
         # BAM parameters
-        # TODO update effort to larger one
-        friction = 0.013343597773929877
-        armature = 0.008793405204572328
+        # TODO update effort to larger one - fake numbers for now
+        friction = 0.04
+        armature = 0.0018
 
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"
@@ -75,7 +75,7 @@ class StompyMicroCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.6  # scales other values
+        noise_level = 1.0 # scales other values
 
         class noise_scales:
             dof_pos = 0.05

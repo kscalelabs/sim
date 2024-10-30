@@ -4,7 +4,8 @@
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
   <default>
-    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01" />
+    <!-- These needs to align to the joint limits in the config file -->
+    <joint limited="true" damping="0.095" armature="0.001" frictionloss="0.04" />
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
     <motor ctrllimited="true" />
     <equality solref="0.001 2" />
