@@ -177,6 +177,9 @@ def run_mujoco(
     viewer = mujoco_viewer.MujocoViewer(model, data)
 
     target_q = np.zeros((model_info["num_actions"]), dtype=np.double)
+    actions = np.zeros((model_info["num_actions"]), dtype=np.double)
+    hist_obs = np.zeros((model_info["num_observations"]), dtype=np.double)
+
     count_lowlevel = 0
 
     input_data = {
@@ -203,7 +206,6 @@ def run_mujoco(
 
         # 1000hz -> 50hz
         if count_lowlevel % cfg.decimation == 0:
-            positions, actions, hist_obs = policy.run(None, input_data)
 
             eu_ang = quaternion_to_euler_array(quat)
             eu_ang[eu_ang > math.pi] -= 2 * math.pi
@@ -228,6 +230,7 @@ def run_mujoco(
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
+            positions, actions, hist_obs = policy.run(None, input_data)
             target_q = positions
 
         # Generate PD control
@@ -290,7 +293,7 @@ if __name__ == "__main__":
             sim_duration=60.0,
             dt=0.001,
             decimation=10,
-            tau_factor=3.0,
+            tau_factor=10.0,
         )
     elif args.embodiment == "stompymicro":
         policy_cfg.cycle_time = 0.2
