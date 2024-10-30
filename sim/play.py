@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
+from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
@@ -36,21 +37,6 @@ def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> No
     model = copy.deepcopy(actor_critic.actor).to("cpu")
     traced_script_module = torch.jit.script(model)
     traced_script_module.save(path)
-
-
-def export_policy_as_onnx(actor_critic, path):
-    os.makedirs(path, exist_ok=True)
-    path = os.path.join(path, "policy_1.onnx")
-    model = copy.deepcopy(actor_critic.actor).to("cpu")
-
-    # Get the input dimension from the first layer of the model
-    first_layer = next(model.parameters())
-    input_dim = first_layer.shape[1]
-
-    # Create a dummy input tensor with the correct dimensions
-    dummy_input = torch.randn(1, input_dim)
-
-    torch.onnx.export(model, dummy_input, path)
 
 
 def play(args: argparse.Namespace) -> None:
@@ -86,16 +72,16 @@ def play(args: argparse.Namespace) -> None:
     policy = ppo_runner.get_inference_policy(device=env.device)
 
     # Export policy if needed
-    EXPORT_POLICY = True
-    if EXPORT_POLICY:
+    if args.export_policy:
         path = os.path.join(".")
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
 
     # export policy as a onnx module (used to run it on web)
-    if EXPORT_ONNX:
-        path = os.path.join(".")
-        export_policy_as_onnx(ppo_runner.alg.actor_critic, path)
+    if args.export_onnx:
+        breakpoint()
+        path = ppo_runner.alg.actor_critic
+        convert_model_to_onnx(path, ActorCfg(), save_path="policy.onnx")
         print("Exported policy as onnx to: ", path)
 
     # Prepare for logging
@@ -136,7 +122,7 @@ def play(args: argparse.Namespace) -> None:
             "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
         )  # root orientation
 
-    if RENDER:
+    if args.render:
         camera_properties = gymapi.CameraProperties()
         camera_properties.width = 1920
         camera_properties.height = 1080
@@ -170,7 +156,7 @@ def play(args: argparse.Namespace) -> None:
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
 
-        if FIX_COMMAND:
+        if args.fix_command:
             env.commands[:, 0] = 0.5
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
@@ -178,7 +164,7 @@ def play(args: argparse.Namespace) -> None:
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
         print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
-        if RENDER:
+        if args.render:
             env.gym.fetch_results(env.sim, True)
             env.gym.step_graphics(env.sim)
             env.gym.render_all_camera_sensors(env.sim)
@@ -237,7 +223,7 @@ def play(args: argparse.Namespace) -> None:
     env_logger.print_rewards()
     env_logger.plot_states()
 
-    if RENDER:
+    if args.render:
         video.release()
 
     if args.log_h5:
@@ -246,14 +232,13 @@ def play(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    RENDER = True
-    FIX_COMMAND = True
-
-    EXPORT_ONNX = True
-
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
     parser.add_argument("--log_h5", action="store_true", help="Enable HDF5 logging")
+    parser.add_argument("--render", action="store_true", help="Enable rendering", default=True)
+    parser.add_argument("--fix_command", action="store_true", help="Fix command", default=True)
+    parser.add_argument("--export_onnx", action="store_true", help="Export policy as ONNX", default=True)
+    parser.add_argument("--export_policy", action="store_true", help="Export policy as JIT", default=True)
     args, unknown = parser.parse_known_args(namespace=base_args)
 
     play(args)
