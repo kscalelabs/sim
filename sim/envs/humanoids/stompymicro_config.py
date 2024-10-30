@@ -80,7 +80,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         class noise_scales:
             dof_pos = 0.05
             dof_vel = 1.5
-            lin_vel = 0.1
+            lin_vel = 0.05
             ang_vel = 0.2
             quat = 0.1
             gravity = 0.05
@@ -216,18 +216,18 @@ class StompyMicroCfg(LeggedRobotCfg):
 class StompyMicroStandingCfg(StompyMicroCfg):
     class rewards:
         base_height_target = Robot.height
-        min_dist = 0.07
+        min_dist = 0.03
         max_dist = 0.14
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.02  # m
-        cycle_time = 0.2  # sec
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 50  # forces above this value are penalized
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales:
             # base pos
