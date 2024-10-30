@@ -232,6 +232,12 @@ def get_args() -> argparse.Namespace:
             "default": False,
             "help": "Enable HDF5 logging",
         },
+        {
+            "name": "--trimesh",
+            "action": "store_true",
+            "default": False,
+            "help": "Use trimesh terrain",
+        },
     ]
     # parse arguments
     args = gymutil.parse_arguments(description="RL Policy", custom_parameters=custom_parameters)

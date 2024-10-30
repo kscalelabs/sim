@@ -244,6 +244,7 @@ def run_mujoco(policy, cfg, keyboard_use=False):
             hist_obs.popleft()
 
             policy_input = np.zeros([1, cfg.num_observations], dtype=np.float32)
+
             for i in range(cfg.frame_stack):
                 policy_input[0, i * cfg.num_single_obs : (i + 1) * cfg.num_single_obs] = hist_obs[i][0, :]
 
@@ -307,7 +308,7 @@ if __name__ == "__main__":
             dt=0.001,
             decimation=10,
             cycle_time=0.4,
-            tau_factor=3.0,
+            tau_factor=10.0,
         )
     elif args.embodiment == "stompymicro":
         cfg = Sim2simCfg(

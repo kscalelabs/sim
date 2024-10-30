@@ -60,7 +60,10 @@ def play(args: argparse.Namespace) -> None:
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
     env_cfg.sim.max_gpu_contact_pairs = 2**10
-    env_cfg.terrain.mesh_type = "plane"
+    if args.trimesh:
+        env_cfg.terrain.mesh_type = "trimesh"
+    else:
+        env_cfg.terrain.mesh_type = "plane"
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
@@ -171,7 +174,7 @@ def play(args: argparse.Namespace) -> None:
             dset_actions[t] = actions.detach().numpy()
 
         if FIX_COMMAND:
-            env.commands[:, 0] = 0.5
+            env.commands[:, 0] = 0.4
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
@@ -248,12 +251,12 @@ def play(args: argparse.Namespace) -> None:
 if __name__ == "__main__":
     RENDER = True
     FIX_COMMAND = True
-
     EXPORT_ONNX = True
 
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
     parser.add_argument("--log_h5", action="store_true", help="Enable HDF5 logging")
+    parser.add_argument("--trimesh", action="store_true", help="Use trimesh terrain")
     args, unknown = parser.parse_known_args(namespace=base_args)
 
     play(args)
