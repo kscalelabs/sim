@@ -16,16 +16,16 @@ from torch.distributions import Normal
 @dataclass
 class ActorCfg:
     embodiment: str = "stompypro"
-    cycle_time: float = 0.4 # Cycle time for sinusoidal command input
-    action_scale: float = 0.25 # Scale for actions
-    lin_vel_scale: float = 2.0 # Scale for linear velocity
-    ang_vel_scale: float = 1.0 # Scale for angular velocity
-    quat_scale: float = 1.0 # Scale for quaternion
-    dof_pos_scale: float = 1.0 # Scale for joint positions
-    dof_vel_scale: float = 0.05 # Scale for joint velocities
-    frame_stack: int = 15 # Number of frames to stack for the policy input
-    clip_observations: float = 18.0 # Clip observations to this value
-    clip_actions: float = 18.0 # Clip actions to this value
+    cycle_time: float = 0.4  # Cycle time for sinusoidal command input
+    action_scale: float = 0.25  # Scale for actions
+    lin_vel_scale: float = 2.0  # Scale for linear velocity
+    ang_vel_scale: float = 1.0  # Scale for angular velocity
+    quat_scale: float = 1.0  # Scale for quaternion
+    dof_pos_scale: float = 1.0  # Scale for joint positions
+    dof_vel_scale: float = 0.05  # Scale for joint velocities
+    frame_stack: int = 15  # Number of frames to stack for the policy input
+    clip_observations: float = 18.0  # Clip observations to this value
+    clip_actions: float = 18.0  # Clip actions to this value
 
 
 class ActorCritic(nn.Module):
@@ -83,6 +83,7 @@ class Actor(nn.Module):
         policy: The policy network.
         cfg: The configuration for the actor.
     """
+
     def __init__(self, policy: nn.Module, cfg: ActorCfg) -> None:
         super().__init__()
 
@@ -121,16 +122,16 @@ class Actor(nn.Module):
 
     def forward(
         self,
-        x_vel: Tensor, # x-coordinate of the target velocity
-        y_vel: Tensor, # y-coordinate of the target velocity
-        rot: Tensor, # target angular velocity
-        t: Tensor, # current policy time (sec)
-        dof_pos: Tensor, # current angular position of the DoFs relative to default
-        dof_vel: Tensor, # current angular velocity of the DoFs
-        prev_actions: Tensor, # previous actions taken by the model
-        imu_ang_vel: Tensor, # angular velocity of the IMU
-        imu_euler_xyz: Tensor, # euler angles of the IMU
-        buffer: Tensor, # buffer of previous observations
+        x_vel: Tensor,  # x-coordinate of the target velocity
+        y_vel: Tensor,  # y-coordinate of the target velocity
+        rot: Tensor,  # target angular velocity
+        t: Tensor,  # current policy time (sec)
+        dof_pos: Tensor,  # current angular position of the DoFs relative to default
+        dof_vel: Tensor,  # current angular velocity of the DoFs
+        prev_actions: Tensor,  # previous actions taken by the model
+        imu_ang_vel: Tensor,  # angular velocity of the IMU
+        imu_euler_xyz: Tensor,  # euler angles of the IMU
+        buffer: Tensor,  # buffer of previous observations
     ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
 
@@ -205,13 +206,9 @@ class Actor(nn.Module):
         return actions_scaled, actions, x
 
 
-def convert_model_to_onnx(
-        model_path: str,
-        cfg: ActorCfg,
-        save_path: Optional[str] = None
-    ) -> ort.InferenceSession:
+def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
     """Converts a PyTorch model to a ONNX format.
-    
+
     Args:
         model_path: Path to the PyTorch model.
         cfg: The configuration for the actor.

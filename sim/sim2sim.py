@@ -307,9 +307,7 @@ if __name__ == "__main__":
     if args.load_model.endswith(".onnx"):
         policy = ort.InferenceSession(args.load_model)
     else:
-        policy = convert_model_to_onnx(
-            args.load_model, policy_cfg, save_path="policy.onnx"
-        )
+        policy = convert_model_to_onnx(args.load_model, policy_cfg, save_path="policy.onnx")
 
     model_info = parse_modelmeta(
         policy.get_modelmeta().custom_metadata_map.items(),

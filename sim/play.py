@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
+from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
-from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
 
 import torch  # isort: skip
 
@@ -236,7 +236,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
     parser.add_argument("--log_h5", action="store_true", help="Enable HDF5 logging")
     parser.add_argument("--render", action="store_true", help="Enable rendering", default=True)
-    parser.add_argument("--fix_command", action="store_true", help="Fix command", default=True) 
+    parser.add_argument("--fix_command", action="store_true", help="Fix command", default=True)
     parser.add_argument("--export_onnx", action="store_true", help="Export policy as ONNX", default=True)
     parser.add_argument("--export_policy", action="store_true", help="Export policy as JIT", default=True)
     args, unknown = parser.parse_known_args(namespace=base_args)
