@@ -143,6 +143,7 @@ class LeggedRobotCfg(BaseConfig):
         max_angular_velocity = 1000.0
         max_linear_velocity = 1000.0
         armature = 0.0
+        friction = 0.0
         thickness = 0.01
 
     class domain_rand:
