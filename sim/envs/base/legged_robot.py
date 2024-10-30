@@ -234,6 +234,7 @@ class LeggedRobot(BaseTask):
         Returns:
             [List[gymapi.RigidShapeProperties]]: Modified rigid shape properties
         """
+
         if self.cfg.domain_rand.randomize_friction:
             if env_id == 0:
                 # prepare friction randomization
@@ -275,6 +276,10 @@ class LeggedRobot(BaseTask):
                 self.dof_pos_limits[i, 1] = props["upper"][i].item() * self.cfg.safety.pos_limit
                 self.dof_vel_limits[i] = props["velocity"][i].item() * self.cfg.safety.vel_limit
                 self.torque_limits[i] = props["effort"][i].item() * self.cfg.safety.torque_limit
+
+        for i, dof_name in enumerate(self.dof_names):
+            props["friction"][i] = self.cfg.asset.friction
+            props["armature"][i] = self.cfg.asset.armature
 
         return props
 
@@ -738,9 +743,9 @@ class LeggedRobot(BaseTask):
             )
             dof_props = self._process_dof_props(dof_props_asset, i)
             self.gym.set_actor_dof_properties(env_handle, actor_handle, dof_props)
+
             body_props = self.gym.get_actor_rigid_body_properties(env_handle, actor_handle)
             body_props = self._process_rigid_body_props(body_props, i)
-
             self.gym.set_actor_rigid_body_properties(env_handle, actor_handle, body_props, recomputeInertia=False)
             self.envs.append(env_handle)
             self.actor_handles.append(actor_handle)

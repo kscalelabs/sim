@@ -86,7 +86,7 @@ class Legs(Node):
 
 
 class Robot(Node):
-    height = 0.31
+    height = 0.293
     rotation = [0, 0, 0.707, 0.707]
 
     # left_arm = LeftArm()
@@ -97,16 +97,16 @@ class Robot(Node):
     def default_standing(cls) -> Dict[str, float]:
         return {
             # Legs
-            cls.legs.left.hip_pitch: 0.0,
+            cls.legs.left.hip_pitch: 0.23,
             cls.legs.left.hip_yaw: 0,
             cls.legs.left.hip_roll: 0,
-            cls.legs.left.knee_pitch: 0,
-            cls.legs.left.ankle_pitch: 0,
-            cls.legs.right.hip_pitch: 0,
+            cls.legs.left.knee_pitch: 0.741,
+            cls.legs.left.ankle_pitch: -0.5,
+            cls.legs.right.hip_pitch: -0.23,
             cls.legs.right.hip_yaw: 0,
             cls.legs.right.hip_roll: 0,
-            cls.legs.right.knee_pitch: 0,
-            cls.legs.right.ankle_pitch: 0,
+            cls.legs.right.knee_pitch: -0.741,
+            cls.legs.right.ankle_pitch: 0.5,
             # TODO: fixing this for debugging
             # Arms
             # cls.left_arm.shoulder_pitch: 0,
@@ -194,11 +194,11 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 5,
-            "hip_yaw": 5,
-            "hip_roll": 5,
-            "knee_pitch": 5,
-            "ankle_pitch": 5,
+            "hip_pitch": 17.681462808698132,
+            "hip_yaw": 17.681462808698132,
+            "hip_roll": 17.681462808698132,
+            "knee_pitch": 17.681462808698132,
+            "ankle_pitch": 17.681462808698132,
             # "shoulder_pitch": 5,
             # "shoulder_yaw": 5,
             # "shoulder_roll": 5,
@@ -210,11 +210,11 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 0.3,
-            "hip_yaw": 0.3,
-            "hip_roll": 0.3,
-            "knee_pitch": 0.3,
-            "ankle_pitch": 0.3,
+            "hip_pitch": 0.5354656169048285,
+            "hip_yaw": 0.5354656169048285,
+            "hip_roll": 0.5354656169048285,
+            "knee_pitch": 0.5354656169048285,
+            "ankle_pitch": 0.5354656169048285,
             # "shoulder_pitch": 0.3,
             # "shoulder_yaw": 0.3,
             # "shoulder_roll": 0.3,

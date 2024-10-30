@@ -257,7 +257,7 @@ def run_mujoco(policy, cfg, keyboard_use=False):
         tau = pd_control(target_q, q, cfg.kps, target_dq, dq, cfg.kds, default)  # Calc torques
 
         tau = np.clip(tau, -cfg.tau_limit, cfg.tau_limit)  # Clamp torques
-        # print(tau)
+        print(tau)
         # print(eu_ang)
         print(x_vel_cmd, y_vel_cmd, yaw_vel_cmd)
 
@@ -278,14 +278,14 @@ if __name__ == "__main__":
     parser.add_argument("--load_actions", action="store_true", help="saved_actions")
     parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
     args = parser.parse_args()
-            
+
     if args.keyboard_use:
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.0, 0.0, 0.0
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
-            
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
+
     if "pt" in args.load_model:
         policy = torch.jit.load(args.load_model)
     elif "onnx" in args.load_model:
@@ -315,8 +315,8 @@ if __name__ == "__main__":
             sim_duration=60.0,
             dt=0.001,
             decimation=10,
-            cycle_time=0.2,
-            tau_factor=2,
+            cycle_time=0.4,
+            tau_factor=4.,
         )
 
     run_mujoco(policy, cfg, args.keyboard_use)

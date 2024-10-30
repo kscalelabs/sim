@@ -1,13 +1,14 @@
 # requirements.txt
 
-mediapy
-torch
-python-dotenv
-h5py
-gdown
+mediapy==1.2.2
+torch==2.4.1
+python-dotenv==1.0.1
+h5py==3.11.0
+gdown==5.2.0
 matplotlib==3.3.4
 numpy==1.19.5
-wandb
+wandb==0.18.1
 tensorboard==2.14.0
-onnx
-onnxscript
+onnx==1.15.0
+onnxscript==0.1.0.dev20240413
+pygame==2.6.1
