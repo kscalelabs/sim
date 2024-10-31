@@ -52,7 +52,7 @@ class StompyProCfg(LeggedRobotCfg):
 
     class terrain(LeggedRobotCfg.terrain):
         # mesh_type = "plane"
-        mesh_type = 'trimesh'
+        mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False

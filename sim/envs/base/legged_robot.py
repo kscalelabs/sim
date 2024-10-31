@@ -106,7 +106,7 @@ class LeggedRobot(BaseTask):
         if self.imu_indices:
             self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])
             self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 7:10])
-            self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 10:13]) 
+            self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 10:13])
         else:
             self.base_quat = self.root_states[:, 3:7]
             self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 7:10])
@@ -490,7 +490,7 @@ class LeggedRobot(BaseTask):
         self.dof_pos = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
 
-        self.rigid_state = gymtorch.wrap_tensor(rigid_body_state)#.view(self.num_envs, -1, 13)
+        self.rigid_state = gymtorch.wrap_tensor(rigid_body_state)  # .view(self.num_envs, -1, 13)
         self.rigid_state = self.rigid_state.view(self.num_envs, -1, 13)
         # TODO(pfb30): debug this
         # self.base_quat = self.root_states[:, 3:7]
@@ -498,7 +498,7 @@ class LeggedRobot(BaseTask):
         origin = quat_conjugate(origin)
 
         if self.imu_indices:
-            self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])   
+            self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])
         else:
             self.base_quat = quat_mul(origin, self.root_states[:, 3:7])
 
@@ -507,7 +507,6 @@ class LeggedRobot(BaseTask):
         self.contact_forces = gymtorch.wrap_tensor(net_contact_forces).view(
             self.num_envs, -1, 3
         )  # shape: num_envs, num_bodies, xyz axis
-
 
         # initialize some data used later on
         self.common_step_counter = 0

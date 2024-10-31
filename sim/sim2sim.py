@@ -228,7 +228,6 @@ def run_mujoco(
             input_data["imu_ang_vel.1"] = omega.astype(np.float32)
             input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
-
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
             positions, actions, hist_obs = policy.run(None, input_data)
