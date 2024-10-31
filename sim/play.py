@@ -1,12 +1,10 @@
+# mypy: ignore-errors
 """Play a trained policy in the environment.
 
 Run:
     python sim/play.py --task g1 --log_h5
     python sim/play.py --task stompymini --log_h5
 """
-
-# mypy: ignore-errors
-
 import argparse
 import copy
 import logging
@@ -46,7 +44,10 @@ def play(args: argparse.Namespace) -> None:
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
     env_cfg.sim.max_gpu_contact_pairs = 2**10
-    env_cfg.terrain.mesh_type = "plane"
+    if args.trimesh:
+        env_cfg.terrain.mesh_type = "trimesh"
+    else:
+        env_cfg.terrain.mesh_type = "plane"
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
@@ -79,7 +80,6 @@ def play(args: argparse.Namespace) -> None:
 
     # export policy as a onnx module (used to run it on web)
     if args.export_onnx:
-        breakpoint()
         path = ppo_runner.alg.actor_critic
         convert_model_to_onnx(path, ActorCfg(), save_path="policy.onnx")
         print("Exported policy as onnx to: ", path)
@@ -155,7 +155,6 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
-
         if args.fix_command:
             env.commands[:, 0] = 0.5
             env.commands[:, 1] = 0.0
