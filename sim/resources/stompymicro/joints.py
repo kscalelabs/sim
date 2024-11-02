@@ -218,11 +218,11 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 2,
-            "hip_yaw": 2,
-            "hip_roll": 2,
-            "knee_pitch": 2,
-            "ankle_pitch": 2,
+            "hip_pitch": 10,
+            "hip_yaw": 10,
+            "hip_roll": 10,
+            "knee_pitch": 10,
+            "ankle_pitch": 10,
             # "shoulder_pitch": 1,
             # "shoulder_yaw": 1,
             # "shoulder_roll": 1,
