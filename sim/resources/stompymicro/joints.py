@@ -120,33 +120,33 @@ class Robot(Node):
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            # # left arm
+            # # Left Arm
             # Robot.left_arm.shoulder_pitch: {
-            #     "lower": -1.5707963,
-            #     "upper": 1.5707963,
+            #     "lower": -1.7453293,
+            #     "upper": 1.7453293,
             # },
             # Robot.left_arm.shoulder_yaw: {
-            #     "lower": -1.5707963,
+            #     "lower": -0.43633231,
             #     "upper": 1.5707963,
             # },
             # Robot.left_arm.elbow_pitch: {
-            #     "lower": -1.2217305,
-            #     "upper": 1.2217305,
-            # },
-            # # right arm
-            # Robot.right_arm.shoulder_pitch: {
             #     "lower": -1.5707963,
             #     "upper": 1.5707963,
+            # },
+            # # Right Arm
+            # Robot.right_arm.shoulder_pitch: {
+            #     "lower": -1.7453293,
+            #     "upper": 1.7453293,
             # },
             # Robot.right_arm.shoulder_yaw: {
+            #     "lower": -1.134464,
+            #     "upper": 0.87266463,
+            # },
+            # Robot.right_arm.elbow_pitch: {
             #     "lower": -1.5707963,
             #     "upper": 1.5707963,
             # },
-            # Robot.right_arm.elbow_pitch: {
-            #     "lower": -1.2217305,
-            #     "upper": 1.2217305,
-            # },
-            # left leg
+            # Left Leg
             Robot.legs.left.hip_pitch: {
                 "lower": -1.5707963,
                 "upper": 1.5707963,
@@ -160,14 +160,14 @@ class Robot(Node):
                 "upper": 0.78539816,
             },
             Robot.legs.left.knee_pitch: {
-                "lower": 0,
-                "upper": 1.0471976,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
             Robot.legs.left.ankle_pitch: {
-                "lower": -1.0471976,
-                "upper": 1.0471976,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
-            # right leg
+            # Right Leg
             Robot.legs.right.hip_pitch: {
                 "lower": -1.5707963,
                 "upper": 1.5707963,
@@ -181,12 +181,12 @@ class Robot(Node):
                 "upper": 0.78539816,
             },
             Robot.legs.right.knee_pitch: {
-                "lower": -1.0471976,
-                "upper": 0,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
             Robot.legs.right.ankle_pitch: {
-                "lower": -1.0471976,
-                "upper": 1.0471976,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
         }
 
