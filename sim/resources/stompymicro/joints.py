@@ -112,7 +112,7 @@ class Robot(Node):
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            # # # left arm
+            # # left arm
             # Robot.left_arm.shoulder_pitch: {
             #     "lower": -1.7453293,
             #     "upper": 1.7453293,
@@ -138,7 +138,7 @@ class Robot(Node):
             #     "lower": -1.5707963,
             #     "upper": 1.5707963,
             # },
-            # left leg
+            # Left Leg
             Robot.legs.left.hip_pitch: {
                 "lower": -1.5707963,
                 "upper": 1.5707963,
@@ -156,10 +156,10 @@ class Robot(Node):
                 "upper": 0,
             },
             Robot.legs.left.ankle_pitch: {
-                "lower": -1.0471976,
-                "upper": 1.0471976,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
-            # right leg
+            # Right Leg
             Robot.legs.right.hip_pitch: {
                 "lower": -1.5707963,
                 "upper": 1.5707963,
@@ -177,8 +177,8 @@ class Robot(Node):
                 "upper": 1.0471976,
             },
             Robot.legs.right.ankle_pitch: {
-                "lower": -1.0471976,
-                "upper": 1.0471976,
+                "lower": -1.5707963,
+                "upper": 1.5707963,
             },
         }
 
