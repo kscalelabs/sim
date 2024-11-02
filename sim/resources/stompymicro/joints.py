@@ -86,7 +86,7 @@ class Legs(Node):
 
 
 class Robot(Node):
-    height = 0.293
+    height = 0.32
     rotation = [0, 0, 0.707, 0.707]
 
     # left_arm = LeftArm()
@@ -98,53 +98,45 @@ class Robot(Node):
         return {
             # Legs
             cls.legs.left.hip_pitch: 0.23,
+            cls.legs.left.knee_pitch: -0.741,
             cls.legs.left.hip_yaw: 0,
             cls.legs.left.hip_roll: 0,
-            cls.legs.left.knee_pitch: 0.741,
-            cls.legs.left.ankle_pitch: -0.5,
+            cls.legs.left.ankle_pitch: -0.5, 
             cls.legs.right.hip_pitch: -0.23,
+            cls.legs.right.knee_pitch: 0.741,
+            cls.legs.right.ankle_pitch: 0.5,
             cls.legs.right.hip_yaw: 0,
             cls.legs.right.hip_roll: 0,
-            cls.legs.right.knee_pitch: -0.741,
-            cls.legs.right.ankle_pitch: 0.5,
-            # TODO: fixing this for debugging
-            # Arms
-            # cls.left_arm.shoulder_pitch: 0,
-            # cls.left_arm.shoulder_yaw: 0,
-            # cls.left_arm.elbow_pitch: 0,
-            # cls.right_arm.shoulder_pitch: 0,
-            # cls.right_arm.shoulder_yaw: 0,
-            # cls.right_arm.elbow_pitch: 0,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            # # left arm
+            # # # left arm
             # Robot.left_arm.shoulder_pitch: {
-            #     "lower": -1.5707963,
-            #     "upper": 1.5707963,
+            #     "lower": -1.7453293,
+            #     "upper": 1.7453293,
             # },
             # Robot.left_arm.shoulder_yaw: {
-            #     "lower": -1.5707963,
+            #     "lower": -0.43633231,
             #     "upper": 1.5707963,
             # },
             # Robot.left_arm.elbow_pitch: {
-            #     "lower": -1.2217305,
-            #     "upper": 1.2217305,
-            # },
-            # # right arm
-            # Robot.right_arm.shoulder_pitch: {
             #     "lower": -1.5707963,
             #     "upper": 1.5707963,
+            # },
+            # # Right Arm
+            # Robot.right_arm.shoulder_pitch: {
+            #     "lower": -1.7453293,
+            #     "upper": 1.7453293,
             # },
             # Robot.right_arm.shoulder_yaw: {
-            #     "lower": -1.5707963,
-            #     "upper": 1.5707963,
+            #     "lower": -1.134464,
+            #     "upper": 0.87266463,
             # },
             # Robot.right_arm.elbow_pitch: {
-            #     "lower": -1.2217305,
-            #     "upper": 1.2217305,
+            #     "lower": -1.5707963,
+            #     "upper": 1.5707963,
             # },
             # left leg
             Robot.legs.left.hip_pitch: {
@@ -160,8 +152,8 @@ class Robot(Node):
                 "upper": 0.78539816,
             },
             Robot.legs.left.knee_pitch: {
-                "lower": 0,
-                "upper": 1.0471976,
+                "lower": -1.0471976,
+                "upper": 0,
             },
             Robot.legs.left.ankle_pitch: {
                 "lower": -1.0471976,
@@ -181,8 +173,8 @@ class Robot(Node):
                 "upper": 0.78539816,
             },
             Robot.legs.right.knee_pitch: {
-                "lower": -1.0471976,
-                "upper": 0,
+                "lower": 0,
+                "upper": 1.0471976,
             },
             Robot.legs.right.ankle_pitch: {
                 "lower": -1.0471976,
@@ -226,11 +218,11 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 1,
-            "hip_yaw": 1,
-            "hip_roll": 1,
-            "knee_pitch": 1,
-            "ankle_pitch": 1,
+            "hip_pitch": 2,
+            "hip_yaw": 2,
+            "hip_roll": 2,
+            "knee_pitch": 2,
+            "ankle_pitch": 2,
             # "shoulder_pitch": 1,
             # "shoulder_yaw": 1,
             # "shoulder_roll": 1,

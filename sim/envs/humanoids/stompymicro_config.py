@@ -38,7 +38,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         file = str(robot_urdf_path(name))
 
         foot_name = ["foot_left", "foot_right"]
-        knee_name = ["ankle_pitch_left", "ankle_pitch_right"]
+        knee_name = ["left_knee_pitch_motor", "right_knee_pitch_motor"]
 
         termination_height = 0.05
         default_feet_height = 0.02
@@ -53,7 +53,7 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         # BAM parameters
         # TODO update effort to larger one
-        friction = 0.013343597773929877
+        friction = 0.053343597773929877
         armature = 0.008793405204572328
 
     class terrain(LeggedRobotCfg.terrain):
