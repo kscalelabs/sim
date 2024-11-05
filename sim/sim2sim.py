@@ -336,7 +336,7 @@ def run_mujoco(
     print(f"Average speed: {average_speed:.4f} m/s")
 
     if args.log_h5:
-        print("Saving data to " + os.path.abspath(f"data{now}.h5"))
+        print(f"Saving data to {os.path.abspath(f'{embodiment}/{now}.h5')}")
         h5_file.close()
 
 def parse_modelmeta(
