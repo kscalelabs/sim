@@ -37,8 +37,10 @@ import math
 import os
 from copy import deepcopy
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, Dict, List, Tuple, Union
 
+import h5py
 import mujoco
 import mujoco_viewer
 import numpy as np
@@ -49,6 +51,49 @@ from tqdm import tqdm
 
 from sim.model_export import ActorCfg, convert_model_to_onnx
 
+
+def log_hdf5(data_name, num_actions, now, stop_state_log):
+    # Create data directory if it doesn't exist
+    os.makedirs(data_name, exist_ok=True)
+    h5_file = h5py.File(f"{data_name}/{now}.h5", "w")
+
+    # Create dataset for actions
+    max_timesteps = stop_state_log
+    dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_actions), dtype=np.float32)
+
+    # Create dataset of observations
+    dset_2D_command = h5_file.create_dataset(
+        "observations/2D_command", (max_timesteps, 2), dtype=np.float32
+    )  # sin and cos commands
+    dset_3D_command = h5_file.create_dataset(
+        "observations/3D_command", (max_timesteps, 3), dtype=np.float32
+    )  # x, y, yaw commands
+    dset_q = h5_file.create_dataset(
+        "observations/q", (max_timesteps, num_actions), dtype=np.float32
+    )  # joint positions
+    dset_dq = h5_file.create_dataset(
+        "observations/dq", (max_timesteps, num_actions), dtype=np.float32
+    )  # joint velocities
+    dset_obs_actions = h5_file.create_dataset(
+        "observations/actions", (max_timesteps, num_actions), dtype=np.float32
+    )  # actions
+    dset_ang_vel = h5_file.create_dataset(
+        "observations/ang_vel", (max_timesteps, 3), dtype=np.float32
+    )  # root angular velocity
+    dset_euler = h5_file.create_dataset(
+        "observations/euler", (max_timesteps, 3), dtype=np.float32
+    )  # root orientation
+
+    h5_dict = {
+        "actions": dset_actions,
+        "2D_command": dset_2D_command,
+        "3D_command": dset_3D_command,
+        "joint_pos": dset_q,
+        "joint_vel": dset_dq,
+        "ang_vel": dset_ang_vel,
+        "euler_rotation": dset_euler,
+    }
+    return h5_file, h5_dict
 
 @dataclass
 class Sim2simCfg:
@@ -128,10 +173,12 @@ def pd_control(
 
 
 def run_mujoco(
+    embodiment: str,
     policy: ort.InferenceSession,
     cfg: Sim2simCfg,
     model_info: Dict[str, Union[float, List[float], str]],
     keyboard_use: bool = False,
+    log_h5: bool = False,
 ) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
@@ -144,7 +191,7 @@ def run_mujoco(
         None
     """
     model_dir = os.environ.get("MODEL_DIR", "sim/resources")
-    mujoco_model_path = f"{model_dir}/{args.embodiment}/robot_fixed.xml"
+    mujoco_model_path = f"{model_dir}/{embodiment}/robot_fixed.xml"
 
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = cfg.dt
@@ -195,6 +242,17 @@ def run_mujoco(
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
 
+    if log_h5:
+        stop_state_log = int(cfg.sim_duration / cfg.dt)
+        now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        h5_file, h5_dict = log_hdf5(embodiment, model_info["num_actions"], now, stop_state_log)
+
+    # Initialize variables for tracking upright steps and average speed
+    upright_steps = 0
+    total_speed = 0.0
+    step_count = 0
+
+    t = 0
     for _ in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
         if keyboard_use:
             handle_keyboard_input()
@@ -204,12 +262,23 @@ def run_mujoco(
         q = q[-model_info["num_actions"] :]
         dq = dq[-model_info["num_actions"] :]
 
+        eu_ang = quaternion_to_euler_array(quat)
+        eu_ang[eu_ang > math.pi] -= 2 * math.pi
+
+        # Check if the robot is upright (roll and pitch within ±30 degrees)
+        if abs(eu_ang[0]) > math.radians(30) or abs(eu_ang[1]) > math.radians(30):
+            print("Robot tilted heavily, ending simulation.")
+            break
+        else:
+            upright_steps += 1  # Increment upright steps
+
+        # Calculate speed and accumulate for average speed calculation
+        speed = np.linalg.norm(v[:2])  # Speed in the x-y plane
+        total_speed += speed
+        step_count += 1
+
         # 1000hz -> 50hz
         if count_lowlevel % cfg.decimation == 0:
-
-            eu_ang = quaternion_to_euler_array(quat)
-            eu_ang[eu_ang > math.pi] -= 2 * math.pi
-
             # Convert sim coordinates to policy coordinates
             cur_pos_obs = q - default
             cur_vel_obs = dq
@@ -231,7 +300,18 @@ def run_mujoco(
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
             positions, actions, hist_obs = policy.run(None, input_data)
+            # actions = np.zeros_like(actions)
             target_q = positions
+
+            if args.log_h5:
+                t += 1
+                h5_dict["2D_command"][t] = np.array([x_vel_cmd, y_vel_cmd], dtype=np.float32)
+                h5_dict["3D_command"][t] = np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32)
+                h5_dict["joint_pos"][t] = cur_pos_obs.astype(np.float32)
+                h5_dict["joint_vel"][t] = cur_vel_obs.astype(np.float32)
+                h5_dict["actions"][t] = actions.astype(np.float32)
+                h5_dict["ang_vel"][t] = omega.astype(np.float32)
+                h5_dict["euler_rotation"][t] = eu_ang.astype(np.float32)
 
         # Generate PD control
         tau = pd_control(target_q, q, kps, dq, kds, default)  # Calc torques
@@ -245,6 +325,19 @@ def run_mujoco(
 
     viewer.close()
 
+    # Calculate average speed
+    if step_count > 0:
+        average_speed = total_speed / step_count
+    else:
+        average_speed = 0.0
+
+    # Save or print the statistics at the end of the episode
+    print(f"Number of upright steps: {upright_steps}")
+    print(f"Average speed: {average_speed:.4f} m/s")
+
+    if args.log_h5:
+        print("Saving data to " + os.path.abspath(f"data{now}.h5"))
+        h5_file.close()
 
 def parse_modelmeta(
     modelmeta: List[Tuple[str, str]],
@@ -276,7 +369,7 @@ if __name__ == "__main__":
     parser.add_argument("--embodiment", type=str, required=True, help="Embodiment name.")
     parser.add_argument("--load_model", type=str, required=True, help="Path to run to load from.")
     parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
-
+    parser.add_argument("--log_h5", action="store_true", help="log_h5")
     args = parser.parse_args()
 
     if args.keyboard_use:
@@ -284,13 +377,13 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "stompypro":
         policy_cfg.cycle_time = 0.4
         cfg = Sim2simCfg(
-            sim_duration=60.0,
+            sim_duration=10.0,
             dt=0.001,
             decimation=10,
             tau_factor=3.0,
@@ -298,7 +391,7 @@ if __name__ == "__main__":
     elif args.embodiment == "stompymicro":
         policy_cfg.cycle_time = 0.2
         cfg = Sim2simCfg(
-            sim_duration=60.0,
+            sim_duration=10.0,
             dt=0.001,
             decimation=10,
             tau_factor=2,
@@ -314,4 +407,4 @@ if __name__ == "__main__":
         verbose=True,
     )
 
-    run_mujoco(policy, cfg, model_info, args.keyboard_use)
+    run_mujoco(args.embodiment, policy, cfg, model_info, args.keyboard_use, args.log_h5)
