@@ -74,9 +74,6 @@ def log_hdf5(data_name, num_actions, now, stop_state_log):
     dset_dq = h5_file.create_dataset(
         "observations/dq", (max_timesteps, num_actions), dtype=np.float32
     )  # joint velocities
-    dset_obs_actions = h5_file.create_dataset(
-        "observations/actions", (max_timesteps, num_actions), dtype=np.float32
-    )  # actions
     dset_ang_vel = h5_file.create_dataset(
         "observations/ang_vel", (max_timesteps, 3), dtype=np.float32
     )  # root angular velocity
