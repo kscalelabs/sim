@@ -20,4 +20,4 @@
 
 # K-Scale Sim Library
 
-This repository implements training for robotic control policies in Nvidia's Isaac simulator, using [Humanoid Gym](https://sites.google.com/view/humanoid-gym/). For more information, see the [documentation](https://docs.kscale.dev/software/simulation/isaac).
+This repository implements training for robotic control policies in Nvidia's Isaac simulator, using [Humanoid Gym](https://sites.google.com/view/humanoid-gym/). For more information, see the [documentation](https://docs.kscale.dev/simulation/isaac).
