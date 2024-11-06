@@ -1,44 +1,17 @@
-# SPDX-License-Identifier: BSD-3-Clause
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# 1. Redistributions of source code must retain the above copyright notice, this
-# list of conditions and the following disclaimer.
-#
-# 2. Redistributions in binary form must reproduce the above copyright notice,
-# this list of conditions and the following disclaimer in the documentation
-# and/or other materials provided with the distribution.
-#
-# 3. Neither the name of the copyright holder nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 """
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
 python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompypro
 python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
 """
+
 import argparse
 import math
 import os
+import uuid
 from copy import deepcopy
 from dataclasses import dataclass
-from datetime import datetime
-from typing import Any, Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 import h5py
 import mujoco
@@ -52,10 +25,11 @@ from tqdm import tqdm
 from sim.model_export import ActorCfg, convert_model_to_onnx
 
 
-def log_hdf5(data_name, num_actions, now, stop_state_log):
+def log_hdf5(data_name, num_actions, stop_state_log):
     # Create data directory if it doesn't exist
-    os.makedirs(data_name, exist_ok=True)
-    h5_file = h5py.File(f"{data_name}/{now}.h5", "w")
+    # os.makedirs(data_name, exist_ok=True)
+    idd = str(uuid.uuid4())
+    h5_file = h5py.File(f"{data_name}/{idd}.h5", "w")
 
     # Create dataset for actions
     max_timesteps = stop_state_log
@@ -68,18 +42,14 @@ def log_hdf5(data_name, num_actions, now, stop_state_log):
     dset_3D_command = h5_file.create_dataset(
         "observations/3D_command", (max_timesteps, 3), dtype=np.float32
     )  # x, y, yaw commands
-    dset_q = h5_file.create_dataset(
-        "observations/q", (max_timesteps, num_actions), dtype=np.float32
-    )  # joint positions
+    dset_q = h5_file.create_dataset("observations/q", (max_timesteps, num_actions), dtype=np.float32)  # joint positions
     dset_dq = h5_file.create_dataset(
         "observations/dq", (max_timesteps, num_actions), dtype=np.float32
     )  # joint velocities
     dset_ang_vel = h5_file.create_dataset(
         "observations/ang_vel", (max_timesteps, 3), dtype=np.float32
     )  # root angular velocity
-    dset_euler = h5_file.create_dataset(
-        "observations/euler", (max_timesteps, 3), dtype=np.float32
-    )  # root orientation
+    dset_euler = h5_file.create_dataset("observations/euler", (max_timesteps, 3), dtype=np.float32)  # root orientation
 
     h5_dict = {
         "actions": dset_actions,
@@ -91,6 +61,7 @@ def log_hdf5(data_name, num_actions, now, stop_state_log):
         "euler_rotation": dset_euler,
     }
     return h5_file, h5_dict
+
 
 @dataclass
 class Sim2simCfg:
@@ -176,6 +147,7 @@ def run_mujoco(
     model_info: Dict[str, Union[float, List[float], str]],
     keyboard_use: bool = False,
     log_h5: bool = False,
+    render: bool = True,
 ) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
@@ -218,7 +190,9 @@ def run_mujoco(
 
     data.qvel = np.zeros_like(data.qvel)
     data.qacc = np.zeros_like(data.qacc)
-    viewer = mujoco_viewer.MujocoViewer(model, data)
+
+    if render:
+        viewer = mujoco_viewer.MujocoViewer(model, data)
 
     target_q = np.zeros((model_info["num_actions"]), dtype=np.double)
     actions = np.zeros((model_info["num_actions"]), dtype=np.double)
@@ -241,8 +215,7 @@ def run_mujoco(
 
     if log_h5:
         stop_state_log = int(cfg.sim_duration / cfg.dt)
-        now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        h5_file, h5_dict = log_hdf5(embodiment, model_info["num_actions"], now, stop_state_log)
+        h5_file, h5_dict = log_hdf5(embodiment, model_info["num_actions"], stop_state_log)
 
     # Initialize variables for tracking upright steps and average speed
     upright_steps = 0
@@ -317,10 +290,12 @@ def run_mujoco(
         data.ctrl = tau
         mujoco.mj_step(model, data)
 
-        viewer.render()
+        if render:
+            viewer.render()
         count_lowlevel += 1
 
-    viewer.close()
+    if render:
+        viewer.close()
 
     # Calculate average speed
     if step_count > 0:
@@ -333,8 +308,8 @@ def run_mujoco(
     print(f"Average speed: {average_speed:.4f} m/s")
 
     if args.log_h5:
-        print(f"Saving data to {os.path.abspath(f'{embodiment}/{now}.h5')}")
         h5_file.close()
+
 
 def parse_modelmeta(
     modelmeta: List[Tuple[str, str]],
@@ -367,6 +342,8 @@ if __name__ == "__main__":
     parser.add_argument("--load_model", type=str, required=True, help="Path to run to load from.")
     parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
     parser.add_argument("--log_h5", action="store_true", help="log_h5")
+    parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
+    parser.set_defaults(render=True)
     args = parser.parse_args()
 
     if args.keyboard_use:
@@ -374,7 +351,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = np.random.uniform(0.1, 0.5), 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "stompypro":
@@ -404,4 +381,4 @@ if __name__ == "__main__":
         verbose=True,
     )
 
-    run_mujoco(args.embodiment, policy, cfg, model_info, args.keyboard_use, args.log_h5)
+    run_mujoco(args.embodiment, policy, cfg, model_info, args.keyboard_use, args.log_h5, args.render)
