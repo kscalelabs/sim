@@ -19,10 +19,11 @@ def run_dir() -> Path:
 
 
 def robot_urdf_path(robotname: str, legs_only: bool = False) -> Path:
+    urdf_file_name = "robot_fixed.urdf"
     if legs_only:
-        robot_path = model_dir(robotname) / "robot_fixed.urdf"
+        robot_path = model_dir(robotname) / urdf_file_name
     else:
-        robot_path = model_dir(robotname) / "robot_fixed.urdf"
+        robot_path = model_dir(robotname) / urdf_file_name
 
     if not robot_path.exists():
         raise FileNotFoundError(f"URDF file not found: {robot_path}")
