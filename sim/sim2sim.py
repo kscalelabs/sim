@@ -39,7 +39,7 @@ import os
 from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Deque
+from typing import Any, Deque, Union
 
 import mujoco
 import mujoco_viewer
@@ -209,7 +209,7 @@ class PolicyWrapper:
         self.model_path = model_path
         self.policy = self._load_policy()
 
-    def _load_policy(self) -> torch.jit._script.RecursiveScriptModule | Any:
+    def _load_policy(self) -> Union[torch.jit._script.RecursiveScriptModule, Any]:
         if "pt" in self.model_path:
             return torch.jit.load(self.model_path)
         elif "onnx" in self.model_path:
