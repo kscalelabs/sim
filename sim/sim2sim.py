@@ -176,7 +176,7 @@ def run_mujoco(policy, cfg, keyboard_use=False):
     Returns:
         None
     """
-    model_dir = os.environ.get("MODEL_DIR")
+    model_dir = os.environ.get("MODEL_DIR") or "sim/resources"
     mujoco_model_path = f"{model_dir}/{args.embodiment}/robot_fixed.xml"
 
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
