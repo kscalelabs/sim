@@ -13,3 +13,5 @@ onnx==1.15.0
 onnxscript==0.1.0.dev20240413
 pygame==2.6.1
 opencv-python==4.10.0.84
+mujoco==3.2.3
+mujoco-python-viewer==0.1.4
