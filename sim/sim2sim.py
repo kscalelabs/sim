@@ -38,6 +38,8 @@ import math
 import os
 from collections import deque
 from copy import deepcopy
+from dataclasses import dataclass
+from typing import Any, Deque
 
 import mujoco
 import mujoco_viewer
@@ -92,6 +94,7 @@ class Sim2simCfg:
         clip_actions=18.0,
         action_scale=0.25,
     ):
+        self.embodiment = embodiment
         self.robot = load_embodiment(embodiment)
 
         self.num_actions = len(self.robot.all_joints())
@@ -125,198 +128,252 @@ class Sim2simCfg:
         self.action_scale = action_scale
 
 
-def quaternion_to_euler_array(quat):
-    # Ensure quaternion is in the correct format [x, y, z, w]
-    x, y, z, w = quat
+@dataclass
+class SimulationState:
+    """Holds the current state of the simulation"""
 
-    # Roll (x-axis rotation)
-    t0 = +2.0 * (w * x + y * z)
-    t1 = +1.0 - 2.0 * (x * x + y * y)
-    roll_x = np.arctan2(t0, t1)
-
-    # Pitch (y-axis rotation)
-    t2 = +2.0 * (w * y - z * x)
-    t2 = np.clip(t2, -1.0, 1.0)
-    pitch_y = np.arcsin(t2)
-
-    # Yaw (z-axis rotation)
-    t3 = +2.0 * (w * z + x * y)
-    t4 = +1.0 - 2.0 * (y * y + z * z)
-    yaw_z = np.arctan2(t3, t4)
-
-    # Returns roll, pitch, yaw in a NumPy array in radians
-    return np.array([roll_x, pitch_y, yaw_z])
+    q: np.ndarray
+    dq: np.ndarray
+    quat: np.ndarray
+    base_lin_vel: np.ndarray
+    base_ang_vel: np.ndarray
+    gravity_vec: np.ndarray
 
 
-def get_obs(data):
-    """Extracts an observation from the mujoco data structure"""
-    q = data.qpos.astype(np.double)
-    dq = data.qvel.astype(np.double)
-    quat = data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double)
-    r = R.from_quat(quat)
-    v = r.apply(data.qvel[:3], inverse=True).astype(np.double)  # In the base frame
-    omega = data.sensor("angular-velocity").data.astype(np.double)
-    gvec = r.apply(np.array([0.0, 0.0, -1.0]), inverse=True).astype(np.double)
-    return (q, dq, quat, v, omega, gvec)
+class MujocoSimulator:
+    """Handles all Mujoco-specific simulation logic"""
+
+    def __init__(self, model_path: str, dt: float, cfg):
+        self.cfg = cfg
+        self.model = mujoco.MjModel.from_xml_path(model_path)
+        self.model.opt.timestep = dt
+        self.data = mujoco.MjData(self.model)
+        self.viewer = mujoco_viewer.MujocoViewer(self.model, self.data)
+
+        # Initialize state
+        self._initialize_state()
+
+    def _initialize_state(self):
+        """Initialize simulation state"""
+        try:
+            self.data.qpos = self.model.keyframe("default").qpos
+            self.default_qpos = deepcopy(self.model.keyframe("default").qpos)
+            print("Default position:", self.default_qpos[-self.cfg.num_actions :])
+        except:
+            print("No default position found, using zero initialization")
+            self.default_qpos = np.zeros_like(self.data.qpos)
+
+        self.data.qvel = np.zeros_like(self.data.qvel)
+        self.data.qacc = np.zeros_like(self.data.qacc)
+        mujoco.mj_step(self.model, self.data)
+
+        # Print joint information
+        for ii in range(len(self.data.ctrl) + 1):
+            print(self.data.joint(ii).id, self.data.joint(ii).name)
+
+    def get_state(self) -> SimulationState:
+        """Extract current simulation state"""
+        quat = self.data.sensor("orientation").data[[1, 2, 3, 0]]
+        r = R.from_quat(quat)
+        base_lin_vel = r.apply(self.data.qvel[:3], inverse=True)
+        base_ang_vel = self.data.sensor("angular-velocity").data
+        gravity_vec = r.apply(np.array([0.0, 0.0, -1.0]), inverse=True)
+
+        return SimulationState(
+            q=self.data.qpos.astype(np.double),
+            dq=self.data.qvel.astype(np.double),
+            quat=quat.astype(np.double),
+            base_lin_vel=base_lin_vel.astype(np.double),
+            base_ang_vel=base_ang_vel.astype(np.double),
+            gravity_vec=gravity_vec.astype(np.double),
+        )
+
+    def step(self, tau: np.ndarray):
+        """Step the simulation forward"""
+        self.data.ctrl = tau
+        # Print debug information
+        print(tau)
+        print(x_vel_cmd, y_vel_cmd, yaw_vel_cmd)
+        mujoco.mj_step(self.model, self.data)
+        self.viewer.render()
+
+    def close(self):
+        """Clean up resources"""
+        self.viewer.close()
 
 
-def pd_control(target_q, q, kp, target_dq, dq, kd, default):
-    """Calculates torques from position commands"""
-    return kp * (target_q + default - q) - kd * dq
+class PolicyWrapper:
+    """Handles policy loading and inference"""
+
+    def __init__(self, model_path: str):
+        self.model_path = model_path
+        self.policy = self._load_policy()
+
+    def _load_policy(self) -> torch.jit._script.RecursiveScriptModule | Any:
+        if "pt" in self.model_path:
+            return torch.jit.load(self.model_path)
+        elif "onnx" in self.model_path:
+            import onnxruntime as ort
+
+            return ort.InferenceSession(self.model_path)
+        else:
+            raise ValueError(f"Unsupported model type: {self.model_path}")
+
+    def __call__(self, input_data: np.ndarray) -> np.ndarray:
+        if isinstance(self.policy, torch.jit._script.RecursiveScriptModule):
+            return self.policy(torch.tensor(input_data))[0].detach().numpy()
+        else:
+            ort_inputs = {self.policy.get_inputs()[0].name: input_data}
+            return self.policy.run(None, ort_inputs)[0][0]
 
 
-def run_mujoco(policy, cfg, keyboard_use=False):
-    """
-    Run the Mujoco simulation using the provided policy and configuration.
+class Controller:
+    """Handles control logic and observation processing"""
 
-    Args:
-        policy: The policy used for controlling the simulation.
-        cfg: The configuration object containing simulation settings.
+    def __init__(self, cfg, policy_wrapper: PolicyWrapper):
+        self.cfg = cfg
+        self.policy = policy_wrapper
+        self.hist_obs: Deque = deque(maxlen=cfg.frame_stack)
+        self.target_q = np.zeros(cfg.num_actions, dtype=np.double)
+        self.action = np.zeros(cfg.num_actions, dtype=np.double)
 
-    Returns:
-        None
-    """
+        # Initialize observation history
+        for _ in range(cfg.frame_stack):
+            self.hist_obs.append(np.zeros([1, cfg.num_single_obs], dtype=np.double))
+
+    def _process_observation(self, state: SimulationState, count: int) -> np.ndarray:
+        """Process raw state into policy observation"""
+        obs = np.zeros([1, self.cfg.num_single_obs], dtype=np.float32)
+
+        # Extract euler angles
+        eu_ang = self._quat_to_euler(state.quat)
+        eu_ang[eu_ang > math.pi] -= 2 * math.pi
+
+        # Get relevant joint states
+        q = state.q[-self.cfg.num_actions :]
+        dq = state.dq[-self.cfg.num_actions :]
+
+        # Convert default standing dictionary to array in correct order
+        default_standing = np.array(
+            [self.cfg.robot.default_standing()[joint_name] for joint_name in self.cfg.robot.all_joints()]
+        )
+
+        # Fill observation vector
+        obs[0, 0] = math.sin(2 * math.pi * count * self.cfg.dt / self.cfg.cycle_time)
+        obs[0, 1] = math.cos(2 * math.pi * count * self.cfg.dt / self.cfg.cycle_time)
+        obs[0, 2] = x_vel_cmd * self.cfg.lin_vel
+        obs[0, 3] = y_vel_cmd * self.cfg.lin_vel
+        obs[0, 4] = yaw_vel_cmd * self.cfg.ang_vel
+        obs[0, 5 : (self.cfg.num_actions + 5)] = (q - default_standing) * self.cfg.dof_pos
+        obs[0, (self.cfg.num_actions + 5) : (2 * self.cfg.num_actions + 5)] = dq * self.cfg.dof_vel
+        obs[0, (2 * self.cfg.num_actions + 5) : (3 * self.cfg.num_actions + 5)] = self.action
+        obs[0, (3 * self.cfg.num_actions + 5) : (3 * self.cfg.num_actions + 5) + 3] = state.base_ang_vel
+        obs[0, (3 * self.cfg.num_actions + 5) + 3 : (3 * self.cfg.num_actions + 5) + 2 * 3] = eu_ang
+
+        return np.clip(obs, -self.cfg.clip_observations, self.cfg.clip_observations)
+
+    @staticmethod
+    def _quat_to_euler(quat: np.ndarray) -> np.ndarray:
+        """Convert quaternion to euler angles"""
+        x, y, z, w = quat
+
+        # Roll (x-axis rotation)
+        t0 = +2.0 * (w * x + y * z)
+        t1 = +1.0 - 2.0 * (x * x + y * y)
+        roll_x = np.arctan2(t0, t1)
+
+        # Pitch (y-axis rotation)
+        t2 = +2.0 * (w * y - z * x)
+        t2 = np.clip(t2, -1.0, 1.0)
+        pitch_y = np.arcsin(t2)
+
+        # Yaw (z-axis rotation)
+        t3 = +2.0 * (w * z + x * y)
+        t4 = +1.0 - 2.0 * (y * y + z * z)
+        yaw_z = np.arctan2(t3, t4)
+
+        return np.array([roll_x, pitch_y, yaw_z])
+
+    def compute_action(self, state: SimulationState, count: int) -> np.ndarray:
+        """Compute control action based on current state"""
+        obs = self._process_observation(state, count)
+        self.hist_obs.append(obs)
+
+        # Prepare policy input
+        policy_input = np.zeros([1, self.cfg.num_observations], dtype=np.float32)
+        for i in range(self.cfg.frame_stack):
+            policy_input[0, i * self.cfg.num_single_obs : (i + 1) * self.cfg.num_single_obs] = self.hist_obs[i][0, :]
+
+        # Get policy output and update action
+        self.action[:] = self.policy(policy_input)
+        self.action = np.clip(self.action, -self.cfg.clip_actions, self.cfg.clip_actions)
+        self.target_q = self.action * self.cfg.action_scale
+
+        # Compute PD control
+        q = state.q[-self.cfg.num_actions :]
+        dq = state.dq[-self.cfg.num_actions :]
+        target_dq = np.zeros(self.cfg.num_actions, dtype=np.double)
+
+        tau = self._pd_control(
+            self.target_q, q, self.cfg.kps, target_dq, dq, self.cfg.kds, self.cfg.robot.default_standing()
+        )
+
+        return np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)
+
+    def _pd_control(self, target_q, q, kp, target_dq, dq, kd, default_dict):
+        """PD control calculation"""
+        # Convert default dictionary to array in correct order
+        default = np.array([default_dict[joint_name] for joint_name in self.cfg.robot.all_joints()])
+        return kp * (target_q + default - q) - kd * dq
+
+
+def run_simulation(cfg, policy_path: str, keyboard_control: bool = False):
+    """Main simulation loop"""
+    if keyboard_control:
+        pygame.init()
+        pygame.display.set_caption("Simulation Control")
+
+    # Initialize components
     model_dir = os.environ.get("MODEL_DIR") or "sim/resources"
-    mujoco_model_path = f"{model_dir}/{args.embodiment}/robot_fixed.xml"
+    simulator = MujocoSimulator(model_path=f"{model_dir}/{cfg.embodiment}/robot_fixed.xml", dt=cfg.dt, cfg=cfg)
+    policy = PolicyWrapper(policy_path)
+    controller = Controller(cfg, policy)
 
-    model = mujoco.MjModel.from_xml_path(mujoco_model_path)
-    model.opt.timestep = cfg.dt
-    data = mujoco.MjData(model)
-
-    try:
-        data.qpos = model.keyframe("default").qpos
-        default = deepcopy(model.keyframe("default").qpos)[-cfg.num_actions :]
-        print("Default position:", default)
-    except:
-        print("No default position found, using zero initialization")
-        default = np.zeros(cfg.num_actions)  # 3 for pos, 4 for quat, cfg.num_actions for joints
-
-    mujoco.mj_step(model, data)
-    for ii in range(len(data.ctrl) + 1):
-        print(data.joint(ii).id, data.joint(ii).name)
-
-    data.qvel = np.zeros_like(data.qvel)
-    data.qacc = np.zeros_like(data.qacc)
-    viewer = mujoco_viewer.MujocoViewer(model, data)
-
-    target_q = np.zeros((cfg.num_actions), dtype=np.double)
-    action = np.zeros((cfg.num_actions), dtype=np.double)
-
-    hist_obs = deque()
-    for _ in range(cfg.frame_stack):
-        hist_obs.append(np.zeros([1, cfg.num_single_obs], dtype=np.double))
-
-    count_lowlevel = 0
-
-    for _ in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
-        if keyboard_use:
+    # Main simulation loop
+    for count in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
+        if keyboard_control:
             handle_keyboard_input()
 
-        # Obtain an observation
-        q, dq, quat, v, omega, gvec = get_obs(data)
-        q = q[-cfg.num_actions :]
-        dq = dq[-cfg.num_actions :]
+        state = simulator.get_state()
 
-        # 1000hz -> 50hz
-        if count_lowlevel % cfg.decimation == 0:
-            obs = np.zeros([1, cfg.num_single_obs], dtype=np.float32)
-            eu_ang = quaternion_to_euler_array(quat)
-            eu_ang[eu_ang > math.pi] -= 2 * math.pi
+        # Compute control at policy rate
+        if count % cfg.decimation == 0:
+            tau = controller.compute_action(state, count)
+            simulator.step(tau)
 
-            cur_pos_obs = (q - default) * cfg.dof_pos
-
-            cur_vel_obs = dq * cfg.dof_vel
-
-            obs[0, 0] = math.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
-            obs[0, 1] = math.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time)
-            obs[0, 2] = x_vel_cmd * cfg.lin_vel
-            obs[0, 3] = y_vel_cmd * cfg.lin_vel
-            obs[0, 4] = yaw_vel_cmd * cfg.ang_vel
-            obs[0, 5 : (cfg.num_actions + 5)] = cur_pos_obs
-            obs[0, (cfg.num_actions + 5) : (2 * cfg.num_actions + 5)] = cur_vel_obs
-            obs[0, (2 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5)] = action
-            obs[0, (3 * cfg.num_actions + 5) : (3 * cfg.num_actions + 5) + 3] = omega
-            obs[0, (3 * cfg.num_actions + 5) + 3 : (3 * cfg.num_actions + 5) + 2 * 3] = eu_ang
-
-            obs = np.clip(obs, -cfg.clip_observations, cfg.clip_observations)
-
-            hist_obs.append(obs)
-            hist_obs.popleft()
-
-            policy_input = np.zeros([1, cfg.num_observations], dtype=np.float32)
-            for i in range(cfg.frame_stack):
-                policy_input[0, i * cfg.num_single_obs : (i + 1) * cfg.num_single_obs] = hist_obs[i][0, :]
-
-            action[:] = get_policy_output(policy, policy_input)
-            action = np.clip(action, -cfg.clip_actions, cfg.clip_actions)
-            target_q = action * cfg.action_scale
-
-        target_dq = np.zeros((cfg.num_actions), dtype=np.double)
-
-        # Generate PD control
-        tau = pd_control(target_q, q, cfg.kps, target_dq, dq, cfg.kds, default)  # Calc torques
-
-        tau = np.clip(tau, -cfg.tau_limit, cfg.tau_limit)  # Clamp torques
-        print(tau)
-        # print(eu_ang)
-        print(x_vel_cmd, y_vel_cmd, yaw_vel_cmd)
-
-        data.ctrl = tau
-
-        mujoco.mj_step(model, data)
-        viewer.render()
-        count_lowlevel += 1
-
-    viewer.close()
+    simulator.close()
+    if keyboard_control:
+        pygame.quit()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
-    parser.add_argument("--load_model", type=str, required=True, help="Run to load from.")
-    parser.add_argument("--embodiment", type=str, required=True, help="embodiment")
-    parser.add_argument("--terrain", action="store_true", help="terrain or plane")
-    parser.add_argument("--load_actions", action="store_true", help="saved_actions")
-    parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
+    parser.add_argument("--load_model", type=str, required=True, help="Path to model file")
+    parser.add_argument("--embodiment", type=str, required=True, help="Robot embodiment type")
+    parser.add_argument("--keyboard_use", action="store_true", help="Enable keyboard control")
     args = parser.parse_args()
 
+    # Initialize global command variables
+    global x_vel_cmd, y_vel_cmd, yaw_vel_cmd
     if args.keyboard_use:
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.0, 0.0, 0.0
-        pygame.init()
-        pygame.display.set_caption("Simulation Control")
     else:
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
 
-    if "pt" in args.load_model:
-        policy = torch.jit.load(args.load_model)
-    elif "onnx" in args.load_model:
-        import onnxruntime as ort
-
-        policy = ort.InferenceSession(args.load_model)
-
-    def get_policy_output(policy, input_data):
-        if isinstance(policy, torch.jit._script.RecursiveScriptModule):
-            return policy(torch.tensor(input_data))[0].detach().numpy()
-        else:
-            ort_inputs = {policy.get_inputs()[0].name: input_data}
-            return policy.run(None, ort_inputs)[0][0]
-
+    # Create config based on embodiment
     if args.embodiment == "stompypro":
-        cfg = Sim2simCfg(
-            args.embodiment,
-            sim_duration=60.0,
-            dt=0.001,
-            decimation=10,
-            cycle_time=0.4,
-            tau_factor=3.0,
-        )
+        cfg = Sim2simCfg(args.embodiment, sim_duration=60.0, dt=0.001, decimation=10, cycle_time=0.4, tau_factor=3.0)
     elif args.embodiment == "stompymicro":
-        cfg = Sim2simCfg(
-            args.embodiment,
-            sim_duration=60.0,
-            dt=0.001,
-            decimation=10,
-            cycle_time=0.4,
-            tau_factor=4.,
-        )
+        cfg = Sim2simCfg(args.embodiment, sim_duration=60.0, dt=0.001, decimation=10, cycle_time=0.4, tau_factor=4.0)
 
-    run_mujoco(policy, cfg, args.keyboard_use)
+    run_simulation(cfg, args.load_model, args.keyboard_use)
