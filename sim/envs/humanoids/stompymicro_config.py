@@ -23,7 +23,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_actions = NUM_JOINTS
         num_envs = 4096
-        episode_length_s = 24  # episode length in seconds
+        episode_length_s = 60  # episode length in seconds
         use_ref_actions = False
 
     class safety:
@@ -40,7 +40,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         foot_name = ["foot_left", "foot_right"]
         knee_name = ["left_knee_pitch_motor", "right_knee_pitch_motor"]
 
-        termination_height = 0.05
+        termination_height = 0.25
         default_feet_height = 0.02
 
         terminate_after_contacts_on = ["torso"]
