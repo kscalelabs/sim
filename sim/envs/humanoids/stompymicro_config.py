@@ -157,7 +157,7 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.02  # m
+        target_feet_height = 0.1  # m
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
@@ -167,20 +167,20 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.5
+            joint_pos = 1.0
+            feet_clearance = 5.0
             feet_contact_number = 1.5
-            feet_air_time = 1.4
+            feet_air_time = 5.0
             foot_slip = -0.1
             feet_distance = 0.2
             knee_distance = 0.2
             # contact
-            feet_contact_forces = -0.01
+            feet_contact_forces = -0.1
             # vel tracking
             tracking_lin_vel = 1.6
             tracking_ang_vel = 1.6
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.4
+            low_speed = 1.0
             track_vel_hard = 0.5
 
             # base pos
