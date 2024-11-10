@@ -128,9 +128,9 @@ class StompyMicroCfg(LeggedRobotCfg):
         start_pos_noise = 0.05
         randomize_friction = True
         friction_range = [0.1, 2.0]
-        randomize_base_mass = True  # True
+        randomize_base_mass = True
         added_mass_range = [-0.5, 0.5]
-        push_robots = True  # True
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.05
         max_push_ang_vel = 0.05
@@ -145,20 +145,20 @@ class StompyMicroCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.05, 0.23]  # min max [m/s]
-            lin_vel_y = [-0.04, 0.04]  # min max [m/s]
+            lin_vel_x = [-0.05, 0.6]  # min max [m/s]
+            lin_vel_y = [-0.1, 0.1]  # min max [m/s]
             ang_vel_yaw = [-0.1, 0.1]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
-        base_height_target = Robot.height
+        base_height_target = Robot.height + 0.01
         min_dist = 0.03
-        max_dist = 0.14
+        max_dist = 0.20
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.1  # m
-        cycle_time = 0.4  # sec
+        target_feet_height = 0.05  # m
+        cycle_time = 0.6  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -184,9 +184,9 @@ class StompyMicroCfg(LeggedRobotCfg):
             track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 1.0
-            orientation = 1
-            base_height = 0.2
+            default_joint_pos = 0.3
+            orientation = 1.0
+            base_height = 1.0
             base_acc = 0.2
             # energy
             action_smoothness = -0.002
@@ -264,7 +264,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 6001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
