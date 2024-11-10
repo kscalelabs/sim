@@ -30,6 +30,9 @@ from sim.utils.logger import Logger  # noqa: E402
 import torch  # isort: skip
 
 
+DEFAULT_COMMAND = [0.6, 0.0, 0.0, 0.0]
+
+
 def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> None:
     os.makedirs(path, exist_ok=True)
     path = os.path.join(path, "policy_1.pt")
@@ -171,10 +174,10 @@ def play(args: argparse.Namespace) -> None:
             dset_actions[t] = actions.detach().numpy()
 
         if FIX_COMMAND:
-            env.commands[:, 0] = 0.2
-            env.commands[:, 1] = 0.0
-            env.commands[:, 2] = 0.0
-            env.commands[:, 3] = 0.0
+            env.commands[:, 0] = DEFAULT_COMMAND[0]
+            env.commands[:, 1] = DEFAULT_COMMAND[1]
+            env.commands[:, 2] = DEFAULT_COMMAND[2]
+            env.commands[:, 3] = DEFAULT_COMMAND[3]
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
         print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
