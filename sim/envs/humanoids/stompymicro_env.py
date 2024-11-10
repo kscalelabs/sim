@@ -317,7 +317,7 @@ class StompyMicroEnv(LeggedRobot):
         self.last_contacts = contact
         first_contact = (self.feet_air_time > 0.0) * self.contact_filt
         self.feet_air_time += self.dt
-        air_time = self.feet_air_time.clamp(0, 0.5) * first_contact
+        air_time = self.feet_air_time.clamp(0, 1) * first_contact
         self.feet_air_time *= ~self.contact_filt
         return air_time.sum(dim=1)
 
