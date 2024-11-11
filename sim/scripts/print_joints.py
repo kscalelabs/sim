@@ -1,4 +1,6 @@
-"""Parses the URDF file and prints the joint names and types."""
+"""Parses the URDF file and prints the joint names and types.
+Assumes name-based heirarchy of URDF joints, with underscores as delimiters.
+Additionally, will print out associated limits of revolute joints from the URDF."""
 
 import argparse
 import xml.etree.ElementTree as ET
@@ -18,14 +20,28 @@ def main() -> None:
 
     # Gets the relevant joint names.
     joint_names: List[str] = []
+    joint_uppers: List[str] = []
+    joint_lowers: List[str] = []
     for joint in urdf.findall("joint"):
         joint_type = joint.attrib["type"]
         if joint_type in ignore_joint_type:
-            continue
+            continue # ignoring fixed joints, or whatever is defined in arguments
         joint_name = joint.attrib["name"]
         joint_names.append(joint_name)
+        joint_upper = joint.find('limit').get('upper')
+        joint_lower = joint.find('limit').get('lower')
+        joint_uppers.append(joint_upper)
+        joint_lowers.append(joint_lower)
+    
+    
+    for i in range(len(joint_names)):
+        # Concatenate the limits into the name string
+        joint_names[i] = joint_names[i] + " | Limits = [ Lower: " + joint_lowers[i] + ", Upper: " + joint_uppers[i] + " ]"
+            # This is pretty bad way of doing this, but trying make a proper data storage system work with the below implementation
+            #   of the tree structure became overly hard. The dict itself can store more data theoretically, but there's no clear way to 
+            #   associated more data with the names as they're passed along and sorted into the tree.
 
-    # Makes a "tree" of the joints using common prefixes.
+# Makes a "tree" of the joints using common prefixes.
     joint_names.sort()
     joint_tree: Dict = {}
     for joint_name in joint_names:
@@ -62,7 +78,7 @@ def main() -> None:
                 print("  " * depth + key)
                 print_tree(value, depth + 1)
             else:
-                print("  " * depth + key + ": " + value)
+                print("  " * depth + key) #+ ": " + value)
 
     print_tree(joint_tree)
 
