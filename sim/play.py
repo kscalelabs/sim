@@ -20,10 +20,9 @@ import numpy as np
 from isaacgym import gymapi
 from tqdm import tqdm
 
-logger = logging.getLogger(__name__)
-
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
+from sim.utils.cmd_manager import CommandManager  # noqa: E402
 from sim.utils.helpers import (  # noqa: E402
     export_policy_as_jit,
     export_policy_as_onnx,
@@ -31,7 +30,10 @@ from sim.utils.helpers import (  # noqa: E402
 )
 from sim.utils.logger import Logger  # noqa: E402
 
+logger = logging.getLogger(__name__)
+
 DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
+CMD_MODE = "fixed"
 
 
 def draw_velocity_arrows(gym, viewer, env_handles, robot_positions, command_xs, command_ys, actual_xs, actual_ys):
@@ -223,16 +225,20 @@ def play(args: argparse.Namespace) -> None:
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
+    cmd_manager = CommandManager(
+        num_envs=env_cfg.env.num_envs,
+        mode=CMD_MODE,
+        default_cmd=DEFAULT_COMMAND,
+        device=env.device,
+    )
+
     for t in tqdm(range(stop_state_log)):
         actions = policy(obs.detach())
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
 
-        if FIX_COMMAND:
-            env.commands[:, 0] = DEFAULT_COMMAND[0]
-            env.commands[:, 1] = DEFAULT_COMMAND[1]
-            env.commands[:, 2] = DEFAULT_COMMAND[2]
-            env.commands[:, 3] = DEFAULT_COMMAND[3]
+        env.commands[:] = cmd_manager.update(env.dt)
+
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
         print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
