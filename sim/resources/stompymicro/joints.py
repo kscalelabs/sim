@@ -116,14 +116,16 @@ class Robot(Node):
         }
 
         if cls.USE_ARMS:
-            base_dict.update({
-                cls.arms.left.shoulder_pitch: 0.0,
-                cls.arms.left.shoulder_yaw: 0.0,
-                cls.arms.left.elbow_yaw: 0.0,
-                cls.arms.right.shoulder_pitch: 0.0,
-                cls.arms.right.shoulder_yaw: 0.0,
-                cls.arms.right.elbow_yaw: 0.0,
-            })
+            base_dict.update(
+                {
+                    cls.arms.left.shoulder_pitch: 0.0,
+                    cls.arms.left.shoulder_yaw: 0.0,
+                    cls.arms.left.elbow_yaw: 0.0,
+                    cls.arms.right.shoulder_pitch: 0.0,
+                    cls.arms.right.shoulder_yaw: 0.0,
+                    cls.arms.right.elbow_yaw: 0.0,
+                }
+            )
 
         return base_dict
 
@@ -217,14 +219,16 @@ class Robot(Node):
             "knee_pitch": 17.681462808698132,
             "ankle_pitch": 17.681462808698132,
         }
-        
+
         if cls.USE_ARMS:
-            base_dict.update({
-                "shoulder_pitch": 5.0,
-                "shoulder_yaw": 5.0,
-                "elbow_yaw": 5.0,
-            })
-        
+            base_dict.update(
+                {
+                    "shoulder_pitch": 5.0,
+                    "shoulder_yaw": 5.0,
+                    "elbow_yaw": 5.0,
+                }
+            )
+
         return base_dict
 
     # d_gains
@@ -237,14 +241,16 @@ class Robot(Node):
             "knee_pitch": 0.5354656169048285,
             "ankle_pitch": 0.5354656169048285,
         }
-        
+
         if cls.USE_ARMS:
-            base_dict.update({
-                "shoulder_pitch": 0.3,
-                "shoulder_yaw": 0.3,
-                "elbow_yaw": 0.3,
-            })
-        
+            base_dict.update(
+                {
+                    "shoulder_pitch": 0.3,
+                    "shoulder_yaw": 0.3,
+                    "elbow_yaw": 0.3,
+                }
+            )
+
         return base_dict
 
     # pos_limits
@@ -257,14 +263,16 @@ class Robot(Node):
             "knee_pitch": 10,
             "ankle_pitch": 10,
         }
-        
+
         if cls.USE_ARMS:
-            base_dict.update({
-                "shoulder_pitch": 80,
-                "shoulder_yaw": 80,
-                "elbow_yaw": 80,
-            })
-        
+            base_dict.update(
+                {
+                    "shoulder_pitch": 80,
+                    "shoulder_yaw": 80,
+                    "elbow_yaw": 80,
+                }
+            )
+
         return base_dict
 
     # vel_limits
@@ -277,14 +285,16 @@ class Robot(Node):
             "knee_pitch": 10,
             "ankle_pitch": 10,
         }
-        
+
         if cls.USE_ARMS:
-            base_dict.update({
-                "shoulder_pitch": 5,
-                "shoulder_yaw": 5,
-                "elbow_yaw": 5,
-            })
-        
+            base_dict.update(
+                {
+                    "shoulder_pitch": 5,
+                    "shoulder_yaw": 5,
+                    "elbow_yaw": 5,
+                }
+            )
+
         return base_dict
 
     @classmethod
@@ -296,14 +306,16 @@ class Robot(Node):
             "knee_pitch": 0.05,
             "ankle_pitch": 0.05,
         }
-        
+
         if cls.USE_ARMS:
-            base_dict.update({
-                "shoulder_pitch": 0.05,
-                "shoulder_yaw": 0.05,
-                "elbow_yaw": 0.05,
-            })
-        
+            base_dict.update(
+                {
+                    "shoulder_pitch": 0.05,
+                    "shoulder_yaw": 0.05,
+                    "elbow_yaw": 0.05,
+                }
+            )
+
         return base_dict
 
 
