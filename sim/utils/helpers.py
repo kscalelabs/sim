@@ -34,6 +34,7 @@ import argparse
 import copy
 import os
 import random
+from typing import Any, Union
 
 import numpy as np
 
@@ -244,7 +245,7 @@ def get_args() -> argparse.Namespace:
     return args
 
 
-def export_policy_as_jit(actor_critic, path) -> None:
+def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> None:
     os.makedirs(path, exist_ok=True)
     path = os.path.join(path, "policy_1.pt")
     model = copy.deepcopy(actor_critic.actor).to("cpu")
