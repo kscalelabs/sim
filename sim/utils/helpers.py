@@ -348,3 +348,60 @@ def draw_vector(
     if clear_lines:
         gym.clear_lines(viewer)
     gym.add_lines(viewer, env_handle, 3, verts, colors)
+
+
+def analyze_policy(policy_path: str) -> dict:
+    """Analyzes a policy file to determine its input/output dimensions."""
+    info = {}
+
+    if policy_path.endswith(".pt"):
+        import torch
+
+        # Load TorchScript model
+        model = torch.jit.load(policy_path)
+
+        # Get the first parameter of the first layer to determine input size
+        first_layer = next(model.parameters())
+        info["input_dim"] = first_layer.shape[1]
+
+        # Get the last layer to determine output size
+        last_layer = None
+        for param in model.parameters():
+            last_layer = param
+        info["output_dim"] = last_layer.shape[0]
+
+        # Additional info
+        info["type"] = "TorchScript"
+        info["num_parameters"] = sum(p.numel() for p in model.parameters())
+
+    elif policy_path.endswith(".onnx"):
+        import onnx
+
+        # Load ONNX model
+        model = onnx.load(policy_path)
+
+        # Get input info
+        input_info = model.graph.input[0]
+        input_shape = [d.dim_value for d in input_info.type.tensor_type.shape.dim]
+        info["input_dim"] = input_shape[1] if len(input_shape) > 1 else input_shape[0]
+
+        # Get output info
+        output_info = model.graph.output[0]
+        output_shape = [d.dim_value for d in output_info.type.tensor_type.shape.dim]
+        info["output_dim"] = output_shape[1] if len(output_shape) > 1 else output_shape[0]
+
+        # Additional info
+        info["type"] = "ONNX"
+        info["input_shape"] = input_shape
+        info["output_shape"] = output_shape
+
+    else:
+        raise ValueError(f"Unsupported model type: {policy_path}")
+
+    return info
+
+
+if __name__ == "__main__":
+    path = "examples/experiments/walking/exp6-arm_movement++/policy_1.pt"  # "policy_1.pt"
+    info = analyze_policy(path)
+    print(info)
