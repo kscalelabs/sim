@@ -11,6 +11,7 @@ class CommandMode(Enum):
     FIXED = "fixed"
     OSCILLATING = "oscillating"
     KEYBOARD = "keyboard"
+    RANDOM = "random"
 
 
 class CommandManager:
@@ -19,9 +20,10 @@ class CommandManager:
     def __init__(
         self,
         num_envs: int = 1,
-        mode: str = "oscillating",
+        mode: str = "fixed",
         default_cmd: List[float] = [0.3, 0.0, 0.0, 0.0],
         device="cpu",
+        env_cfg=None,
     ):
         self.num_envs = num_envs
         self.mode = CommandMode(mode)
@@ -29,15 +31,32 @@ class CommandManager:
         self.default_cmd = torch.tensor(default_cmd, device=self.device)
         self.commands = self.default_cmd.repeat(num_envs, 1)
         self.time = 0
+        self.env_cfg = env_cfg
 
         # Mode-specific parameters
         if self.mode == CommandMode.OSCILLATING:
-            self.osc_period = 10.0
-            self.osc_amplitude = 0.3
+            self.osc_period = 5.0  # secs
+            self.min_x_vel = env_cfg.commands.ranges.lin_vel_x[0] if env_cfg else 0.0
+            self.max_x_vel = env_cfg.commands.ranges.lin_vel_x[1] if env_cfg else 0.3
+            self.osc_amplitude = (self.max_x_vel - self.min_x_vel) / 2
+            self.osc_offset = (self.max_x_vel + self.min_x_vel) / 2
+        elif self.mode == CommandMode.RANDOM:
+            self.cmd_ranges = {
+                'lin_vel_x': env_cfg.commands.ranges.lin_vel_x,
+                'lin_vel_y': env_cfg.commands.ranges.lin_vel_y,
+                'ang_vel_yaw': env_cfg.commands.ranges.ang_vel_yaw,
+                'heading': env_cfg.commands.ranges.heading
+            } if env_cfg else {
+                'lin_vel_x': [-0.05, 0.23],
+                'lin_vel_y': [-0.05, 0.05],
+                'ang_vel_yaw': [-0.5, 0.5],
+                'heading': [-np.pi, np.pi]
+            }
+            self.resampling_time = env_cfg.commands.resampling_time if env_cfg else 8.0
+            self.last_sample_time = 0.0
         elif self.mode == CommandMode.KEYBOARD:
             try:
                 import pygame
-
                 pygame.init()
                 pygame.display.set_mode((100, 100))
                 self.x_vel_cmd = 0.0
@@ -50,14 +69,31 @@ class CommandManager:
     def update(self, dt: float) -> torch.Tensor:
         """Updates and returns commands based on current mode."""
         self.time += dt
+
         if self.mode == CommandMode.FIXED:
             return self.commands
-
         elif self.mode == CommandMode.OSCILLATING:
-            # Oscillate x velocity
-            x_vel = self.osc_amplitude * torch.sin(torch.tensor(2 * np.pi * self.time / self.osc_period))
+            # Oscillate x velocity between min and max
+            x_vel = self.osc_offset + self.osc_amplitude * torch.sin(
+                torch.tensor(2 * np.pi * self.time / self.osc_period)
+            )
             self.commands[:, 0] = x_vel.to(self.device)
-
+        elif self.mode == CommandMode.RANDOM:
+            if self.time - self.last_sample_time >= self.resampling_time:
+                self.last_sample_time = self.time
+                # Generate random commands within training ranges
+                new_commands = torch.tensor([
+                    np.random.uniform(*self.cmd_ranges['lin_vel_x']),
+                    np.random.uniform(*self.cmd_ranges['lin_vel_y']),
+                    0.0,
+                    np.random.uniform(*self.cmd_ranges['heading'])
+                ], device=self.device) if self.env_cfg and self.env_cfg.commands.heading_command else torch.tensor([
+                    np.random.uniform(*self.cmd_ranges['lin_vel_x']),
+                    np.random.uniform(*self.cmd_ranges['lin_vel_y']),
+                    np.random.uniform(*self.cmd_ranges['ang_vel_yaw']),
+                    0.0
+                ], device=self.device)
+                self.commands = new_commands.repeat(self.num_envs, 1)
         elif self.mode == CommandMode.KEYBOARD:
             self._handle_keyboard_input()
             self.commands[:, 0] = torch.tensor(self.x_vel_cmd, device=self.device)

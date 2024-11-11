@@ -30,9 +30,6 @@ from sim.utils.logger import Logger  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
-CMD_MODE = "oscillating"
-
 
 def play(args: argparse.Namespace) -> None:
     logger.info("Configuring environment and training settings...")
@@ -67,7 +64,6 @@ def play(args: argparse.Namespace) -> None:
     policy = ppo_runner.get_inference_policy(device=env.device)
 
     # Export policy if needed
-    EXPORT_POLICY = True
     if EXPORT_POLICY:
         path = os.path.join(".")
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
@@ -85,6 +81,7 @@ def play(args: argparse.Namespace) -> None:
     joint_index = 1
     stop_state_log = 1000
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
     if args.log_h5:
         h5_file = h5py.File(f"data{now}.h5", "w")
 
@@ -117,7 +114,7 @@ def play(args: argparse.Namespace) -> None:
             "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
         )  # root orientation
 
-    if RENDER:
+    if not args.headless:
         camera_properties = gymapi.CameraProperties()
         camera_properties.width = 1920
         camera_properties.height = 1080
@@ -151,6 +148,7 @@ def play(args: argparse.Namespace) -> None:
         mode=CMD_MODE,
         default_cmd=DEFAULT_COMMAND,
         device=env.device,
+        env_cfg=env_cfg
     )
 
     for t in tqdm(range(stop_state_log)):
@@ -163,7 +161,7 @@ def play(args: argparse.Namespace) -> None:
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
         print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
-        if RENDER:
+        if not args.headless:
             env.gym.fetch_results(env.sim, True)
             env.gym.step_graphics(env.sim)
             env.gym.render_all_camera_sensors(env.sim)
@@ -172,7 +170,10 @@ def play(args: argparse.Namespace) -> None:
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
             robot_positions = env.root_states[:, 0:3].cpu().numpy()
             actual_vels = np.stack([env.base_lin_vel[:, 0].cpu().numpy(), env.base_lin_vel[:, 1].cpu().numpy()], axis=1)
-            cmd_manager.draw(env.gym, env.viewer, env.envs, robot_positions, actual_vels)
+
+            if args.command_arrow:
+                cmd_manager.draw(env.gym, env.viewer, env.envs, robot_positions, actual_vels)
+
             video.write(img[..., :3])
 
         # Log states
@@ -224,7 +225,7 @@ def play(args: argparse.Namespace) -> None:
     env_logger.print_rewards()
     env_logger.plot_states()
 
-    if RENDER:
+    if not args.headless:
         video.release()
 
     if args.log_h5:
@@ -233,10 +234,11 @@ def play(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    RENDER = True
-    FIX_COMMAND = True
-
+    EXPORT_POLICY = True
     EXPORT_ONNX = True
+
+    DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
+    CMD_MODE = "random"  # options: "fixed", "oscillating", "random", "keyboard"
 
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")

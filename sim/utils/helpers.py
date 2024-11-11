@@ -233,6 +233,12 @@ def get_args() -> argparse.Namespace:
             "default": False,
             "help": "Enable HDF5 logging",
         },
+        {
+            "name": "--command-arrow",
+            "action": "store_true",
+            "default": False,
+            "help": "Draw command and velocity arrows during visualization",
+        },
     ]
     # parse arguments
     args = gymutil.parse_arguments(description="RL Policy", custom_parameters=custom_parameters)
@@ -276,7 +282,6 @@ def draw_vector(
     direction: Tuple[float, float],
     color: Tuple[float, float, float],
     clear_lines: bool = False,
-    height: float = 0.2,
     head_scale: float = 0.1,
 ) -> None:
     """Draws a single vector with an arrowhead."""
@@ -285,7 +290,7 @@ def draw_vector(
 
     # Unpack direction and create start position
     vel_x, vel_y = direction
-    start = gymapi.Vec3(start_pos[0], start_pos[1], start_pos[2] + height)
+    start = gymapi.Vec3(start_pos[0], start_pos[1], start_pos[2])
 
     # Scale arrow length by magnitude
     vel_magnitude = np.sqrt(vel_x**2 + vel_y**2)
