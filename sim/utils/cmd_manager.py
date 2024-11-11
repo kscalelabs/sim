@@ -2,9 +2,10 @@ from enum import Enum
 from typing import List
 
 import numpy as np
-import torch
 
 from sim.utils.helpers import draw_vector
+
+import torch  # isort: skip
 
 
 class CommandMode(Enum):
@@ -65,6 +66,11 @@ class CommandManager:
             except ImportError:
                 print("WARNING: pygame not found, falling back to fixed commands")
                 self.mode = CommandMode.FIXED
+
+    def close(self):
+        if self.mode == CommandMode.KEYBOARD:
+            import pygame
+            pygame.quit()
 
     def update(self, dt: float) -> torch.Tensor:
         """Updates and returns commands based on current mode."""
