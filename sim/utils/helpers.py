@@ -34,7 +34,7 @@ import argparse
 import copy
 import os
 import random
-from typing import Any, Union
+from typing import Any, Tuple, Union
 
 import numpy as np
 
@@ -266,3 +266,79 @@ def export_policy_as_onnx(actor_critic, path):
     dummy_input = torch.randn(1, input_dim)
 
     torch.onnx.export(model, dummy_input, path)
+
+
+def draw_vector(
+    gym: gymapi.Gym,
+    viewer: gymapi.Viewer,
+    env_handle: gymapi.Env,
+    start_pos: np.ndarray,
+    direction: Tuple[float, float],
+    color: Tuple[float, float, float],
+    clear_lines: bool = False,
+    height: float = 0.2, head_scale: float = 0.1
+) -> None:
+    """Draws a single vector with an arrowhead."""
+    if viewer is None:
+        return
+
+    # Unpack direction and create start position
+    vel_x, vel_y = direction
+    start = gymapi.Vec3(start_pos[0], start_pos[1], start_pos[2] + height)
+
+    # Scale arrow length by magnitude
+    vel_magnitude = np.sqrt(vel_x**2 + vel_y**2)
+    if vel_magnitude > 0:
+        arrow_scale = np.clip(vel_magnitude, 0.1, 1.0)
+        normalized_x = vel_x / vel_magnitude
+        normalized_y = vel_y / vel_magnitude
+    else:
+        arrow_scale = 0.1
+        normalized_x = 0
+        normalized_y = 0
+
+    # Calculate end position and arrowhead
+    end = gymapi.Vec3(start.x + normalized_x * arrow_scale, start.y + normalized_y * arrow_scale, start.z)
+
+    # Calculate perpendicular vector for arrowhead
+    perp_x = -normalized_y
+    perp_y = normalized_x
+
+    head_left = gymapi.Vec3(
+        end.x - head_scale * (normalized_x * 0.7 + perp_x * 0.7),
+        end.y - head_scale * (normalized_y * 0.7 + perp_y * 0.7),
+        end.z,
+    )
+
+    head_right = gymapi.Vec3(
+        end.x - head_scale * (normalized_x * 0.7 - perp_x * 0.7),
+        end.y - head_scale * (normalized_y * 0.7 - perp_y * 0.7),
+        end.z,
+    )
+
+    # Create vertices and colors
+    verts = [
+        start.x,
+        start.y,
+        start.z,
+        end.x,
+        end.y,
+        end.z,
+        end.x,
+        end.y,
+        end.z,
+        head_left.x,
+        head_left.y,
+        head_left.z,
+        end.x,
+        end.y,
+        end.z,
+        head_right.x,
+        head_right.y,
+        head_right.z,
+    ]
+    colors = [color[0], color[1], color[2]] * 6
+
+    if clear_lines:
+        gym.clear_lines(viewer)
+    gym.add_lines(viewer, env_handle, 3, verts, colors)
