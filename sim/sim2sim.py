@@ -316,7 +316,7 @@ if __name__ == "__main__":
             dt=0.001,
             decimation=10,
             cycle_time=0.4,
-            tau_factor=4.,
+            tau_factor=4.0,
         )
 
     run_mujoco(policy, cfg, args.keyboard_use)
