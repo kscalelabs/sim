@@ -79,14 +79,13 @@ def play(args: argparse.Namespace) -> None:
     env_logger = Logger(env.dt)
     robot_index = 0
     joint_index = 1
-    stop_state_log = 1000
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     if args.log_h5:
         h5_file = h5py.File(f"data{now}.h5", "w")
 
         # Create dataset for actions
-        max_timesteps = stop_state_log
+        max_timesteps = TIME_STEPS
         num_dof = env.num_dof
         dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_dof), dtype=np.float32)
 
@@ -151,7 +150,7 @@ def play(args: argparse.Namespace) -> None:
         env_cfg=env_cfg
     )
 
-    for t in tqdm(range(stop_state_log)):
+    for t in tqdm(range(TIME_STEPS)):
         actions = policy(obs.detach())
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
@@ -224,6 +223,7 @@ def play(args: argparse.Namespace) -> None:
 
     env_logger.print_rewards()
     env_logger.plot_states()
+    cmd_manager.close()
 
     if not args.headless:
         video.release()
@@ -236,6 +236,7 @@ def play(args: argparse.Namespace) -> None:
 if __name__ == "__main__":
     EXPORT_POLICY = True
     EXPORT_ONNX = True
+    TIME_STEPS = 1000
 
     DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
     CMD_MODE = "random"  # options: "fixed", "oscillating", "random", "keyboard"
