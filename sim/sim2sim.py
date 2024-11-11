@@ -49,7 +49,7 @@ from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from sim.scripts.create_mjcf import load_embodiment
-from sim.sim2sim_helpers import handle_keyboard_input
+from sim.utils.cmd_manager import CommandManager
 
 import torch  # isort: skip
 
@@ -122,14 +122,13 @@ class SimulationState:
 class MujocoSimulator:
     """Handles all Mujoco-specific simulation logic"""
 
-    def __init__(self, model_path: str, dt: float, cfg):
+    def __init__(self, model_path: str, cfg):
         self.cfg = cfg
         self.model = mujoco.MjModel.from_xml_path(model_path)
-        self.model.opt.timestep = dt
+        self.model.opt.timestep = cfg.dt
         self.data = mujoco.MjData(self.model)
         self.viewer = mujoco_viewer.MujocoViewer(self.model, self.data)
 
-        # Initialize state
         self._initialize_state()
 
     def _initialize_state(self):
@@ -170,9 +169,6 @@ class MujocoSimulator:
     def step(self, tau: np.ndarray):
         """Step the simulation forward"""
         self.data.ctrl = tau
-        # Print debug information
-        print(tau)
-        print(x_vel_cmd, y_vel_cmd, yaw_vel_cmd)
         mujoco.mj_step(self.model, self.data)
         self.viewer.render()
 
@@ -240,9 +236,9 @@ class Controller:
         # Fill observation vector
         obs[0, 0] = math.sin(2 * math.pi * count * self.cfg.dt / self.cfg.cycle_time)
         obs[0, 1] = math.cos(2 * math.pi * count * self.cfg.dt / self.cfg.cycle_time)
-        obs[0, 2] = x_vel_cmd * self.cfg.lin_vel
-        obs[0, 3] = y_vel_cmd * self.cfg.lin_vel
-        obs[0, 4] = yaw_vel_cmd * self.cfg.ang_vel
+        obs[0, 2] = self.x_vel_cmd * self.cfg.lin_vel
+        obs[0, 3] = self.y_vel_cmd * self.cfg.lin_vel
+        obs[0, 4] = self.yaw_vel_cmd * self.cfg.ang_vel
         obs[0, 5 : (self.cfg.num_actions + 5)] = (q - default_standing) * self.cfg.dof_pos
         obs[0, (self.cfg.num_actions + 5) : (2 * self.cfg.num_actions + 5)] = dq * self.cfg.dof_vel
         obs[0, (2 * self.cfg.num_actions + 5) : (3 * self.cfg.num_actions + 5)] = self.action
@@ -306,23 +302,21 @@ class Controller:
         return kp * (target_q + default - q) - kd * dq
 
 
-def run_simulation(cfg, policy_path: str, keyboard_control: bool = False):
+def run_simulation(cfg: Sim2simCfg, policy_path: str, command_mode: str = "fixed"):
     """Main simulation loop"""
-    if keyboard_control:
-        pygame.init()
-        pygame.display.set_caption("Simulation Control")
-
     # Initialize components
     model_dir = os.environ.get("MODEL_DIR") or "sim/resources"
-    simulator = MujocoSimulator(model_path=f"{model_dir}/{cfg.embodiment}/robot_fixed.xml", dt=cfg.dt, cfg=cfg)
+    simulator = MujocoSimulator(model_path=f"{model_dir}/{cfg.embodiment}/robot_fixed.xml", cfg=cfg)
     policy = PolicyWrapper(policy_path)
     controller = Controller(cfg, policy)
+    cmd_manager = CommandManager(num_envs=1, mode=command_mode)
 
     # Main simulation loop
     for count in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
-        if keyboard_control:
-            handle_keyboard_input()
-
+        commands = cmd_manager.update(cfg.dt)
+        controller.x_vel_cmd = commands[0, 0].item()
+        controller.y_vel_cmd = commands[0, 1].item()
+        controller.yaw_vel_cmd = commands[0, 2].item()
         state = simulator.get_state()
 
         # Compute control at policy rate
@@ -331,31 +325,29 @@ def run_simulation(cfg, policy_path: str, keyboard_control: bool = False):
             simulator.step(tau)
 
     simulator.close()
-    if keyboard_control:
-        pygame.quit()
+    cmd_manager.close()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--load_model", type=str, required=True, help="Path to model file")
     parser.add_argument("--embodiment", type=str, required=True, help="Robot embodiment type")
-    parser.add_argument("--keyboard_use", action="store_true", help="Enable keyboard control")
+    parser.add_argument(
+        "--command_mode",
+        type=str,
+        choices=["fixed", "oscillating", "keyboard", "random"],
+        default="fixed",
+        help="Command mode for robot control",
+    )
     args = parser.parse_args()
-
-    # Initialize global command variables
-    global x_vel_cmd, y_vel_cmd, yaw_vel_cmd
-    if args.keyboard_use:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.0, 0.0, 0.0
-    else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
 
     cfg = Sim2simCfg(
         args.embodiment,
         sim_duration=60.0,
         dt=0.001,
-        decimation=10,
+        decimation=20,
         cycle_time=0.4,
         tau_factor=4.0,
     )
 
-    run_simulation(cfg, args.load_model, args.keyboard_use)
+    run_simulation(cfg, args.load_model, args.command_mode)
