@@ -349,10 +349,13 @@ if __name__ == "__main__":
     else:
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
 
-    # Create config based on embodiment
-    if args.embodiment == "stompypro":
-        cfg = Sim2simCfg(args.embodiment, sim_duration=60.0, dt=0.001, decimation=10, cycle_time=0.4, tau_factor=3.0)
-    elif args.embodiment == "stompymicro":
-        cfg = Sim2simCfg(args.embodiment, sim_duration=60.0, dt=0.001, decimation=10, cycle_time=0.4, tau_factor=4.0)
+    cfg = Sim2simCfg(
+        args.embodiment,
+        sim_duration=60.0,
+        dt=0.001,
+        decimation=10,
+        cycle_time=0.4,
+        tau_factor=4.0,
+    )
 
     run_simulation(cfg, args.load_model, args.keyboard_use)

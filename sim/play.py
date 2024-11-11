@@ -8,19 +8,15 @@ Run:
 # mypy: ignore-errors
 
 import argparse
-import copy
 import logging
 import os
 from datetime import datetime
-from typing import Any, Union
 
 import cv2
 import h5py
 import numpy as np
 from isaacgym import gymapi
 from tqdm import tqdm
-
-logger = logging.getLogger(__name__)
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
@@ -29,9 +25,10 @@ from sim.utils.helpers import (  # noqa: E402
     export_policy_as_onnx,
     get_args,
 )
+from sim.utils.cmd_manager import CommandManager  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
-DEFAULT_COMMAND = [0.4, 0.0, 0.0, 0.0]
+logger = logging.getLogger(__name__)
 
 
 def play(args: argparse.Namespace) -> None:
@@ -67,7 +64,6 @@ def play(args: argparse.Namespace) -> None:
     policy = ppo_runner.get_inference_policy(device=env.device)
 
     # Export policy if needed
-    EXPORT_POLICY = True
     if EXPORT_POLICY:
         path = os.path.join(".")
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
@@ -85,6 +81,7 @@ def play(args: argparse.Namespace) -> None:
     joint_index = 1
     stop_state_log = 1000
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
     if args.log_h5:
         h5_file = h5py.File(f"data{now}.h5", "w")
 
@@ -117,7 +114,7 @@ def play(args: argparse.Namespace) -> None:
             "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
         )  # root orientation
 
-    if RENDER:
+    if not args.headless:
         camera_properties = gymapi.CameraProperties()
         camera_properties.width = 1920
         camera_properties.height = 1080
@@ -146,26 +143,36 @@ def play(args: argparse.Namespace) -> None:
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
+    cmd_manager = CommandManager(
+        num_envs=env_cfg.env.num_envs,
+        mode=CMD_MODE,
+        default_cmd=DEFAULT_COMMAND,
+        device=env.device,
+        env_cfg=env_cfg
+    )
+
     for t in tqdm(range(stop_state_log)):
         actions = policy(obs.detach())
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
 
-        if FIX_COMMAND:
-            env.commands[:, 0] = DEFAULT_COMMAND[0]
-            env.commands[:, 1] = DEFAULT_COMMAND[1]
-            env.commands[:, 2] = DEFAULT_COMMAND[2]
-            env.commands[:, 3] = DEFAULT_COMMAND[3]
+        env.commands[:] = cmd_manager.update(env.dt)
+
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
         print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
-        if RENDER:
+        if not args.headless:
             env.gym.fetch_results(env.sim, True)
             env.gym.step_graphics(env.sim)
             env.gym.render_all_camera_sensors(env.sim)
             img = env.gym.get_camera_image(env.sim, env.envs[0], h1, gymapi.IMAGE_COLOR)
             img = np.reshape(img, (1080, 1920, 4))
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
+            robot_positions = env.root_states[:, 0:3].cpu().numpy()
+            actual_vels = np.stack([env.base_lin_vel[:, 0].cpu().numpy(), env.base_lin_vel[:, 1].cpu().numpy()], axis=1)
+
+            if args.command_arrow:
+                cmd_manager.draw(env.gym, env.viewer, env.envs, robot_positions, actual_vels)
 
             video.write(img[..., :3])
 
@@ -218,7 +225,7 @@ def play(args: argparse.Namespace) -> None:
     env_logger.print_rewards()
     env_logger.plot_states()
 
-    if RENDER:
+    if not args.headless:
         video.release()
 
     if args.log_h5:
@@ -227,10 +234,11 @@ def play(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    RENDER = True
-    FIX_COMMAND = True
-
+    EXPORT_POLICY = True
     EXPORT_ONNX = True
+
+    DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
+    CMD_MODE = "random"  # options: "fixed", "oscillating", "random", "keyboard"
 
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")

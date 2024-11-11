@@ -1,5 +1,7 @@
 """Defines the environment configuration for the Getting up task"""
 
+import numpy as np
+
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
@@ -148,7 +150,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             lin_vel_x = [-0.05, 1.0]  # min max [m/s]
             lin_vel_y = [-0.1, 0.1]  # min max [m/s]
             ang_vel_yaw = [-0.1, 0.1]  # min max [rad/s]
-            heading = [-3.14, 3.14]
+            heading = [-np.pi, np.pi]  # min max [rad]
 
     class rewards:
         base_height_target = Robot.height + 0.02
