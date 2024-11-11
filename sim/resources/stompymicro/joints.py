@@ -91,7 +91,7 @@ class Arms(Node):
 
 
 class Robot(Node):
-    USE_ARMS = False  # Set to True to enable active arms
+    USE_ARMS = True  # Set to True to enable active arms
 
     height = 0.32
     rotation = [0, 0, 0.707, 0.707]
