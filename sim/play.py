@@ -8,11 +8,9 @@ Run:
 # mypy: ignore-errors
 
 import argparse
-import copy
 import logging
 import os
 from datetime import datetime
-from typing import Any, Union
 
 import cv2
 import h5py
@@ -33,84 +31,7 @@ from sim.utils.logger import Logger  # noqa: E402
 logger = logging.getLogger(__name__)
 
 DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
-CMD_MODE = "fixed"
-
-
-def draw_velocity_arrows(gym, viewer, env_handles, robot_positions, command_xs, command_ys, actual_xs, actual_ys):
-    """Draws command and actual velocity arrows for all robots."""
-    if viewer is None:
-        return
-
-    ARROW_HEIGHT = 0.2  # Height of arrow from robot's base
-    HEAD_SCALE = 0.1  # Size of arrowhead
-
-    gym.clear_lines(viewer)
-
-    for env_handle, robot_pos, command_x, command_y, actual_x, actual_y in zip(
-        env_handles, robot_positions, command_xs, command_ys, actual_xs, actual_ys
-    ):
-        # Draw both commanded and actual velocity arrows for this robot
-        for velocity_type, (vel_x, vel_y), color in [
-            ("command", (command_x, command_y), (0.0, 1.0, 0.0)),  # Green for command
-            ("actual", (actual_x, actual_y), (1.0, 0.0, 0.0)),  # Red for actual
-        ]:
-            start = gymapi.Vec3(robot_pos[0], robot_pos[1], robot_pos[2] + ARROW_HEIGHT)
-
-            # Scale arrow length by velocity magnitude
-            vel_magnitude = np.sqrt(vel_x**2 + vel_y**2)
-            if vel_magnitude > 0:
-                arrow_scale = np.clip(vel_magnitude, 0.1, 1.0)
-                normalized_x = vel_x / vel_magnitude
-                normalized_y = vel_y / vel_magnitude
-            else:
-                arrow_scale = 0.1
-                normalized_x = 0
-                normalized_y = 0
-
-            # End position - length varies with velocity magnitude
-            end = gymapi.Vec3(start.x + normalized_x * arrow_scale, start.y + normalized_y * arrow_scale, start.z)
-
-            # Calculate arrowhead
-            perp_x = -normalized_y
-            perp_y = normalized_x
-
-            head_left = gymapi.Vec3(
-                end.x - HEAD_SCALE * (normalized_x * 0.7 + perp_x * 0.7),
-                end.y - HEAD_SCALE * (normalized_y * 0.7 + perp_y * 0.7),
-                end.z,
-            )
-
-            head_right = gymapi.Vec3(
-                end.x - HEAD_SCALE * (normalized_x * 0.7 - perp_x * 0.7),
-                end.y - HEAD_SCALE * (normalized_y * 0.7 - perp_y * 0.7),
-                end.z,
-            )
-
-            # Draw lines
-            verts = [
-                start.x,
-                start.y,
-                start.z,
-                end.x,
-                end.y,
-                end.z,
-                end.x,
-                end.y,
-                end.z,
-                head_left.x,
-                head_left.y,
-                head_left.z,
-                end.x,
-                end.y,
-                end.z,
-                head_right.x,
-                head_right.y,
-                head_right.z,
-            ]
-            colors = [color[0], color[1], color[2]] * 6
-
-            # Add the lines to the viewer
-            gym.add_lines(viewer, env_handle, 3, verts, colors)
+CMD_MODE = "oscillating"
 
 
 def play(args: argparse.Namespace) -> None:
@@ -249,19 +170,9 @@ def play(args: argparse.Namespace) -> None:
             img = env.gym.get_camera_image(env.sim, env.envs[0], h1, gymapi.IMAGE_COLOR)
             img = np.reshape(img, (1080, 1920, 4))
             img = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
-
             robot_positions = env.root_states[:, 0:3].cpu().numpy()
-            draw_velocity_arrows(
-                env.gym,
-                env.viewer,
-                env.envs,
-                robot_positions,
-                env.commands[:, 0].cpu().numpy(),  # cmd x vels
-                env.commands[:, 1].cpu().numpy(),  # cmd y vels
-                env.base_lin_vel[:, 0].cpu().numpy(),  # real x vels
-                env.base_lin_vel[:, 1].cpu().numpy(),  # real y vels
-            )
-
+            actual_vels = np.stack([env.base_lin_vel[:, 0].cpu().numpy(), env.base_lin_vel[:, 1].cpu().numpy()], axis=1)
+            cmd_manager.draw(env.gym, env.viewer, env.envs, robot_positions, actual_vels)
             video.write(img[..., :3])
 
         # Log states

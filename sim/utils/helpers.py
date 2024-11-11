@@ -276,7 +276,8 @@ def draw_vector(
     direction: Tuple[float, float],
     color: Tuple[float, float, float],
     clear_lines: bool = False,
-    height: float = 0.2, head_scale: float = 0.1
+    height: float = 0.2,
+    head_scale: float = 0.1,
 ) -> None:
     """Draws a single vector with an arrowhead."""
     if viewer is None:
