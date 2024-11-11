@@ -20,12 +20,12 @@ from tqdm import tqdm
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
+from sim.utils.cmd_manager import CommandManager  # noqa: E402
 from sim.utils.helpers import (  # noqa: E402
     export_policy_as_jit,
     export_policy_as_onnx,
     get_args,
 )
-from sim.utils.cmd_manager import CommandManager  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -143,11 +143,7 @@ def play(args: argparse.Namespace) -> None:
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
     cmd_manager = CommandManager(
-        num_envs=env_cfg.env.num_envs,
-        mode=CMD_MODE,
-        default_cmd=DEFAULT_COMMAND,
-        device=env.device,
-        env_cfg=env_cfg
+        num_envs=env_cfg.env.num_envs, mode=CMD_MODE, default_cmd=DEFAULT_COMMAND, device=env.device, env_cfg=env_cfg
     )
 
     for t in tqdm(range(TIME_STEPS)):
