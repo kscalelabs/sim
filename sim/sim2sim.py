@@ -136,10 +136,15 @@ class MujocoSimulator:
         try:
             self.data.qpos = self.model.keyframe("default").qpos
             self.default_qpos = deepcopy(self.model.keyframe("default").qpos)
-            print("Default position:", self.default_qpos[-self.cfg.num_actions :])
         except:
             print("No default position found, using zero initialization")
             self.default_qpos = np.zeros_like(self.data.qpos)
+
+        print("Default position:", self.default_qpos[-self.cfg.num_actions :])
+        if self.default_qpos is not None:
+            print("Loaded joint positions:")
+            for i, joint_name in enumerate(self.cfg.robot.all_joints()):
+                print(f"{joint_name}: {self.default_qpos[-len(self.cfg.robot.all_joints()) + i]}")
 
         self.data.qvel = np.zeros_like(self.data.qvel)
         self.data.qacc = np.zeros_like(self.data.qacc)
