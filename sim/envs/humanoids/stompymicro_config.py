@@ -131,25 +131,25 @@ class StompyMicroCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
         randomize_base_mass = True
-        added_mass_range = [-0.5, 0.5]
+        added_mass_range = [-1.0, 1.0]
         push_robots = True
-        push_interval_s = 4
-        max_push_vel_xy = 0.05
-        max_push_ang_vel = 0.05
+        push_interval_s = 3
+        max_push_vel_xy = 0.15
+        max_push_ang_vel = 0.15
         # dynamic randomization
         action_delay = 0.5
-        action_noise = 0.02
+        action_noise = 0.05
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
         num_commands = 4
-        resampling_time = 8.0  # time before command are changed[s]
+        resampling_time = 5.0  # time before command are changed[s]
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.05, 1.0]  # min max [m/s]
-            lin_vel_y = [-0.1, 0.1]  # min max [m/s]
-            ang_vel_yaw = [-0.1, 0.1]  # min max [rad/s]
+            lin_vel_x = [-0.25, 1.3]  # min max [m/s]
+            lin_vel_y = [-0.2, 0.2]  # min max [m/s]
+            ang_vel_yaw = [-0.2, 0.2]  # min max [rad/s]
             heading = [-np.pi, np.pi]  # min max [rad]
 
     class rewards:
@@ -169,32 +169,32 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 2.0
+            joint_pos = 3.0
             feet_clearance = 1.5
-            feet_contact_number = 1.5
+            feet_contact_number = 2.0
             feet_air_time = 1.5
-            foot_slip = -0.3
+            foot_slip = -0.5
             feet_distance = 0.2
             knee_distance = 0.2
             # contact
-            feet_contact_forces = -0.1
+            feet_contact_forces = -0.2
             # vel tracking
-            tracking_lin_vel = 1.6
-            tracking_ang_vel = 1.6
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 1.0
+            tracking_lin_vel = 3.0
+            tracking_ang_vel = 3.0
+            vel_mismatch_exp = 1.5  # lin_z; ang x,y
+            low_speed = 2.0
             track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 1.0
+            default_joint_pos = 2.0
             orientation = 2.0
             base_height = 1.0
             base_acc = 0.2
             # energy
             action_smoothness = -0.01
             torques = -1e-5
-            dof_vel = -1e-4
-            dof_acc = -1e-7
+            dof_vel = -4e-4
+            dof_acc = -4e-7
             collision = -1.0
 
     class normalization:
