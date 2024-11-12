@@ -167,6 +167,10 @@ class StompyMicroCfg(LeggedRobotCfg):
         tracking_sigma = 5.0
         max_contact_force = 100  # forces above this value are penalized
 
+        symmetry_timing_weight = 0.4  # Weight for cycle timing symmetry
+        symmetry_motion_weight = 0.4  # Weight for joint motion symmetry
+        symmetry_trajectory_weight = 0.2  # Weight for foot trajectory symmetry
+
         class scales:
             # reference motion tracking
             joint_pos = 3.0
@@ -176,7 +180,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             foot_slip = -0.5
             feet_distance = 0.2
             knee_distance = 0.2
-            gait_symmetry = 5.0  # TODO: Adjust
+            gait_symmetry = 1.0
             # contact
             feet_contact_forces = -0.2
             # vel tracking
