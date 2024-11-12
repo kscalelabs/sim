@@ -134,26 +134,26 @@
 
   <actuator>
     <!-- Arm joints -->
-    <motor name="right_shoulder_pitch" joint="right_shoulder_pitch" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="right_shoulder_yaw" joint="right_shoulder_yaw" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="right_elbow_yaw" joint="right_elbow_yaw" ctrllimited="true" ctrlrange="-200 200" gear="1" />
+    <motor name="right_shoulder_pitch" joint="right_shoulder_pitch" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="right_shoulder_yaw" joint="right_shoulder_yaw" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="right_elbow_yaw" joint="right_elbow_yaw" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
     
-    <motor name="left_shoulder_pitch" joint="left_shoulder_pitch" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="left_shoulder_yaw" joint="left_shoulder_yaw" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="left_elbow_yaw" joint="left_elbow_yaw" ctrllimited="true" ctrlrange="-200 200" gear="1" />
+    <motor name="left_shoulder_pitch" joint="left_shoulder_pitch" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="left_shoulder_yaw" joint="left_shoulder_yaw" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="left_elbow_yaw" joint="left_elbow_yaw" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
 
     <!-- Leg joints -->
-    <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-200 200" gear="1" />
+    <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
 
-    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-200 200" gear="1" />
-    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-200 200" gear="1" />
+    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
+    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-1.5 1.5" gear="1" />
   </actuator>
 
   <sensor>
@@ -162,7 +162,13 @@
   </sensor>
 
   <keyframe>
-    <!-- Format: root position (3) + root quaternion (4) + joint positions (16) -->
-    <key name="default" qpos="0.0 0.0 0.32  1.0 0.0 0.0 0.0  0.0 0.0 0.0  0.0 0.0 0.0  -0.23 0.0 0.0 0.741 0.5 0.23 0.0 0.0 -0.741 -0.5" />
+    <!-- TODO: Fix me. Values are still wrong. -->
+    <!-- Base position (x y z): 0.0 0.0 0.32 -->
+    <!-- Base quaternion (w x y z): 1.0 0.0 0.0 0.0 -->
+    <!-- Right arm (shoulder_pitch shoulder_yaw elbow_yaw): 0.0 0.0 0.0 -->
+    <!-- Left arm (shoulder_pitch shoulder_yaw elbow_yaw): 0.0 0.0 0.0 -->
+    <!-- Right leg (hip_pitch hip_yaw hip_roll knee_pitch ankle_pitch): 0.0 0.0 0.0 0.0 0.0 -->
+    <!-- Left leg (hip_pitch hip_yaw hip_roll knee_pitch ankle_pitch): 0.0 0.0 0.0 0.0 0.0 -->
+    <key name="default" qpos="0.0 0.0 0.32     1.0 0.0 0.0 0.0     0.0 0.0 0.0     0.0 0.0 0.0     0.0 0.0 0.0 0.0 0.0     0.0 0.0 0.0 0.0 0.0"/>
   </keyframe>
 </mujoco>
