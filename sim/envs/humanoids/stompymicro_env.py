@@ -514,3 +514,106 @@ class StompyMicroEnv(LeggedRobot):
         )
         term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
         return term_1 + term_2 + term_3
+
+    def _reward_gait_symmetry(self):
+        """Calculates a reward based on the symmetry of gait cycles between left and right legs.
+
+        The reward is computed by:
+        1. Tracking gait cycles based on foot contact events
+        2. Comparing leg motion patterns during single support phases
+        3. Ignoring double support phases where symmetry comparison isn't meaningful
+        4. Using contact transitions to identify corresponding parts of the gait cycle
+        """
+        # Get current foot contacts - True when foot is in contact with ground
+        contact = self.contact_forces[:, self.feet_indices, 2] > 5.0  # [num_envs, 2]
+
+        # Track foot contact state changes
+        contact_changed = contact != self.last_contacts
+        new_contact = contact & contact_changed  # Foot just made contact
+        lost_contact = (~contact) & contact_changed  # Foot just lost contact
+
+        # Initialize reward tensor
+        reward = torch.zeros(self.num_envs, device=self.device)
+
+        # Only compute symmetry during single support phases
+        single_support = contact[:, 0] ^ contact[:, 1]  # XOR - true only when exactly one foot in contact
+
+        if not hasattr(self, "last_cycle_start_time"):
+            # Initialize cycle tracking tensors if they don't exist
+            self.last_cycle_start_time = torch.zeros((self.num_envs, 2), device=self.device)
+            self.cycle_durations = torch.ones((self.num_envs, 2), device=self.device)
+            self.stance_durations = torch.ones((self.num_envs, 2), device=self.device)
+            self.swing_durations = torch.ones((self.num_envs, 2), device=self.device)
+
+        # Update cycle timing information
+        for foot in [0, 1]:  # 0: left, 1: right
+            # Detect new cycle starts (when foot makes contact after swing)
+            cycle_start = new_contact[:, foot]
+            if cycle_start.any():
+                # Calculate actual cycle duration
+                current_time = self.episode_length_buf * self.dt
+                cycle_duration = current_time - self.last_cycle_start_time[cycle_start, foot]
+                self.cycle_durations[cycle_start, foot] = cycle_duration
+                self.last_cycle_start_time[cycle_start, foot] = current_time
+
+                # Update stance/swing phase durations
+                self.stance_durations[cycle_start, foot] = (
+                    self.episode_length_buf[cycle_start] * self.dt - self.last_cycle_start_time[cycle_start, foot]
+                )
+
+        # Compare gait characteristics between left and right legs
+        # 1. Cycle duration symmetry
+        cycle_duration_diff = torch.abs(self.cycle_durations[:, 0] - self.cycle_durations[:, 1])
+        timing_symmetry = torch.exp(-2.0 * cycle_duration_diff)
+
+        # 2. Motion symmetry during single support
+        motion_symmetry = torch.zeros_like(reward)
+        if single_support.any():
+            # Get leg joint positions and velocities
+            left_joints = torch.tensor(
+                [
+                    self.legs_joints["left_hip_pitch"],
+                    self.legs_joints["left_knee_pitch"],
+                    self.legs_joints["left_ankle_pitch"],
+                ],
+                device=self.device,
+            )
+
+            right_joints = torch.tensor(
+                [
+                    self.legs_joints["right_hip_pitch"],
+                    self.legs_joints["right_knee_pitch"],
+                    self.legs_joints["right_ankle_pitch"],
+                ],
+                device=self.device,
+            )
+
+            # Compare motion only during single support
+            left_pos = self.dof_pos[single_support][:, left_joints]
+            right_pos = self.dof_pos[single_support][:, right_joints]
+            left_vel = self.dof_vel[single_support][:, left_joints]
+            right_vel = self.dof_vel[single_support][:, right_joints]
+
+            # Calculate normalized position and velocity differences
+            pos_diff = torch.norm(left_pos - right_pos, dim=1)
+            vel_diff = torch.norm(left_vel - right_vel, dim=1)
+
+            # Convert to reward
+            motion_symmetry[single_support] = torch.exp(-2.0 * (pos_diff + 0.1 * vel_diff))
+
+        # 3. Foot trajectory symmetry
+        # Compare foot height during swing phase
+        foot_height_diff = torch.abs(
+            self.rigid_state[:, self.feet_indices[0], 2] - self.rigid_state[:, self.feet_indices[1], 2]
+        )
+        trajectory_symmetry = torch.exp(-5.0 * foot_height_diff)
+
+        # Combine rewards with different weights
+        # Only apply motion and trajectory symmetry during single support
+        reward = (
+            0.4 * timing_symmetry
+            + 0.4 * motion_symmetry * single_support.float()
+            + 0.2 * trajectory_symmetry * single_support.float()
+        )
+
+        return reward

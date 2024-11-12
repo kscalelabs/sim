@@ -176,6 +176,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             foot_slip = -0.5
             feet_distance = 0.2
             knee_distance = 0.2
+            gait_symmetry = 5.0  # TODO: Adjust
             # contact
             feet_contact_forces = -0.2
             # vel tracking
