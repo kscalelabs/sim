@@ -1,12 +1,10 @@
+# mypy: ignore-errors
 """Play a trained policy in the environment.
 
 Run:
     python sim/play.py --task g1 --log_h5
     python sim/play.py --task stompymini --log_h5
 """
-
-# mypy: ignore-errors
-
 import argparse
 import logging
 import os
@@ -20,12 +18,9 @@ from tqdm import tqdm
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
+from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
 from sim.utils.cmd_manager import CommandManager  # noqa: E402
-from sim.utils.helpers import (  # noqa: E402
-    export_policy_as_jit,
-    export_policy_as_onnx,
-    get_args,
-)
+from sim.utils.helpers import export_policy_as_jit, get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -38,7 +33,10 @@ def play(args: argparse.Namespace) -> None:
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
     env_cfg.sim.max_gpu_contact_pairs = 2**10
-    env_cfg.terrain.mesh_type = "plane"
+    if args.trimesh:
+        env_cfg.terrain.mesh_type = "trimesh"
+    else:
+        env_cfg.terrain.mesh_type = "plane"
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
@@ -64,15 +62,15 @@ def play(args: argparse.Namespace) -> None:
     policy = ppo_runner.get_inference_policy(device=env.device)
 
     # Export policy if needed
-    if EXPORT_POLICY:
+    if args.export_policy:
         path = os.path.join(".")
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
 
     # export policy as a onnx module (used to run it on web)
-    if EXPORT_ONNX:
-        path = os.path.join(".")
-        export_policy_as_onnx(ppo_runner.alg.actor_critic, path)
+    if args.export_onnx:
+        path = ppo_runner.alg.actor_critic
+        convert_model_to_onnx(path, ActorCfg(), save_path="policy.onnx")
         print("Exported policy as onnx to: ", path)
 
     # Prepare for logging
@@ -114,7 +112,7 @@ def play(args: argparse.Namespace) -> None:
             "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
         )  # root orientation
 
-    if not args.headless:
+    if args.render:
         camera_properties = gymapi.CameraProperties()
         camera_properties.width = 1920
         camera_properties.height = 1080
@@ -145,10 +143,10 @@ def play(args: argparse.Namespace) -> None:
 
     cmd_manager = CommandManager(
         num_envs=env_cfg.env.num_envs,
-        mode=CMD_MODE,
+        mode=env.command_mode,
         default_cmd=DEFAULT_COMMAND,
         device=env.device,
-        env_cfg=env_cfg
+        env_cfg=env_cfg,
     )
 
     for t in tqdm(range(stop_state_log)):
@@ -161,7 +159,7 @@ def play(args: argparse.Namespace) -> None:
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
         print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
-        if not args.headless:
+        if args.render:
             env.gym.fetch_results(env.sim, True)
             env.gym.step_graphics(env.sim)
             env.gym.render_all_camera_sensors(env.sim)
@@ -225,7 +223,7 @@ def play(args: argparse.Namespace) -> None:
     env_logger.print_rewards()
     env_logger.plot_states()
 
-    if not args.headless:
+    if args.render:
         video.release()
 
     if args.log_h5:
@@ -234,15 +232,16 @@ def play(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    EXPORT_POLICY = True
-    EXPORT_ONNX = True
-
     DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
-    CMD_MODE = "random"  # options: "fixed", "oscillating", "random", "keyboard"
 
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
     parser.add_argument("--log_h5", action="store_true", help="Enable HDF5 logging")
+    parser.add_argument("--render", action="store_true", help="Enable rendering", default=True)
+    parser.add_argument("--fix_command", action="store_true", help="Fix command", default=True)
+    parser.add_argument("--export_onnx", action="store_true", help="Export policy as ONNX", default=True)
+    parser.add_argument("--export_policy", action="store_true", help="Export policy as JIT", default=True)
+    parser.add_argument("--command_mode", type=str, default="fixed", help="Command mode")
     args, unknown = parser.parse_known_args(namespace=base_args)
 
     play(args)
