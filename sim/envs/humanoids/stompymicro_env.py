@@ -118,7 +118,6 @@ class StompyMicroEnv(LeggedRobot):
         sin_pos = torch.sin(2 * torch.pi * phase)
         sin_pos_l = sin_pos.clone()
         sin_pos_r = sin_pos.clone()
-        default_clone = self.default_dof_pos.clone()
         self.ref_dof_pos = self.default_dof_pos.repeat(self.num_envs, 1)
 
         scale_1 = self.cfg.rewards.target_joint_pos_scale

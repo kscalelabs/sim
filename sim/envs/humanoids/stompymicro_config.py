@@ -76,7 +76,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = True
+        add_noise = False
         noise_level = 1.0  # scales other values
 
         class noise_scales:
@@ -128,11 +128,11 @@ class StompyMicroCfg(LeggedRobotCfg):
 
     class domain_rand(LeggedRobotCfg.domain_rand):
         start_pos_noise = 0.05
-        randomize_friction = True
+        randomize_friction = False
         friction_range = [0.1, 2.0]
-        randomize_base_mass = True
+        randomize_base_mass = False
         added_mass_range = [-1.0, 1.0]
-        push_robots = True
+        push_robots = False
         push_interval_s = 3
         max_push_vel_xy = 0.15
         max_push_ang_vel = 0.15
@@ -147,59 +147,62 @@ class StompyMicroCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
+            # lin_vel_x = [-1.0, 1.3]  # min max [m/s]
+            # lin_vel_y = [-1.0, 1.0]  # min max [m/s]
+            # ang_vel_yaw = [-1, 1]  # min max [rad/s]
             lin_vel_x = [-0.25, 1.3]  # min max [m/s]
             lin_vel_y = [-0.2, 0.2]  # min max [m/s]
             ang_vel_yaw = [-0.2, 0.2]  # min max [rad/s]
             heading = [-np.pi, np.pi]  # min max [rad]
 
     class rewards:
-        base_height_target = Robot.height + 0.02
+        base_height_target = Robot.height + 0.03  # +0.03 to encourage standing taller
         min_dist = 0.03
         max_dist = 0.20
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.04  # m
-        cycle_time = 0.5  # sec
+        target_feet_height = 0.07  # m
+        cycle_time = 0.8  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
         max_contact_force = 100  # forces above this value are penalized
 
-        symmetry_timing_weight = 0.4  # Weight for cycle timing symmetry
-        symmetry_motion_weight = 0.4  # Weight for joint motion symmetry
-        symmetry_trajectory_weight = 0.2  # Weight for foot trajectory symmetry
+        symmetry_timing_weight = 0.3  # Weight for cycle timing symmetry
+        symmetry_motion_weight = 0.3  # Weight for joint motion symmetry
+        symmetry_trajectory_weight = 0.4  # Weight for foot trajectory symmetry
 
         class scales:
             # reference motion tracking
-            joint_pos = 3.0
-            feet_clearance = 1.5
+            joint_pos = 0.5
+            feet_clearance = 2.0
             feet_contact_number = 2.0
             feet_air_time = 1.5
-            foot_slip = -0.5
-            feet_distance = 0.2
-            knee_distance = 0.2
-            gait_symmetry = 1.0
+            foot_slip = -1.0
+            feet_distance = 0.1
+            knee_distance = 0.1
+            gait_symmetry = 0.2
             # contact
-            feet_contact_forces = -0.2
+            feet_contact_forces = -0.1
             # vel tracking
-            tracking_lin_vel = 3.0
-            tracking_ang_vel = 3.0
-            vel_mismatch_exp = 1.5  # lin_z; ang x,y
-            low_speed = 2.0
+            tracking_lin_vel = 0.5
+            tracking_ang_vel = 0.5
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.5
             track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 2.0
-            orientation = 2.0
-            base_height = 1.0
-            base_acc = 0.2
+            default_joint_pos = 1.0
+            orientation = 1.0
+            base_height = 0.5
+            base_acc = 0.1
             # energy
-            action_smoothness = -0.01
+            action_smoothness = -0.002
             torques = -1e-5
-            dof_vel = -4e-4
-            dof_acc = -4e-7
+            dof_vel = -4e-6
+            dof_acc = -1e-7
             collision = -1.0
 
     class normalization:
@@ -271,7 +274,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 15001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
