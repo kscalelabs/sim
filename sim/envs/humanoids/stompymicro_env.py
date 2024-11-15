@@ -407,6 +407,12 @@ class StompyMicroEnv(LeggedRobot):
 
         return (lin_vel_error_exp + ang_vel_error_exp) / 2.0 - linear_error
 
+    def _reward_angular_momentum(self):
+        """Rewards conservation of total angular momentum"""
+        # Get total angular velocity magnitude
+        ang_vel_magnitude = torch.norm(self.base_ang_vel, dim=1)
+        return torch.exp(-ang_vel_magnitude * 5.0)
+
     def _reward_tracking_lin_vel(self):
         """Tracks linear velocity commands along the xy axes.
         Calculates a reward based on how closely the robot's linear velocity matches the commanded values.
