@@ -131,39 +131,37 @@ class StompyMicroCfg(LeggedRobotCfg):
         randomize_friction = False
         friction_range = [0.1, 2.0]
         randomize_base_mass = False
-        added_mass_range = [-1.0, 1.0]
+        added_mass_range = [-0.5, 0.5]
         push_robots = False
-        push_interval_s = 3
-        max_push_vel_xy = 0.15
-        max_push_ang_vel = 0.15
+        push_interval_s = 4
+        max_push_vel_xy = 0.1
+        max_push_ang_vel = 0.1
         # dynamic randomization
         action_delay = 0.5
-        action_noise = 0.05
+        action_noise = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
         num_commands = 4
-        resampling_time = 5.0  # time before command are changed[s]
+        resampling_time = 8.0  # time before command are changed[s]
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            # lin_vel_x = [-1.0, 1.3]  # min max [m/s]
-            # lin_vel_y = [-1.0, 1.0]  # min max [m/s]
-            # ang_vel_yaw = [-1, 1]  # min max [rad/s]
-            lin_vel_x = [-0.25, 1.3]  # min max [m/s]
-            lin_vel_y = [-0.2, 0.2]  # min max [m/s]
-            ang_vel_yaw = [-0.2, 0.2]  # min max [rad/s]
-            heading = [-np.pi, np.pi]  # min max [rad]
+            # for each, min / max
+            lin_vel_x = [-0.3, 1.0]  # [m/s]
+            lin_vel_y = [-0.3, 0.3]  # [m/s]
+            ang_vel_yaw = [-np.pi/6, np.pi/6]  # [rad/s]
+            heading = [-np.pi, np.pi]  # [rad]
 
     class rewards:
-        base_height_target = Robot.height + 0.03  # +0.03 to encourage standing taller
+        base_height_target = Robot.height  + 0.02  # to encourage standing taller
         min_dist = 0.03
-        max_dist = 0.20
+        max_dist = 0.25
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.07  # m
-        cycle_time = 0.8  # sec
+        target_feet_height = 0.06  # m
+        cycle_time = 0.6  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -176,32 +174,32 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 0.5
-            feet_clearance = 2.0
+            joint_pos = 1.0
+            feet_clearance = 5.0
             feet_contact_number = 2.0
-            feet_air_time = 1.5
-            foot_slip = -1.0
-            feet_distance = 0.1
-            knee_distance = 0.1
-            gait_symmetry = 0.2
+            feet_air_time = 5.0
+            foot_slip = -0.3
+            feet_distance = 0.2
+            knee_distance = 0.2
+            gait_symmetry = 0.5
             # contact
-            feet_contact_forces = -0.1
+            feet_contact_forces = -0.01
             # vel tracking
-            tracking_lin_vel = 0.5
+            tracking_lin_vel = 5.0
             tracking_ang_vel = 0.5
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.5
+            low_speed = 1.0
             track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 1.0
-            orientation = 1.0
+            orientation = 2.0
             base_height = 0.5
-            base_acc = 0.1
+            base_acc = 0.2
             # energy
-            action_smoothness = -0.002
+            action_smoothness = -0.01
             torques = -1e-5
-            dof_vel = -4e-6
+            dof_vel = -1e-4
             dof_acc = -1e-7
             collision = -1.0
 
@@ -274,7 +272,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 10001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
