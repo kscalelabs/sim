@@ -230,12 +230,12 @@ def play(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    EXPORT_POLICY = True
-    EXPORT_ONNX = True
+    EXPORT_POLICY = False
+    EXPORT_ONNX = False
     TIME_STEPS = 1000
 
     DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
-    CMD_MODE = "random"  # options: "fixed", "oscillating", "random", "keyboard"
+    CMD_MODE = "fixed"  # options: "fixed", "oscillating", "random", "keyboard"
 
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
