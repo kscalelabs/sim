@@ -223,9 +223,9 @@ class Robot(Node):
         if cls.USE_ARMS:
             base_dict.update(
                 {
-                    "shoulder_pitch": 10.0,
-                    "shoulder_yaw": 7.5,
-                    "elbow_yaw": 7.0,
+                    "shoulder_pitch": 5.0,
+                    "shoulder_yaw": 3.75,
+                    "elbow_yaw": 3.5,
                 }
             )
 
@@ -245,9 +245,9 @@ class Robot(Node):
         if cls.USE_ARMS:
             base_dict.update(
                 {
-                    "shoulder_pitch": 0.5,
-                    "shoulder_yaw": 0.5,
-                    "elbow_yaw": 0.4,
+                    "shoulder_pitch": 0.3,
+                    "shoulder_yaw": 0.3,
+                    "elbow_yaw": 0.2,
                 }
             )
 
