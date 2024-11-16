@@ -10,7 +10,30 @@
     <origin rpy="0 0 0" xyz="0 0 0.0" />
     <parent link="base" />
     <child link="trunk" />
-    </joint>
+  </joint>
+  <!-- IMU pfb30 - fix the placement -->
+  <link name="imu_link">
+      <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+  <joint
+    name="imu_joint"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="0.0 0.0 0.55"
+      rpy="0 0 0" />
+    <parent
+      link="base" />
+    <child
+      link="imu_link" />
+  </joint>
   <link name="trunk">
     <inertial>
       <origin rpy="0.0 0.0 0.0" xyz="-0.00051930492 0.00030343937 0.21140495" />

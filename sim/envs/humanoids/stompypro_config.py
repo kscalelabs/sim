@@ -7,7 +7,7 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
 )
 from sim.resources.stompypro.joints import Robot
 
-NUM_JOINTS = len(Robot.all_joints())  # 12
+NUM_JOINTS = len(Robot.all_joints())
 
 
 class StompyProCfg(LeggedRobotCfg):
@@ -39,6 +39,7 @@ class StompyProCfg(LeggedRobotCfg):
 
         foot_name = ["L_foot", "R_foot"]
         knee_name = ["L_calf", "R_calf"]
+        imu_name = "imu_link"
 
         termination_height = 0.2
         default_feet_height = 0.0
@@ -50,8 +51,8 @@ class StompyProCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        mesh_type = "plane"
-        # mesh_type = 'trimesh'
+        # mesh_type = "plane"
+        mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -161,9 +162,9 @@ class StompyProCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.6
-            feet_contact_number = 1.5
+            joint_pos = 1.9
+            feet_clearance = 1.7
+            feet_contact_number = 1.7
             # gait
             feet_air_time = 1.6
             foot_slip = -0.05
@@ -172,8 +173,8 @@ class StompyProCfg(LeggedRobotCfg):
             # contact
             feet_contact_forces = -0.01
             # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.3
+            tracking_lin_vel = 1.0
+            tracking_ang_vel = 1.0
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 0.2
             track_vel_hard = 0.5
