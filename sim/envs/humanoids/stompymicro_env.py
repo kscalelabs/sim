@@ -435,7 +435,7 @@ class StompyMicroEnv(LeggedRobot):
         # Separate horizontal and vertical components
         ang_vel_horizontal = torch.norm(self.base_ang_vel[:, :2], dim=1)  # pitch and roll
         ang_vel_vertical = torch.abs(self.base_ang_vel[:, 2])  # yaw
-        
+
         # Stronger penalty for horizontal movements
         return torch.exp(-8.0 * ang_vel_horizontal - 2.0 * ang_vel_vertical)
 
@@ -592,7 +592,7 @@ class StompyMicroEnv(LeggedRobot):
             # Calculate normalized position and velocity differences
             pos_diff = torch.norm(left_pos - right_pos, dim=1)
             vel_diff = torch.norm(left_vel - right_vel, dim=1)
-            
+
             # Increased position difference penalty
             motion_symmetry[single_support] = torch.exp(-4.0 * pos_diff - 0.1 * vel_diff)
 
