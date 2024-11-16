@@ -41,6 +41,7 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         foot_name = ["foot_left", "foot_right"]
         knee_name = ["left_knee_pitch_motor", "right_knee_pitch_motor"]
+        hand_name = ["left_hand", "right_hand"]
 
         termination_height = 0.25
         default_feet_height = 0.02

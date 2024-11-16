@@ -8,7 +8,6 @@ from sim.utils.terrain import HumanoidTerrain
 from isaacgym import gymtorch  # isort:skip
 from isaacgym.torch_utils import *  # isort: skip
 
-
 import torch  # isort:skip
 
 
@@ -64,6 +63,11 @@ class StompyMicroEnv(LeggedRobot):
         for name, joint in Robot.legs.right.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
+
+        self.hand_indices = []
+        for hand in self.cfg.asset.hand_name:
+            hand_idx = self.gym.find_actor_rigid_body_handle(env_handle, actor_handle, hand)
+            self.hand_indices.append(hand_idx)
 
         self.compute_observations()
 
@@ -294,6 +298,25 @@ class StompyMicroEnv(LeggedRobot):
         d_max = torch.clamp(foot_dist - max_df, 0, 0.5)
         return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
+    def _reward_hand_distance(self):
+        """Rewards maintaining natural hand spacing in the robot's lateral axis."""
+        # Get hand positions in world frame
+        hand_positions = self.rigid_state[:, self.hand_indices, :3]
+
+        # Convert to robot's local frame
+        hand_pos_local = torch.zeros_like(hand_positions)
+        for i in range(2):
+            hand_pos_local[:, i] = quat_rotate_inverse(self.base_quat, hand_positions[:, i])
+
+        # Get lateral distance (y in local frame)
+        hand_lateral_dist = torch.abs(hand_pos_local[:, 0, 1] - hand_pos_local[:, 1, 1])
+
+        # Natural hand distance should be about proportional to shoulder width
+        target_lateral_dist = self.cfg.init_state.pos[2] * 0.5
+        lateral_error = torch.abs(hand_lateral_dist - target_lateral_dist)
+
+        return torch.exp(-lateral_error * 10.0)
+
     def _reward_foot_slip(self):
         """Calculates the reward for minimizing foot slip. The reward is based on the contact forces
         and the speed of the feet. A contact threshold is used to determine if the foot is in contact
@@ -409,9 +432,12 @@ class StompyMicroEnv(LeggedRobot):
 
     def _reward_angular_momentum(self):
         """Rewards conservation of total angular momentum"""
-        # Get total angular velocity magnitude
-        ang_vel_magnitude = torch.norm(self.base_ang_vel, dim=1)
-        return torch.exp(-ang_vel_magnitude * 5.0)
+        # Separate horizontal and vertical components
+        ang_vel_horizontal = torch.norm(self.base_ang_vel[:, :2], dim=1)  # pitch and roll
+        ang_vel_vertical = torch.abs(self.base_ang_vel[:, 2])  # yaw
+        
+        # Stronger penalty for horizontal movements
+        return torch.exp(-8.0 * ang_vel_horizontal - 2.0 * ang_vel_vertical)
 
     def _reward_tracking_lin_vel(self):
         """Tracks linear velocity commands along the xy axes.
@@ -442,13 +468,15 @@ class StompyMicroEnv(LeggedRobot):
 
         # Compute swing mask
         swing_mask = 1 - self._get_gait_phase()
+        height_error = torch.abs(self.feet_height - self.cfg.rewards.target_feet_height)
 
-        # feet height should be closed to target feet height at the peak
-        rew_pos = torch.abs(self.feet_height - self.cfg.rewards.target_feet_height) < 0.02
-        rew_pos = torch.sum(rew_pos * swing_mask, dim=1)
+        # Continuous reward that penalizes being too low or too high
+        rew = torch.exp(-5.0 * height_error)
+        rew = torch.where(self.feet_height < 0.02, -1.0, rew)  # Penalize too low
+
+        total_rew = torch.sum(rew * swing_mask, dim=1)
         self.feet_height *= ~contact
-
-        return rew_pos
+        return total_rew
 
     def _reward_low_speed(self):
         """Rewards or penalizes the robot based on its speed relative to the commanded speed.
@@ -564,9 +592,9 @@ class StompyMicroEnv(LeggedRobot):
             # Calculate normalized position and velocity differences
             pos_diff = torch.norm(left_pos - right_pos, dim=1)
             vel_diff = torch.norm(left_vel - right_vel, dim=1)
-
-            # Convert to reward
-            motion_symmetry[single_support] = torch.exp(-2.0 * (pos_diff + 0.1 * vel_diff))
+            
+            # Increased position difference penalty
+            motion_symmetry[single_support] = torch.exp(-4.0 * pos_diff - 0.1 * vel_diff)
 
         # 3. Foot trajectory symmetry
         foot_height_diff = torch.abs(
