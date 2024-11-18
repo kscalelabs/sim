@@ -4,7 +4,6 @@ python sim/play.py --task mini_ppo --sim_device cpu
 python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompypro
 python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
 """
-
 import argparse
 import math
 import os
@@ -22,45 +21,8 @@ import pygame
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
+from sim.h5_logger import HDF5Logger
 from sim.model_export import ActorCfg, convert_model_to_onnx
-
-
-def log_hdf5(data_name, num_actions, stop_state_log):
-    # Create data directory if it doesn't exist
-    # os.makedirs(data_name, exist_ok=True)
-    idd = str(uuid.uuid4())
-    h5_file = h5py.File(f"{data_name}/{idd}.h5", "w")
-
-    # Create dataset for actions
-    max_timesteps = stop_state_log
-    dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_actions), dtype=np.float32)
-
-    # Create dataset of observations
-    dset_2D_command = h5_file.create_dataset(
-        "observations/2D_command", (max_timesteps, 2), dtype=np.float32
-    )  # sin and cos commands
-    dset_3D_command = h5_file.create_dataset(
-        "observations/3D_command", (max_timesteps, 3), dtype=np.float32
-    )  # x, y, yaw commands
-    dset_q = h5_file.create_dataset("observations/q", (max_timesteps, num_actions), dtype=np.float32)  # joint positions
-    dset_dq = h5_file.create_dataset(
-        "observations/dq", (max_timesteps, num_actions), dtype=np.float32
-    )  # joint velocities
-    dset_ang_vel = h5_file.create_dataset(
-        "observations/ang_vel", (max_timesteps, 3), dtype=np.float32
-    )  # root angular velocity
-    dset_euler = h5_file.create_dataset("observations/euler", (max_timesteps, 3), dtype=np.float32)  # root orientation
-
-    h5_dict = {
-        "actions": dset_actions,
-        "2D_command": dset_2D_command,
-        "3D_command": dset_3D_command,
-        "joint_pos": dset_q,
-        "joint_vel": dset_dq,
-        "ang_vel": dset_ang_vel,
-        "euler_rotation": dset_euler,
-    }
-    return h5_file, h5_dict
 
 
 @dataclass
@@ -183,7 +145,8 @@ def run_mujoco(
     except:
         print("No default position found, using zero initialization")
         default = np.zeros(model_info["num_actions"])  # 3 for pos, 4 for quat, cfg.num_actions for joints
-
+    default += np.random.uniform(-0.03, 0.03, size=default.shape)
+    print("Default position:", default)
     mujoco.mj_step(model, data)
     for ii in range(len(data.ctrl) + 1):
         print(data.joint(ii).id, data.joint(ii).name)
@@ -214,8 +177,8 @@ def run_mujoco(
     }
 
     if log_h5:
-        stop_state_log = int(cfg.sim_duration / cfg.dt)
-        h5_file, h5_dict = log_hdf5(embodiment, model_info["num_actions"], stop_state_log)
+        stop_state_log = int(cfg.sim_duration / cfg.dt) / cfg.decimation
+        logger = HDF5Logger(embodiment, model_info["num_actions"], stop_state_log, model_info["num_observations"])
 
     # Initialize variables for tracking upright steps and average speed
     upright_steps = 0
@@ -270,18 +233,20 @@ def run_mujoco(
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
             positions, actions, hist_obs = policy.run(None, input_data)
-            # actions = np.zeros_like(actions)
             target_q = positions
 
             if args.log_h5:
-                t += 1
-                h5_dict["2D_command"][t] = np.array([x_vel_cmd, y_vel_cmd], dtype=np.float32)
-                h5_dict["3D_command"][t] = np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32)
-                h5_dict["joint_pos"][t] = cur_pos_obs.astype(np.float32)
-                h5_dict["joint_vel"][t] = cur_vel_obs.astype(np.float32)
-                h5_dict["actions"][t] = actions.astype(np.float32)
-                h5_dict["ang_vel"][t] = omega.astype(np.float32)
-                h5_dict["euler_rotation"][t] = eu_ang.astype(np.float32)
+                logger.log_data({
+                    "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
+                    "2D_command": np.array([x_vel_cmd, y_vel_cmd], dtype=np.float32),
+                    "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
+                    "joint_pos": cur_pos_obs.astype(np.float32),
+                    "joint_vel": cur_vel_obs.astype(np.float32),
+                    "actions": actions.astype(np.float32),
+                    "ang_vel": omega.astype(np.float32),
+                    "euler_rotation": eu_ang.astype(np.float32),
+                    "buffer": hist_obs.astype(np.float32)
+                })
 
         # Generate PD control
         tau = pd_control(target_q, q, kps, dq, kds, default)  # Calc torques
@@ -308,7 +273,7 @@ def run_mujoco(
     print(f"Average speed: {average_speed:.4f} m/s")
 
     if args.log_h5:
-        h5_file.close()
+        logger.close()
 
 
 def parse_modelmeta(
@@ -360,7 +325,7 @@ if __name__ == "__main__":
             sim_duration=10.0,
             dt=0.001,
             decimation=10,
-            tau_factor=3.0,
+            tau_factor=4.0,
         )
     elif args.embodiment == "stompymicro":
         policy_cfg.cycle_time = 0.2
