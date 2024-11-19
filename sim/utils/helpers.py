@@ -162,49 +162,12 @@ def update_cfg_from_args(env_cfg, cfg_train, args):
 
 def get_args() -> argparse.Namespace:
     custom_parameters = [
+        # General
         {
             "name": "--task",
             "type": str,
             "default": "stompymicro",
             "help": "Resume training or start testing from a checkpoint. Overrides config file if provided.",
-        },
-        {
-            "name": "--resume",
-            "action": "store_true",
-            "default": False,
-            "help": "Resume training from a checkpoint",
-        },
-        {
-            "name": "--experiment_name",
-            "type": str,
-            "help": "Name of the experiment to run or load. Overrides config file if provided.",
-        },
-        {
-            "name": "--run_name",
-            "type": str,
-            "help": "Name of the run. Overrides config file if provided.",
-        },
-        {
-            "name": "--load_run",
-            "type": str,
-            "help": "Name of the run to load when resume=True. If -1: will load the last run. Overrides config file if provided.",
-        },
-        {
-            "name": "--checkpoint",
-            "type": int,
-            "help": "Saved model checkpoint number. If -1: will load the last checkpoint. Overrides config file if provided.",
-        },
-        {
-            "name": "--headless",
-            "action": "store_true",
-            "default": False,
-            "help": "Force display off at all times",
-        },
-        {
-            "name": "--horovod",
-            "action": "store_true",
-            "default": False,
-            "help": "Use horovod for multi-gpu training",
         },
         {
             "name": "--rl_device",
@@ -225,8 +188,56 @@ def get_args() -> argparse.Namespace:
         {
             "name": "--max_iterations",
             "type": int,
-            "help": "Maximum number of training iterations. Overrides config file if provided.",
+            "help": "Maximum number of iterations. Refers to training iterations for `train.py` and playing steps for `play.py`. Overrides config file if provided.",
         },
+        # Training
+        {
+            "name": "--resume",
+            "action": "store_true",
+            "default": False,
+            "help": "Resume training from a checkpoint",
+        },
+        {
+            "name": "--horovod",
+            "action": "store_true",
+            "default": False,
+            "help": "Use horovod for multi-gpu training",
+        },
+        # Loading model
+        {
+            "name": "--experiment_name",
+            "type": str,
+            "help": "Name of the experiment to run or load. Overrides config file if provided.",
+        },
+        {
+            "name": "--run_name",
+            "type": str,
+            "help": "Name of the run. Overrides config file if provided.",
+        },
+        {
+            "name": "--load_run",
+            "type": str,
+            "help": "Name of the run to load when resume=True. If -1: will load the last run. Overrides config file if provided.",
+        },
+        {
+            "name": "--checkpoint",
+            "type": int,
+            "help": "Saved model checkpoint number. If -1: will load the last checkpoint. Overrides config file if provided.",
+        },
+        # Rendering
+        {
+            "name": "--headless",
+            "action": "store_true",
+            "default": False,
+            "help": "Force display off at all times",
+        },
+        {
+            "name": "--arrows",
+            "action": "store_true",
+            "default": False,
+            "help": "Draw command and velocity arrows during visualization",
+        },
+        # Play
         {
             "name": "--log_h5",
             "action": "store_true",
@@ -234,11 +245,13 @@ def get_args() -> argparse.Namespace:
             "help": "Enable HDF5 logging",
         },
         {
-            "name": "--command-arrow",
-            "action": "store_true",
-            "default": False,
-            "help": "Draw command and velocity arrows during visualization",
+            "name": "--command_mode",
+            "type": str,
+            "default": "fixed",
+            "choices": ["fixed", "oscillating", "random", "keyboard"],
+            "help": "Control mode for the robot",
         },
+        # Unused?
         {
             "name": "--trimesh",
             "action": "store_true",
