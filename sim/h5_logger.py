@@ -123,4 +123,4 @@ class HDF5Logger:
 
 
 if __name__ == "__main__":
-    HDF5Logger.visualize_h5("stompypro/6dc85e02-fc8e-42e1-a396-b0bd578e0816.h5")
+    HDF5Logger.visualize_h5("stompypro/1d0b1829-535a-441b-a568-588b7e700d91.h5")

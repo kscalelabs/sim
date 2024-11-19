@@ -7,12 +7,10 @@ python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stomp
 import argparse
 import math
 import os
-import uuid
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Union
 
-import h5py
 import mujoco
 import mujoco_viewer
 import numpy as np
@@ -31,6 +29,8 @@ class Sim2simCfg:
     dt: float = 0.001
     decimation: int = 10
     tau_factor: float = 3
+    cycle_time: float = 0.4
+
 
 
 def handle_keyboard_input() -> None:
@@ -238,7 +238,13 @@ def run_mujoco(
             if args.log_h5:
                 logger.log_data({
                     "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
-                    "2D_command": np.array([x_vel_cmd, y_vel_cmd], dtype=np.float32),
+                    "2D_command": np.array(
+                        [
+                            np.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
+                            np.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
+                        ],
+                        dtype=np.float32,
+                    ),
                     "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
                     "joint_pos": cur_pos_obs.astype(np.float32),
                     "joint_vel": cur_vel_obs.astype(np.float32),
@@ -326,6 +332,7 @@ if __name__ == "__main__":
             dt=0.001,
             decimation=10,
             tau_factor=4.0,
+            cycle_time=policy_cfg.cycle_time,
         )
     elif args.embodiment == "stompymicro":
         policy_cfg.cycle_time = 0.2
@@ -334,16 +341,27 @@ if __name__ == "__main__":
             dt=0.001,
             decimation=10,
             tau_factor=2,
+            cycle_time=policy_cfg.cycle_time,
         )
 
     if args.load_model.endswith(".onnx"):
         policy = ort.InferenceSession(args.load_model)
     else:
-        policy = convert_model_to_onnx(args.load_model, policy_cfg, save_path="policy.onnx")
+        policy = convert_model_to_onnx(
+            args.load_model, policy_cfg, save_path="policy.onnx"
+        )
 
     model_info = parse_modelmeta(
         policy.get_modelmeta().custom_metadata_map.items(),
         verbose=True,
     )
 
-    run_mujoco(args.embodiment, policy, cfg, model_info, args.keyboard_use, args.log_h5, args.render)
+    run_mujoco(
+        args.embodiment,
+        policy,
+        cfg,
+        model_info,
+        args.keyboard_use,
+        args.log_h5,
+        args.render,
+    )

@@ -1,4 +1,4 @@
-"""Produce simulation data for training."""
+""" Produce simulation data for training."""
 import argparse
 import multiprocessing as mp
 import subprocess
