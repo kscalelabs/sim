@@ -13,15 +13,16 @@ from datetime import datetime
 import cv2
 import h5py
 import numpy as np
-from isaacgym import gymapi
 from tqdm import tqdm
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
-from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
+from sim.utils.args_parsing import parse_args_with_extras
 from sim.utils.cmd_manager import CommandManager  # noqa: E402
 from sim.utils.helpers import export_policy_as_jit, get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
+
+from isaacgym import gymapi  # isort: skip
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.terrain.max_init_terrain_level = 5
-    env_cfg.noise.add_noise = True
+    env_cfg.noise.add_noise = False
     env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.joint_angle_noise = 0.0
     env_cfg.noise.curriculum = False
@@ -69,6 +70,8 @@ def play(args: argparse.Namespace) -> None:
 
     # export policy as a onnx module (used to run it on web)
     if args.export_onnx:
+        from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
+
         path = ppo_runner.alg.actor_critic
         convert_model_to_onnx(path, ActorCfg(), save_path="policy.onnx")
         print("Exported policy as onnx to: ", path)
@@ -83,7 +86,7 @@ def play(args: argparse.Namespace) -> None:
         h5_file = h5py.File(f"data{now}.h5", "w")
 
         # Create dataset for actions
-        max_timesteps = TIME_STEPS
+        max_timesteps = args.max_iterations
         num_dof = env.num_dof
         dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_dof), dtype=np.float32)
 
@@ -141,10 +144,10 @@ def play(args: argparse.Namespace) -> None:
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
     cmd_manager = CommandManager(
-        num_envs=env_cfg.env.num_envs, mode=CMD_MODE, default_cmd=DEFAULT_COMMAND, device=env.device, env_cfg=env_cfg
+        num_envs=env_cfg.env.num_envs, mode=args.command_mode, device=env.device, env_cfg=env_cfg
     )
 
-    for t in tqdm(range(TIME_STEPS)):
+    for t in tqdm(range(args.max_iterations)):
         actions = policy(obs.detach())
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
@@ -164,7 +167,7 @@ def play(args: argparse.Namespace) -> None:
             robot_positions = env.root_states[:, 0:3].cpu().numpy()
             actual_vels = np.stack([env.base_lin_vel[:, 0].cpu().numpy(), env.base_lin_vel[:, 1].cpu().numpy()], axis=1)
 
-            if args.command_arrow:
+            if args.arrows:
                 cmd_manager.draw(env.gym, env.viewer, env.envs, robot_positions, actual_vels)
 
             video.write(img[..., :3])
@@ -227,22 +230,36 @@ def play(args: argparse.Namespace) -> None:
         h5_file.close()
 
 
+def add_play_arguments(parser):
+    """Add play-specific arguments."""
+    # Visualization
+    parser.add_argument(
+        "--arrows", action="store_true", default=False, help="Draw command and velocity arrows during visualization"
+    )
+    parser.add_argument("--render", action="store_true", default=True, help="Enable rendering")
+
+    # Control
+    parser.add_argument(
+        "--command_mode",
+        type=str,
+        default="fixed",
+        choices=["fixed", "oscillating", "random", "keyboard"],
+        help="Control mode for the robot",
+    )
+    parser.add_argument("--fix_command", action="store_true", default=True, help="Fix command")
+
+    # Export options
+    parser.add_argument("--export_policy", action="store_true", default=True, help="Export policy as JIT")
+    parser.add_argument("--export_onnx", action="store_true", default=True, help="Export policy as ONNX")
+
+    # Logging
+    parser.add_argument("--log_h5", action="store_true", default=False, help="Enable HDF5 logging")
+
+    # Trimesh
+    parser.add_argument("--trimesh", action="store_true", default=False, help="Use trimesh terrain")
+
+
 if __name__ == "__main__":
-    EXPORT_POLICY = False
-    EXPORT_ONNX = False
-    TIME_STEPS = 1000
-
-    DEFAULT_COMMAND = [0.3, 0.0, 0.0, 0.0]
-    CMD_MODE = "fixed"  # options: "fixed", "oscillating", "random", "keyboard"
-
-    base_args = get_args()
-    parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
-    parser.add_argument("--log_h5", action="store_true", help="Enable HDF5 logging")
-    parser.add_argument("--render", action="store_true", help="Enable rendering", default=True)
-    parser.add_argument("--fix_command", action="store_true", help="Fix command", default=True)
-    parser.add_argument("--export_onnx", action="store_true", help="Export policy as ONNX", default=True)
-    parser.add_argument("--export_policy", action="store_true", help="Export policy as JIT", default=True)
-    parser.add_argument("--command_mode", type=str, default="fixed", help="Command mode")
-    args, unknown = parser.parse_known_args(namespace=base_args)
-
+    args = parse_args_with_extras(add_play_arguments)
+    print("Arguments:", vars(args))
     play(args)
