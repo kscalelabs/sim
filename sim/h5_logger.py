@@ -24,7 +24,7 @@ class HDF5Logger:
         h5_file = h5py.File(f"{self.data_name}/{idd}.h5", "w")
 
         # Create datasets for logging actions and observations
-        dset_actions = h5_file.create_dataset("actions", (self.max_timesteps, self.num_actions), dtype=np.float32)
+        dset_actions = h5_file.create_dataset("prev_actions", (self.max_timesteps, self.num_actions), dtype=np.float32)
         dset_2D_command = h5_file.create_dataset("observations/2D_command", (self.max_timesteps, 2), dtype=np.float32)
         dset_3D_command = h5_file.create_dataset("observations/3D_command", (self.max_timesteps, 3), dtype=np.float32)
         dset_q = h5_file.create_dataset("observations/q", (self.max_timesteps, self.num_actions), dtype=np.float32)
@@ -36,7 +36,7 @@ class HDF5Logger:
 
         # Map datasets for easy access
         h5_dict = {
-            "actions": dset_actions,
+            "prev_actions": dset_actions,
             "2D_command": dset_2D_command,
             "3D_command": dset_3D_command,
             "joint_pos": dset_q,
@@ -123,4 +123,4 @@ class HDF5Logger:
 
 
 if __name__ == "__main__":
-    HDF5Logger.visualize_h5("stompypro/6dc85e02-fc8e-42e1-a396-b0bd578e0816.h5")
+    HDF5Logger.visualize_h5("stompypro/5a7dc371-445c-4f56-be05-4e65c5cc38bc.h5")

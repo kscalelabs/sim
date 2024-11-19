@@ -1,4 +1,4 @@
-"""Produce simulation data for training."""
+""" Produce simulation data for training."""
 import argparse
 import multiprocessing as mp
 import subprocess
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_threads", type=int, default=10, help="Number of parallel simulations to run")
     parser.add_argument("--embodiment", default="stompypro", type=str, help="Embodiment name")
     parser.add_argument("--load_model", default="examples/walking_pro.onnx", type=str, help="Path to model to load")
-    parser.add_argument("--num_examples", default=1000, type=int, help="Number of examples to run")
+    parser.add_argument("--num_examples", default=10000, type=int, help="Number of examples to run")
     args = parser.parse_args()
 
     # Run 100 examples total, in parallel batches
