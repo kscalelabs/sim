@@ -185,7 +185,6 @@ def run_mujoco(
     total_speed = 0.0
     step_count = 0
 
-    t = 0
     for _ in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
         if keyboard_use:
             handle_keyboard_input()
@@ -232,9 +231,6 @@ def run_mujoco(
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
-            positions, actions, hist_obs = policy.run(None, input_data)
-            target_q = positions
-
             if args.log_h5:
                 logger.log_data({
                     "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
@@ -248,11 +244,14 @@ def run_mujoco(
                     "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
                     "joint_pos": cur_pos_obs.astype(np.float32),
                     "joint_vel": cur_vel_obs.astype(np.float32),
-                    "actions": actions.astype(np.float32),
+                    "prev_actions": actions.astype(np.float32),
                     "ang_vel": omega.astype(np.float32),
                     "euler_rotation": eu_ang.astype(np.float32),
                     "buffer": hist_obs.astype(np.float32)
                 })
+
+            positions, actions, hist_obs = policy.run(None, input_data)
+            target_q = positions
 
         # Generate PD control
         tau = pd_control(target_q, q, kps, dq, kds, default)  # Calc torques
