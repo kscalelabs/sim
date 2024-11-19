@@ -5,47 +5,46 @@ python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompyp
 python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
 """
 
-import argparse
 import math
 import os
-import uuid
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Deque, Union
+from collections import deque
 
-import h5py
 import mujoco
 import mujoco_viewer
 import numpy as np
-import onnxruntime as ort
-import pygame
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from sim.scripts.create_mjcf import load_embodiment
+from sim.utils.args_parsing import parse_args_with_extras
 from sim.utils.cmd_manager import CommandManager
 
 import torch  # isort: skip
 
 
 class Sim2simCfg:
+    """Configuration for sim2sim transfer"""
+
     def __init__(
         self,
-        embodiment,
-        frame_stack=15,
-        c_frame_stack=3,
-        sim_duration=60.0,
-        dt=0.001,
-        decimation=10,
-        cycle_time=0.4,
-        tau_factor=3,
-        lin_vel=2.0,
-        ang_vel=1.0,
-        dof_pos=1.0,
-        dof_vel=0.05,
-        clip_observations=18.0,
-        clip_actions=18.0,
-        action_scale=0.25,
+        embodiment: str,
+        frame_stack: int = 15,
+        c_frame_stack: int = 3,
+        sim_duration: float = 60.0,
+        dt: float = 0.001,
+        decimation: int = 10,
+        cycle_time: float = 0.4,
+        tau_factor: float = 3,
+        lin_vel: float = 2.0,
+        ang_vel: float = 1.0,
+        dof_pos: float = 1.0,
+        dof_vel: float = 0.05,
+        clip_observations: float = 18.0,
+        clip_actions: float = 18.0,
+        action_scale: float = 0.25,
     ):
         self.embodiment = embodiment
         self.robot = load_embodiment(embodiment)
@@ -307,19 +306,27 @@ def run_simulation(cfg: Sim2simCfg, policy_path: str, command_mode: str = "fixed
     cmd_manager.close()
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Deployment script.")
+def add_sim2sim_arguments(parser):
+    """Add sim2sim-specific arguments."""
+    # Model loading
     parser.add_argument("--load_model", type=str, required=True, help="Path to model file")
+
+    # Robot configuration
     parser.add_argument("--embodiment", type=str, required=True, help="Robot embodiment type")
+
+    # Control
     parser.add_argument(
         "--command_mode",
         type=str,
-        choices=["fixed", "oscillating", "keyboard", "random"],
         default="fixed",
+        choices=["fixed", "oscillating", "keyboard", "random"],
         help="Command mode for robot control",
     )
-    args = parser.parse_args()
 
+
+if __name__ == "__main__":
+    args = parse_args_with_extras(add_sim2sim_arguments)
+    print("Arguments:", vars(args))
     cfg = Sim2simCfg(
         args.embodiment,
         sim_duration=60.0,
@@ -328,5 +335,4 @@ if __name__ == "__main__":
         cycle_time=0.4,
         tau_factor=4.0,
     )
-
     run_simulation(cfg, args.load_model, args.command_mode)
