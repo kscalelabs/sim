@@ -4,6 +4,7 @@
 Run:
     python sim/play.py --task g1 --log_h5
     python sim/play.py --task stompymini --log_h5
+    python sim/play.py --task=stompymicro --sim_device=cpu --num_envs=9 --arrows --command_mode=fixed
 """
 import argparse
 import logging
@@ -19,7 +20,7 @@ from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
 from sim.utils.args_parsing import parse_args_with_extras
 from sim.utils.cmd_manager import CommandManager  # noqa: E402
-from sim.utils.helpers import export_policy_as_jit, get_args  # noqa: E402
+from sim.utils.helpers import export_policy_as_jit  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
 from isaacgym import gymapi  # isort: skip
@@ -246,11 +247,10 @@ def add_play_arguments(parser):
         choices=["fixed", "oscillating", "random", "keyboard"],
         help="Control mode for the robot",
     )
-    parser.add_argument("--fix_command", action="store_true", default=True, help="Fix command")
 
     # Export options
-    parser.add_argument("--export_policy", action="store_true", default=True, help="Export policy as JIT")
-    parser.add_argument("--export_onnx", action="store_true", default=True, help="Export policy as ONNX")
+    parser.add_argument("--export_policy", action="store_true", default=False, help="Export policy as JIT")
+    parser.add_argument("--export_onnx", action="store_true", default=False, help="Export policy as ONNX")
 
     # Logging
     parser.add_argument("--log_h5", action="store_true", default=False, help="Enable HDF5 logging")

@@ -7,10 +7,10 @@ python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stomp
 
 import math
 import os
+from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any, Deque, Union
-from collections import deque
 
 import mujoco
 import mujoco_viewer

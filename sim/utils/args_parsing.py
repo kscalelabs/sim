@@ -1,4 +1,5 @@
 import argparse
+import sys
 from typing import Any, Dict, List
 
 from isaacgym import gymutil
@@ -28,6 +29,7 @@ def create_base_parser(add_help=False):
     parser.add_argument(
         "--max_iterations",
         type=int,
+        default=1001,
         help="Maximum number of iterations. Refers to training iterations for `train.py` and playing steps for `play.py`.",
     )
 
@@ -78,8 +80,17 @@ def parse_args_with_extras(extra_args_fn=None):
     if extra_args_fn is not None:
         extra_args_fn(parser)
 
+    # Store which arguments were meant to be True by default
+    true_by_default = {action.dest for action in parser._actions if action.default is True}
+
     custom_parameters = convert_to_gymutil_format(parser)
     args = gymutil.parse_arguments(description="RL Policy", custom_parameters=custom_parameters)
+
+    # Restore default=True values that weren't explicitly set to False
+    for arg_name in true_by_default:
+        # Check if this argument wasn't explicitly provided in command line
+        if not any(arg.lstrip("-").replace("-", "_") == arg_name for arg in sys.argv[1:]):
+            setattr(args, arg_name, True)
 
     # Add the sim device arguments
     args.sim_device_id = args.compute_device_id
