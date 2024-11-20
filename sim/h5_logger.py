@@ -6,31 +6,22 @@ from typing import Dict
 import h5py
 import matplotlib.pyplot as plt
 import numpy as np
-from datetime import datetime
 
 
 class HDF5Logger:
-    def __init__(self, data_name: str, num_actions: int, max_timesteps: int, num_observations: int, h5_out_dir: str = "sim/resources/"):
+    def __init__(self, data_name: str, num_actions: int, max_timesteps: int, num_observations: int):
         self.data_name = data_name
         self.num_actions = num_actions
         self.max_timesteps = max_timesteps
         self.num_observations = num_observations
         self.max_threshold = 1e3  # Adjust this threshold as needed
-        self.h5_out_dir = h5_out_dir
         self.h5_file, self.h5_dict = self._create_h5_file()
         self.current_timestep = 0
 
     def _create_h5_file(self):
         # Create a unique file ID
         idd = str(uuid.uuid4())
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-        curr_h5_out_dir = f"{self.h5_out_dir}/{self.data_name}/h5_out/"
-        os.makedirs(curr_h5_out_dir, exist_ok=True)
-
-        h5_file_path = f"{curr_h5_out_dir}/{timestamp}__{idd}.h5"
-        print(f"Saving HDF5 data to {h5_file_path}")
-        h5_file = h5py.File(h5_file_path, "w")
+        h5_file = h5py.File(f"{self.data_name}/{idd}.h5", "w")
 
         # Create datasets for logging actions and observations
         dset_actions = h5_file.create_dataset("prev_actions", (self.max_timesteps, self.num_actions), dtype=np.float32)
@@ -56,6 +47,7 @@ class HDF5Logger:
             "buffer": dset_buffer,
         }
         return h5_file, h5_dict
+
     def log_data(self, data: Dict[str, np.ndarray]):
         if self.current_timestep >= self.max_timesteps:
             print(f"Warning: Exceeded maximum timesteps ({self.max_timesteps})")

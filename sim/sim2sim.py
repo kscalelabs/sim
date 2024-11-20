@@ -110,7 +110,6 @@ def run_mujoco(
     keyboard_use: bool = False,
     log_h5: bool = False,
     render: bool = True,
-    h5_out_dir: str = "sim/resources",
 ) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
@@ -179,13 +178,7 @@ def run_mujoco(
 
     if log_h5:
         stop_state_log = int(cfg.sim_duration / cfg.dt) / cfg.decimation
-        logger = HDF5Logger(
-            data_name=embodiment,
-            num_actions=model_info["num_actions"],
-            max_timesteps=stop_state_log,
-            num_observations=model_info["num_observations"],
-            h5_out_dir=h5_out_dir
-        )
+        logger = HDF5Logger(embodiment, model_info["num_actions"], stop_state_log, model_info["num_observations"])
 
     # Initialize variables for tracking upright steps and average speed
     upright_steps = 0
@@ -319,7 +312,6 @@ if __name__ == "__main__":
     parser.add_argument("--load_model", type=str, required=True, help="Path to run to load from.")
     parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
     parser.add_argument("--log_h5", action="store_true", help="log_h5")
-    parser.add_argument("--h5_out_dir", type=str, default="sim/resources", help="Directory to save HDF5 files")
     parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
     parser.set_defaults(render=True)
     args = parser.parse_args()
@@ -371,5 +363,4 @@ if __name__ == "__main__":
         args.keyboard_use,
         args.log_h5,
         args.render,
-        args.h5_out_dir,
     )
