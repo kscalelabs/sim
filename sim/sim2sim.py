@@ -252,6 +252,7 @@ def run_mujoco(
                     "joint_pos": cur_pos_obs.astype(np.float32),
                     "joint_vel": cur_vel_obs.astype(np.float32),
                     "prev_actions": actions.astype(np.float32),
+                    "curr_actions": target_q.astype(np.float32),
                     "ang_vel": omega.astype(np.float32),
                     "euler_rotation": eu_ang.astype(np.float32),
                     "buffer": hist_obs.astype(np.float32)
