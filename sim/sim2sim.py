@@ -237,6 +237,9 @@ def run_mujoco(
             input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
+            
+            positions, actions, hist_obs = policy.run(None, input_data)
+            target_q = positions
 
             if args.log_h5:
                 logger.log_data({
@@ -258,8 +261,6 @@ def run_mujoco(
                     "buffer": hist_obs.astype(np.float32)
                 })
 
-            positions, actions, hist_obs = policy.run(None, input_data)
-            target_q = positions
 
         # Generate PD control
         tau = pd_control(target_q, q, kps, dq, kds, default)  # Calc torques
