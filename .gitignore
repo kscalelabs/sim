@@ -29,3 +29,4 @@ out*/
 wandb/
 runs/
 isaacgym/
+*.h5
