@@ -1,8 +1,28 @@
 # requirements-dev.txt
 
-black
-darglint
+black==24.8.0
+darglint==1.8.1
+h5py==3.11.0
+imageio==2.35.1
+matplotlib==3.3.4
+mediapy==1.2.2
+mujoco==3.2.3
+mujoco_python_viewer==0.1.4
+numpy==1.24.4
+onnx==1.15.0
+onnxruntime==1.19.2
+pandas==1.4.4
+Pillow==11.0.0
+poselib==2.0.4
+pygame==2.6.1
+python-dotenv==1.0.1
+ruamel.base==1.0.0
+scipy==1.14.1
+setuptools==75.1.0
+torch==2.4.1
+tqdm==4.67.0
+wandb==0.18.7
 mypy==1.10.0
-pytest
-ruff
-isort
+pytest==8.3.3
+ruff==0.7.4
+isort==5.13.2

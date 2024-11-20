@@ -28,3 +28,5 @@ out*/
 # Training artifacts
 wandb/
 runs/
+isaacgym/
+*.h5
