@@ -149,9 +149,9 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         class ranges:
             # for each, min / max
-            lin_vel_x = [-0.2, 0.5]  # [m/s]
-            lin_vel_y = [-0.1, 0.1]  # [m/s]
-            ang_vel_yaw = [-np.pi / 24, np.pi / 24]  # [rad/s]
+            lin_vel_x = [-0.1, 0.8]  # [m/s]
+            lin_vel_y = [-0.05, 0.05]  # [m/s]
+            ang_vel_yaw = [-np.pi / 12, np.pi / 12]  # [rad/s]
             heading = [-np.pi, np.pi]  # [rad]
 
     class rewards:
@@ -162,7 +162,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.04  # m
-        cycle_time = 0.4  # sec
+        cycle_time = 0.6  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -175,38 +175,38 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 1.0
-            feet_clearance = 3.0
+            joint_pos = 2.0
+            feet_clearance = 2.0
             feet_contact_number = 1.5
-            feet_air_time = 3.0
+            feet_air_time = 2.0
             foot_slip = -0.1
-            feet_distance = 0.2
+            feet_distance = 1.0
             knee_distance = 0.2
             # contact
             feet_contact_forces = -0.1
             # vel tracking
-            tracking_lin_vel = 1.6
-            tracking_ang_vel = 1.6
+            tracking_lin_vel = 2.0
+            tracking_ang_vel = 3.0
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 1.0
             track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 0.3
-            orientation = 1.0
+            default_joint_pos = 1.0
+            orientation = 0.0
             base_height = 1.0
-            base_acc = 0.2
+            base_acc = 0.1
             # energy
-            action_smoothness = -0.005
-            torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
+            action_smoothness = -0.01
+            torques = -3e-5
+            dof_vel = -1e-3
+            dof_acc = -3e-7
             collision = -1.0
 
             # new
-            hand_distance = 0.0
-            gait_symmetry = 0.0
-            angular_momentum = 0.0
+            hand_distance = 0.1
+            gait_symmetry = 0.2
+            angular_momentum = 0.2
 
     class normalization:
         class obs_scales:
@@ -282,7 +282,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         # logging
         save_interval = 100  # check for potential saves every this many iterations
         experiment_name = "StompyMicro"
-        run_name = "Exp12"
+        run_name = "Exp12.1"
         # load and resume
         resume = False
         load_run = -1  # -1 = last run
