@@ -241,7 +241,7 @@ def run_mujoco(
             positions, actions, hist_obs = policy.run(None, input_data)
             target_q = positions
 
-            if args.log_h5:
+            if log_h5:
                 logger.log_data({
                     "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
                     "2D_command": np.array(
@@ -286,7 +286,7 @@ def run_mujoco(
     print(f"Number of upright steps: {upright_steps}")
     print(f"Average speed: {average_speed:.4f} m/s")
 
-    if args.log_h5:
+    if log_h5:
         logger.close()
 
 
