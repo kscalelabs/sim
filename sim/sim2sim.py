@@ -159,7 +159,7 @@ def run_mujoco(
         viewer = mujoco_viewer.MujocoViewer(model, data)
 
     target_q = np.zeros((model_info["num_actions"]), dtype=np.double)
-    actions = np.zeros((model_info["num_actions"]), dtype=np.double)
+    prev_actions = np.zeros((model_info["num_actions"]), dtype=np.double)
     hist_obs = np.zeros((model_info["num_observations"]), dtype=np.double)
 
     count_lowlevel = 0
@@ -231,16 +231,16 @@ def run_mujoco(
             input_data["dof_pos.1"] = cur_pos_obs.astype(np.float32)
             input_data["dof_vel.1"] = cur_vel_obs.astype(np.float32)
 
-            input_data["prev_actions.1"] = actions.astype(np.float32)
+            input_data["prev_actions.1"] = prev_actions.astype(np.float32)
 
             input_data["imu_ang_vel.1"] = omega.astype(np.float32)
             input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
-            
-            positions, actions, hist_obs = policy.run(None, input_data)
-            target_q = positions
 
+            positions, curr_actions, hist_obs = policy.run(None, input_data)
+            target_q = positions
+            
             if log_h5:
                 logger.log_data({
                     "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
@@ -254,13 +254,14 @@ def run_mujoco(
                     "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
                     "joint_pos": cur_pos_obs.astype(np.float32),
                     "joint_vel": cur_vel_obs.astype(np.float32),
-                    "prev_actions": actions.astype(np.float32),
-                    "curr_actions": target_q.astype(np.float32),
+                    "prev_actions": prev_actions.astype(np.float32),
+                    "curr_actions": curr_actions.astype(np.float32),
                     "ang_vel": omega.astype(np.float32),
                     "euler_rotation": eu_ang.astype(np.float32),
                     "buffer": hist_obs.astype(np.float32)
                 })
-
+                
+            prev_actions = curr_actions
 
         # Generate PD control
         tau = pd_control(target_q, q, kps, dq, kds, default)  # Calc torques
