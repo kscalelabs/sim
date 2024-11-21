@@ -6,25 +6,34 @@ from typing import Dict
 import h5py
 import matplotlib.pyplot as plt
 import numpy as np
+from datetime import datetime
 
 
 class HDF5Logger:
-    def __init__(self, data_name: str, num_actions: int, max_timesteps: int, num_observations: int):
+    def __init__(self, data_name: str, num_actions: int, max_timesteps: int, num_observations: int, h5_out_dir: str = "sim/resources/"):
         self.data_name = data_name
         self.num_actions = num_actions
         self.max_timesteps = max_timesteps
         self.num_observations = num_observations
         self.max_threshold = 1e3  # Adjust this threshold as needed
+        self.h5_out_dir = h5_out_dir
         self.h5_file, self.h5_dict = self._create_h5_file()
         self.current_timestep = 0
 
     def _create_h5_file(self):
         # Create a unique file ID
         idd = str(uuid.uuid4())
-        h5_file = h5py.File(f"{self.data_name}/{idd}.h5", "w")
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        curr_h5_out_dir = f"{self.h5_out_dir}/{self.data_name}/h5_out/"
+        os.makedirs(curr_h5_out_dir, exist_ok=True)
+
+        h5_file_path = f"{curr_h5_out_dir}/{timestamp}__{idd}.h5"
+        print(f"Saving HDF5 data to {h5_file_path}")
+        h5_file = h5py.File(h5_file_path, "w")
 
         # Create datasets for logging actions and observations
-        dset_actions = h5_file.create_dataset("prev_actions", (self.max_timesteps, self.num_actions), dtype=np.float32)
+        dset_prev_actions = h5_file.create_dataset("prev_actions", (self.max_timesteps, self.num_actions), dtype=np.float32)
         dset_2D_command = h5_file.create_dataset("observations/2D_command", (self.max_timesteps, 2), dtype=np.float32)
         dset_3D_command = h5_file.create_dataset("observations/3D_command", (self.max_timesteps, 3), dtype=np.float32)
         dset_q = h5_file.create_dataset("observations/q", (self.max_timesteps, self.num_actions), dtype=np.float32)
@@ -33,10 +42,12 @@ class HDF5Logger:
         dset_euler = h5_file.create_dataset("observations/euler", (self.max_timesteps, 3), dtype=np.float32)
         dset_t = h5_file.create_dataset("observations/t", (self.max_timesteps, 1), dtype=np.float32)
         dset_buffer = h5_file.create_dataset("observations/buffer", (self.max_timesteps, self.num_observations), dtype=np.float32)
+        dset_curr_actions = h5_file.create_dataset("curr_actions", (self.max_timesteps, self.num_actions), dtype=np.float32)
 
         # Map datasets for easy access
         h5_dict = {
-            "prev_actions": dset_actions,
+            "prev_actions": dset_prev_actions,
+            "curr_actions": dset_curr_actions,
             "2D_command": dset_2D_command,
             "3D_command": dset_3D_command,
             "joint_pos": dset_q,

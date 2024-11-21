@@ -17,6 +17,8 @@ def run_simulation(sim_idx: int, args: argparse.Namespace) -> None:
         "--load_model",
         args.load_model,
         "--log_h5",
+        "--h5_out_dir",
+        args.h5_out_dir,
         "--no_render",
     ]
 
@@ -48,6 +50,7 @@ if __name__ == "__main__":
     parser.add_argument("--embodiment", default="stompypro", type=str, help="Embodiment name")
     parser.add_argument("--load_model", default="examples/walking_pro.onnx", type=str, help="Path to model to load")
     parser.add_argument("--num_examples", default=10000, type=int, help="Number of examples to run")
+    parser.add_argument("--h5_out_dir", default="sim/resources", type=str, help="Directory to save HDF5 files")
     args = parser.parse_args()
 
     # Run 100 examples total, in parallel batches

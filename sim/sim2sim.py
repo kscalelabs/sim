@@ -110,6 +110,7 @@ def run_mujoco(
     keyboard_use: bool = False,
     log_h5: bool = False,
     render: bool = True,
+    h5_out_dir: str = "sim/resources",
 ) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
@@ -158,7 +159,7 @@ def run_mujoco(
         viewer = mujoco_viewer.MujocoViewer(model, data)
 
     target_q = np.zeros((model_info["num_actions"]), dtype=np.double)
-    actions = np.zeros((model_info["num_actions"]), dtype=np.double)
+    prev_actions = np.zeros((model_info["num_actions"]), dtype=np.double)
     hist_obs = np.zeros((model_info["num_observations"]), dtype=np.double)
 
     count_lowlevel = 0
@@ -178,7 +179,13 @@ def run_mujoco(
 
     if log_h5:
         stop_state_log = int(cfg.sim_duration / cfg.dt) / cfg.decimation
-        logger = HDF5Logger(embodiment, model_info["num_actions"], stop_state_log, model_info["num_observations"])
+        logger = HDF5Logger(
+            data_name=embodiment,
+            num_actions=model_info["num_actions"],
+            max_timesteps=stop_state_log,
+            num_observations=model_info["num_observations"],
+            h5_out_dir=h5_out_dir
+        )
 
     # Initialize variables for tracking upright steps and average speed
     upright_steps = 0
@@ -224,14 +231,17 @@ def run_mujoco(
             input_data["dof_pos.1"] = cur_pos_obs.astype(np.float32)
             input_data["dof_vel.1"] = cur_vel_obs.astype(np.float32)
 
-            input_data["prev_actions.1"] = actions.astype(np.float32)
+            input_data["prev_actions.1"] = prev_actions.astype(np.float32)
 
             input_data["imu_ang_vel.1"] = omega.astype(np.float32)
             input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
-            if args.log_h5:
+            positions, curr_actions, hist_obs = policy.run(None, input_data)
+            target_q = positions
+            
+            if log_h5:
                 logger.log_data({
                     "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
                     "2D_command": np.array(
@@ -244,14 +254,14 @@ def run_mujoco(
                     "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
                     "joint_pos": cur_pos_obs.astype(np.float32),
                     "joint_vel": cur_vel_obs.astype(np.float32),
-                    "prev_actions": actions.astype(np.float32),
+                    "prev_actions": prev_actions.astype(np.float32),
+                    "curr_actions": curr_actions.astype(np.float32),
                     "ang_vel": omega.astype(np.float32),
                     "euler_rotation": eu_ang.astype(np.float32),
                     "buffer": hist_obs.astype(np.float32)
                 })
-
-            positions, actions, hist_obs = policy.run(None, input_data)
-            target_q = positions
+                
+            prev_actions = curr_actions
 
         # Generate PD control
         tau = pd_control(target_q, q, kps, dq, kds, default)  # Calc torques
@@ -277,7 +287,7 @@ def run_mujoco(
     print(f"Number of upright steps: {upright_steps}")
     print(f"Average speed: {average_speed:.4f} m/s")
 
-    if args.log_h5:
+    if log_h5:
         logger.close()
 
 
@@ -312,6 +322,7 @@ if __name__ == "__main__":
     parser.add_argument("--load_model", type=str, required=True, help="Path to run to load from.")
     parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
     parser.add_argument("--log_h5", action="store_true", help="log_h5")
+    parser.add_argument("--h5_out_dir", type=str, default="sim/resources", help="Directory to save HDF5 files")
     parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
     parser.set_defaults(render=True)
     args = parser.parse_args()
@@ -363,4 +374,5 @@ if __name__ == "__main__":
         args.keyboard_use,
         args.log_h5,
         args.render,
+        args.h5_out_dir,
     )
