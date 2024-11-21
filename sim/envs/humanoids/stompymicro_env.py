@@ -64,11 +64,6 @@ class StompyMicroEnv(LeggedRobot):
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
 
-        self.hand_indices = []
-        for hand in self.cfg.asset.hand_name:
-            hand_idx = self.gym.find_actor_rigid_body_handle(env_handle, actor_handle, hand)
-            self.hand_indices.append(hand_idx)
-
         self.compute_observations()
 
     def _push_robots(self):
@@ -298,25 +293,6 @@ class StompyMicroEnv(LeggedRobot):
         d_max = torch.clamp(foot_dist - max_df, 0, 0.5)
         return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
-    def _reward_hand_distance(self):
-        """Rewards maintaining natural hand spacing in the robot's lateral axis."""
-        # Get hand positions in world frame
-        hand_positions = self.rigid_state[:, self.hand_indices, :3]
-
-        # Convert to robot's local frame
-        hand_pos_local = torch.zeros_like(hand_positions)
-        for i in range(2):
-            hand_pos_local[:, i] = quat_rotate_inverse(self.base_quat, hand_positions[:, i])
-
-        # Get lateral distance (y in local frame)
-        hand_lateral_dist = torch.abs(hand_pos_local[:, 0, 1] - hand_pos_local[:, 1, 1])
-
-        # Natural hand distance should be about proportional to shoulder width
-        target_lateral_dist = self.cfg.init_state.pos[2] * 0.5
-        lateral_error = torch.abs(hand_lateral_dist - target_lateral_dist)
-
-        return torch.exp(-lateral_error * 10.0)
-
     def _reward_foot_slip(self):
         """Calculates the reward for minimizing foot slip. The reward is based on the contact forces
         and the speed of the feet. A contact threshold is used to determine if the foot is in contact
@@ -430,15 +406,6 @@ class StompyMicroEnv(LeggedRobot):
 
         return (lin_vel_error_exp + ang_vel_error_exp) / 2.0 - linear_error
 
-    def _reward_angular_momentum(self):
-        """Rewards conservation of total angular momentum"""
-        # Separate horizontal and vertical components
-        ang_vel_horizontal = torch.norm(self.base_ang_vel[:, :2], dim=1)  # pitch and roll
-        ang_vel_vertical = torch.abs(self.base_ang_vel[:, 2])  # yaw
-
-        # Stronger penalty for horizontal movements
-        return torch.exp(-8.0 * ang_vel_horizontal - 2.0 * ang_vel_vertical)
-
     def _reward_tracking_lin_vel(self):
         """Tracks linear velocity commands along the xy axes.
         Calculates a reward based on how closely the robot's linear velocity matches the commanded values.
@@ -468,15 +435,13 @@ class StompyMicroEnv(LeggedRobot):
 
         # Compute swing mask
         swing_mask = 1 - self._get_gait_phase()
-        height_error = torch.abs(self.feet_height - self.cfg.rewards.target_feet_height)
 
-        # Continuous reward that penalizes being too low or too high
-        rew = torch.exp(-5.0 * height_error)
-        rew = torch.where(self.feet_height < 0.02, -1.0, rew)  # Penalize too low
-
-        total_rew = torch.sum(rew * swing_mask, dim=1)
+        # feet height should be closed to target feet height at the peak
+        rew_pos = torch.abs(self.feet_height - self.cfg.rewards.target_feet_height) < 0.02
+        rew_pos = torch.sum(rew_pos * swing_mask, dim=1)
         self.feet_height *= ~contact
-        return total_rew
+
+        return rew_pos
 
     def _reward_low_speed(self):
         """Rewards or penalizes the robot based on its speed relative to the commanded speed.
@@ -547,66 +512,3 @@ class StompyMicroEnv(LeggedRobot):
         )
         term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
         return term_1 + term_2 + term_3
-
-    def _reward_gait_symmetry(self):
-        """Calculates a reward based on the symmetry of gait cycles between left and right legs."""
-        # Get current foot contacts
-        contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
-
-        # Only compute symmetry during single support phases
-        single_support = contact[:, 0] ^ contact[:, 1]
-
-        # Initialize reward components
-        reward = torch.zeros(self.num_envs, device=self.device)
-
-        # 1. Timing symmetry - using feet_air_time
-        timing_symmetry = torch.exp(-2.0 * torch.abs(self.feet_air_time[:, 0] - self.feet_air_time[:, 1]))
-
-        # 2. Motion symmetry during single support
-        motion_symmetry = torch.zeros_like(reward)
-        if single_support.any():
-            left_joints = torch.tensor(
-                [
-                    self.legs_joints["left_hip_pitch"],
-                    self.legs_joints["left_knee_pitch"],
-                    self.legs_joints["left_ankle_pitch"],
-                ],
-                device=self.device,
-            )
-
-            right_joints = torch.tensor(
-                [
-                    self.legs_joints["right_hip_pitch"],
-                    self.legs_joints["right_knee_pitch"],
-                    self.legs_joints["right_ankle_pitch"],
-                ],
-                device=self.device,
-            )
-
-            # Compare motion only during single support
-            left_pos = self.dof_pos[single_support][:, left_joints]
-            right_pos = self.dof_pos[single_support][:, right_joints]
-            left_vel = self.dof_vel[single_support][:, left_joints]
-            right_vel = self.dof_vel[single_support][:, right_joints]
-
-            # Calculate normalized position and velocity differences
-            pos_diff = torch.norm(left_pos - right_pos, dim=1)
-            vel_diff = torch.norm(left_vel - right_vel, dim=1)
-
-            # Increased position difference penalty
-            motion_symmetry[single_support] = torch.exp(-4.0 * pos_diff - 0.1 * vel_diff)
-
-        # 3. Foot trajectory symmetry
-        foot_height_diff = torch.abs(
-            self.rigid_state[:, self.feet_indices[0], 2] - self.rigid_state[:, self.feet_indices[1], 2]
-        )
-        trajectory_symmetry = torch.exp(-5.0 * foot_height_diff)
-
-        # Combine symmetry components
-        reward = (
-            self.cfg.rewards.symmetry_timing_weight * timing_symmetry
-            + self.cfg.rewards.symmetry_motion_weight * motion_symmetry * single_support.float()
-            + self.cfg.rewards.symmetry_trajectory_weight * trajectory_symmetry * single_support.float()
-        )
-
-        return reward
