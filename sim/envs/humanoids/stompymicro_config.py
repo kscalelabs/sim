@@ -155,18 +155,18 @@ class StompyMicroCfg(LeggedRobotCfg):
 
     class rewards:
         base_height_target = Robot.height + 0.02  # to encourage standing taller
-        min_dist = 0.03
-        max_dist = 0.18
+        min_dist = 0.07
+        max_dist = 0.15
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.04  # m
-        cycle_time = 0.6  # sec
+        target_feet_height = 0.03  # m
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 100  # forces above this value are penalized
+        max_contact_force = 50  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
@@ -180,11 +180,11 @@ class StompyMicroCfg(LeggedRobotCfg):
             # contact
             feet_contact_forces = -0.2
             # vel tracking
-            tracking_lin_vel = 3.0
-            tracking_ang_vel = 3.0
-            vel_mismatch_exp = 1.5  # lin_z; ang x,y
-            low_speed = 2.0
-            track_vel_hard = 0.5
+            tracking_lin_vel = 1.0
+            tracking_ang_vel = 1.0
+            vel_mismatch_exp = 1.0  # lin_z; ang x,y
+            low_speed = 1.0
+            track_vel_hard = 1.0
 
             # base pos
             default_joint_pos = 2.0
@@ -192,10 +192,10 @@ class StompyMicroCfg(LeggedRobotCfg):
             base_height = 1.0
             base_acc = 0.2
             # energy
-            action_smoothness = -0.01
-            torques = -1e-5
-            dof_vel = -4e-4
-            dof_acc = -4e-7
+            action_smoothness = -0.02
+            torques = -1e-3
+            dof_vel = -4e-3
+            dof_acc = -4e-5
             collision = -1.0
 
     class normalization:
@@ -272,7 +272,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         # logging
         save_interval = 100  # check for potential saves every this many iterations
         experiment_name = "StompyMicro"
-        run_name = "Exp8-redo"
+        run_name = "Exp12.2"
         # load and resume
         resume = False
         load_run = -1  # -1 = last run
