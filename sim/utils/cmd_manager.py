@@ -22,7 +22,7 @@ class CommandManager:
         self,
         num_envs: int = 1,
         mode: str = "fixed",
-        default_cmd: List[float] = [0.3, 0.0, 0.0, 0.0],
+        default_cmd: List[float] = [0.4, 0.0, 0.0, 0.0],
         device="cpu",
         env_cfg=None,
     ):
@@ -93,29 +93,31 @@ class CommandManager:
         elif self.mode == CommandMode.RANDOM:
             if self.time - self.last_sample_time >= self.resampling_time:
                 self.last_sample_time = self.time
-                # Generate random commands within training ranges
-                new_commands = (
-                    torch.tensor(
+                
+                # Generate independent random commands for each environment
+                if self.env_cfg and self.env_cfg.commands.heading_command:
+                    new_commands = torch.tensor(
                         [
-                            np.random.uniform(*self.cmd_ranges["lin_vel_x"]),
-                            np.random.uniform(*self.cmd_ranges["lin_vel_y"]),
-                            0.0,
-                            np.random.uniform(*self.cmd_ranges["heading"]),
+                            np.random.uniform(*self.cmd_ranges["lin_vel_x"], size=self.num_envs),
+                            np.random.uniform(*self.cmd_ranges["lin_vel_y"], size=self.num_envs),
+                            np.zeros(self.num_envs),
+                            np.random.uniform(*self.cmd_ranges["heading"], size=self.num_envs),
                         ],
                         device=self.device,
-                    )
-                    if self.env_cfg and self.env_cfg.commands.heading_command
-                    else torch.tensor(
+                    ).t()  # Transpose to get shape [num_envs, 4]
+                else:
+                    new_commands = torch.tensor(
                         [
-                            np.random.uniform(*self.cmd_ranges["lin_vel_x"]),
-                            np.random.uniform(*self.cmd_ranges["lin_vel_y"]),
-                            np.random.uniform(*self.cmd_ranges["ang_vel_yaw"]),
-                            0.0,
+                            np.random.uniform(*self.cmd_ranges["lin_vel_x"], size=self.num_envs),
+                            np.random.uniform(*self.cmd_ranges["lin_vel_y"], size=self.num_envs),
+                            np.random.uniform(*self.cmd_ranges["ang_vel_yaw"], size=self.num_envs),
+                            np.zeros(self.num_envs),
                         ],
                         device=self.device,
-                    )
-                )
-                self.commands = new_commands.repeat(self.num_envs, 1)
+                    ).t()  # Transpose to get shape [num_envs, 4]
+                
+                self.commands = new_commands
+
         elif self.mode == CommandMode.KEYBOARD:
             self._handle_keyboard_input()
             self.commands[:, 0] = torch.tensor(self.x_vel_cmd, device=self.device)
