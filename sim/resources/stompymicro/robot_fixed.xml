@@ -50,12 +50,15 @@
 
       <!-- Right Arm -->
       <body name="right_shoulder_pitch_link" pos="-0.0782502 -0.000326898 0.0461512" quat="0.5 0.5 0.5 0.5">
+          <site name="right_shoulder_marker" pos="0 0 0" size="0.02" rgba="1 0 0 1"/>  <!-- Debug marker -->
           <joint name="right_shoulder_pitch" type="hinge" axis="0 0 1" range="-1.7453293 1.7453293"/>
           <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="right_shoulder_yaw"/>
           <body name="right_shoulder_yaw_link" pos="-0.018825 -0.01629921 -0.03" quat="0.707107 0.707107 0 0">
+              <site name="right_yaw_marker" pos="0 0 0" size="0.02" rgba="0 1 0 1"/>  <!-- Debug marker -->
               <joint name="right_shoulder_yaw" type="hinge" axis="0 0 1" range="-1.134464 0.87266463"/>
               <geom type="mesh" rgba="0.4 0.4 0.4 1" mesh="right_shoulder_yaw_motor"/>
               <body name="right_elbow_link" pos="-0.030003116 -0.06434189 -0.00015000">
+                  <site name="right_elbow_marker" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>  <!-- Debug marker -->
                   <joint name="right_elbow_yaw" type="hinge" axis="0 0 1" range="-1.5707963 1.5707963"/>
                   <geom type="mesh" rgba="0.980392 0.713726 0.00392157 1" mesh="right_hand"/>
               </body>
@@ -64,12 +67,15 @@
 
       <!-- Left Arm -->
       <body name="left_shoulder_pitch_link" pos="0.0780498 -0.000326898 0.0461512" quat="0.5 -0.5 -0.5 0.5">
+          <site name="left_shoulder_marker" pos="0 0 0" size="0.02" rgba="1 0 0 1"/>  <!-- Debug marker -->
           <joint name="left_shoulder_pitch" type="hinge" axis="0 0 1" range="-1.7453293 1.7453293"/>
           <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="left_shoulder_yaw"/>
           <body name="left_shoulder_yaw_link" pos="-0.018825 0.01629921 -0.03" quat="0.707107 -0.707107 0 0">
+              <site name="left_yaw_marker" pos="0 0 0" size="0.02" rgba="0 1 0 1"/>  <!-- Debug marker -->
               <joint name="left_shoulder_yaw" type="hinge" axis="0 0 1" range="-0.43633231 1.5707963"/>
               <geom type="mesh" rgba="0.4 0.4 0.4 1" mesh="left_shoulder_yaw_motor"/>
               <body name="left_elbow_link" pos="0.03000311 -0.06434189 -0.00015000">
+                  <site name="left_elbow_marker" pos="0 0 0" size="0.02" rgba="0 0 1 1"/>  <!-- Debug marker -->
                   <joint name="left_elbow_yaw" type="hinge" axis="0 0 1" range="-1.5707963 1.5707963"/>
                   <geom type="mesh" rgba="0.980392 0.713726 0.00392157 1" mesh="left_hand"/>
               </body>
@@ -169,6 +175,6 @@
     <!-- Left arm (shoulder_pitch shoulder_yaw elbow_yaw): 0.0 0.0 0.0 -->
     <!-- Right leg (hip_pitch hip_yaw hip_roll knee_pitch ankle_pitch): 0.0 0.0 0.0 0.0 0.0 -->
     <!-- Left leg (hip_pitch hip_yaw hip_roll knee_pitch ankle_pitch): 0.0 0.0 0.0 0.0 0.0 -->
-    <key name="default" qpos="0.0 0.0 0.32     1.0 0.0 0.0 0.0     0.0 0.0 0.0     0.0 0.0 0.0     0.0 0.0 0.0 0.0 0.0     0.0 0.0 0.0 0.0 0.0"/>
+    <key name="default" qpos="0.0 0.0 0.32   1.0 0.0 0.0 0.0   0.0 0.0 0.0   0.0 0.0 0.0   -0.23 0.0 0.0 0.741 0.5   0.23 0.0 0.0 -0.741 -0.5"/>
   </keyframe>
 </mujoco>
