@@ -19,14 +19,16 @@ def run_dir() -> Path:
 
 
 def robot_urdf_path(robotname: str, legs_only: bool = False) -> Path:
-    robot_path = model_dir(robotname) / "robot_fixed.urdf"
+    filename = "robot_fixed.urdf" if legs_only else "robot.urdf"
+    robot_path = model_dir(robotname) / filename
     if not robot_path.exists():
         raise FileNotFoundError(f"URDF file not found: {robot_path}")
     return robot_path.resolve()
 
 
 def robot_mjcf_path(robotname: str, legs_only: bool = False) -> Path:
-    robot_path = model_dir(robotname) / "robot_fixed.xml"
+    filename = "robot_fixed.xml" if legs_only else "robot.xml"
+    robot_path = model_dir(robotname) / filename
     if not robot_path.exists():
         raise FileNotFoundError(f"MJCF file not found: {robot_path}")
     return robot_path.resolve()

@@ -280,11 +280,11 @@ class Controller:
         return kp * (target_q + default - q) - kd * dq
 
 
-def run_simulation(cfg: Sim2simCfg, policy_path: str, command_mode: str = "fixed"):
+def run_simulation(cfg: Sim2simCfg, policy_path: str, command_mode: str = "fixed", legs_only: bool = False):
     """Main simulation loop"""
     # Initialize components
     model_dir = os.environ.get("MODEL_DIR") or "sim/resources"
-    simulator = MujocoSimulator(model_path=f"{model_dir}/{cfg.embodiment}/robot_fixed.xml", cfg=cfg)
+    simulator = MujocoSimulator(model_path=f"{model_dir}/{cfg.embodiment}/robot" + ("_fixed" if legs_only else "") + ".xml", cfg=cfg)
     policy = PolicyWrapper(policy_path)
     controller = Controller(cfg, policy)
     cmd_manager = CommandManager(num_envs=1, mode=command_mode)
