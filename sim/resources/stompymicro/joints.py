@@ -91,8 +91,6 @@ class Arms(Node):
 
 
 class Robot(Node):
-    USE_ARMS = True  # Set to True to enable active arms
-
     height = 0.32
     rotation = [0, 0, 0.707, 0.707]
 
@@ -101,7 +99,7 @@ class Robot(Node):
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
-        base_dict = {
+        return {
             # Legs
             cls.legs.left.hip_pitch: 0.23,
             cls.legs.left.knee_pitch: -0.741,
@@ -113,25 +111,18 @@ class Robot(Node):
             cls.legs.right.ankle_pitch: 0.5,
             cls.legs.right.hip_yaw: 0,
             cls.legs.right.hip_roll: 0,
+            # Arms
+            cls.arms.left.shoulder_pitch: 0.0,
+            cls.arms.left.shoulder_yaw: 0.0,
+            cls.arms.left.elbow_yaw: 0.0,
+            cls.arms.right.shoulder_pitch: 0.0,
+            cls.arms.right.shoulder_yaw: 0.0,
+            cls.arms.right.elbow_yaw: 0.0,
         }
-
-        if cls.USE_ARMS:
-            base_dict.update(
-                {
-                    cls.arms.left.shoulder_pitch: 0.0,
-                    cls.arms.left.shoulder_yaw: 0.0,
-                    cls.arms.left.elbow_yaw: 0.0,
-                    cls.arms.right.shoulder_pitch: 0.0,
-                    cls.arms.right.shoulder_yaw: 0.0,
-                    cls.arms.right.elbow_yaw: 0.0,
-                }
-            )
-
-        return base_dict
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
-        base_limits = {
+        return {
             # Left Leg
             Robot.legs.left.hip_pitch: {
                 "lower": -1.5707963,
@@ -174,149 +165,102 @@ class Robot(Node):
                 "lower": -1.5707963,
                 "upper": 1.5707963,
             },
+            # Left Arm
+            Robot.arms.left.shoulder_pitch: {
+                "lower": -1.7453293,
+                "upper": 1.7453293,
+            },
+            Robot.arms.left.shoulder_yaw: {
+                "lower": -0.43633231,
+                "upper": 1.5707963,
+            },
+            Robot.arms.left.elbow_yaw: {
+                "lower": -1.5707963,
+                "upper": 1.5707963,
+            },
+            # Right Arm
+            Robot.arms.right.shoulder_pitch: {
+                "lower": -1.7453293,
+                "upper": 1.7453293,
+            },
+            Robot.arms.right.shoulder_yaw: {
+                "lower": -1.134464,
+                "upper": 0.87266463,
+            },
+            Robot.arms.right.elbow_yaw: {
+                "lower": -1.5707963,
+                "upper": 1.5707963,
+            },
         }
-
-        if cls.USE_ARMS:
-            arm_limits = {
-                # Left Arm
-                Robot.arms.left.shoulder_pitch: {
-                    "lower": -1.7453293,
-                    "upper": 1.7453293,
-                },
-                Robot.arms.left.shoulder_yaw: {
-                    "lower": -0.43633231,
-                    "upper": 1.5707963,
-                },
-                Robot.arms.left.elbow_yaw: {
-                    "lower": -1.5707963,
-                    "upper": 1.5707963,
-                },
-                # Right Arm
-                Robot.arms.right.shoulder_pitch: {
-                    "lower": -1.7453293,
-                    "upper": 1.7453293,
-                },
-                Robot.arms.right.shoulder_yaw: {
-                    "lower": -1.134464,
-                    "upper": 0.87266463,
-                },
-                Robot.arms.right.elbow_yaw: {
-                    "lower": -1.5707963,
-                    "upper": 1.5707963,
-                },
-            }
-            base_limits.update(arm_limits)
-
-        return base_limits
 
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
-        base_dict = {
+        return {
             "hip_pitch": 17.681462808698132,
             "hip_yaw": 17.681462808698132,
             "hip_roll": 17.681462808698132,
             "knee_pitch": 17.681462808698132,
             "ankle_pitch": 17.681462808698132,
+            "shoulder_pitch": 5.0,
+            "shoulder_yaw": 3.75,
+            "elbow_yaw": 3.5,
         }
-
-        if cls.USE_ARMS:
-            base_dict.update(
-                {
-                    "shoulder_pitch": 5.0,
-                    "shoulder_yaw": 3.75,
-                    "elbow_yaw": 3.5,
-                }
-            )
-
-        return base_dict
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
-        base_dict = {
+        return {
             "hip_pitch": 0.5354656169048285,
             "hip_yaw": 0.5354656169048285,
             "hip_roll": 0.5354656169048285,
             "knee_pitch": 0.5354656169048285,
             "ankle_pitch": 0.5354656169048285,
+            "shoulder_pitch": 0.3,
+            "shoulder_yaw": 0.3,
+            "elbow_yaw": 0.2,
         }
-
-        if cls.USE_ARMS:
-            base_dict.update(
-                {
-                    "shoulder_pitch": 0.3,
-                    "shoulder_yaw": 0.3,
-                    "elbow_yaw": 0.2,
-                }
-            )
-
-        return base_dict
 
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
-        base_dict = {
+        return {
             "hip_pitch": 10,
             "hip_yaw": 10,
             "hip_roll": 10,
             "knee_pitch": 10,
             "ankle_pitch": 10,
+            "shoulder_pitch": 80,
+            "shoulder_yaw": 80,
+            "elbow_yaw": 80,
         }
-
-        if cls.USE_ARMS:
-            base_dict.update(
-                {
-                    "shoulder_pitch": 80,
-                    "shoulder_yaw": 80,
-                    "elbow_yaw": 80,
-                }
-            )
-
-        return base_dict
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
-        base_dict = {
+        return {
             "hip_pitch": 10,
             "hip_yaw": 10,
             "hip_roll": 10,
             "knee_pitch": 10,
             "ankle_pitch": 10,
+            "shoulder_pitch": 5,
+            "shoulder_yaw": 5,
+            "elbow_yaw": 5,
         }
-
-        if cls.USE_ARMS:
-            base_dict.update(
-                {
-                    "shoulder_pitch": 5,
-                    "shoulder_yaw": 5,
-                    "elbow_yaw": 5,
-                }
-            )
-
-        return base_dict
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
-        base_dict = {
+        return {
             "hip_pitch": 0.05,
             "hip_yaw": 0.05,
             "hip_roll": 0.05,
             "knee_pitch": 0.05,
             "ankle_pitch": 0.05,
+            "shoulder_pitch": 0.05,
+            "shoulder_yaw": 0.05,
+            "elbow_yaw": 0.05,
         }
-
-        if cls.USE_ARMS:
-            base_dict.update(
-                {
-                    "shoulder_pitch": 0.05,
-                    "shoulder_yaw": 0.05,
-                    "elbow_yaw": 0.05,
-                }
-            )
-
-        return base_dict
 
 
 def print_joints() -> None:
