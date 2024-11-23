@@ -16,7 +16,7 @@ import os
 import xml.dom.minidom
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any, List, OrderedDict, Union
+from typing import Any, List, Union
 
 from sim.scripts import mjcf
 
@@ -373,20 +373,20 @@ def create_mjcf(filepath: Path) -> None:
     """Create a MJCF file for the Stompy robot."""
     path = Path(filepath)
     robot_name = path.stem
-    path = path.parent
+    parent_path = path.parent
     robot = Sim2SimRobot(
         robot_name,
-        path,
+        parent_path,
         mjcf.Compiler(angle="radian", meshdir="meshes", autolimits=True, eulerseq="zyx"),
     )
     robot.adapt_world()
 
-    robot.save(path / f"{robot_name}_fixed.xml")
+    robot.save(path.with_suffix(".xml"))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a MJCF file for the robot.")
-    parser.add_argument("filepath", type=str, help="The path to load and save the MJCF file.")
+    parser.add_argument("--filepath", type=str, help="The path to load and save the MJCF file.")
     parser.add_argument("--robot", type=str, help="The robot name to load.")
     args = parser.parse_args()
     # Robot name is whatever string comes right before ".urdf" extension
