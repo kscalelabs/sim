@@ -366,8 +366,16 @@ if __name__ == "__main__":
         # Export function is able to infer input shapes
         # actor_model = new_func(args, policy_cfg)
         # actor_model = torch.jit.load(args.load_model)
-        actor_model = get_actor_policy(args.load_model, policy_cfg)
-        policy = export_to_onnx(actor_model, input_tensors=None, config=policy_cfg, save_path="kinfer_test.onnx")
+        actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
+        # Merge policy_cfg and sim2sim_info into a single config object
+        export_config = {**vars(policy_cfg), **sim2sim_info}
+        print(export_config)
+        policy = export_to_onnx(
+            actor_model,
+            input_tensors=input_tensors,
+            config=export_config,
+            save_path="kinfer_test.onnx"
+        )
         # policy = convert_model_to_onnx(args.load_model, policy_cfg, save_path="policy.onnx")
 
     model_info = parse_modelmeta(

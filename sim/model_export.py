@@ -205,7 +205,7 @@ class Actor(nn.Module):
 
         return actions_scaled, actions, x
 
-def get_actor_policy(model_path: str, cfg: ActorCfg) -> Actor:
+def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
     all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
     weights = all_weights["model_state_dict"]
     num_actor_obs = weights["actor.0.weight"].shape[1]
@@ -243,7 +243,13 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Actor:
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
-    return a_model.policy
+    return a_model, {
+        "robot_effort": robot_effort,
+        "robot_stiffness": robot_stiffness,
+        "robot_damping": robot_damping,
+        "num_actions": num_actions,
+        "num_observations": num_observations,
+    }, input_tensors
 
 
 def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
