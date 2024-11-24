@@ -21,7 +21,7 @@ import torch
 from tqdm import tqdm
 
 from sim.h5_logger import HDF5Logger
-from model_export import ActorCfg, get_actor_policy, convert_model_to_onnx
+from sim.model_export import ActorCfg, get_actor_policy
 from kinfer.export.pytorch import export_to_onnx
 
 
@@ -363,10 +363,8 @@ if __name__ == "__main__":
     if args.load_model.endswith(".onnx"):
         policy = ort.InferenceSession(args.load_model)
     else:
-        # Export function is able to infer input shapes
-        # actor_model = new_func(args, policy_cfg)
-        # actor_model = torch.jit.load(args.load_model)
         actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
+
         # Merge policy_cfg and sim2sim_info into a single config object
         export_config = {**vars(policy_cfg), **sim2sim_info}
         print(export_config)
@@ -377,7 +375,7 @@ if __name__ == "__main__":
             save_path="kinfer_test.onnx"
         )
         # policy = convert_model_to_onnx(args.load_model, policy_cfg, save_path="policy.onnx")
-
+    
     model_info = parse_modelmeta(
         policy.get_modelmeta().custom_metadata_map.items(),
         verbose=True,
