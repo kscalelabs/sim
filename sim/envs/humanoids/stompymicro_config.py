@@ -37,7 +37,7 @@ class StompyMicroCfg(LeggedRobotCfg):
 
     class asset(LeggedRobotCfg.asset):
         name = "stompymicro"
-        file = str(robot_urdf_path(name))
+        file = str(robot_urdf_path(name, legs_only=Robot.legs_only))
 
         foot_name = ["foot_left", "foot_right"]
         knee_name = ["left_knee_pitch_motor", "right_knee_pitch_motor"]

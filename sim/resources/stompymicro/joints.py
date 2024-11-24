@@ -93,6 +93,7 @@ class Arms(Node):
 class Robot(Node):
     height = 0.32
     rotation = [0, 0, 0.707, 0.707]
+    legs_only = False  # TODO: add legs_only functionality
 
     arms = Arms()
     legs = Legs()
