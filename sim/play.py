@@ -83,6 +83,11 @@ def play(args: argparse.Namespace) -> None:
     joint_index = 1
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+    # Prepare command manager
+    cmd_manager = CommandManager(
+        num_envs=env_cfg.env.num_envs, mode=args.command_mode, device=env.device, env_cfg=env_cfg
+    )
+
     if args.log_h5:
         h5_file = h5py.File(f"data{now}.h5", "w")
 
@@ -144,19 +149,19 @@ def play(args: argparse.Namespace) -> None:
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
-    cmd_manager = CommandManager(
-        num_envs=env_cfg.env.num_envs, mode=args.command_mode, device=env.device, env_cfg=env_cfg
-    )
-
     for t in tqdm(range(args.max_iterations)):
         actions = policy(obs.detach())
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
 
-        env.commands[:] = cmd_manager.update(env.dt)
+        commands = cmd_manager.update(env.dt)
+        env.commands[:] = commands
 
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
+
+        print(f"Commands: {commands[0]}")
         print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
+        print(f"Full reward: {rews} | Individual rewards: {{{', '.join(f'{k[4:]}: {float(v)}' for k, v in infos['episode'].items())}}}")
 
         if args.render:
             env.gym.fetch_results(env.sim, True)
