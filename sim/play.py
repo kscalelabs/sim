@@ -161,7 +161,9 @@ def play(args: argparse.Namespace) -> None:
 
         print(f"Commands: {commands[0]}")
         print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
-        print(f"Full reward: {rews} | Individual rewards: {{{', '.join(f'{k[4:]}: {float(v)}' for k, v in infos['episode'].items())}}}")
+        print(
+            f"Full reward: {rews} | Individual rewards: {{{', '.join(f'{k[4:]}: {float(v)}' for k, v in infos['episode'].items())}}}"
+        )
 
         if args.render:
             env.gym.fetch_results(env.sim, True)

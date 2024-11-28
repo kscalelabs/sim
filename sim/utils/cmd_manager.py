@@ -93,7 +93,7 @@ class CommandManager:
         elif self.mode == CommandMode.RANDOM:
             if self.time - self.last_sample_time >= self.resampling_time:
                 self.last_sample_time = self.time
-                
+
                 # Generate independent random commands for each environment
                 if self.env_cfg and self.env_cfg.commands.heading_command:
                     new_commands = torch.tensor(
@@ -115,7 +115,7 @@ class CommandManager:
                         ],
                         device=self.device,
                     ).t()  # Transpose to get shape [num_envs, 4]
-                
+
                 self.commands = new_commands
 
         elif self.mode == CommandMode.KEYBOARD:
