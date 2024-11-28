@@ -4,12 +4,12 @@
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
   <default>
-    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01" />
-    <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
-    <motor ctrllimited="true" />
-    <equality solref="0.001 2" />
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01"/>
+    <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2"/>
+    <motor ctrllimited="true"/>
+    <equality solref="0.001 2"/>
     <default class="visualgeom">
-      <geom material="visualgeom" condim="1" contype="0" conaffinity="0" />
+      <geom material="visualgeom" condim="1" contype="0" conaffinity="0"/>
     </default>
   </default>
 

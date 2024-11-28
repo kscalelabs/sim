@@ -52,42 +52,42 @@ class Node(ABC):
         return f"[{self.__class__.__name__}]{parts_str}"
 
 
-class LeftArm(Node):
-    shoulder_yaw = "left_shoulder_yaw"
-    shoulder_pitch = "left_shoulder_pitch"
-    elbow_yaw = "left_elbow_yaw"
-
-
 class RightArm(Node):
-    shoulder_yaw = "right_shoulder_yaw"
     shoulder_pitch = "right_shoulder_pitch"
+    shoulder_yaw = "right_shoulder_yaw"
     elbow_yaw = "right_elbow_yaw"
 
 
-class LeftLeg(Node):
-    hip_roll = "left_hip_roll"
-    hip_yaw = "left_hip_yaw"
-    hip_pitch = "left_hip_pitch"
-    knee_pitch = "left_knee_pitch"
-    ankle_pitch = "left_ankle_pitch"
+class LeftArm(Node):
+    shoulder_pitch = "left_shoulder_pitch"
+    shoulder_yaw = "left_shoulder_yaw"
+    elbow_yaw = "left_elbow_yaw"
 
 
 class RightLeg(Node):
-    hip_roll = "right_hip_roll"
-    hip_yaw = "right_hip_yaw"
     hip_pitch = "right_hip_pitch"
+    hip_yaw = "right_hip_yaw"
+    hip_roll = "right_hip_roll"
     knee_pitch = "right_knee_pitch"
     ankle_pitch = "right_ankle_pitch"
 
 
+class LeftLeg(Node):
+    hip_pitch = "left_hip_pitch"
+    hip_yaw = "left_hip_yaw"
+    hip_roll = "left_hip_roll"
+    ankle_pitch = "left_ankle_pitch"
+    knee_pitch = "left_knee_pitch"
+
+
 class Legs(Node):
-    left = LeftLeg()
     right = RightLeg()
+    left = LeftLeg()
 
 
 class Arms(Node):
-    left = LeftArm()
     right = RightArm()
+    left = LeftArm()
 
 
 class Robot(Node):
@@ -95,8 +95,8 @@ class Robot(Node):
     rotation = [0, 0, 0.707, 0.707]
     legs_only = False  # TODO: add legs_only functionality
 
-    arms = Arms()
     legs = Legs()
+    arms = Arms()
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
