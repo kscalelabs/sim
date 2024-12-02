@@ -45,9 +45,10 @@ def play(args: argparse.Namespace) -> None:
     logger.info("Configuring environment and training settings...")
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
 
-    # override some parameters for testing
-    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
-    env_cfg.sim.max_gpu_contact_pairs = 2**10
+    num_parallel_envs = 4
+    env_cfg.env.num_envs = num_parallel_envs
+    env_cfg.sim.max_gpu_contact_pairs = 2**10 * num_parallel_envs
+
     if args.trimesh:
         env_cfg.terrain.mesh_type = "trimesh"
     else:
@@ -121,14 +122,20 @@ def play(args: argparse.Namespace) -> None:
         ang_vel_end = ang_vel_start + 3
         euler_start = ang_vel_end
         euler_end = euler_start + 3
+        
+        h5_loggers = []
+        for env_idx in range(env_cfg.env.num_envs):
+            h5_dir = run_dir() / "h5_out" / args.task / now / f"env_{env_idx}"
+            h5_dir.mkdir(parents=True, exist_ok=True)
+            
+            h5_loggers.append(HDF5Logger(
+                data_name=f"{args.task}_env_{env_idx}",
+                num_actions=num_joints,
+                max_timesteps=env_steps_to_run,
+                num_observations=obs_size,
+                h5_out_dir=str(h5_dir)
+            ))
 
-        h5_logger = HDF5Logger(
-            data_name=args.task,
-            num_actions=num_joints,
-            max_timesteps=env_steps_to_run,
-            num_observations=obs_size,
-            h5_out_dir=str(h5_dir)
-        )
 
     if args.log_krec:
         # Create directory for KRec files
@@ -195,20 +202,21 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
         if args.log_h5:
             # Extract the current observation
-            cur_obs = env.obs_history[0].tolist()[0]
-            
-            h5_logger.log_data({
-                "t": np.array([t * env.dt], dtype=np.float32),
-                "2D_command": np.array(cur_obs[command_2d_start:command_2d_end], dtype=np.float32),
-                "3D_command": np.array(cur_obs[command_3d_start:command_3d_end], dtype=np.float32),
-                "joint_pos": np.array(cur_obs[joint_pos_start:joint_pos_end], dtype=np.float32),
-                "joint_vel": np.array(cur_obs[joint_vel_start:joint_vel_end], dtype=np.float32),
-                "prev_actions": np.array(cur_obs[prev_actions_start:prev_actions_end], dtype=np.float32),
-                "curr_actions": actions.detach().cpu().numpy()[0],
-                "ang_vel": np.array(cur_obs[ang_vel_start:ang_vel_end], dtype=np.float32),
-                "euler_rotation": np.array(cur_obs[euler_start:euler_end], dtype=np.float32),
-                "buffer": np.array(cur_obs, dtype=np.float32)
-            })
+            for env_idx in range(env_cfg.env.num_envs):
+                cur_obs = env.obs_history[env_idx].tolist()[0]
+                
+                h5_loggers[env_idx].log_data({
+                    "t": np.array([t * env.dt], dtype=np.float32),
+                    "2D_command": np.array(cur_obs[command_2d_start:command_2d_end], dtype=np.float32),
+                    "3D_command": np.array(cur_obs[command_3d_start:command_3d_end], dtype=np.float32),
+                    "joint_pos": np.array(cur_obs[joint_pos_start:joint_pos_end], dtype=np.float32),
+                    "joint_vel": np.array(cur_obs[joint_vel_start:joint_vel_end], dtype=np.float32),
+                    "prev_actions": np.array(cur_obs[prev_actions_start:prev_actions_end], dtype=np.float32),
+                    "curr_actions": actions.detach().cpu().numpy()[0],
+                    "ang_vel": np.array(cur_obs[ang_vel_start:ang_vel_end], dtype=np.float32),
+                    "euler_rotation": np.array(cur_obs[euler_start:euler_end], dtype=np.float32),
+                    "buffer": np.array(cur_obs, dtype=np.float32)
+                })
                 
         if args.fix_command:
             env.commands[:, 0] = 0.5
@@ -303,8 +311,9 @@ def play(args: argparse.Namespace) -> None:
 
     if args.log_h5:
         # print(f"Saving HDF5 file to {h5_logger.h5_file_path}") # TODO use code from kdatagen
-        h5_logger.close()
-        print(f"HDF5 file saved!")
+        for h5_logger in h5_loggers:
+            h5_logger.close()
+        print(f"HDF5 file(s) saved!")
 
     if args.log_krec:
         krec_file_path = krec_dir / f"walking_{str(uuid.uuid4())[:8]}.krec"
