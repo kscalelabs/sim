@@ -28,6 +28,8 @@ from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
+from sim.h5_logger import HDF5Logger
+
 logger = logging.getLogger(__name__)
 
 
@@ -97,39 +99,36 @@ def play(args: argparse.Namespace) -> None:
         h5_dir = run_dir() / "h5_out" / args.task / now
         h5_dir.mkdir(parents=True, exist_ok=True)
         
-        h5_file_path = h5_dir / "data.h5"
-        h5_file = h5py.File(h5_file_path, "w")
+        # Get observation dimensions
+        num_joints = env.num_dof
+        obs_buffer = env.obs_history[0].tolist()[0]
+        obs_size = len(obs_buffer)
+        
+        # Index mappings for observation buffer
+        # This is based on stompypro_env.py
+        # https://github.com/kscalelabs/sim/blob/54c40d55eab15a9e784e89fb47e64a668851a41b/sim/envs/humanoids/stompypro_env.py#L225
+        command_2d_start = 0
+        command_2d_end = 2
+        command_3d_start = 2
+        command_3d_end = 5
+        joint_pos_start = 5
+        joint_pos_end = joint_pos_start + num_joints
+        joint_vel_start = joint_pos_end
+        joint_vel_end = joint_vel_start + num_joints
+        prev_actions_start = joint_vel_end
+        prev_actions_end = prev_actions_start + num_joints
+        ang_vel_start = prev_actions_end
+        ang_vel_end = ang_vel_start + 3
+        euler_start = ang_vel_end
+        euler_end = euler_start + 3
 
-        # Create dataset for actions
-        max_timesteps = env_steps_to_run
-        num_dof = env.num_dof
-        dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_dof), dtype=np.float32)
-
-        # Create dataset of observations
-        buf_len = len(env.obs_history)  # length of observation buffer
-        dset_2D_command = h5_file.create_dataset(
-            "observations/2D_command", (max_timesteps, buf_len, 2), dtype=np.float32
-        )  # sin and cos commands
-        dset_3D_command = h5_file.create_dataset(
-            "observations/3D_command", (max_timesteps, buf_len, 3), dtype=np.float32
-        )  # x, y, yaw commands
-        dset_q = h5_file.create_dataset(
-            "observations/q", (max_timesteps, buf_len, num_dof), dtype=np.float32
-        )  # joint positions
-        dset_dq = h5_file.create_dataset(
-            "observations/dq", (max_timesteps, buf_len, num_dof), dtype=np.float32
-        )  # joint velocities
-        dset_obs_actions = h5_file.create_dataset(
-            "observations/actions", (max_timesteps, buf_len, num_dof), dtype=np.float32
-        )  # actions
-        dset_ang_vel = h5_file.create_dataset(
-            "observations/ang_vel", (max_timesteps, buf_len, 3), dtype=np.float32
-        )  # root angular velocity
-        dset_euler = h5_file.create_dataset(
-            "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
-        )  # root orientation
-
-
+        h5_logger = HDF5Logger(
+            data_name=args.task,
+            num_actions=num_joints,
+            max_timesteps=env_steps_to_run,
+            num_observations=obs_size,
+            h5_out_dir=str(h5_dir)
+        )
 
     if args.log_krec:
         # Create directory for KRec files
@@ -195,14 +194,28 @@ def play(args: argparse.Namespace) -> None:
     for t in tqdm(range(env_steps_to_run)):
         actions = policy(obs.detach())
         if args.log_h5:
-            dset_actions[t] = actions.detach().cpu().numpy()
+            # Extract the current observation
+            cur_obs = env.obs_history[0].tolist()[0]
+            
+            h5_logger.log_data({
+                "t": np.array([t * env.dt], dtype=np.float32),
+                "2D_command": np.array(cur_obs[command_2d_start:command_2d_end], dtype=np.float32),
+                "3D_command": np.array(cur_obs[command_3d_start:command_3d_end], dtype=np.float32),
+                "joint_pos": np.array(cur_obs[joint_pos_start:joint_pos_end], dtype=np.float32),
+                "joint_vel": np.array(cur_obs[joint_vel_start:joint_vel_end], dtype=np.float32),
+                "prev_actions": np.array(cur_obs[prev_actions_start:prev_actions_end], dtype=np.float32),
+                "curr_actions": actions.detach().cpu().numpy()[0],
+                "ang_vel": np.array(cur_obs[ang_vel_start:ang_vel_end], dtype=np.float32),
+                "euler_rotation": np.array(cur_obs[euler_start:euler_end], dtype=np.float32),
+                "buffer": np.array(cur_obs, dtype=np.float32)
+            })
+                
         if args.fix_command:
             env.commands[:, 0] = 0.5
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
-        print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
         if args.render:
             env.gym.fetch_results(env.sim, True)
@@ -227,17 +240,6 @@ def play(args: argparse.Namespace) -> None:
         base_vel_z = env.base_lin_vel[robot_index, 2].item()
         base_vel_yaw = env.base_ang_vel[robot_index, 2].item()
         contact_forces_z = env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
-
-        if args.log_h5:
-            for i in range(buf_len):
-                cur_obs = env.obs_history[i].tolist()[0]
-                dset_2D_command[t, i] = cur_obs[0:2]  # sin and cos commands
-                dset_3D_command[t, i] = cur_obs[2:5]  # x, y, yaw commands
-                dset_q[t, i] = cur_obs[5 : 5 + num_dof]  # joint positions
-                dset_dq[t, i] = cur_obs[5 + num_dof : 5 + 2 * num_dof]  # joint velocities
-                dset_obs_actions[t, i] = cur_obs[5 + 2 * num_dof : 5 + 3 * num_dof]  # actions
-                dset_ang_vel[t, i] = cur_obs[5 + 3 * num_dof : 8 + 3 * num_dof]  # root angular velocity
-                dset_euler[t, i] = cur_obs[8 + 3 * num_dof : 11 + 3 * num_dof]  # root orientation
 
         env_logger.log_states(
             {
@@ -294,14 +296,15 @@ def play(args: argparse.Namespace) -> None:
             krec_logger.add_frame(frame)
 
     env_logger.print_rewards()
-    env_logger.plot_states()
+    # env_logger.plot_states()
 
     if args.render:
         video.release()
 
     if args.log_h5:
-        print("Saving data to " + os.path.abspath(h5_file_path))
-        h5_file.close()
+        # print(f"Saving HDF5 file to {h5_logger.h5_file_path}") # TODO use code from kdatagen
+        h5_logger.close()
+        print(f"HDF5 file saved!")
 
     if args.log_krec:
         krec_file_path = krec_dir / f"walking_{str(uuid.uuid4())[:8]}.krec"
