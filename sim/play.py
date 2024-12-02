@@ -144,30 +144,33 @@ def play(args: argparse.Namespace) -> None:
 
         start_time_ns = time.time_ns()  # Current time in nanoseconds
 
-        # Create KRec header
-        header = krec.KRecHeader(
-            uuid=str(uuid.uuid4()),
-            robot_platform=f"{args.task}-sim",
-            robot_serial="123",
-            task=args.task,
-            start_timestamp=start_time_ns,
-            end_timestamp=start_time_ns + int(env_steps_to_run * env_cfg.sim.dt * 1e9),
-        )
+        krec_loggers = []
+        for env_idx in range(env_cfg.env.num_envs):
 
-        # Add actuator configs for each joint
-        for i in range(env.num_dof):
-            actuator_config = krec.ActuatorConfig(
-                i,  # actuator id
-                kp=float(env.p_gains[0, i].cpu()),  # get first row, i-th column and convert to CPU float
-                ki=0.0,
-                kd=float(env.d_gains[0, i].cpu()),  # get first row, i-th column and convert to CPU float
-                max_torque=float(env.torque_limits[i].cpu()),  # convert to CPU float
-                name=f"Joint{i}",
+            # Create KRec header for each environment
+            header = krec.KRecHeader(
+                uuid=str(uuid.uuid4()),
+                robot_platform=f"{args.task}-sim",
+                robot_serial="123",
+                task=args.task,
+                start_timestamp=start_time_ns,
+                end_timestamp=start_time_ns + int(env_steps_to_run * env_cfg.sim.dt * 1e9),
             )
-            header.add_actuator_config(actuator_config)
 
-        # Create KRec object
-        krec_logger = krec.KRec(header)
+            # Add actuator configs for each joint
+            for i in range(env.num_dof):
+                actuator_config = krec.ActuatorConfig(
+                    i,  # actuator id
+                    kp=float(env.p_gains[env_idx, i].cpu()),  # use env_idx instead of 0
+                    ki=0.0,
+                    kd=float(env.d_gains[env_idx, i].cpu()),  # use env_idx instead of 0
+                    max_torque=float(env.torque_limits[i].cpu()),
+                    name=f"Joint{i}",
+                )
+                header.add_actuator_config(actuator_config)
+
+            # Create KRec object for this environment
+            krec_loggers.append(krec.KRec(header))
 
     if args.render:
         camera_properties = gymapi.CameraProperties()
@@ -271,37 +274,39 @@ def play(args: argparse.Namespace) -> None:
                 env_logger.log_rewards(infos["episode"], num_episodes)
 
         if args.log_krec:
-            frame = krec.KRecFrame(
-                video_timestamp=start_time_ns + int(t * env.dt * 1e9),  # Convert simulation time to real time
-                frame_number=t,
-                inference_step=t // env_cfg.control.decimation,
-            )
-
-            # Add actuator states and commands for each joint
-            for i in range(env.num_dof):
-                state = krec.ActuatorState(
-                    actuator_id=i,
-                    online=True,
-                    position=env.dof_pos[robot_index, i].item(),
-                    velocity=env.dof_vel[robot_index, i].item(),
-                    torque=env.torques[robot_index, i].item(),
+            # Log data for each environment
+            for env_idx in range(env_cfg.env.num_envs):
+                frame = krec.KRecFrame(
+                    video_timestamp=start_time_ns + int(t * env.dt * 1e9),
+                    frame_number=t,
+                    inference_step=t // env_cfg.control.decimation,
                 )
-                command = krec.ActuatorCommand(
-                    i,  # actuator id
-                    position=actions[robot_index, i].item(),
-                    velocity=0.0,  # if you have velocity commands
-                    torque=actions[robot_index, i].item(),
-                )
-                frame.add_actuator_state(state)
-                frame.add_actuator_command(command)
 
-            # Add IMU data
-            imu_values = krec.IMUValues(
-                gyro=krec.Vec3(x=obs[0, 0], y=obs[0, 1], z=obs[0, 2]),
-                quaternion=krec.IMUQuaternion(x=obs[0, 3], y=obs[0, 4], z=obs[0, 5], w=obs[0, 6]),
-            )
-            frame.set_imu_values(imu_values)
-            krec_logger.add_frame(frame)
+                # Add actuator states and commands for each joint
+                for i in range(env.num_dof):
+                    state = krec.ActuatorState(
+                        actuator_id=i,
+                        online=True,
+                        position=env.dof_pos[env_idx, i].item(),
+                        velocity=env.dof_vel[env_idx, i].item(),
+                        torque=env.torques[env_idx, i].item(),
+                    )
+                    command = krec.ActuatorCommand(
+                        i,  # actuator id
+                        position=actions[env_idx, i].item(),
+                        velocity=0.0,
+                        torque=actions[env_idx, i].item(),
+                    )
+                    frame.add_actuator_state(state)
+                    frame.add_actuator_command(command)
+
+                # Add IMU data
+                imu_values = krec.IMUValues(
+                    gyro=krec.Vec3(x=obs[env_idx, 0], y=obs[env_idx, 1], z=obs[env_idx, 2]),
+                    quaternion=krec.IMUQuaternion(x=obs[env_idx, 3], y=obs[env_idx, 4], z=obs[env_idx, 5], w=obs[env_idx, 6]),
+                )
+                frame.set_imu_values(imu_values)
+                krec_loggers[env_idx].add_frame(frame)
 
     env_logger.print_rewards()
     # env_logger.plot_states()
@@ -316,10 +321,12 @@ def play(args: argparse.Namespace) -> None:
         print(f"HDF5 file(s) saved!")
 
     if args.log_krec:
-        krec_file_path = krec_dir / f"walking_{str(uuid.uuid4())[:8]}.krec"
-        print(f"Saving KRec file to {krec_file_path}")
-        krec_logger.save(str(krec_file_path))
-        print("KRec file saved!")
+        for env_idx, krec_logger in enumerate(krec_loggers):
+            krec_file_path = krec_dir / f"env_{env_idx}" / f"walking_{str(uuid.uuid4())[:8]}.krec"
+            krec_file_path.parent.mkdir(parents=True, exist_ok=True)
+            print(f"Saving KRec file to {krec_file_path}")
+            krec_logger.save(str(krec_file_path))
+        print("KRec files saved!")
 
 
 if __name__ == "__main__":
