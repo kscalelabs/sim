@@ -12,7 +12,7 @@ rm meshes.zip
 # Stompypro
 echo
 echo "Downloading Stompypro assets..."
-gdown --folder https://drive.google.com/drive/folders/1-iIqy8j4gF6JeuMc_MjxkRe4vSZl8Ozp -O sim/resources/stompypro/
+gdown --folder https://drive.google.com/drive/folders/1pFxFpnKxGe7UygpBG5S4YboDLfuIaG05 -O sim/resources/stompypro/
 
 # Xbot
 echo
