@@ -83,12 +83,6 @@ def play(args: argparse.Namespace) -> None:
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
 
-    # # export policy as a onnx module (used to run it on web)
-    # if args.export_onnx:
-    #     path = ppo_runner.alg.actor_critic
-    #     convert_model_to_onnx(path, ActorCfg(), save_path="policy.onnx")
-    #     print("Exported policy as onnx to: ", path)
-
     # Prepare for logging
     env_logger = Logger(env.dt)
     robot_index = 0
@@ -309,7 +303,6 @@ def play(args: argparse.Namespace) -> None:
                 krec_loggers[env_idx].add_frame(frame)
 
     env_logger.print_rewards()
-    # env_logger.plot_states()
 
     if args.render:
         video.release()
