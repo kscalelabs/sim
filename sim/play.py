@@ -9,6 +9,8 @@ import argparse
 import copy
 import logging
 import os
+import time
+import uuid
 from datetime import datetime
 from typing import Any, Union
 
@@ -16,17 +18,17 @@ import cv2
 import h5py
 import numpy as np
 from isaacgym import gymapi
+import torch  # isort: skip
 from tqdm import tqdm
 
-logger = logging.getLogger(__name__)
-
+import krec
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
 from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
-import torch  # isort: skip
+logger = logging.getLogger(__name__)
 
 
 def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> None:
@@ -78,23 +80,28 @@ def play(args: argparse.Namespace) -> None:
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
 
-    # export policy as a onnx module (used to run it on web)
-    if args.export_onnx:
-        path = ppo_runner.alg.actor_critic
-        convert_model_to_onnx(path, ActorCfg(), save_path="policy.onnx")
-        print("Exported policy as onnx to: ", path)
+    # # export policy as a onnx module (used to run it on web)
+    # if args.export_onnx:
+    #     path = ppo_runner.alg.actor_critic
+    #     convert_model_to_onnx(path, ActorCfg(), save_path="policy.onnx")
+    #     print("Exported policy as onnx to: ", path)
 
     # Prepare for logging
     env_logger = Logger(env.dt)
     robot_index = 0
     joint_index = 1
-    stop_state_log = 1000
+    env_steps_to_run = 1000
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     if args.log_h5:
-        h5_file = h5py.File(f"data{now}.h5", "w")
+        # Create directory for HDF5 files
+        h5_dir = run_dir() / "h5_out" / args.task / now
+        h5_dir.mkdir(parents=True, exist_ok=True)
+        
+        h5_file_path = h5_dir / "data.h5"
+        h5_file = h5py.File(h5_file_path, "w")
 
         # Create dataset for actions
-        max_timesteps = stop_state_log
+        max_timesteps = env_steps_to_run
         num_dof = env.num_dof
         dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_dof), dtype=np.float32)
 
@@ -121,6 +128,40 @@ def play(args: argparse.Namespace) -> None:
         dset_euler = h5_file.create_dataset(
             "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
         )  # root orientation
+
+
+
+    if args.log_krec:
+        # Create directory for KRec files
+        krec_dir = run_dir() / "krec_out" / args.task / now
+        krec_dir.mkdir(parents=True, exist_ok=True)
+
+        start_time_ns = time.time_ns()  # Current time in nanoseconds
+
+        # Create KRec header
+        header = krec.KRecHeader(
+            uuid=str(uuid.uuid4()),
+            robot_platform=f"{args.task}-sim",
+            robot_serial="123",
+            task=args.task,
+            start_timestamp=start_time_ns,
+            end_timestamp=start_time_ns + int(env_steps_to_run * env_cfg.sim.dt * 1e9),
+        )
+
+        # Add actuator configs for each joint
+        for i in range(env.num_dof):
+            actuator_config = krec.ActuatorConfig(
+                i,  # actuator id
+                kp=float(env.p_gains[0, i].cpu()),  # get first row, i-th column and convert to CPU float
+                ki=0.0,
+                kd=float(env.d_gains[0, i].cpu()),  # get first row, i-th column and convert to CPU float
+                max_torque=float(env.torque_limits[i].cpu()),  # convert to CPU float
+                name=f"Joint{i}",
+            )
+            header.add_actuator_config(actuator_config)
+
+        # Create KRec object
+        krec_logger = krec.KRec(header)
 
     if args.render:
         camera_properties = gymapi.CameraProperties()
@@ -151,10 +192,10 @@ def play(args: argparse.Namespace) -> None:
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
-    for t in tqdm(range(stop_state_log)):
+    for t in tqdm(range(env_steps_to_run)):
         actions = policy(obs.detach())
         if args.log_h5:
-            dset_actions[t] = actions.detach().numpy()
+            dset_actions[t] = actions.detach().cpu().numpy()
         if args.fix_command:
             env.commands[:, 0] = 0.5
             env.commands[:, 1] = 0.0
@@ -219,6 +260,39 @@ def play(args: argparse.Namespace) -> None:
             if num_episodes > 0:
                 env_logger.log_rewards(infos["episode"], num_episodes)
 
+        if args.log_krec:
+            frame = krec.KRecFrame(
+                video_timestamp=start_time_ns + int(t * env.dt * 1e9),  # Convert simulation time to real time
+                frame_number=t,
+                inference_step=t // env_cfg.control.decimation,
+            )
+
+            # Add actuator states and commands for each joint
+            for i in range(env.num_dof):
+                state = krec.ActuatorState(
+                    actuator_id=i,
+                    online=True,
+                    position=env.dof_pos[robot_index, i].item(),
+                    velocity=env.dof_vel[robot_index, i].item(),
+                    torque=env.torques[robot_index, i].item(),
+                )
+                command = krec.ActuatorCommand(
+                    i,  # actuator id
+                    position=actions[robot_index, i].item(),
+                    velocity=0.0,  # if you have velocity commands
+                    torque=actions[robot_index, i].item(),
+                )
+                frame.add_actuator_state(state)
+                frame.add_actuator_command(command)
+
+            # Add IMU data
+            imu_values = krec.IMUValues(
+                gyro=krec.Vec3(x=obs[0, 0], y=obs[0, 1], z=obs[0, 2]),
+                quaternion=krec.IMUQuaternion(x=obs[0, 3], y=obs[0, 4], z=obs[0, 5], w=obs[0, 6]),
+            )
+            frame.set_imu_values(imu_values)
+            krec_logger.add_frame(frame)
+
     env_logger.print_rewards()
     env_logger.plot_states()
 
@@ -226,8 +300,14 @@ def play(args: argparse.Namespace) -> None:
         video.release()
 
     if args.log_h5:
-        print("Saving data to " + os.path.abspath(f"data{now}.h5"))
+        print("Saving data to " + os.path.abspath(h5_file_path))
         h5_file.close()
+
+    if args.log_krec:
+        krec_file_path = krec_dir / f"walking_{str(uuid.uuid4())[:8]}.krec"
+        print(f"Saving KRec file to {krec_file_path}")
+        krec_logger.save(str(krec_file_path))
+        print("KRec file saved!")
 
 
 if __name__ == "__main__":
