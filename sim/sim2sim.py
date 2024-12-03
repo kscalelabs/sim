@@ -21,8 +21,9 @@ import torch
 from tqdm import tqdm
 
 from sim.h5_logger import HDF5Logger
-from sim.model_export import ActorCfg, get_actor_policy
+from model_export import ActorCfg, get_actor_policy
 from kinfer.export.pytorch import export_to_onnx
+from kinfer.inference.python import ONNXModel
 
 
 @dataclass
@@ -240,7 +241,13 @@ def run_mujoco(
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
-            positions, curr_actions, hist_obs = policy.run(None, input_data)
+            # positions, curr_actions, hist_obs = policy(input_data)
+
+            policy_output = policy(input_data)
+            positions = policy_output["actions_scaled"]
+            curr_actions = policy_output["actions"]
+            hist_obs = policy_output["x.3"]
+
             target_q = positions
             
             if log_h5:
@@ -317,11 +324,6 @@ def parse_modelmeta(
             print(f"{key}: {value}")
     return parsed_meta
 
-
-def new_func(args, policy_cfg):
-    actor_model = get_actor_jit(args.load_model, policy_cfg)
-    return actor_model
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--embodiment", type=str, required=True, help="Embodiment name.")
@@ -361,25 +363,32 @@ if __name__ == "__main__":
         )
 
     if args.load_model.endswith(".onnx"):
-        policy = ort.InferenceSession(args.load_model)
+        policy = ONNXModel(args.load_model)
     else:
         actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
 
         # Merge policy_cfg and sim2sim_info into a single config object
         export_config = {**vars(policy_cfg), **sim2sim_info}
         print(export_config)
-        policy = export_to_onnx(
+        export_to_onnx(
             actor_model,
             input_tensors=input_tensors,
             config=export_config,
             save_path="kinfer_test.onnx"
         )
-        # policy = convert_model_to_onnx(args.load_model, policy_cfg, save_path="policy.onnx")
-    
-    model_info = parse_modelmeta(
-        policy.get_modelmeta().custom_metadata_map.items(),
-        verbose=True,
-    )
+        policy = ONNXModel("kinfer_test.onnx")
+
+    metadata = policy.get_metadata()
+    # only take the follwing keys:
+
+    model_info = {
+        "num_actions": metadata["num_actions"],
+        "num_observations": metadata["num_observations"],
+        "robot_effort": metadata["robot_effort"],
+        "robot_stiffness": metadata["robot_stiffness"],
+        "robot_damping": metadata["robot_damping"],
+    }
+
 
     run_mujoco(
         args.embodiment,
