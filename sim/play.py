@@ -2,13 +2,15 @@
 """Play a trained policy in the environment.
 
 Run:
-    python sim/play.py --task g1 --log_h5
-    python sim/play.py --task stompymini --log_h5
+    python sim/play.py --task stompypro --log_h5
 """
 import argparse
 import copy
 import logging
+import math
 import os
+import time
+import uuid
 from datetime import datetime
 from typing import Any, Union
 
@@ -18,8 +20,15 @@ import numpy as np
 from isaacgym import gymapi
 from tqdm import tqdm
 
-logger = logging.getLogger(__name__)
+# Local imports third
+from sim.env import run_dir
+from sim.envs import task_registry
+from sim.h5_logger import HDF5Logger
+from sim.model_export import ActorCfg, convert_model_to_onnx
+from sim.utils.helpers import get_args
+from sim.utils.logger import Logger
 
+import torch  # special case with isort: skip comment
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
 from sim.model_export import ActorCfg, get_actor_policy  # noqa: E402
@@ -27,7 +36,7 @@ from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 from kinfer.export.pytorch import export_to_onnx
 
-import torch  # isort: skip
+logger = logging.getLogger(__name__)
 
 
 def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> None:
@@ -42,9 +51,10 @@ def play(args: argparse.Namespace) -> None:
     logger.info("Configuring environment and training settings...")
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
 
-    # override some parameters for testing
-    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
-    env_cfg.sim.max_gpu_contact_pairs = 2**10
+    num_parallel_envs = 2
+    env_cfg.env.num_envs = num_parallel_envs
+    env_cfg.sim.max_gpu_contact_pairs = 2**10 * num_parallel_envs
+
     if args.trimesh:
         env_cfg.terrain.mesh_type = "trimesh"
     else:
@@ -100,39 +110,31 @@ def play(args: argparse.Namespace) -> None:
     env_logger = Logger(env.dt)
     robot_index = 0
     joint_index = 1
-    stop_state_log = 1000
+    env_steps_to_run = 1000
+
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     if args.log_h5:
-        h5_file = h5py.File(f"data{now}.h5", "w")
+        # Create directory for HDF5 files
+        h5_dir = run_dir() / "h5_out" / args.task / now
+        h5_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Get observation dimensions
+        num_actions = env.num_dof
+        obs_buffer = env.obs_buf.shape[1]
+        prev_actions = np.zeros((num_actions), dtype=np.double)
 
-        # Create dataset for actions
-        max_timesteps = stop_state_log
-        num_dof = env.num_dof
-        dset_actions = h5_file.create_dataset("actions", (max_timesteps, num_dof), dtype=np.float32)
-
-        # Create dataset of observations
-        buf_len = len(env.obs_history)  # length of observation buffer
-        dset_2D_command = h5_file.create_dataset(
-            "observations/2D_command", (max_timesteps, buf_len, 2), dtype=np.float32
-        )  # sin and cos commands
-        dset_3D_command = h5_file.create_dataset(
-            "observations/3D_command", (max_timesteps, buf_len, 3), dtype=np.float32
-        )  # x, y, yaw commands
-        dset_q = h5_file.create_dataset(
-            "observations/q", (max_timesteps, buf_len, num_dof), dtype=np.float32
-        )  # joint positions
-        dset_dq = h5_file.create_dataset(
-            "observations/dq", (max_timesteps, buf_len, num_dof), dtype=np.float32
-        )  # joint velocities
-        dset_obs_actions = h5_file.create_dataset(
-            "observations/actions", (max_timesteps, buf_len, num_dof), dtype=np.float32
-        )  # actions
-        dset_ang_vel = h5_file.create_dataset(
-            "observations/ang_vel", (max_timesteps, buf_len, 3), dtype=np.float32
-        )  # root angular velocity
-        dset_euler = h5_file.create_dataset(
-            "observations/euler", (max_timesteps, buf_len, 3), dtype=np.float32
-        )  # root orientation
+        h5_loggers = []
+        for env_idx in range(env_cfg.env.num_envs):
+            h5_dir = run_dir() / "h5_out" / args.task / now / f"env_{env_idx}"
+            h5_dir.mkdir(parents=True, exist_ok=True)
+            
+            h5_loggers.append(HDF5Logger(
+                data_name=f"{args.task}_env_{env_idx}",
+                num_actions=num_actions,
+                max_timesteps=env_steps_to_run,
+                num_observations=obs_buffer,
+                h5_out_dir=str(h5_dir)
+            ))
 
     if args.render:
         camera_properties = gymapi.CameraProperties()
@@ -163,17 +165,15 @@ def play(args: argparse.Namespace) -> None:
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
-    for t in tqdm(range(stop_state_log)):
+    for t in tqdm(range(env_steps_to_run)):
         actions = policy(obs.detach())
-        if args.log_h5:
-            dset_actions[t] = actions.detach().numpy()
+
         if args.fix_command:
             env.commands[:, 0] = 0.5
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
-        print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
 
         if args.render:
             env.gym.fetch_results(env.sim, True)
@@ -199,17 +199,6 @@ def play(args: argparse.Namespace) -> None:
         base_vel_yaw = env.base_ang_vel[robot_index, 2].item()
         contact_forces_z = env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
 
-        if args.log_h5:
-            for i in range(buf_len):
-                cur_obs = env.obs_history[i].tolist()[0]
-                dset_2D_command[t, i] = cur_obs[0:2]  # sin and cos commands
-                dset_3D_command[t, i] = cur_obs[2:5]  # x, y, yaw commands
-                dset_q[t, i] = cur_obs[5 : 5 + num_dof]  # joint positions
-                dset_dq[t, i] = cur_obs[5 + num_dof : 5 + 2 * num_dof]  # joint velocities
-                dset_obs_actions[t, i] = cur_obs[5 + 2 * num_dof : 5 + 3 * num_dof]  # actions
-                dset_ang_vel[t, i] = cur_obs[5 + 3 * num_dof : 8 + 3 * num_dof]  # root angular velocity
-                dset_euler[t, i] = cur_obs[8 + 3 * num_dof : 11 + 3 * num_dof]  # root orientation
-
         env_logger.log_states(
             {
                 "dof_pos_target": dof_pos_target,
@@ -226,20 +215,46 @@ def play(args: argparse.Namespace) -> None:
                 "contact_forces_z": contact_forces_z,
             }
         )
+        actions = actions.detach().cpu().numpy()
+        if args.log_h5:
+            # Extract the current observation
+            for env_idx in range(env_cfg.env.num_envs):
+                h5_loggers[env_idx].log_data({
+                    "t": np.array([t * env.dt], dtype=np.float32),
+                    "2D_command": np.array(
+                        [
+                            np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
+                            np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
+                        ],
+                        dtype=np.float32,
+                    ),
+                    "3D_command": np.array(env.commands[env_idx, :3].cpu().numpy(), dtype=np.float32),
+                    "joint_pos": np.array(env.dof_pos[env_idx].cpu().numpy(), dtype=np.float32), 
+                    "joint_vel": np.array(env.dof_vel[env_idx].cpu().numpy(), dtype=np.float32),
+                    "prev_actions": prev_actions[env_idx].astype(np.float32),
+                    "curr_actions": actions[env_idx].astype(np.float32),
+                    "ang_vel": env.base_ang_vel[env_idx].cpu().numpy().astype(np.float32),
+                    "euler_rotation": env.base_euler_xyz[env_idx].cpu().numpy().astype(np.float32),
+                    "buffer": env.obs_buf[env_idx].cpu().numpy().astype(np.float32)
+                })
+
+            prev_actions = actions
+    
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
             if num_episodes > 0:
                 env_logger.log_rewards(infos["episode"], num_episodes)
 
     env_logger.print_rewards()
-    env_logger.plot_states()
 
     if args.render:
         video.release()
 
     if args.log_h5:
-        print("Saving data to " + os.path.abspath(f"data{now}.h5"))
-        h5_file.close()
+        # print(f"Saving HDF5 file to {h5_logger.h5_file_path}") # TODO use code from kdatagen
+        for h5_logger in h5_loggers:
+            h5_logger.close()
+        print(f"HDF5 file(s) saved!")
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ python-dotenv
 h5py
 gdown
 matplotlib==3.3.4
-numpy==1.19.5
+numpy<2.0.0
 wandb
 tensorboard==2.14.0
 onnxscript
