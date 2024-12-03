@@ -7,27 +7,28 @@ Run:
 import argparse
 import copy
 import logging
+import math
 import os
 import time
 import uuid
 from datetime import datetime
 from typing import Any, Union
-import math
 
 import cv2
 import h5py
 import numpy as np
 from isaacgym import gymapi
-import torch  # isort: skip
 from tqdm import tqdm
 
-from sim.env import run_dir  # noqa: E402
-from sim.envs import task_registry  # noqa: E402
-from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
-from sim.utils.helpers import get_args  # noqa: E402
-from sim.utils.logger import Logger  # noqa: E402
-
+# Local imports third
+from sim.env import run_dir
+from sim.envs import task_registry
 from sim.h5_logger import HDF5Logger
+from sim.model_export import ActorCfg, convert_model_to_onnx
+from sim.utils.helpers import get_args
+from sim.utils.logger import Logger
+
+import torch  # special case with isort: skip comment
 
 logger = logging.getLogger(__name__)
 

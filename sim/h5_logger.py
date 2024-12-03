@@ -5,8 +5,8 @@ from datetime import datetime
 from typing import Dict
 
 import h5py
-import numpy as np
 import matplotlib.pyplot as plt  # dependency issues with python 3.8
+import numpy as np
 
 
 class HDF5Logger:
