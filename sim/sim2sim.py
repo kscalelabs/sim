@@ -297,31 +297,6 @@ def run_mujoco(
     if log_h5:
         logger.close()
 
-
-def parse_modelmeta(
-    modelmeta: List[Tuple[str, str]],
-    verbose: bool = False,
-) -> Dict[str, Union[float, List[float], str]]:
-    parsed_meta: Dict[str, Union[float, List[float], str]] = {}
-    for key, value in modelmeta:
-        if value.startswith("[") and value.endswith("]"):
-            parsed_meta[key] = list(map(float, value.strip("[]").split(",")))
-        else:
-            try:
-                parsed_meta[key] = float(value)
-                try:
-                    if int(value) == parsed_meta[key]:
-                        parsed_meta[key] = int(value)
-                except ValueError:
-                    pass
-            except ValueError:
-                print(f"Failed to convert {value} to float")
-                parsed_meta[key] = value
-    if verbose:
-        for key, value in parsed_meta.items():
-            print(f"{key}: {value}")
-    return parsed_meta
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--embodiment", type=str, required=True, help="Embodiment name.")
@@ -377,7 +352,6 @@ if __name__ == "__main__":
         policy = ONNXModel("kinfer_test.onnx")
 
     metadata = policy.get_metadata()
-    # only take the follwing keys:
 
     model_info = {
         "num_actions": metadata["num_actions"],
