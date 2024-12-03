@@ -21,7 +21,7 @@ import torch
 from tqdm import tqdm
 
 from sim.h5_logger import HDF5Logger
-from model_export import ActorCfg, get_actor_policy
+from sim.model_export import ActorCfg, get_actor_policy
 from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
 
@@ -240,8 +240,6 @@ def run_mujoco(
             input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
-
-            # positions, curr_actions, hist_obs = policy(input_data)
 
             policy_output = policy(input_data)
             positions = policy_output["actions_scaled"]

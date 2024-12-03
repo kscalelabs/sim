@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
-from sim.model_export import ActorCfg, convert_model_to_onnx, get_actor_policy  # noqa: E402
+from sim.model_export import ActorCfg, get_actor_policy  # noqa: E402
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 from kinfer.export.pytorch import export_to_onnx
