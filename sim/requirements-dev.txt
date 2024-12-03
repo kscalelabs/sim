@@ -12,7 +12,7 @@ numpy<2.0.0
 onnx==1.15.0
 onnxruntime==1.19.2
 pandas==1.4.4
-Pillow==11.0.0
+Pillow>6.2.0
 poselib==2.0.4
 pygame==2.6.1
 python-dotenv==1.0.1
