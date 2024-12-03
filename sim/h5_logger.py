@@ -4,7 +4,6 @@ import uuid
 from typing import Dict
 
 import h5py
-import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 
@@ -117,6 +116,7 @@ class HDF5Logger:
             name (str): Name of the dataset.
             data (np.ndarray): Data to be plotted.
         """
+        import matplotlib.pyplot as plt # dependency issues with python 3.8
         plt.figure(figsize=(10, 5))
         if data.ndim == 2:  # Handle multi-dimensional data
             for i in range(data.shape[1]):
