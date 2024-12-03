@@ -29,6 +29,12 @@ from sim.utils.helpers import get_args
 from sim.utils.logger import Logger
 
 import torch  # special case with isort: skip comment
+from sim.env import run_dir  # noqa: E402
+from sim.envs import task_registry  # noqa: E402
+from sim.model_export import ActorCfg, get_actor_policy  # noqa: E402
+from sim.utils.helpers import get_args  # noqa: E402
+from sim.utils.logger import Logger  # noqa: E402
+from kinfer.export.pytorch import export_to_onnx
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +88,23 @@ def play(args: argparse.Namespace) -> None:
         path = os.path.join(".")
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
+
+    # export policy as a onnx module (used to run it on web)
+    if args.export_onnx:
+        path = ppo_runner.alg.actor_critic
+        policy_cfg = ActorCfg()
+        actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
+
+        # Merge policy_cfg and sim2sim_info into a single config object
+        export_config = {**vars(policy_cfg), **sim2sim_info}
+
+        policy = export_to_onnx(
+            actor_model,
+            input_tensors=input_tensors,
+            config=export_config,
+            save_path="kinfer_policy.onnx"
+        )
+        print("Exported policy as kinfer-compatible onnx to: ", path)
 
     # Prepare for logging
     env_logger = Logger(env.dt)

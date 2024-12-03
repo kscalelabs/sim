@@ -17,10 +17,13 @@ import numpy as np
 import onnxruntime as ort
 import pygame
 from scipy.spatial.transform import Rotation as R
+import torch
 from tqdm import tqdm
 
 from sim.h5_logger import HDF5Logger
-from sim.model_export import ActorCfg, convert_model_to_onnx
+from sim.model_export import ActorCfg, get_actor_policy
+from kinfer.export.pytorch import export_to_onnx
+from kinfer.inference.python import ONNXModel
 
 
 @dataclass
@@ -238,7 +241,11 @@ def run_mujoco(
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
-            positions, curr_actions, hist_obs = policy.run(None, input_data)
+            policy_output = policy(input_data)
+            positions = policy_output["actions_scaled"]
+            curr_actions = policy_output["actions"]
+            hist_obs = policy_output["x.3"]
+
             target_q = positions
             
             if log_h5:
@@ -290,32 +297,6 @@ def run_mujoco(
     if log_h5:
         logger.close()
 
-
-def parse_modelmeta(
-    modelmeta: List[Tuple[str, str]],
-    verbose: bool = False,
-) -> Dict[str, Union[float, List[float], str]]:
-    parsed_meta: Dict[str, Union[float, List[float], str]] = {}
-    for key, value in modelmeta:
-        if value.startswith("[") and value.endswith("]"):
-            parsed_meta[key] = list(map(float, value.strip("[]").split(",")))
-        else:
-            try:
-                parsed_meta[key] = float(value)
-                try:
-                    if int(value) == parsed_meta[key]:
-                        parsed_meta[key] = int(value)
-                except ValueError:
-                    pass
-            except ValueError:
-                print(f"Failed to convert {value} to float")
-                parsed_meta[key] = value
-    if verbose:
-        for key, value in parsed_meta.items():
-            print(f"{key}: {value}")
-    return parsed_meta
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--embodiment", type=str, required=True, help="Embodiment name.")
@@ -355,16 +336,31 @@ if __name__ == "__main__":
         )
 
     if args.load_model.endswith(".onnx"):
-        policy = ort.InferenceSession(args.load_model)
+        policy = ONNXModel(args.load_model)
     else:
-        policy = convert_model_to_onnx(
-            args.load_model, policy_cfg, save_path="policy.onnx"
-        )
+        actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
 
-    model_info = parse_modelmeta(
-        policy.get_modelmeta().custom_metadata_map.items(),
-        verbose=True,
-    )
+        # Merge policy_cfg and sim2sim_info into a single config object
+        export_config = {**vars(policy_cfg), **sim2sim_info}
+        print(export_config)
+        export_to_onnx(
+            actor_model,
+            input_tensors=input_tensors,
+            config=export_config,
+            save_path="kinfer_test.onnx"
+        )
+        policy = ONNXModel("kinfer_test.onnx")
+
+    metadata = policy.get_metadata()
+
+    model_info = {
+        "num_actions": metadata["num_actions"],
+        "num_observations": metadata["num_observations"],
+        "robot_effort": metadata["robot_effort"],
+        "robot_stiffness": metadata["robot_stiffness"],
+        "robot_damping": metadata["robot_damping"],
+    }
+
 
     run_mujoco(
         args.embodiment,
