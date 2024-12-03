@@ -315,7 +315,7 @@ if __name__ == "__main__":
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "stompypro":
-        policy_cfg.cycle_time = 0.4
+        policy_cfg.cycle_time = 0.64
         cfg = Sim2simCfg(
             sim_duration=10.0,
             dt=0.001,

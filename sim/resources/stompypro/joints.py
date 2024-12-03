@@ -148,7 +148,7 @@ class Robot(Node):
             "hip_x": 200,
             "hip_z": 200,
             "knee": 300,
-            "ankle_y": 300,
+            "ankle_y": 15,
         }
 
     # d_gains
@@ -170,7 +170,7 @@ class Robot(Node):
             "hip_x": 100,
             "hip_z": 100,
             "knee": 250,
-            "ankle_y": 17,
+            "ankle_y": 100,
         }
 
     # # vel_limits

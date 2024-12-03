@@ -45,7 +45,7 @@
     <visual>
       <geometry>
         <box
-          size="0.1 0.1 0.1" />
+          size="0.1 0.3 0.1" />
       </geometry>
       <material
         name="red">
@@ -338,7 +338,7 @@
       link="R_foot" />
     <axis
       xyz="-1 0 0" />
-    <limit effort="17" lower="-0.398" upper="0.398" velocity="10" />
+    <limit effort="100" lower="-0.398" upper="0.398" velocity="10" />
     <dynamics damping="0" friction="0.1" />
   </joint>
   <link
@@ -613,7 +613,7 @@
       link="L_foot" />
     <axis
       xyz="-1 0 0" />
-    <limit effort="17" lower="-0.498" upper="0.498" velocity="10" />
+    <limit effort="100" lower="-0.498" upper="0.498" velocity="10" />
         <dynamics damping="0" friction="0.1" />
   </joint>
   <link
