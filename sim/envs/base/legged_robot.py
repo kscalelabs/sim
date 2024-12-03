@@ -567,6 +567,7 @@ class LeggedRobot(BaseTask):
         self.default_dof_pos = torch.zeros(self.num_dof, dtype=torch.float, device=self.device, requires_grad=False)
         for i in range(self.num_dofs):
             name = self.dof_names[i]
+            print(name)
             self.default_dof_pos[i] = self.cfg.init_state.default_joint_angles[name]
             found = False
 
@@ -579,6 +580,7 @@ class LeggedRobot(BaseTask):
                 self.p_gains[:, i] = 0.0
                 self.d_gains[:, i] = 0.0
                 print(f"PD gain of joint {name} were not defined, setting them to zero")
+
         self.rand_push_force = torch.zeros((self.num_envs, 3), dtype=torch.float32, device=self.device)
         self.rand_push_torque = torch.zeros((self.num_envs, 3), dtype=torch.float32, device=self.device)
         self.default_dof_pos = self.default_dof_pos.unsqueeze(0)

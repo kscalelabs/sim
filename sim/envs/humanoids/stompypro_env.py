@@ -325,7 +325,7 @@ class StompyProFreeEnv(LeggedRobot):
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
         stance_mask = self._get_gait_phase()
-        reward = torch.where(contact == stance_mask, 1, -0.3)
+        reward = torch.where(contact == stance_mask, 1.0, -0.3)
         return torch.mean(reward, dim=1)
 
     def _reward_orientation(self):
