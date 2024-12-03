@@ -19,7 +19,7 @@ import pygame
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
-from sim.h5_logger import HDF5Logger
+# from sim.h5_logger import HDF5Logger
 from sim.model_export import ActorCfg, convert_model_to_onnx
 
 
@@ -240,27 +240,6 @@ def run_mujoco(
 
             positions, curr_actions, hist_obs = policy.run(None, input_data)
             target_q = positions
-            
-            if log_h5:
-                logger.log_data({
-                    "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
-                    "2D_command": np.array(
-                        [
-                            np.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
-                            np.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
-                        ],
-                        dtype=np.float32,
-                    ),
-                    "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
-                    "joint_pos": cur_pos_obs.astype(np.float32),
-                    "joint_vel": cur_vel_obs.astype(np.float32),
-                    "prev_actions": prev_actions.astype(np.float32),
-                    "curr_actions": curr_actions.astype(np.float32),
-                    "ang_vel": omega.astype(np.float32),
-                    "euler_rotation": eu_ang.astype(np.float32),
-                    "buffer": hist_obs.astype(np.float32)
-                })
-                
             prev_actions = curr_actions
 
         # Generate PD control
@@ -332,7 +311,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = np.random.uniform(0.1, 0.5), 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = .4, 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "stompypro":
@@ -350,7 +329,7 @@ if __name__ == "__main__":
             sim_duration=10.0,
             dt=0.001,
             decimation=10,
-            tau_factor=2,
+            tau_factor=1,
             cycle_time=policy_cfg.cycle_time,
         )
 
