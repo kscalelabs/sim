@@ -51,8 +51,8 @@ class StompyProCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -95,7 +95,7 @@ class StompyProCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 20  # 100hz
+        decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz

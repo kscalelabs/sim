@@ -1,0 +1,181 @@
+<mujoco model="k-bot">
+  <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true"/>
+  <default>
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01"/>
+    <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2"/>
+    <motor ctrllimited="true"/>
+    <equality solref="0.001 2"/>
+    <default class="visualgeom">
+      <geom material="visualgeom" condim="1" contype="0" conaffinity="0"/>
+    </default>
+  </default>
+  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81"/>
+  <asset>
+    <mesh name="body_base" file="body_base.STL"/>
+    <mesh name="R_buttock" file="R_buttock.STL"/>
+    <mesh name="R_leg" file="R_leg.STL"/>
+    <mesh name="R_thigh" file="R_thigh.STL"/>
+    <mesh name="R_calf" file="R_calf.STL"/>
+    <mesh name="R_foot" file="R_foot.STL"/>
+    <mesh name="L_buttock" file="L_buttock.STL"/>
+    <mesh name="L_hip" file="L_hip.STL"/>
+    <mesh name="L_thigh" file="L_thigh.STL"/>
+    <mesh name="L_calf" file="L_calf.STL"/>
+    <mesh name="L_foot" file="L_foot.STL"/>
+    <mesh name="R_clav" file="R_clav.STL"/>
+    <mesh name="R_scapula" file="R_scapula.STL"/>
+    <mesh name="R_uarm" file="R_uarm.STL"/>
+    <mesh name="R_farm" file="R_farm.STL"/>
+    <mesh name="R_finger" file="R_finger.STL"/>
+    <mesh name="L_clav" file="L_clav.STL"/>
+    <mesh name="L_scapula" file="L_scapula.STL"/>
+    <mesh name="L_uarm" file="L_uarm.STL"/>
+    <mesh name="L_farm" file="L_farm.STL"/>
+    <mesh name="L_finger" file="L_finger.STL"/>
+    <texture name="texplane" type="2d" builtin="checker" rgb1=".0 .0 .0" rgb2=".8 .8 .8" width="100" height="108"/>
+    <material name="matplane" reflectance="0." texture="texplane" texrepeat="1 1" texuniform="true"/>
+    <material name="visualgeom" rgba="0.5 0.9 0.2 1"/>
+  </asset>
+  <worldbody>
+    <geom name="ground" type="plane" pos="0.001 0 0" quat="1 0 0 0" material="matplane" condim="1" conaffinity="15" size="0 0 1"/>
+    <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
+    <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false"/>
+    <body name="root" pos="0 0 0" quat="0.0 0.0 0 1">
+      <freejoint name="root"/>
+      <!-- <camera name="front" pos="0 -3 1" xyaxes="1 0 0 0 1 2" mode="trackcom"/> -->
+      <!-- <camera name="side" pos="-2.893 -1.330 0.757" xyaxes="0.405 -0.914 0.000 0.419 0.186 0.889" mode="trackcom"/> -->
+      <site name="imu" size="0.01" pos="0 0 0.35" rgba="1 0 0 1"/>
+      <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="body_base" class="visualgeom"/>
+      <geom type="mesh" rgba="0.752941 0.752941 0.752941 1" mesh="body_base"/>
+      <geom pos="0.000261964 -0.255 0.450056" quat="0 0 0.707107 0.707107" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_clav" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_clav" pos="0.000261964 -0.255 0.450056" quat="0 0 0.707107 0.707107"/>
+      <geom pos="0.000261964 -0.255 0.450056" quat="-0.5 -0.5 0.5 0.5" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_scapula" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_scapula" pos="0.000261964 -0.255 0.450056" quat="-0.5 -0.5 0.5 0.5"/>
+      <geom pos="1.19644e-05 -0.255 0.336056" quat="-0.499732 -0.500268 0.499732 -0.500268" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_uarm" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_uarm" pos="1.19644e-05 -0.255 0.336056" quat="-0.499732 -0.500268 0.499732 -0.500268"/>
+      <geom pos="-0.00348803 -0.255004 0.220556" quat="0 0 0.707107 -0.707107" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_farm" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_farm" pos="-0.00348803 -0.255004 0.220556" quat="0 0 0.707107 -0.707107"/>
+      <geom pos="0.000511968 -0.255004 0.0565563" quat="-0.499732 -0.500268 0.499732 -0.500268" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_finger" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_finger" pos="0.000511968 -0.255004 0.0565563" quat="-0.499732 -0.500268 0.499732 -0.500268"/>
+      <geom pos="0 0.255 0.45" quat="0.707107 0 0 -0.707107" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_clav" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_clav" pos="0 0.255 0.45" quat="0.707107 0 0 -0.707107"/>
+      <geom pos="0 0.255 0.45" quat="0 1 0 0" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_scapula" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_scapula" pos="0 0.255 0.45" quat="0 1 0 0"/>
+      <geom pos="1.19644e-05 0.255 0.336056" quat="-0.499732 0.500268 0.499732 0.500268" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_uarm" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_uarm" pos="1.19644e-05 0.255 0.336056" quat="-0.499732 0.500268 0.499732 0.500268"/>
+      <geom pos="1.19644e-05 0.255 0.220056" quat="-0.707107 0.707107 0 0" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_farm" class="visualgeom"/>
+      <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_farm" pos="1.19644e-05 0.255 0.220056" quat="-0.707107 0.707107 0 0"/>
+      <geom pos="1.19644e-05 0.255 0.0560563" quat="-0.707107 0 0.707107 0" type="mesh" rgba="1 1 1 1" mesh="L_finger" class="visualgeom"/>
+      <geom type="mesh" rgba="1 1 1 1" mesh="L_finger" pos="1.19644e-05 0.255 0.0560563" quat="-0.707107 0 0.707107 0"/>
+        <body name="L_buttock" pos="0 0.1572 0" quat="0.5 0.5 -0.5 -0.5">
+        <inertial pos="0.00251607 1.91492e-09 0.00298062" quat="-7.736e-06 0.70507 7.78063e-06 0.709138" mass="0.717874" diaginertia="0.00128258 0.000912889 0.00079506"/>
+        <joint name="L_hip_y" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14"/>
+        <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_buttock" class="visualgeom"/>
+        <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_buttock" contype="0" conaffinity="0" group="1" density="0"/>
+        <body name="L_hip">
+          <inertial pos="-0.000667769 -0.0912836 0.00207386" quat="0.59591 0.405023 -0.396195 0.569102" mass="0.833768" diaginertia="0.001426 0.00134341 0.000916057"/>
+          <joint name="L_hip_x" pos="0 0 0" axis="0 0 1" range="-2.093 0.523"/>
+          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_hip" class="visualgeom"/>
+          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_hip" contype="0" conaffinity="0" group="1" density="0"/>
+          <body name="L_thigh" pos="0 -0.13525 0" quat="0.5 0.5 0.5 0.5">
+            <inertial pos="-0.153001 -9.16714e-07 -0.00195251" quat="3.95977e-05 0.69352 -1.86868e-05 0.720437" mass="0.798828" diaginertia="0.0022681 0.00171269 0.000928191"/>
+            <joint name="L_hip_z" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14"/>
+            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_thigh" class="visualgeom"/>
+            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_thigh" contype="0" conaffinity="0" group="1" density="0"/>
+            <body name="L_calf" pos="-0.16475 0 0.0065" quat="0.496236 -0.496236 0.503736 0.503736">
+              <inertial pos="0.00209423 0.127652 -0.000719675" quat="0.710008 0.70221 -0.0297336 -0.043664" mass="1.01528" diaginertia="0.00574933 0.00538696 0.000595192"/>
+              <joint name="L_knee" pos="0 0 0" axis="-0.999888 0.0149983 0" range="-1.919 1.919"/>
+              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_calf" class="visualgeom"/>
+              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_calf" contype="0" conaffinity="0" group="1" density="0"/>
+              <body name="L_foot" pos="0 0.300034 0" quat="0.707087 0.707087 -0.00530285 -0.00530285">
+                <inertial pos="-0.00368888 -0.0203246 -0.0179364" quat="0.499681 0.493804 -0.509643 0.49673" mass="0.550461" diaginertia="0.00195795 0.00178506 0.000241454"/>
+                <joint name="L_ankle_y" pos="0 0 0" axis="-1 0 0" range="-0.698 0.698"/>
+                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_foot" class="visualgeom"/>
+                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_foot"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="R_buttock" pos="0.00525 -0.1572 0" quat="0.706974 -0.706974 0.0137161 0.0137161">
+        <inertial pos="-0.00819709 0.000318209 0.00252305" quat="0.999807 -4.95315e-05 -0.00298434 -0.0193974" mass="0.716813" diaginertia="0.00128072 0.000911559 0.000793901"/>
+        <joint name="R_hip_y" pos="0 0 0" axis="0 0 1" range="-3.14 3.14"/>
+        <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_buttock" class="visualgeom"/>
+        <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_buttock" contype="0" conaffinity="0" group="1" density="0"/>
+        <body name="R_leg">
+          <inertial pos="-0.00346046 0.0922193 -0.000673094" quat="0.703611 0.691273 0.12862 0.102616" mass="0.827134" diaginertia="0.00142182 0.00134115 0.000913515"/>
+          <joint name="R_hip_x" pos="0 0 0" axis="0.999247 -0.0387878 0" range="-2.093 0.523"/>
+          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_leg" class="visualgeom"/>
+          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_leg" contype="0" conaffinity="0" group="1" density="0"/>
+          <body name="R_thigh" pos="0 0.135352 0" quat="0.693258 0 0 -0.72069">
+            <inertial pos="-0.152975 9.16615e-07 -0.0019231" quat="2.25778e-05 0.693615 -2.03251e-05 0.720346" mass="0.797423" diaginertia="0.00226302 0.00170899 0.000926458"/>
+            <joint name="R_hip_z" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14"/>
+            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_thigh" class="visualgeom"/>
+            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_thigh" contype="0" conaffinity="0" group="1" density="0"/>
+            <body name="R_calf" pos="-0.16475 0 0.0065" quat="0.502908 0.502908 -0.497075 0.497075">
+              <inertial pos="-0.00221219 0.128164 -0.00158119" quat="0.709728 0.702426 0.0212983 0.0492936" mass="1.01514" diaginertia="0.00574895 0.00538799 0.000594268"/>
+              <joint name="R_knee" pos="0 0 0" axis="-0.999932 -0.0116659 0" range="-1.919 1.919"/>
+              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_calf" class="visualgeom"/>
+              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_calf" contype="0" conaffinity="0" group="1" density="0"/>
+              <body name="R_foot" pos="0 0.30002 0" quat="0.00412458 0.00412458 -0.707095 -0.707095">
+                <inertial pos="-0.00369306 -0.0204478 0.0179804" quat="0.509645 0.496729 -0.499683 0.493801" mass="0.549122" diaginertia="0.00195788 0.00178506 0.000241376"/>
+                <joint name="R_ankle_y" pos="0 0 0" axis="-1 0 0" range="-0.698 0.698"/>
+                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_foot" class="visualgeom"/>
+                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="R_foot"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor name="L_hip_y" joint="L_hip_y" ctrllimited="true" ctrlrange="-250 250" gear="1"/>
+    <motor name="L_hip_x" joint="L_hip_x" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="L_hip_z" joint="L_hip_z" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="L_knee" joint="L_knee" ctrllimited="true" ctrlrange="-250 250" gear="1"/>
+    <motor name="L_ankle_y" joint="L_ankle_y" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="R_hip_y" joint="R_hip_y" ctrllimited="true" ctrlrange="-250 250" gear="1"/>
+    <motor name="R_hip_x" joint="R_hip_x" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="R_hip_z" joint="R_hip_z" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+    <motor name="R_knee" joint="R_knee" ctrllimited="true" ctrlrange="-250 250" gear="1"/>
+    <motor name="R_ankle_y" joint="R_ankle_y" ctrllimited="true" ctrlrange="-200 200" gear="1"/>
+  </actuator>
+  <sensor>
+    <actuatorpos name="R_hip_y_p" actuator="R_hip_y" user="13"/>
+    <actuatorpos name="R_hip_x_p" actuator="R_hip_x" user="13"/>
+    <actuatorpos name="R_hip_z_p" actuator="R_hip_z" user="13"/>
+    <actuatorpos name="R_knee_p" actuator="R_knee" user="13"/>
+    <actuatorpos name="R_ankle_y_p" actuator="R_ankle_y" user="13"/>
+    <actuatorpos name="L_hip_y_p" actuator="L_hip_y" user="13"/>
+    <actuatorpos name="L_hip_x_p" actuator="L_hip_x" user="13"/>
+    <actuatorpos name="L_hip_z_p" actuator="L_hip_z" user="13"/>
+    <actuatorpos name="L_knee_p" actuator="L_knee" user="13"/>
+    <actuatorpos name="L_ankle_y_p" actuator="L_ankle_y" user="13"/>
+    <actuatorvel name="R_hip_y_v" actuator="R_hip_y" user="13"/>
+    <actuatorvel name="R_hip_x_v" actuator="R_hip_x" user="13"/>
+    <actuatorvel name="R_hip_z_v" actuator="R_hip_z" user="13"/>
+    <actuatorvel name="R_knee_v" actuator="R_knee" user="13"/>
+    <actuatorvel name="R_ankle_y_v" actuator="R_ankle_y" user="13"/>
+    <actuatorvel name="L_hip_y_v" actuator="L_hip_y" user="13"/>
+    <actuatorvel name="L_hip_x_v" actuator="L_hip_x" user="13"/>
+    <actuatorvel name="L_hip_z_v" actuator="L_hip_z" user="13"/>
+    <actuatorvel name="L_knee_v" actuator="L_knee" user="13"/>
+    <actuatorvel name="L_ankle_y_v" actuator="L_ankle_y" user="13"/>
+    <actuatorfrc name="R_hip_y_f" actuator="R_hip_y" user="13" noise="0.001"/>
+    <actuatorfrc name="R_hip_x_f" actuator="R_hip_x" user="13" noise="0.001"/>
+    <actuatorfrc name="R_hip_z_f" actuator="R_hip_z" user="13" noise="0.001"/>
+    <actuatorfrc name="R_knee_f" actuator="R_knee" user="13" noise="0.001"/>
+    <actuatorfrc name="R_ankle_y_f" actuator="R_ankle_y" user="13" noise="0.001"/>
+    <actuatorfrc name="L_hip_y_f" actuator="L_hip_y" user="13" noise="0.001"/>
+    <actuatorfrc name="L_hip_x_f" actuator="L_hip_x" user="13" noise="0.001"/>
+    <actuatorfrc name="L_hip_z_f" actuator="L_hip_z" user="13" noise="0.001"/>
+    <actuatorfrc name="L_knee_f" actuator="L_knee" user="13" noise="0.001"/>
+    <actuatorfrc name="L_ankle_y_f" actuator="L_ankle_y" user="13" noise="0.001"/>
+    <framequat name="orientation" objtype="site" noise="0.001" objname="imu"/>
+    <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9"/>
+  </sensor>
+  <keyframe>
+    <key name="default" qpos="0 0 0.63 1. 0.0 0.0 0.0 -0.23 0.0 0.0 -0.441 0.258 -0.23 0.0 0.0 -0.441 -0.258"/>
+  </keyframe>
+</mujoco>
