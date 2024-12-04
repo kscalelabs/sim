@@ -1,6 +1,4 @@
 """
-Difference setup
-python sim/play.py --task mini_ppo --sim_device cpu
 python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment gpr
 python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment zeroth
 """
@@ -30,7 +28,6 @@ class Sim2simCfg:
     decimation: int = 10
     tau_factor: float = 3
     cycle_time: float = 0.4
-
 
 
 def handle_keyboard_input() -> None:
@@ -216,7 +213,7 @@ def run_mujoco(
         total_speed += speed
         step_count += 1
 
-        # 1000hz -> 50hz
+        # 1000hz -> Nhz
         if count_lowlevel % cfg.decimation == 0:
             # Convert sim coordinates to policy coordinates
             cur_pos_obs = q - default
@@ -311,7 +308,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = .4, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "gpr":
