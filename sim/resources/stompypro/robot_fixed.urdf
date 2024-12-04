@@ -117,7 +117,7 @@
     <child
       link="R_buttock" />
     <axis
-      xyz="0 0 1" />
+      xyz="0 0 -1" />
     <limit effort="250" lower="-3.14" upper="3.14" velocity="10" />
       <dynamics damping="0" friction="0" />
   </joint>
@@ -172,7 +172,7 @@
     <child
       link="R_leg" />
     <axis
-      xyz="0.999247470344691 -0.0387877945974834 0" />
+      xyz="1 0 0" />
     <limit effort="100" lower="-2.093" upper="0.523" velocity="10" />
         <dynamics damping="0" friction="0" />
   </joint>
@@ -282,8 +282,8 @@
     <child
       link="R_calf" />
     <axis
-      xyz="-0.999931951391002 -0.0116658727656092 0" />
-    <limit effort="250" lower="-1.919" upper="1.919" velocity="10" />
+      xyz="1 0 0" />
+    <limit effort="250" lower="0" upper="1.919" velocity="10" />
         <dynamics damping="0" friction="0" />
   </joint>
   <link
@@ -337,8 +337,8 @@
     <child
       link="R_foot" />
     <axis
-      xyz="-1 0 0" />
-    <limit effort="100" lower="-0.398" upper="0.398" velocity="10" />
+      xyz="1 0 0" />
+    <limit effort="100" lower="-0.498" upper="0.498" velocity="10" />
     <dynamics damping="0" friction="0.1" />
   </joint>
   <link
@@ -557,8 +557,8 @@
     <child
       link="L_calf" />
     <axis
-      xyz="-0.999887518980808 0.0149983127852693 0" />
-    <limit effort="250" lower="-1.919" upper="1.919" velocity="10" />
+      xyz="-1 0 0" />
+    <limit effort="250" lower="-1.919" upper="0" velocity="10" />
         <dynamics damping="0" friction="0" />
   </joint>
   <link
@@ -612,7 +612,7 @@
     <child
       link="L_foot" />
     <axis
-      xyz="-1 0 0" />
+      xyz="1 0 0" />
     <limit effort="100" lower="-0.498" upper="0.498" velocity="10" />
         <dynamics damping="0" friction="0.1" />
   </joint>
