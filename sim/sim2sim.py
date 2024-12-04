@@ -7,6 +7,7 @@ python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stomp
 
 import math
 import os
+import types
 from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
@@ -69,10 +70,12 @@ class Sim2simCfg:
         self.kps = np.array(list(self.robot.stiffness().values()) + list(self.robot.stiffness().values()))
         self.kds = np.array(list(self.robot.damping().values()) + list(self.robot.damping().values()))
 
-        self.lin_vel = lin_vel
-        self.ang_vel = ang_vel
-        self.dof_pos = dof_pos
-        self.dof_vel = dof_vel
+        self.obs_scales = types.SimpleNamespace()
+        self.obs_scales.lin_vel = lin_vel
+        self.obs_scales.ang_vel = ang_vel
+        self.obs_scales.dof_pos = dof_pos
+        self.obs_scales.dof_vel = dof_vel
+        self.obs_scales.quat = np.array([0.0, 0.0, 0.0, 1.0])
 
         self.clip_observations = clip_observations
         self.clip_actions = clip_actions
@@ -186,42 +189,64 @@ class Controller:
     def __init__(self, cfg, policy_wrapper: PolicyWrapper):
         self.cfg = cfg
         self.policy = policy_wrapper
-        self.hist_obs: Deque = deque(maxlen=cfg.frame_stack)
-        self.target_q = np.zeros(cfg.num_actions, dtype=np.double)
-        self.action = np.zeros(cfg.num_actions, dtype=np.double)
-
+        
+        self.obs_history: Deque = deque(maxlen=cfg.frame_stack)
+        self.last_actions = np.zeros(cfg.num_actions, dtype=np.float32)
+        self.last_last_actions = np.zeros(cfg.num_actions, dtype=np.float32)
+        self.action = np.zeros(cfg.num_actions, dtype=np.float32)
+        
         # Initialize observation history
         for _ in range(cfg.frame_stack):
-            self.hist_obs.append(np.zeros([1, cfg.num_single_obs], dtype=np.double))
+            self.obs_history.append(np.zeros([1, cfg.num_single_obs], dtype=np.float32))
+        self.default_dof_pos = np.array(
+            [self.cfg.robot.default_standing()[joint_name] for joint_name in self.cfg.robot.all_joints()]
+        )
 
     def _process_observation(self, state: SimulationState, count: int) -> np.ndarray:
         """Process raw state into policy observation"""
         obs = np.zeros([1, self.cfg.num_single_obs], dtype=np.float32)
+        
+        phase = count * self.cfg.dt / self.cfg.cycle_time
+        
+        # Commands
+        commands = np.array([
+            self.x_vel_cmd * self.cfg.obs_scales.lin_vel,
+            self.y_vel_cmd * self.cfg.obs_scales.lin_vel,
+            self.yaw_vel_cmd * self.cfg.obs_scales.ang_vel
+        ])
 
-        # Extract euler angles
+        # Extract joint states
+        q = state.q[-self.cfg.num_actions:]
+        dq = state.dq[-self.cfg.num_actions:]
+
+        # Extract base states
         eu_ang = self._quat_to_euler(state.quat)
         eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
-        # Get relevant joint states
-        q = state.q[-self.cfg.num_actions :]
-        dq = state.dq[-self.cfg.num_actions :]
+        if count % 1000 == 0:
+            print("\nSim2sim Raw States:")
+            print(f"Raw Base Lin Vel: {state.base_lin_vel}")
+            print(f"Raw Base Ang Vel: {state.base_ang_vel}")
+            print(f"Raw DOF Pos: {state.q[-self.cfg.num_actions:]}")
+            print(f"Raw DOF Vel: {state.dq[-self.cfg.num_actions:]}")
 
-        # Convert default standing dictionary to array in correct order
-        default_standing = np.array(
-            [self.cfg.robot.default_standing()[joint_name] for joint_name in self.cfg.robot.all_joints()]
-        )
+            print("\nSim2sim Observation Components:")
+            print(f"Phase: sin={obs[0,0]:.3f}, cos={obs[0,1]:.3f}")
+            print(f"Commands: {obs[0,2:5]}")
+            print(f"Joint Positions: {obs[0,5:self.cfg.num_actions+5]}")
+            print(f"Joint Velocities: {obs[0,self.cfg.num_actions+5:2*self.cfg.num_actions+5]}")
+            print(f"Actions: {obs[0,2*self.cfg.num_actions+5:3*self.cfg.num_actions+5]}")
+            print(f"Base Angular Velocity: {obs[0,3*self.cfg.num_actions+5:3*self.cfg.num_actions+8]}")
+            print(f"Euler Angles: {obs[0,3*self.cfg.num_actions+8:3*self.cfg.num_actions+11]}")
 
-        # Fill observation vector
-        obs[0, 0] = math.sin(2 * math.pi * count * self.cfg.dt / self.cfg.cycle_time)
-        obs[0, 1] = math.cos(2 * math.pi * count * self.cfg.dt / self.cfg.cycle_time)
-        obs[0, 2] = self.x_vel_cmd * self.cfg.lin_vel
-        obs[0, 3] = self.y_vel_cmd * self.cfg.lin_vel
-        obs[0, 4] = self.yaw_vel_cmd * self.cfg.ang_vel
-        obs[0, 5 : (self.cfg.num_actions + 5)] = (q - default_standing) * self.cfg.dof_pos
-        obs[0, (self.cfg.num_actions + 5) : (2 * self.cfg.num_actions + 5)] = dq * self.cfg.dof_vel
-        obs[0, (2 * self.cfg.num_actions + 5) : (3 * self.cfg.num_actions + 5)] = self.action
-        obs[0, (3 * self.cfg.num_actions + 5) : (3 * self.cfg.num_actions + 5) + 3] = state.base_ang_vel
-        obs[0, (3 * self.cfg.num_actions + 5) + 3 : (3 * self.cfg.num_actions + 5) + 2 * 3] = eu_ang
+        obs[0, 0] = math.sin(2 * math.pi * phase)
+        obs[0, 1] = math.cos(2 * math.pi * phase)
+        obs[0, 2:5] = commands
+        obs[0, 5:(self.cfg.num_actions + 5)] = (q - self.default_dof_pos) * self.cfg.obs_scales.dof_pos
+        obs[0, (self.cfg.num_actions + 5):(2 * self.cfg.num_actions + 5)] = dq * self.cfg.obs_scales.dof_vel
+        obs[0, (2 * self.cfg.num_actions + 5):(3 * self.cfg.num_actions + 5)] = self.action
+        obs[0, (3 * self.cfg.num_actions + 5):(3 * self.cfg.num_actions + 5) + 3] = state.base_ang_vel
+        obs[0, (3 * self.cfg.num_actions + 5) + 3:(3 * self.cfg.num_actions + 5) + 2 * 3] = eu_ang
 
         return np.clip(obs, -self.cfg.clip_observations, self.cfg.clip_observations)
 
@@ -231,44 +256,60 @@ class Controller:
         x, y, z, w = quat
 
         # Roll (x-axis rotation)
-        t0 = +2.0 * (w * x + y * z)
-        t1 = +1.0 - 2.0 * (x * x + y * y)
-        roll_x = np.arctan2(t0, t1)
+        sinr_cosp = 2.0 * (w * x + y * z)
+        cosr_cosp = 1.0 - 2.0 * (x * x + y * y)
+        roll = np.arctan2(sinr_cosp, cosr_cosp)
 
         # Pitch (y-axis rotation)
-        t2 = +2.0 * (w * y - z * x)
-        t2 = np.clip(t2, -1.0, 1.0)
-        pitch_y = np.arcsin(t2)
+        sinp = 2.0 * (w * y - z * x)
+        pitch = np.arcsin(np.clip(sinp, -1.0, 1.0))
 
         # Yaw (z-axis rotation)
-        t3 = +2.0 * (w * z + x * y)
-        t4 = +1.0 - 2.0 * (y * y + z * z)
-        yaw_z = np.arctan2(t3, t4)
+        siny_cosp = 2.0 * (w * z + x * y)
+        cosy_cosp = 1.0 - 2.0 * (y * y + z * z)
+        yaw = np.arctan2(siny_cosp, cosy_cosp)
 
-        return np.array([roll_x, pitch_y, yaw_z])
+        return np.array([roll, pitch, yaw])
 
     def compute_action(self, state: SimulationState, count: int) -> np.ndarray:
         """Compute control action based on current state"""
+        # Update observation history
         obs = self._process_observation(state, count)
-        self.hist_obs.append(obs)
+        self.obs_history.append(obs)
 
-        # Prepare policy input
+        # Stack observations
         policy_input = np.zeros([1, self.cfg.num_observations], dtype=np.float32)
         for i in range(self.cfg.frame_stack):
-            policy_input[0, i * self.cfg.num_single_obs : (i + 1) * self.cfg.num_single_obs] = self.hist_obs[i][0, :]
+            policy_input[0, i * self.cfg.num_single_obs:(i + 1) * self.cfg.num_single_obs] = self.obs_history[i][0, :]
 
-        # Get policy output and update action
+        # Update action history
+        self.last_last_actions = self.last_actions.copy()
+        self.last_actions = self.action.copy()
+        
+        # Get policy output and scale
         self.action[:] = self.policy(policy_input)
         self.action = np.clip(self.action, -self.cfg.clip_actions, self.cfg.clip_actions)
-        self.target_q = self.action * self.cfg.action_scale
+        target_dof_pos = self.action * self.cfg.action_scale
+        
+        if count % 1000 == 0:
+            print("\nAction Computation:")
+            print(f"Raw Policy Output: {self.action}")
+            print(f"Target DOF Positions: {target_dof_pos}")
 
         # Compute PD control
-        q = state.q[-self.cfg.num_actions :]
-        dq = state.dq[-self.cfg.num_actions :]
+        q = state.q[-self.cfg.num_actions:]
+        dq = state.dq[-self.cfg.num_actions:]
         target_dq = np.zeros(self.cfg.num_actions, dtype=np.double)
 
+        # PD control with scaling
         tau = self._pd_control(
-            self.target_q, q, self.cfg.kps, target_dq, dq, self.cfg.kds, self.cfg.robot.default_standing()
+            target_dof_pos, 
+            q, 
+            self.cfg.kps, 
+            target_dq, 
+            dq, 
+            self.cfg.kds, 
+            self.cfg.robot.default_standing()
         )
 
         return np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)
@@ -277,7 +318,7 @@ class Controller:
         """PD control calculation"""
         # Convert default dictionary to array in correct order
         default = np.array([default_dict[joint_name] for joint_name in self.cfg.robot.all_joints()])
-        return kp * (target_q + default - q) - kd * dq
+        return kp * (target_q + default - q) + kd * (target_dq - dq)
 
 
 def run_simulation(cfg: Sim2simCfg, policy_path: str, command_mode: str = "fixed", legs_only: bool = False):
@@ -334,7 +375,7 @@ if __name__ == "__main__":
         sim_duration=60.0,
         dt=0.001,
         decimation=20,
-        cycle_time=0.4,
+        cycle_time=0.5,
         tau_factor=4.0,
     )
     run_simulation(cfg, args.load_model, args.command_mode)
