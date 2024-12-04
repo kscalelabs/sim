@@ -6,13 +6,11 @@
       <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
     </inertial>
   </link>
-  <!-- floating base for xml 
   <joint name="floating_base" type="fixed">
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="base"/>
     <child link="body1-part"/>
   </joint>
-  -->
   <link name="body1-part">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>

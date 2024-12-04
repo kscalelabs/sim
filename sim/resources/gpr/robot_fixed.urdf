@@ -1,12 +1,4 @@
 <robot name="gpr">
-  <link name="base">
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.001" />
-      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
-    </inertial>
-  </link>
-  
   <link name="body1-part">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
