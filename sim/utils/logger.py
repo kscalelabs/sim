@@ -32,7 +32,7 @@
 from collections import defaultdict
 from multiprocessing import Process, Value
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 
 
