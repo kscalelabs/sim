@@ -2,8 +2,7 @@
 """Play a trained policy in the environment.
 
 Run:
-    python sim/play.py --task g1 --log_h5
-    python sim/play.py --task stompymini --log_h5
+    python sim/play.py --task gpr --log_h5
 """
 import argparse
 import copy

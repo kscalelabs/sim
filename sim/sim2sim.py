@@ -1,8 +1,8 @@
 """
 Difference setup
 python sim/play.py --task mini_ppo --sim_device cpu
-python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompypro
-python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
+python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment gpr
+python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment zeroth
 """
 import argparse
 import math
@@ -316,7 +316,7 @@ if __name__ == "__main__":
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = np.random.uniform(0.1, 0.5), 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
-    if args.embodiment == "stompypro":
+    if args.embodiment == "gpr":
         policy_cfg.cycle_time = 0.4
         cfg = Sim2simCfg(
             sim_duration=10.0,
@@ -325,7 +325,7 @@ if __name__ == "__main__":
             tau_factor=4.0,
             cycle_time=policy_cfg.cycle_time,
         )
-    elif args.embodiment == "stompymicro":
+    elif args.embodiment == "zeroth":
         policy_cfg.cycle_time = 0.2
         cfg = Sim2simCfg(
             sim_duration=10.0,
