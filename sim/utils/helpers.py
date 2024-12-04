@@ -35,6 +35,7 @@ import copy
 import os
 import random
 from typing import Any, Tuple, Union
+from datetime import datetime
 
 import numpy as np
 
@@ -108,18 +109,38 @@ def parse_sim_params(args, cfg):
     return sim_params
 
 
-def get_load_path(root, load_run=-1, checkpoint=-1):
+def get_load_path(root, load_run: Union[int, str] = -1, checkpoint: Union[int, str] = -1):
     try:
         runs = os.listdir(root)
-        # TODO sort by date to handle change of month
-        runs.sort()
+        # Sort by datetime instead of alphabetically
+        def parse_run_time(run_name):
+            try:
+                return datetime.strptime(run_name[:14], "%b%d_%H-%M-%S")
+            except:
+                return datetime.min
+        runs.sort(key=parse_run_time)
+        
         if "exported" in runs:
             runs.remove("exported")
-        last_run = os.path.join(root, runs[-1])
-    except:
-        raise ValueError("No runs in this directory: " + root)
-    if load_run == -1:
-        load_run = last_run
+            
+        # Keep only runs with model files
+        runs = [run for run in runs if any("model" in file for file in os.listdir(os.path.join(root, run)))]
+        if not runs:
+            raise ValueError("No runs with model files in this directory: " + root)
+            
+    except Exception as e:
+        raise ValueError("Error accessing directory: " + root) from e
+
+    # Handle load_run selection
+    if isinstance(load_run, str) and load_run.lstrip('-').isdigit():
+        load_run = int(load_run)
+        
+    if isinstance(load_run, int):
+        try:
+            run_name = runs[load_run]
+            load_run = os.path.join(root, run_name)
+        except IndexError:
+            raise ValueError(f"Run index {load_run} out of range. Available runs: {len(runs)}")
     else:
         load_run = os.path.join(root, load_run)
 
