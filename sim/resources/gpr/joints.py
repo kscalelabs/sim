@@ -91,8 +91,8 @@ class Robot(Node):
     legs = Legs()
     # arms = Arms()
 
-    height = 0.63
-    rotation = [0.0, 0.0, 0, 1]
+    height = 1.06
+    rotation = [0, 0.7071, 0.7071, 0]
 
     @classmethod
     def isaac_to_mujoco_signs(cls) -> Dict[str, int]:
