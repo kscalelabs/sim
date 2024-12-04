@@ -78,7 +78,7 @@ def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa:
     Returns:
         None
     """
-    model_dir = os.environ.get("MODEL_DIR")
+    model_dir = os.environ.get("MODEL_DIR") or "sim/resources"
     mujoco_model_path = f"{model_dir}/{args.embodiment}/robot_calibration.xml"
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = cfg.sim_config.dt
