@@ -149,7 +149,7 @@ def play(args: argparse.Namespace) -> None:
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
-    for t in tqdm(range(args.max_iterations)):
+    for t in tqdm(range(train_cfg.runner.max_iterations)):
         actions = policy(obs.detach())
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
@@ -159,11 +159,21 @@ def play(args: argparse.Namespace) -> None:
 
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
 
-        print(f"Commands: {commands[0]}")
-        print(f"IMU: {obs[0, (3 * env.num_actions + 5) + 3 : (3 * env.num_actions + 5) + 2 * 3]}")
-        print(
-            f"Full reward: {rews} | Individual rewards: {{{', '.join(f'{k[4:]}: {float(v)}' for k, v in infos['episode'].items())}}}"
-        )
+        if t * env.cfg.control.decimation % 1000 == 0:
+            print("\nPlay.py Raw States:")
+            print(f"Raw Base Lin Vel: {env.base_lin_vel[0]}")
+            print(f"Raw Base Ang Vel: {env.base_ang_vel[0]}")
+            print(f"Raw DOF Pos: {env.dof_pos[0]}")
+            print(f"Raw DOF Vel: {env.dof_vel[0]}")
+
+            print("\nPlay.py Observation Components:")
+            print(f"Phase: sin={obs[0,0]:.3f}, cos={obs[0,1]:.3f}")
+            print(f"Commands: {obs[0,2:5]}")
+            print(f"Joint Positions: {obs[0,5:5+env.num_actions]}")  
+            print(f"Joint Velocities: {obs[0,5+env.num_actions:5+2*env.num_actions]}")
+            print(f"Actions: {obs[0,5+2*env.num_actions:5+3*env.num_actions]}")
+            print(f"Base Angular Velocity: {obs[0,5+3*env.num_actions:8+3*env.num_actions]}")
+            print(f"Euler Angles: {obs[0,8+3*env.num_actions:11+3*env.num_actions]}")
 
         if args.render:
             env.gym.fetch_results(env.sim, True)
