@@ -334,7 +334,8 @@ class StompyMicroEnv(LeggedRobot):
         """
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
-        return (quat_mismatch + orientation) / 2
+        reward = (quat_mismatch + orientation) / 2
+        return reward
 
     def _reward_feet_contact_forces(self):
         """Calculates the reward for keeping contact forces within a specified range. Penalizes
@@ -403,8 +404,10 @@ class StompyMicroEnv(LeggedRobot):
         ang_vel_error_exp = torch.exp(-ang_vel_error * 10)
 
         linear_error = 0.2 * (lin_vel_error + ang_vel_error)
+        
+        reward = (lin_vel_error_exp + ang_vel_error_exp) / 2.0 - linear_error
 
-        return (lin_vel_error_exp + ang_vel_error_exp) / 2.0 - linear_error
+        return reward
 
     def _reward_tracking_lin_vel(self):
         """Tracks linear velocity commands along the xy axes.
