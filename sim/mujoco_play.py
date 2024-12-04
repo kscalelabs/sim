@@ -64,9 +64,9 @@ class Sim2simCfg:
         self.cycle_time = cycle_time
 
         self.tau_factor = tau_factor
-        self.tau_limit = (
-            np.array(list(self.robot.effort().values()) + list(self.robot.effort().values())) * self.tau_factor
-        )
+        self.tau_limit = np.array(
+            list(self.robot.effort().values()) + list(self.robot.effort().values())
+        ) * self.tau_factor
         self.kps = np.array(list(self.robot.stiffness().values()) + list(self.robot.stiffness().values()))
         self.kds = np.array(list(self.robot.damping().values()) + list(self.robot.damping().values()))
 
@@ -75,7 +75,7 @@ class Sim2simCfg:
         self.obs_scales.ang_vel = ang_vel
         self.obs_scales.dof_pos = dof_pos
         self.obs_scales.dof_vel = dof_vel
-        self.obs_scales.quat = np.array([0.0, 0.0, 0.0, 1.0])
+        self.obs_scales.quat = 1.0
 
         self.clip_observations = clip_observations
         self.clip_actions = clip_actions
