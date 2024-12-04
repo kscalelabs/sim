@@ -1,24 +1,24 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
 
-from isaacgym.torch_utils import *  # isort:skip
-
 from sim.envs.base.legged_robot import LeggedRobot
-from sim.resources.gpr.joints import Robot
+from sim.resources.skeletonassem2.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
+from isaacgym.torch_utils import *  # isort: skip
+
 
 import torch  # isort:skip
 
 
-class GprFreeEnv(LeggedRobot):
-    """GprFreeEnv is a class that represents a custom environment for a legged robot.
+class SkeletonFreeEnv(LeggedRobot):
+    """StompyFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
-        cfg (LeggedRobotCfg): Configuration object for the legged robot.
+        cfg: Configuration object for the legged robot.
         sim_params: Parameters for the simulation.
-        physics_engine: Physics engine used in the simulation.
+        physics_engine: Physics engin e used in the simulation.
         sim_device: Device used for the simulation.
         headless: Flag indicating whether the simulation should be run in headless mode.
 
@@ -57,6 +57,7 @@ class GprFreeEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Robot.legs.left.joints_motors():
+            print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
@@ -225,9 +226,9 @@ class GprFreeEnv(LeggedRobot):
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
-                q,  # 12D
-                dq,  # 12D
-                self.actions,  # 12D
+                q,  # 20D
+                dq,  # 20D
+                self.actions,  # 20D
                 self.base_ang_vel * self.obs_scales.ang_vel,  # 3
                 self.base_euler_xyz * self.obs_scales.quat,  # 3
             ),
@@ -244,6 +245,7 @@ class GprFreeEnv(LeggedRobot):
                 * self.obs_scales.height_measurements
             )
             self.privileged_obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
+
         if self.add_noise:
             obs_now = obs_buf.clone() + torch.randn_like(obs_buf) * self.noise_scale_vec * self.cfg.noise.noise_level
         else:
@@ -275,7 +277,7 @@ class GprFreeEnv(LeggedRobot):
 
     def _reward_feet_distance(self):
         """Calculates the reward based on the distance between the feet. Penilize feet get close to each other or too far away."""
-        foot_pos = self.rigid_state[:, self.feet_indices, :2]
+        foot_pos = self.rigid_state[:, self.feet_indices, :2]     
         foot_dist = torch.norm(foot_pos[:, 0, :] - foot_pos[:, 1, :], dim=1)
         fd = self.cfg.rewards.min_dist
         max_df = self.cfg.rewards.max_dist
@@ -313,10 +315,11 @@ class GprFreeEnv(LeggedRobot):
         stance_mask = self._get_gait_phase()
         self.contact_filt = torch.logical_or(torch.logical_or(contact, stance_mask), self.last_contacts)
         self.last_contacts = contact
+        
         first_contact = (self.feet_air_time > 0.0) * self.contact_filt
         self.feet_air_time += self.dt
         air_time = self.feet_air_time.clamp(0, 0.5) * first_contact
-        self.feet_air_time *= ~self.contact_filt
+        self.feet_air_time = ~self.contact_filt #*feet_air_time_combined
         return air_time.sum(dim=1)
 
     def _reward_feet_contact_number(self):
@@ -325,7 +328,7 @@ class GprFreeEnv(LeggedRobot):
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
         stance_mask = self._get_gait_phase()
-        reward = torch.where(contact == stance_mask, 1.0, -0.3)
+        reward = torch.where(contact == stance_mask, 1, -0.3)
         return torch.mean(reward, dim=1)
 
     def _reward_orientation(self):
@@ -334,8 +337,7 @@ class GprFreeEnv(LeggedRobot):
         """
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
-
-        return (quat_mismatch + orientation) / 2.0
+        return (quat_mismatch + orientation) / 2
 
     def _reward_feet_contact_forces(self):
         """Calculates the reward for keeping contact forces within a specified range. Penalizes
@@ -353,8 +355,10 @@ class GprFreeEnv(LeggedRobot):
         on penalizing deviation in yaw and roll directions. Excludes yaw and roll from the main penalty.
         """
         joint_diff = self.dof_pos - self.default_joint_pd_target
-        left_yaw_roll = joint_diff[:, [self.legs_joints["left_hip_roll"], self.legs_joints["left_hip_yaw"]]]
-        right_yaw_roll = joint_diff[:, [self.legs_joints["right_hip_roll"], self.legs_joints["right_hip_yaw"]]]
+        #left_yaw_roll = joint_diff[:, [self.legs_joints["left_hip_roll"], self.legs_joints["left_hip_yaw"]]]
+        left_yaw_roll = joint_diff[:, [self.legs_joints["left_hip_roll"], self.legs_joints["left_hip_pitch"]]]
+        #right_yaw_roll = joint_diff[:, [self.legs_joints["right_hip_roll"], self.legs_joints["right_hip_yaw"]]]
+        right_yaw_roll = joint_diff[:, [self.legs_joints["right_hip_roll"], self.legs_joints["right_hip_pitch"]]]
         yaw_roll = torch.norm(left_yaw_roll, dim=1) + torch.norm(right_yaw_roll, dim=1)
         yaw_roll = torch.clamp(yaw_roll - 0.1, 0, 50)
 
@@ -366,6 +370,11 @@ class GprFreeEnv(LeggedRobot):
         of its feet when they are in contact with the ground.
         """
         stance_mask = self._get_gait_phase()
+
+        #print("feet indicies:")        
+        #print(self.feet_indices)
+        #print("stance mask:")
+        #print(stance_mask)
         measured_heights = torch.sum(self.rigid_state[:, self.feet_indices, 2] * stance_mask, dim=1) / torch.sum(
             stance_mask, dim=1
         )

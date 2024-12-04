@@ -1,16 +1,16 @@
-"""Defines the environment configuration for the Getting up task"""
+"""Defines the environment configuration for the walking task"""
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.gpr.joints import Robot
+from sim.resources.skeletonassem2.joints import Robot
 
-NUM_JOINTS = len(Robot.all_joints())
+NUM_JOINTS = len(Robot.all_joints())  # 20
 
 
-class GprCfg(LeggedRobotCfg):
+class SkeletonCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
@@ -33,26 +33,26 @@ class GprCfg(LeggedRobotCfg):
         torque_limit = 0.85
 
     class asset(LeggedRobotCfg.asset):
-        name = "gpr"
-
+        name = "skeletonassem2"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["L_foot", "R_foot"]
-        knee_name = ["L_calf", "R_calf"]
-        imu_name = "imu_link"
+        #foot_name = ["LLEG_AnklePitch", "RLEG_AnklePitch"]
+        foot_name = ["Foot", "Foot_2"]
+        knee_name = ["Shin", "Shin_2"]
+        #knee_name = ["LLEG_KneePitch", "RLEG_KneePitch"]
 
-        termination_height = 0.2
-        default_feet_height = 0.0
+        termination_height = 0.24
+        default_feet_height = 0.03
 
         penalize_contacts_on = []
-        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"
-        # mesh_type = "trimesh"
+        # mesh_type = 'trimesh'
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -68,7 +68,7 @@ class GprCfg(LeggedRobotCfg):
         restitution = 0.0
 
     class noise:
-        add_noise = True
+        add_noise = False
         noise_level = 0.6  # scales other values
 
         class noise_scales:
@@ -81,12 +81,16 @@ class GprCfg(LeggedRobotCfg):
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, Robot.height]
+        # setting the right rotation
+        # quat_from_euler_xyz(torch.tensor(1.57), torch.tensor(0), torch.tensor(-1.57))
         rot = Robot.rotation
+
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
         default_positions = Robot.default_standing()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
+
 
     class control(LeggedRobotCfg.control):
         # PD Drive parameters:
@@ -106,7 +110,7 @@ class GprCfg(LeggedRobotCfg):
             num_threads = 10
             solver_type = 1  # 0: pgs, 1: tgs
             num_position_iterations = 4
-            num_velocity_iterations = 1
+            num_velocity_iterations = 0
             contact_offset = 0.01  # [m]
             rest_offset = 0.0  # [m]
             bounce_threshold_velocity = 0.1  # [m/s]
@@ -117,19 +121,19 @@ class GprCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
+        start_pos_noise = 0.0
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-3.0, 3.0]
-        push_robots = False
+        added_mass_range = [-1.0, 1.0]
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
         # dynamic randomization
-        action_noise = 0.02
         action_delay = 0.5
+        action_noise = 0.02
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -144,28 +148,39 @@ class GprCfg(LeggedRobotCfg):
             heading = [-3.14, 3.14]
 
     class rewards:
-        # quite important to keep it right
-        base_height_target = 0.63
-        min_dist = 0.2
+        base_height_target = 0.78
+        min_dist = 0.25
         max_dist = 0.5
+
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.06  # m
-
-        cycle_time = 0.25  # sec
+        target_feet_height = 0.05  # m
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 700  # forces above this value are penalized
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
+            # base pos
+            default_joint_pos = 0.5
+            orientation = 1
+            base_height = 0.2
+            base_acc = 0.2
+            # energy
+            action_smoothness = -0.002
+            torques = -1e-5
+            dof_vel = -5e-4
+            dof_acc = -1e-7
+            collision = -1.0
+
             # reference motion tracking
             joint_pos = 1.6
-            feet_clearance = 1.0
+            feet_clearance = 1.6
             feet_contact_number = 1.2
             # gait
-            feet_air_time = 1.0
+            feet_air_time = 1.6
             foot_slip = -0.05
             feet_distance = 0.2
             knee_distance = 0.2
@@ -177,18 +192,6 @@ class GprCfg(LeggedRobotCfg):
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 0.2
             track_vel_hard = 0.5
-
-            # base pos
-            default_joint_pos = 0.5
-            orientation = 1.
-            base_height = 0.2
-            base_acc = 0.2
-            # energy
-            action_smoothness = -0.002
-            torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
-            collision = -1.0
 
     class normalization:
         class obs_scales:
@@ -208,27 +211,27 @@ class GprCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class GprStandingCfg(GprCfg):
-    """Configuration class for the GPR humanoid robot."""
+class SkeletonStandingCfg(SkeletonCfg):
+    """Configuration class for the Legs humanoid robot."""
 
     class rewards:
-        # quite important to keep it right
-        base_height_target = 0.63
-        min_dist = 0.2
-        max_dist = 0.4
+        base_height_target = 0.78
+        min_dist = 0.25
+        max_dist = 0.5
+
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.14  # rad
+        target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.05  # m
-        cycle_time = 0.5  # sec
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
-        tracking_sigma = 5
-        max_contact_force = 500  # forces above this value are penalized
+        tracking_sigma = 5.0
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
             # base pos
-            default_joint_pos = 1.0
+            default_joint_pos = 0.5
             orientation = 1
             base_height = 0.2
             base_acc = 0.2
@@ -240,7 +243,7 @@ class GprStandingCfg(GprCfg):
             collision = -1.0
 
 
-class GprCfgPPO(LeggedRobotCfgPPO):
+class SkeletonCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -261,11 +264,11 @@ class GprCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 5001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "gpr"
+        experiment_name = "Skelebones"
         run_name = ""
         # load and resume
         resume = False
