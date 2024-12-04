@@ -241,6 +241,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     robot_effort = list(a_model.robot.effort().values())
     robot_stiffness = list(a_model.robot.stiffness().values())
     robot_damping = list(a_model.robot.damping().values())
+    default_standing = list(a_model.robot.default_standing().values())
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
@@ -248,6 +249,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
         "robot_effort": robot_effort,
         "robot_stiffness": robot_stiffness,
         "robot_damping": robot_damping,
+        "default_standing": default_standing,
         "num_actions": num_actions,
         "num_observations": num_observations,
     }, input_tensors
