@@ -1,4 +1,16 @@
 <robot name="gpr">
+  <link name="base">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <mass value="0.001" />
+      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
+    </inertial>
+  </link>
+  <joint name="floating_base" type="fixed">
+    <origin rpy="-1.57 3.14 0" xyz="0 0 0" />
+    <parent link="base" />
+    <child link="body1-part" />
+  </joint>
   <link name="body1-part">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -84,7 +96,7 @@
     <parent link="body1-part" />
     <child link="leg0_shell" />
     <limit effort="120" velocity="10" lower="-1.5707963" upper="1.5707963" />
-    <axis xyz="0 0 1" />
+    <axis xyz="0 0 -1" />
   </joint>
   <link name="leg0_shell">
     <visual>
@@ -113,7 +125,7 @@
     <parent link="body1-part" />
     <child link="leg0_shell_2" />
     <limit effort="120" velocity="10" lower="-1.5707963" upper="1.5707963" />
-    <axis xyz="0 0 1" />
+    <axis xyz="0 0 -1" />
   </joint>
   <link name="leg0_shell_2">
     <visual>
@@ -431,8 +443,8 @@
     <origin xyz="0.0 0.0342 -0.14250000009378214" rpy="1.5707963000000003 0.0 0.0" />
     <parent link="leg2_shell" />
     <child link="leg3_shell2" />
-    <limit effort="120" velocity="10" lower="0" upper="1.57" />
-    <axis xyz="0 0 -1" />
+    <limit effort="120" velocity="10" lower="-1.57" upper="0" />
+    <axis xyz="0 0 1" />
   </joint>
   <link name="leg3_shell2">
     <visual>
@@ -460,8 +472,8 @@
     <origin xyz="0.0 0.0342 -0.14250000009378214" rpy="1.5707963000000003 0.0 0.0" />
     <parent link="leg2_shell_2" />
     <child link="leg3_shell22" />
-    <limit effort="120" velocity="10" lower="-1.57" upper="0" />
-    <axis xyz="0 0 -1" />
+    <limit effort="120" velocity="10" lower="0" upper="1.57" />
+    <axis xyz="0 0 1" />
   </joint>
   <link name="leg3_shell22">
     <visual>
@@ -548,7 +560,7 @@
     <parent link="leg3_shell22" />
     <child link="foot3" />
     <limit effort="50" velocity="10" lower="-0.6981317" upper="0.6981317" />
-    <axis xyz="0 0 -1" />
+    <axis xyz="0 0 1" />
   </joint>
   <link name="foot3">
     <visual>

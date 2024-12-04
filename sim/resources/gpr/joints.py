@@ -92,7 +92,7 @@ class Robot(Node):
     # arms = Arms()
 
     height = 1.06
-    rotation = [0, 0.7071, 0.7071, 0]
+    rotation = [0, 0, 0, 1]
 
     @classmethod
     def isaac_to_mujoco_signs(cls) -> Dict[str, int]:
@@ -119,23 +119,23 @@ class Robot(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            Robot.legs.right.hip_pitch: -0.23,
+            Robot.legs.right.hip_pitch: 0.23,
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
-            Robot.legs.right.knee_pitch: -0.441,
-            Robot.legs.right.ankle_pitch: -0.195,
-            Robot.legs.left.hip_pitch: 0.23,
+            Robot.legs.right.knee_pitch: 0.441,
+            Robot.legs.right.ankle_pitch: 0.195,
+            Robot.legs.left.hip_pitch: -0.23,
             Robot.legs.left.hip_yaw: 0.0,
             Robot.legs.left.hip_roll: 0.0,
-            Robot.legs.left.knee_pitch: 0.441,
+            Robot.legs.left.knee_pitch: -0.441,
             Robot.legs.left.ankle_pitch: -0.195,
         }
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            Robot.legs.left.knee_pitch: {"lower": 0, "upper": 1.57},
-            Robot.legs.right.knee_pitch: {"lower": -1.57, "upper": 0}
+            Robot.legs.left.knee_pitch: {"lower": -1.57, "upper": 0},
+            Robot.legs.right.knee_pitch: {"lower": 0, "upper": 1.57}
         }
 
     # p_gains

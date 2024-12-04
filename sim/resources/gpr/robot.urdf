@@ -7,7 +7,7 @@
     </inertial>
   </link>
   <joint name="floating_base" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <origin rpy="-1.57 3.14 0" xyz="0 0 0"/>
     <parent link="base"/>
     <child link="body1-part"/>
   </joint>
@@ -96,7 +96,7 @@
     <parent link="body1-part"/>
     <child link="leg0_shell"/>
     <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 0 -1"/>
   </joint>
   <link name="leg0_shell">
     <visual>
@@ -125,7 +125,7 @@
     <parent link="body1-part"/>
     <child link="leg0_shell_2"/>
     <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963"/>
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 0 -1"/>
   </joint>
   <link name="leg0_shell_2">
     <visual>
@@ -444,7 +444,7 @@
     <parent link="leg2_shell"/>
     <child link="leg3_shell2"/>
     <limit effort="80" velocity="5" lower="-2.0943951" upper="2.0943951"/>
-    <axis xyz="0 0 -1"/>
+    <axis xyz="0 0 1"/>
   </joint>
   <link name="leg3_shell2">
     <visual>
@@ -473,7 +473,7 @@
     <parent link="leg2_shell_2"/>
     <child link="leg3_shell22"/>
     <limit effort="80" velocity="5" lower="-2.0943951" upper="2.0943951"/>
-    <axis xyz="0 0 -1"/>
+    <axis xyz="0 0 1"/>
   </joint>
   <link name="leg3_shell22">
     <visual>
@@ -560,7 +560,7 @@
     <parent link="leg3_shell22"/>
     <child link="foot3"/>
     <limit effort="80" velocity="5" lower="-0.6981317" upper="0.6981317"/>
-    <axis xyz="0 0 -1"/>
+    <axis xyz="0 0 1"/>
   </joint>
   <link name="foot3">
     <visual>

@@ -213,9 +213,9 @@ class GprStandingCfg(GprCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 0.63
+        base_height_target = 1.06
         min_dist = 0.2
-        max_dist = 0.4
+        max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.05  # m
