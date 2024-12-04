@@ -283,11 +283,11 @@ class Robot(Node):
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         legs = {
-            "hip_pitch": 10,
-            "hip_yaw": 10,
-            "hip_roll": 10,
-            "knee_pitch": 10,
-            "ankle_pitch": 10,
+            "hip_pitch": 5,
+            "hip_yaw": 5,
+            "hip_roll": 5,
+            "knee_pitch": 5,
+            "ankle_pitch": 5,
         }
 
         if cls.arms is None:

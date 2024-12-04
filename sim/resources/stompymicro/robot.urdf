@@ -1,3 +1,4 @@
+<?xml version="1.0" ?>
 <robot name="opus">
   <link name="base">
     <inertial>
@@ -124,7 +125,7 @@
     <origin xyz="-0.045750183202404315 -0.00032689585567163837 -0.10384882247403085" rpy="-1.570796353589792 -4.6410206566704915e-08 1.5707963000000003" />
     <parent link="Torso" />
     <child link="hip_yaw_right" />
-    <limit effort="2" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 -1" />
   </joint>
   <link name="hip_yaw_right">
@@ -153,7 +154,7 @@
     <origin xyz="0.045549819648300315 -0.0003268960191209584 -0.10384882247403085" rpy="1.5707963535897942 -4.6410206566704915e-08 1.5707963000000003" />
     <parent link="Torso" />
     <child link="hip_yaw_left" />
-    <limit effort="2" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 -1" />
   </joint>
   <link name="hip_yaw_left">
@@ -211,7 +212,7 @@
     <origin xyz="-0.02550000162875169 0.012500001141551514 0.019359999918275368" rpy="9.282041333256968e-08 1.5707963000000005 0.0" />
     <parent link="hip_yaw_right" />
     <child link="hip_roll_right" />
-    <limit effort="2" velocity="10" lower="-0.087266463" upper="1.5707963" />
+    <limit effort="80" velocity="5" lower="-0.087266463" upper="1.5707963" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="hip_roll_right">
@@ -240,7 +241,7 @@
     <origin xyz="-0.02550000297464769 -0.012500001 0.01936000008172467" rpy="-3.1415926071795863 -1.5707963 0.0" />
     <parent link="hip_yaw_left" />
     <child link="hip_roll_left" />
-    <limit effort="2" velocity="10" lower="-1.5707963" upper="0.087266463" />
+    <limit effort="80" velocity="5" lower="-1.5707963" upper="0.087266463" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="hip_roll_left">
@@ -327,7 +328,7 @@
     <origin xyz="0.0 0.06776001387753285 0.015000000939161373" rpy="-1.5707963 0.0 0.0" />
     <parent link="hip_roll_right" />
     <child link="knee_pitch_left" />
-    <limit effort="2" velocity="10" lower="-0.78539816" upper="0.78539816" />
+    <limit effort="80" velocity="5" lower="-0.78539816" upper="0.78539816" />
     <axis xyz="0 0 -1" />
   </joint>
   <link name="knee_pitch_left">
@@ -356,7 +357,7 @@
     <origin xyz="0.0 0.06776001212246713 0.014999999060838654" rpy="-1.5707963071795865 0.0 0.0" />
     <parent link="hip_roll_left" />
     <child link="knee_pitch_right" />
-    <limit effort="2" velocity="10" lower="-0.78539816" upper="0.78539816" />
+    <limit effort="80" velocity="5" lower="-0.78539816" upper="0.78539816" />
     <axis xyz="0 0 -1" />
   </joint>
   <link name="knee_pitch_right">
@@ -385,7 +386,7 @@
     <origin xyz="0.018825 0 0.02221" rpy="1.5707963 0 -1.5707963" />
     <parent link="knee_pitch_left" />
     <child link="right_knee_pitch_motor" />
-    <limit effort="2" velocity="10" lower="0" upper="1.0471976" />
+    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 -1" />
   </joint>
   <link name="right_knee_pitch_motor">
@@ -414,7 +415,7 @@
     <origin xyz="-0.018825 0 0.02221" rpy="-1.5707963 0 -1.5707963" />
     <parent link="knee_pitch_right" />
     <child link="left_knee_pitch_motor" />
-    <limit effort="2" velocity="10" lower="-1.0471976" upper="0" />
+    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 -1" />
   </joint>
   <link name="left_knee_pitch_motor">
@@ -443,7 +444,7 @@
     <origin xyz="0.0 0.07772000162667812 2.0870670330852548e-09" rpy="9.282041357749903e-08 0.0 0.0" />
     <parent link="right_knee_pitch_motor" />
     <child link="foot_right" />
-    <limit effort="2" velocity="10" lower="-1.0471976" upper="1.0471976" />
+    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="foot_right">
@@ -472,7 +473,7 @@
     <origin xyz="0.0 -0.07771999985844844 -0.000499991045895997" rpy="9.282041357749903e-08 0.0 0.0" />
     <parent link="left_knee_pitch_motor" />
     <child link="foot_left" />
-    <limit effort="2" velocity="10" lower="-1.0471976" upper="1.0471976" />
+    <limit effort="80" velocity="5" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="foot_left">
