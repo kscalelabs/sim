@@ -72,7 +72,7 @@
       <geom pos="1.19644e-05 0.255 0.0560563" quat="-0.707107 0 0.707107 0" type="mesh" rgba="1 1 1 1" mesh="L_finger" contype="1" conaffinity="0" density="0" group="1" />
       <geom type="mesh" rgba="1 1 1 1" mesh="L_finger" pos="1.19644e-05 0.255 0.0560563" quat="-0.707107 0 0.707107 0" class="visualgeom" />
       
-          <body name="L_buttock" pos="0 0.1572 0" quat="0.5 0.5 -0.5 -0.5">
+        <body name="L_buttock" pos="0 0.1572 0" quat="0.5 0.5 -0.5 -0.5">
         <inertial pos="0.00251607 1.91492e-09 0.00298062" quat="-7.736e-06 0.70507 7.78063e-06 0.709138" mass="0.717874" diaginertia="0.00128258 0.000912889 0.00079506" />
         <joint name="L_hip_y" pos="0 0 0" axis="-1 0 0" range="-3.14 3.14"  />
         <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="L_buttock" contype="1" conaffinity="0" density="0" group="1" />
