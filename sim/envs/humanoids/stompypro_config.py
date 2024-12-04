@@ -117,6 +117,7 @@ class StompyProCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
+        start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
