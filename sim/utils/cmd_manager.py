@@ -94,28 +94,24 @@ class CommandManager:
             if self.time - self.last_sample_time >= self.resampling_time:
                 self.last_sample_time = self.time
 
-                # Generate independent random commands for each environment
                 if self.env_cfg and self.env_cfg.commands.heading_command:
-                    new_commands = torch.tensor(
-                        [
+                    new_commands = torch.from_numpy(
+                        np.array([
                             np.random.uniform(*self.cmd_ranges["lin_vel_x"], size=self.num_envs),
                             np.random.uniform(*self.cmd_ranges["lin_vel_y"], size=self.num_envs),
                             np.zeros(self.num_envs),
                             np.random.uniform(*self.cmd_ranges["heading"], size=self.num_envs),
-                        ],
-                        device=self.device,
-                    ).t()  # Transpose to get shape [num_envs, 4]
+                        ]).T  # Transpose to get shape [num_envs, 4]
+                    ).to(self.device)
                 else:
                     new_commands = torch.tensor(
-                        [
+                        np.array([
                             np.random.uniform(*self.cmd_ranges["lin_vel_x"], size=self.num_envs),
                             np.random.uniform(*self.cmd_ranges["lin_vel_y"], size=self.num_envs),
                             np.random.uniform(*self.cmd_ranges["ang_vel_yaw"], size=self.num_envs),
                             np.zeros(self.num_envs),
-                        ],
-                        device=self.device,
-                    ).t()  # Transpose to get shape [num_envs, 4]
-
+                        ]).T  # Transpose to get shape [num_envs, 4]
+                    ).to(self.device)
                 self.commands = new_commands
 
         elif self.mode == CommandMode.KEYBOARD:
