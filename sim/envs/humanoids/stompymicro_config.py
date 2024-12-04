@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from sim.env import robot_urdf_path
+from sim.env import robot_urdf_path, robot_mjcf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
@@ -38,6 +38,7 @@ class StompyMicroCfg(LeggedRobotCfg):
     class asset(LeggedRobotCfg.asset):
         name = "stompymicro"
         file = str(robot_urdf_path(name, legs_only=Robot.legs_only))
+        file_xml = str(robot_mjcf_path(name, legs_only=Robot.legs_only))
 
         foot_name = ["foot_left", "foot_right"]
         knee_name = ["left_knee_pitch_motor", "right_knee_pitch_motor"]
