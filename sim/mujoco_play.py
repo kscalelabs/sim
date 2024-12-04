@@ -376,6 +376,6 @@ if __name__ == "__main__":
         dt=0.001,
         decimation=20,
         cycle_time=0.5,
-        tau_factor=4.0,
+        tau_factor=10.0,
     )
     run_simulation(cfg, args.load_model, args.command_mode)
