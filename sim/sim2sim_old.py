@@ -32,7 +32,6 @@ class Sim2simCfg:
     cycle_time: float = 0.4
 
 
-
 def handle_keyboard_input() -> None:
     global x_vel_cmd, y_vel_cmd, yaw_vel_cmd
 
@@ -216,7 +215,7 @@ def run_mujoco(
         total_speed += speed
         step_count += 1
 
-        # 1000hz -> 50hz
+        # 1000hz -> Nhz
         if count_lowlevel % cfg.decimation == 0:
             # Convert sim coordinates to policy coordinates
             cur_pos_obs = q - default
@@ -311,7 +310,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = .4, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "stompypro":
@@ -319,7 +318,7 @@ if __name__ == "__main__":
         cfg = Sim2simCfg(
             sim_duration=10.0,
             dt=0.001,
-            decimation=10,
+            decimation=4,
             tau_factor=4.0,
             cycle_time=policy_cfg.cycle_time,
         )

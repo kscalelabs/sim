@@ -128,7 +128,7 @@ class Robot(Node):
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
             Robot.legs.right.knee_pitch: 0.441,
-            Robot.legs.right.ankle_pitch: -0.195,
+            Robot.legs.right.ankle_pitch: 0.195,
             Robot.legs.left.hip_pitch: -0.23,
             Robot.legs.left.hip_yaw: 0.0,
             Robot.legs.left.hip_roll: 0.0,
