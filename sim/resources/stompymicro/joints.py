@@ -8,6 +8,7 @@ tree of the various joint names in the robot.
 import textwrap
 from abc import ABC
 from typing import Dict, List, Tuple, Union
+import math
 
 
 class Node(ABC):
@@ -90,18 +91,26 @@ class Arms(Node):
     left = LeftArm()
 
 
+def get_facing_direction_quaternion(angle_degrees: float) -> List[float]:
+    theta = angle_degrees * (math.pi/180)
+    half_theta = theta/2
+    return [0, 0, math.sin(half_theta), math.cos(half_theta)]
+
+
 class Robot(Node):
     height = 0.32
-    rotation = [0, 0, 0.707, 0.707]
-    legs_only = False  # TODO: add legs_only functionality
+    angle = 90  # 0?
+    rotation = get_facing_direction_quaternion(angle)
+    print(f"Rotation: {rotation}")
+
+    legs_only = False
 
     legs = Legs()
-    arms = Arms()
+    arms = Arms() if not legs_only else None
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
-        return {
-            # Legs
+        legs = {
             cls.legs.left.hip_pitch: 0.23,
             cls.legs.left.knee_pitch: -0.741,
             cls.legs.left.hip_yaw: 0,
@@ -112,7 +121,12 @@ class Robot(Node):
             cls.legs.right.ankle_pitch: 0.5,
             cls.legs.right.hip_yaw: 0,
             cls.legs.right.hip_roll: 0,
-            # Arms
+        }
+
+        if cls.arms is None:
+            return legs
+
+        arms = {
             cls.arms.left.shoulder_pitch: 0.0,
             cls.arms.left.shoulder_yaw: 0.0,
             cls.arms.left.elbow_yaw: 0.0,
@@ -120,158 +134,201 @@ class Robot(Node):
             cls.arms.right.shoulder_yaw: 0.0,
             cls.arms.right.elbow_yaw: 0.0,
         }
+        return {**legs, **arms}
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
-        return {
+        legs = {
             # Left Leg
-            Robot.legs.left.hip_pitch: {
+            cls.legs.left.hip_pitch: {
                 "lower": -1.5707963,
                 "upper": 1.5707963,
             },
-            Robot.legs.left.hip_yaw: {
+            cls.legs.left.hip_yaw: {
                 "lower": -1.5707963,
                 "upper": 0.087266463,
             },
-            Robot.legs.left.hip_roll: {
+            cls.legs.left.hip_roll: {
                 "lower": -0.78539816,
                 "upper": 0.78539816,
             },
-            Robot.legs.left.knee_pitch: {
+            cls.legs.left.knee_pitch: {
                 "lower": -1.0471976,
                 "upper": 0,
             },
-            Robot.legs.left.ankle_pitch: {
+            cls.legs.left.ankle_pitch: {
                 "lower": -1.5707963,
                 "upper": 1.5707963,
             },
             # Right Leg
-            Robot.legs.right.hip_pitch: {
+            cls.legs.right.hip_pitch: {
                 "lower": -1.5707963,
                 "upper": 1.5707963,
             },
-            Robot.legs.right.hip_yaw: {
+            cls.legs.right.hip_yaw: {
                 "lower": -0.087266463,
                 "upper": 1.5707963,
             },
-            Robot.legs.right.hip_roll: {
+            cls.legs.right.hip_roll: {
                 "lower": -0.78539816,
                 "upper": 0.78539816,
             },
-            Robot.legs.right.knee_pitch: {
+            cls.legs.right.knee_pitch: {
                 "lower": 0,
                 "upper": 1.0471976,
             },
-            Robot.legs.right.ankle_pitch: {
-                "lower": -1.5707963,
-                "upper": 1.5707963,
-            },
-            # Left Arm
-            Robot.arms.left.shoulder_pitch: {
-                "lower": -1.7453293,
-                "upper": 1.7453293,
-            },
-            Robot.arms.left.shoulder_yaw: {
-                "lower": -0.43633231,
-                "upper": 1.5707963,
-            },
-            Robot.arms.left.elbow_yaw: {
-                "lower": -1.5707963,
-                "upper": 1.5707963,
-            },
-            # Right Arm
-            Robot.arms.right.shoulder_pitch: {
-                "lower": -1.7453293,
-                "upper": 1.7453293,
-            },
-            Robot.arms.right.shoulder_yaw: {
-                "lower": -1.134464,
-                "upper": 0.87266463,
-            },
-            Robot.arms.right.elbow_yaw: {
+            cls.legs.right.ankle_pitch: {
                 "lower": -1.5707963,
                 "upper": 1.5707963,
             },
         }
 
+        if cls.arms is None:
+            return legs
+
+        arms = {
+            # Left Arm
+            cls.arms.left.shoulder_pitch: {
+                "lower": -1.7453293,
+                "upper": 1.7453293,
+            },
+            cls.arms.left.shoulder_yaw: {
+                "lower": -0.43633231,
+                "upper": 1.5707963,
+            },
+            cls.arms.left.elbow_yaw: {
+                "lower": -1.5707963,
+                "upper": 1.5707963,
+            },
+            # Right Arm
+            cls.arms.right.shoulder_pitch: {
+                "lower": -1.7453293,
+                "upper": 1.7453293,
+            },
+            cls.arms.right.shoulder_yaw: {
+                "lower": -1.134464,
+                "upper": 0.87266463,
+            },
+            cls.arms.right.elbow_yaw: {
+                "lower": -1.5707963,
+                "upper": 1.5707963,
+            },
+        }
+        return {**legs, **arms}
+
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
-        return {
+        legs = {
             "hip_pitch": 17.681462808698132,
             "hip_yaw": 17.681462808698132,
             "hip_roll": 17.681462808698132,
             "knee_pitch": 17.681462808698132,
             "ankle_pitch": 17.681462808698132,
+        }
+
+        if cls.arms is None:
+            return legs
+
+        arms = {
             "shoulder_pitch": 5.0,
             "shoulder_yaw": 3.75,
             "elbow_yaw": 3.5,
         }
+        return {**legs, **arms}
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
-        return {
+        legs = {
             "hip_pitch": 0.5354656169048285,
             "hip_yaw": 0.5354656169048285,
             "hip_roll": 0.5354656169048285,
             "knee_pitch": 0.5354656169048285,
             "ankle_pitch": 0.5354656169048285,
+        }
+
+        if cls.arms is None:
+            return legs
+
+        arms = {
             "shoulder_pitch": 0.3,
             "shoulder_yaw": 0.3,
             "elbow_yaw": 0.2,
         }
+        return {**legs, **arms}
 
     # pos_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
-        return {
+        legs = {
             "hip_pitch": 10,
             "hip_yaw": 10,
             "hip_roll": 10,
             "knee_pitch": 10,
             "ankle_pitch": 10,
+        }
+
+        if cls.arms is None:
+            return legs
+
+        arms = {
             "shoulder_pitch": 80,
             "shoulder_yaw": 80,
             "elbow_yaw": 80,
         }
+        return {**legs, **arms}
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
-        return {
+        legs = {
             "hip_pitch": 10,
             "hip_yaw": 10,
             "hip_roll": 10,
             "knee_pitch": 10,
             "ankle_pitch": 10,
+        }
+
+        if cls.arms is None:
+            return legs
+
+        arms = {
             "shoulder_pitch": 5,
             "shoulder_yaw": 5,
             "elbow_yaw": 5,
         }
+        return {**legs, **arms}
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
-        return {
+        legs = {
             "hip_pitch": 0.05,
             "hip_yaw": 0.05,
             "hip_roll": 0.05,
             "knee_pitch": 0.05,
             "ankle_pitch": 0.05,
+        }
+
+        if cls.arms is None:
+            return legs
+
+        arms = {
             "shoulder_pitch": 0.05,
             "shoulder_yaw": 0.05,
             "elbow_yaw": 0.05,
         }
+        return {**legs, **arms}
 
 
 def print_joints() -> None:
     joints = Robot.all_joints()
     assert len(joints) == len(set(joints)), "Duplicate joint names found!"
     print(Robot())
-    print(f"\nArms are {'enabled' if Robot.USE_ARMS else 'disabled'}")
+    print(f"\nArms are {'disabled' if Robot.legs_only else 'enabled'}")
     print(f"Number of joints: {len(joints)}")
 
 
 if __name__ == "__main__":
-    # python -m sim.Robot.joints
+    # python -m sim.resources.[robotname].joints
     print_joints()
