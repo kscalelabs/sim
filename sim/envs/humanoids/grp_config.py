@@ -37,8 +37,8 @@ class GprCfg(LeggedRobotCfg):
 
         file = str(robot_urdf_path(name))
 
-        foot_name = ["L_foot", "R_foot"]
-        knee_name = ["L_calf", "R_calf"]
+        foot_name = ["foot1", "foot3"]
+        knee_name = ["leg3_shell2", "leg3_shell22"]
         imu_name = "imu_link"
 
         termination_height = 0.2
@@ -219,7 +219,7 @@ class GprStandingCfg(GprCfg):
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.14  # rad
         target_feet_height = 0.05  # m
-        cycle_time = 0.5  # sec
+        cycle_time = 0.25  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
