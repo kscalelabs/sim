@@ -11,3 +11,5 @@ wandb
 tensorboard==2.14.0
 onnxscript
 # onnxruntime
+
+kinfer
