@@ -18,23 +18,22 @@ import cv2
 import h5py
 import numpy as np
 from isaacgym import gymapi
+from kinfer.export.pytorch import export_to_onnx
 from tqdm import tqdm
 
 # Local imports third
-from sim.env import run_dir
-from sim.envs import task_registry
-from sim.h5_logger import HDF5Logger
-from sim.model_export import ActorCfg, convert_model_to_onnx
-from sim.utils.helpers import get_args
-from sim.utils.logger import Logger
-
-import torch  # special case with isort: skip comment
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
-from sim.model_export import ActorCfg, get_actor_policy  # noqa: E402
+from sim.h5_logger import HDF5Logger
+from sim.model_export import (  # noqa: E402
+    ActorCfg,
+    convert_model_to_onnx,
+    get_actor_policy,
+)
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
-from kinfer.export.pytorch import export_to_onnx
+
+import torch  # special case with isort: skip comment
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +91,7 @@ def play(args: argparse.Namespace) -> None:
     # export policy as a onnx module (used to run it on web)
     if args.export_onnx:
         path = ppo_runner.load_path
-        embodiment = ppo_runner.cfg['experiment_name'].lower()
+        embodiment = ppo_runner.cfg["experiment_name"].lower()
         policy_cfg = ActorCfg(embodiment=embodiment)
 
         if embodiment == "stompypro":
@@ -101,18 +100,13 @@ def play(args: argparse.Namespace) -> None:
             policy_cfg.cycle_time = 0.2
         else:
             print(f"Specific policy cfg for {embodiment} not implemented")
-  
+
         actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
 
         # Merge policy_cfg and sim2sim_info into a single config object
         export_config = {**vars(policy_cfg), **sim2sim_info}
 
-        export_to_onnx(
-            actor_model,
-            input_tensors=input_tensors,
-            config=export_config,
-            save_path="kinfer_policy.onnx"
-        )
+        export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_policy.onnx")
         print("Exported policy as kinfer-compatible onnx to: ", path)
 
     # Prepare for logging
@@ -126,7 +120,7 @@ def play(args: argparse.Namespace) -> None:
         # Create directory for HDF5 files
         h5_dir = run_dir() / "h5_out" / args.task / now
         h5_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Get observation dimensions
         num_actions = env.num_dof
         obs_buffer = env.obs_buf.shape[1]
@@ -136,14 +130,16 @@ def play(args: argparse.Namespace) -> None:
         for env_idx in range(env_cfg.env.num_envs):
             h5_dir = run_dir() / "h5_out" / args.task / now / f"env_{env_idx}"
             h5_dir.mkdir(parents=True, exist_ok=True)
-            
-            h5_loggers.append(HDF5Logger(
-                data_name=f"{args.task}_env_{env_idx}",
-                num_actions=num_actions,
-                max_timesteps=env_steps_to_run,
-                num_observations=obs_buffer,
-                h5_out_dir=str(h5_dir)
-            ))
+
+            h5_loggers.append(
+                HDF5Logger(
+                    data_name=f"{args.task}_env_{env_idx}",
+                    num_actions=num_actions,
+                    max_timesteps=env_steps_to_run,
+                    num_observations=obs_buffer,
+                    h5_out_dir=str(h5_dir),
+                )
+            )
 
     if args.render:
         camera_properties = gymapi.CameraProperties()
@@ -228,27 +224,29 @@ def play(args: argparse.Namespace) -> None:
         if args.log_h5:
             # Extract the current observation
             for env_idx in range(env_cfg.env.num_envs):
-                h5_loggers[env_idx].log_data({
-                    "t": np.array([t * env.dt], dtype=np.float32),
-                    "2D_command": np.array(
-                        [
-                            np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
-                            np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
-                        ],
-                        dtype=np.float32,
-                    ),
-                    "3D_command": np.array(env.commands[env_idx, :3].cpu().numpy(), dtype=np.float32),
-                    "joint_pos": np.array(env.dof_pos[env_idx].cpu().numpy(), dtype=np.float32), 
-                    "joint_vel": np.array(env.dof_vel[env_idx].cpu().numpy(), dtype=np.float32),
-                    "prev_actions": prev_actions[env_idx].astype(np.float32),
-                    "curr_actions": actions[env_idx].astype(np.float32),
-                    "ang_vel": env.base_ang_vel[env_idx].cpu().numpy().astype(np.float32),
-                    "euler_rotation": env.base_euler_xyz[env_idx].cpu().numpy().astype(np.float32),
-                    "buffer": env.obs_buf[env_idx].cpu().numpy().astype(np.float32)
-                })
+                h5_loggers[env_idx].log_data(
+                    {
+                        "t": np.array([t * env.dt], dtype=np.float32),
+                        "2D_command": np.array(
+                            [
+                                np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
+                                np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
+                            ],
+                            dtype=np.float32,
+                        ),
+                        "3D_command": np.array(env.commands[env_idx, :3].cpu().numpy(), dtype=np.float32),
+                        "joint_pos": np.array(env.dof_pos[env_idx].cpu().numpy(), dtype=np.float32),
+                        "joint_vel": np.array(env.dof_vel[env_idx].cpu().numpy(), dtype=np.float32),
+                        "prev_actions": prev_actions[env_idx].astype(np.float32),
+                        "curr_actions": actions[env_idx].astype(np.float32),
+                        "ang_vel": env.base_ang_vel[env_idx].cpu().numpy().astype(np.float32),
+                        "euler_rotation": env.base_euler_xyz[env_idx].cpu().numpy().astype(np.float32),
+                        "buffer": env.obs_buf[env_idx].cpu().numpy().astype(np.float32),
+                    }
+                )
 
             prev_actions = actions
-    
+
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
             if num_episodes > 0:

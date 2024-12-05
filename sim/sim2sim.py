@@ -3,6 +3,7 @@
 Run:
     python sim/sim2sim.py --load_model examples/walking_policy.onnx --embodiment gpr
 """
+
 import argparse
 import math
 import os
@@ -15,14 +16,14 @@ import mujoco_viewer
 import numpy as np
 import onnxruntime as ort
 import pygame
-from scipy.spatial.transform import Rotation as R
 import torch
+from kinfer.export.pytorch import export_to_onnx
+from kinfer.inference.python import ONNXModel
+from model_export import ActorCfg, get_actor_policy
+from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 from sim.h5_logger import HDF5Logger
-from model_export import ActorCfg, get_actor_policy
-from kinfer.export.pytorch import export_to_onnx
-from kinfer.inference.python import ONNXModel
 
 
 @dataclass
@@ -32,7 +33,6 @@ class Sim2simCfg:
     decimation: int = 10
     tau_factor: float = 3
     cycle_time: float = 0.25
-
 
 
 def handle_keyboard_input() -> None:
@@ -186,7 +186,7 @@ def run_mujoco(
             num_actions=model_info["num_actions"],
             max_timesteps=stop_state_log,
             num_observations=model_info["num_observations"],
-            h5_out_dir=h5_out_dir
+            h5_out_dir=h5_out_dir,
         )
 
     # Initialize variables for tracking upright steps and average speed
@@ -246,27 +246,29 @@ def run_mujoco(
             hist_obs = policy_output["x.3"]
 
             target_q = positions
-            
+
             if log_h5:
-                logger.log_data({
-                    "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
-                    "2D_command": np.array(
-                        [
-                            np.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
-                            np.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
-                        ],
-                        dtype=np.float32,
-                    ),
-                    "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
-                    "joint_pos": cur_pos_obs.astype(np.float32),
-                    "joint_vel": cur_vel_obs.astype(np.float32),
-                    "prev_actions": prev_actions.astype(np.float32),
-                    "curr_actions": curr_actions.astype(np.float32),
-                    "ang_vel": omega.astype(np.float32),
-                    "euler_rotation": eu_ang.astype(np.float32),
-                    "buffer": hist_obs.astype(np.float32)
-                })
-                
+                logger.log_data(
+                    {
+                        "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
+                        "2D_command": np.array(
+                            [
+                                np.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
+                                np.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
+                            ],
+                            dtype=np.float32,
+                        ),
+                        "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
+                        "joint_pos": cur_pos_obs.astype(np.float32),
+                        "joint_vel": cur_vel_obs.astype(np.float32),
+                        "prev_actions": prev_actions.astype(np.float32),
+                        "curr_actions": curr_actions.astype(np.float32),
+                        "ang_vel": omega.astype(np.float32),
+                        "euler_rotation": eu_ang.astype(np.float32),
+                        "buffer": hist_obs.astype(np.float32),
+                    }
+                )
+
             prev_actions = curr_actions
 
         # Generate PD control
@@ -295,6 +297,7 @@ def run_mujoco(
 
     if log_h5:
         logger.close()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
@@ -342,12 +345,7 @@ if __name__ == "__main__":
         # Merge policy_cfg and sim2sim_info into a single config object
         export_config = {**vars(policy_cfg), **sim2sim_info}
         print(export_config)
-        export_to_onnx(
-            actor_model,
-            input_tensors=input_tensors,
-            config=export_config,
-            save_path="kinfer_test.onnx"
-        )
+        export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_test.onnx")
         policy = ONNXModel("kinfer_test.onnx")
 
     metadata = policy.get_metadata()

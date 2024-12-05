@@ -205,52 +205,6 @@ class Actor(nn.Module):
 
         return actions_scaled, actions, x
 
-def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
-    all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
-    weights = all_weights["model_state_dict"]
-    num_actor_obs = weights["actor.0.weight"].shape[1]
-    num_critic_obs = weights["critic.0.weight"].shape[1]
-    num_actions = weights["std"].shape[0]
-    actor_hidden_dims = [v.shape[0] for k, v in weights.items() if re.match(r"actor\.\d+\.weight", k)]
-    critic_hidden_dims = [v.shape[0] for k, v in weights.items() if re.match(r"critic\.\d+\.weight", k)]
-    actor_hidden_dims = actor_hidden_dims[:-1]
-    critic_hidden_dims = critic_hidden_dims[:-1]
-
-    ac_model = ActorCritic(num_actor_obs, num_critic_obs, num_actions, actor_hidden_dims, critic_hidden_dims)
-    ac_model.load_state_dict(weights)
-
-    a_model = Actor(ac_model.actor, cfg)
-
-    # Gets the model input tensors.
-    x_vel = torch.randn(1)
-    y_vel = torch.randn(1)
-    rot = torch.randn(1)
-    t = torch.randn(1)
-    dof_pos = torch.randn(a_model.num_actions)
-    dof_vel = torch.randn(a_model.num_actions)
-    prev_actions = torch.randn(a_model.num_actions)
-    imu_ang_vel = torch.randn(3)
-    imu_euler_xyz = torch.randn(3)
-    buffer = a_model.get_init_buffer()
-    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, imu_ang_vel, imu_euler_xyz, buffer)
-
-    jit_model = torch.jit.script(a_model)
-
-    # Add sim2sim metadata
-    robot_effort = list(a_model.robot.effort().values())
-    robot_stiffness = list(a_model.robot.stiffness().values())
-    robot_damping = list(a_model.robot.damping().values())
-    num_actions = a_model.num_actions
-    num_observations = a_model.num_observations
-
-    return a_model, {
-        "robot_effort": robot_effort,
-        "robot_stiffness": robot_stiffness,
-        "robot_damping": robot_damping,
-        "num_actions": num_actions,
-        "num_observations": num_observations,
-    }, input_tensors
-
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
     all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
@@ -281,24 +235,24 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     buffer = a_model.get_init_buffer()
     input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, imu_ang_vel, imu_euler_xyz, buffer)
 
-    jit_model = torch.jit.script(a_model)
-
     # Add sim2sim metadata
     robot_effort = list(a_model.robot.effort().values())
     robot_stiffness = list(a_model.robot.stiffness().values())
     robot_damping = list(a_model.robot.damping().values())
-    default_standing = list(a_model.robot.default_standing().values())
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
-    return a_model, {
-        "robot_effort": robot_effort,
-        "robot_stiffness": robot_stiffness,
-        "robot_damping": robot_damping,
-        "default_standing": default_standing,
-        "num_actions": num_actions,
-        "num_observations": num_observations,
-    }, input_tensors
+    return (
+        a_model,
+        {
+            "robot_effort": robot_effort,
+            "robot_stiffness": robot_stiffness,
+            "robot_damping": robot_damping,
+            "num_actions": num_actions,
+            "num_observations": num_observations,
+        },
+        input_tensors,
+    )
 
 
 def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:

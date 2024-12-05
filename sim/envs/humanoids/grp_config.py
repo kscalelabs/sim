@@ -180,7 +180,7 @@ class GprCfg(LeggedRobotCfg):
 
             # base pos
             default_joint_pos = 0.5
-            orientation = 1.
+            orientation = 1.0
             base_height = 0.2
             base_acc = 0.2
             # energy
