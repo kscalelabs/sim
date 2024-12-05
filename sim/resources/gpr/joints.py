@@ -128,7 +128,7 @@ class Robot(Node):
     def default_positions(cls) -> Dict[str, float]:
         return {}
 
-    # CONTRACT - this should be ordered according to how the policy is trained. 
+    # CONTRACT - this should be ordered according to how the policy is trained.
     # E.g. the first entry should be the angle of the first joint in the policy.
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
@@ -149,7 +149,7 @@ class Robot(Node):
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
             Robot.legs.left.knee_pitch: {"lower": -1.57, "upper": 0},
-            Robot.legs.right.knee_pitch: {"lower": 0, "upper": 1.57}
+            Robot.legs.right.knee_pitch: {"lower": 0, "upper": 1.57},
         }
 
     # p_gains
@@ -184,6 +184,7 @@ class Robot(Node):
             "knee": 120,
             "ankle_y": 50,
         }
+
     # # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:

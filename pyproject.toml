@@ -1,7 +1,7 @@
 [tool.black]
 
 line-length = 120
-target-version = ["py311"]
+target-version = ["py38"]
 include = '\.pyi?$'
 
 [tool.pytest.ini_options]
@@ -30,15 +30,20 @@ warn_redundant_casts = true
 incremental = true
 namespace_packages = false
 
-exclude = ["sim/envs/", "sim/algo/*", "sim/utils/*", "sim/sim2sim.py",
-           "sim/scripts/create_mjcf.py", "sim/scripts/create_fixed_torso.py"]
+exclude = ["sim/envs/", "sim/algo/", "sim/utils/", "sim/sim2sim.py",
+           "sim/scripts/create_mjcf.py", "sim/scripts/create_fixed_torso.py",
+           "sim/sim2sim_old.py", "sim/play_old.py"]
 
 [[tool.mypy.overrides]]
 
 module = [
     "isaacgym.*",
     "mujoco.*",
+    "sim.envs.*",
+    "sim.utils.*",
 ]
+
+ignore_errors = true
 
 [tool.isort]
 
@@ -48,10 +53,11 @@ known_third_party = ["wandb"]
 [tool.ruff]
 
 line-length = 120
-target-version = "py310"
+target-version = "py38"
 
 exclude = ["sim/envs/", "sim/algo/", "sim/play.py", 
-           "sim/sim2sim.py","sim/utils", "sim/scripts/create_mjcf.py"]
+           "sim/sim2sim.py","sim/utils", "sim/scripts/create_mjcf.py",
+           "sim/play_old.py", "sim/sim2sim_old.py"]
 
 [tool.ruff.lint]
 

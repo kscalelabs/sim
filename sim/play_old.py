@@ -5,6 +5,7 @@ Run:
     python sim/play.py --task g1 --log_h5
     python sim/play.py --task stompymini --log_h5
 """
+
 import argparse
 import copy
 import logging
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
-from sim.model_export import ActorCfg, convert_model_to_onnx  # noqa: E402
+from sim.model_export import convert_model_to_onnx  # noqa: E402
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
@@ -71,18 +72,6 @@ def play(args: argparse.Namespace) -> None:
     train_cfg.runner.resume = True
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
-
-    # # Export policy if needed
-    # if args.export_policy:
-    #     path = os.path.join(".")
-    #     export_policy_as_jit(ppo_runner.alg.actor_critic, path)
-    #     print("Exported policy as jit script to: ", path)
-
-    # export policy as a onnx module (used to run it on web)
-    # if args.export_onnx:
-    #     path = ppo_runner.alg.actor_critic
-    #     convert_model_to_onnx(path, ActorCfg(), save_path="policy.onnx")
-    #     print("Exported policy as onnx to: ", path)
 
     # Prepare for logging
     env_logger = Logger(env.dt)

@@ -2,10 +2,19 @@
 """This script updates the URDF file to fix the joints of the robot."""
 
 import argparse
+import importlib
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import Any
 
-from sim.scripts.create_mjcf import load_embodiment
+
+def load_embodiment(embodiment: str) -> Any:  # noqa: ANN401
+    # Dynamically import embodiment based on MODEL_DIR
+    module_name = f"sim.resources.{embodiment}.joints"
+    module = importlib.import_module(module_name)
+    robot = getattr(module, "Robot")
+    print(robot)
+    return robot
 
 
 def update_urdf(model_path: str, embodiment: str) -> None:
@@ -35,15 +44,15 @@ def update_urdf(model_path: str, embodiment: str) -> None:
                     limit.set("lower", lower)
                     limit.set("upper", upper)
                 for key, value in effort.items():
-                    if key in joint_name:
+                    if key in joint_name:  # type: ignore[operator]
                         limit.set("effort", str(value))
                 for key, value in velocity.items():
-                    if key in joint_name:
+                    if key in joint_name:  # type: ignore[operator]
                         limit.set("velocity", str(value))
             dynamics = joint.find("dynamics")
             if dynamics is not None:
                 for key, value in friction.items():
-                    if key in joint_name:
+                    if key in joint_name:  # type: ignore[operator]
                         dynamics.set("friction", str(value))
 
     # Save the modified URDF to a new file

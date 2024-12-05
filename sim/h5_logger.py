@@ -1,8 +1,9 @@
-""" Logger for logging data to HDF5 files """
+"""Logger for logging data to HDF5 files."""
+
 import os
 import uuid
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Tuple
 
 import h5py
 import matplotlib.pyplot as plt  # dependency issues with python 3.8
@@ -17,7 +18,7 @@ class HDF5Logger:
         max_timesteps: int,
         num_observations: int,
         h5_out_dir: str = "sim/resources/",
-    ):
+    ) -> None:
         self.data_name = data_name
         self.num_actions = num_actions
         self.max_timesteps = max_timesteps
@@ -27,7 +28,7 @@ class HDF5Logger:
         self.h5_file, self.h5_dict = self._create_h5_file()
         self.current_timestep = 0
 
-    def _create_h5_file(self):
+    def _create_h5_file(self) -> Tuple[h5py.File, Dict[str, h5py.Dataset]]:
         # Create a unique file ID
         idd = str(uuid.uuid4())
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -43,8 +44,8 @@ class HDF5Logger:
         dset_prev_actions = h5_file.create_dataset(
             "prev_actions", (self.max_timesteps, self.num_actions), dtype=np.float32
         )
-        dset_2D_command = h5_file.create_dataset("observations/2D_command", (self.max_timesteps, 2), dtype=np.float32)
-        dset_3D_command = h5_file.create_dataset("observations/3D_command", (self.max_timesteps, 3), dtype=np.float32)
+        dset_2d_command = h5_file.create_dataset("observations/2D_command", (self.max_timesteps, 2), dtype=np.float32)
+        dset_3d_command = h5_file.create_dataset("observations/3D_command", (self.max_timesteps, 3), dtype=np.float32)
         dset_q = h5_file.create_dataset("observations/q", (self.max_timesteps, self.num_actions), dtype=np.float32)
         dset_dq = h5_file.create_dataset("observations/dq", (self.max_timesteps, self.num_actions), dtype=np.float32)
         dset_ang_vel = h5_file.create_dataset("observations/ang_vel", (self.max_timesteps, 3), dtype=np.float32)
@@ -61,8 +62,8 @@ class HDF5Logger:
         h5_dict = {
             "prev_actions": dset_prev_actions,
             "curr_actions": dset_curr_actions,
-            "2D_command": dset_2D_command,
-            "3D_command": dset_3D_command,
+            "2D_command": dset_2d_command,
+            "3D_command": dset_3d_command,
             "joint_pos": dset_q,
             "joint_vel": dset_dq,
             "ang_vel": dset_ang_vel,
@@ -72,7 +73,7 @@ class HDF5Logger:
         }
         return h5_file, h5_dict
 
-    def log_data(self, data: Dict[str, np.ndarray]):
+    def log_data(self, data: Dict[str, np.ndarray]) -> None:
         if self.current_timestep >= self.max_timesteps:
             print(f"Warning: Exceeded maximum timesteps ({self.max_timesteps})")
             return
@@ -83,7 +84,7 @@ class HDF5Logger:
 
         self.current_timestep += 1
 
-    def close(self):
+    def close(self) -> None:
         for key, dataset in self.h5_dict.items():
             max_val = np.max(np.abs(dataset[:]))
             if max_val > self.max_threshold:
@@ -97,9 +98,8 @@ class HDF5Logger:
         self.h5_file.close()
 
     @staticmethod
-    def visualize_h5(h5_file_path: str):
-        """
-        Visualizes the data from an HDF5 file by plotting each variable one by one.
+    def visualize_h5(h5_file_path: str) -> None:
+        """Visualizes the data from an HDF5 file by plotting each variable one by one.
 
         Args:
             h5_file_path (str): Path to the HDF5 file.
@@ -122,9 +122,8 @@ class HDF5Logger:
             print(f"Failed to visualize HDF5 file: {e}")
 
     @staticmethod
-    def _plot_dataset(name: str, data: np.ndarray):
-        """
-        Helper method to plot a single dataset.
+    def _plot_dataset(name: str, data: np.ndarray) -> None:
+        """Helper method to plot a single dataset.
 
         Args:
             name (str): Name of the dataset.
@@ -144,7 +143,3 @@ class HDF5Logger:
         plt.grid(True)
         plt.tight_layout()
         plt.show()
-
-
-if __name__ == "__main__":
-    HDF5Logger.visualize_h5("stompypro/5a7dc371-445c-4f56-be05-4e65c5cc38bc.h5")
