@@ -20,7 +20,7 @@ import torch
 from tqdm import tqdm
 
 from sim.h5_logger import HDF5Logger
-from sim.model_export import ActorCfg, get_actor_policy
+from model_export import ActorCfg, get_actor_policy
 from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
 
@@ -334,7 +334,7 @@ if __name__ == "__main__":
             cycle_time=policy_cfg.cycle_time,
         )
 
-    if args.load_model.endswith(".onnx"):
+    if args.load_model.endswith(".kinfer"):
         policy = ONNXModel(args.load_model)
     else:
         actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
