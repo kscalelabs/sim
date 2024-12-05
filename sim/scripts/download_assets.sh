@@ -30,4 +30,3 @@ echo "Downloading H1_2 assets..."
 gdown --id 19ih7zG6Ky8xJVJD5M1th2hmqtxaNiZyh
 tar -xzvf meshes.zip -C sim/resources/h1_2/
 rm meshes.zip
-
