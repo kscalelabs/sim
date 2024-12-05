@@ -26,6 +26,30 @@ from sim.utils.cmd_manager import CommandManager
 import torch  # isort: skip
 
 
+def print_debug_state(sim, step_count, label=""):
+    """Print key state information in concise format"""
+    if step_count % 1000 == 0:
+        # Round all values to 3 decimal places
+        base_pos = [round(x, 3) for x in sim.data.qpos[:3]]
+        base_ori = [round(x, 3) for x in sim.data.qpos[3:7]]
+        joints = [round(x, 3) for x in sim.data.qpos[7:]]
+        joint_vel = [round(x, 3) for x in sim.data.qvel[6:]]
+        
+        # Get base velocities in body frame (keeping your original logic)
+        quat = sim.data.sensor("orientation").data.copy()[[1, 2, 3, 0]]
+        r = R.from_quat(quat)
+        base_lin_vel = [round(x, 3) for x in r.apply(sim.data.qvel[:3], inverse=True)]
+        base_ang_vel = [round(x, 3) for x in sim.data.sensor("angular-velocity").data]
+
+        print(f"\n[Step {step_count}] {label}")
+        print(f"pos: {base_pos}")
+        print(f"ori: {base_ori}")
+        print(f"j_pos: {joints}")
+        print(f"j_vel: {joint_vel}")
+        print(f"lin_v: {base_lin_vel}")
+        print(f"ang_v: {base_ang_vel}")
+
+
 class Sim2simCfg:
     """Configuration for sim2sim transfer"""
 
@@ -98,7 +122,7 @@ class SimulationState:
 class MujocoSimulator:
     """Handles all Mujoco-specific simulation logic"""
 
-    def __init__(self, model_path: str, cfg):
+    def __init__(self, model_path: str, cfg: Sim2simCfg):
         self.cfg = cfg
         self.model = mujoco.MjModel.from_xml_path(model_path)
         self.model.opt.timestep = cfg.dt
@@ -223,22 +247,6 @@ class Controller:
         eu_ang = self._quat_to_euler(state.quat)
         eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
-        if count % 1000 == 0:
-            print("\nSim2sim Raw States:")
-            print(f"Raw Base Lin Vel: {state.base_lin_vel}")
-            print(f"Raw Base Ang Vel: {state.base_ang_vel}")
-            print(f"Raw DOF Pos: {state.q[-self.cfg.num_actions:]}")
-            print(f"Raw DOF Vel: {state.dq[-self.cfg.num_actions:]}")
-
-            print("\nSim2sim Observation Components:")
-            print(f"Phase: sin={obs[0,0]:.3f}, cos={obs[0,1]:.3f}")
-            print(f"Commands: {obs[0,2:5]}")
-            print(f"Joint Positions: {obs[0,5:self.cfg.num_actions+5]}")
-            print(f"Joint Velocities: {obs[0,self.cfg.num_actions+5:2*self.cfg.num_actions+5]}")
-            print(f"Actions: {obs[0,2*self.cfg.num_actions+5:3*self.cfg.num_actions+5]}")
-            print(f"Base Angular Velocity: {obs[0,3*self.cfg.num_actions+5:3*self.cfg.num_actions+8]}")
-            print(f"Euler Angles: {obs[0,3*self.cfg.num_actions+8:3*self.cfg.num_actions+11]}")
-
         obs[0, 0] = math.sin(2 * math.pi * phase)
         obs[0, 1] = math.cos(2 * math.pi * phase)
         obs[0, 2:5] = commands
@@ -291,11 +299,6 @@ class Controller:
         self.action = np.clip(self.action, -self.cfg.clip_actions, self.cfg.clip_actions)
         target_dof_pos = self.action * self.cfg.action_scale
         
-        if count % 1000 == 0:
-            print("\nAction Computation:")
-            print(f"Raw Policy Output: {self.action}")
-            print(f"Target DOF Positions: {target_dof_pos}")
-
         # Compute PD control
         q = state.q[-self.cfg.num_actions:]
         dq = state.dq[-self.cfg.num_actions:]
@@ -344,6 +347,7 @@ def run_simulation(cfg: Sim2simCfg, policy_path: str, command_mode: str = "fixed
         if count % cfg.decimation == 0:
             tau = controller.compute_action(state, count)
             simulator.step(tau)
+            print_debug_state(simulator, count)
 
     simulator.close()
     cmd_manager.close()
