@@ -1,8 +1,7 @@
-"""
-Difference setup
-python sim/play.py --task mini_ppo --sim_device cpu
-python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment stompypro
-python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment stompymicro
+"""Sim2sim deployment test.
+
+Run:
+    python sim/sim2sim.py --load_model examples/walking_policy.onnx --embodiment gpr
 """
 import argparse
 import math
@@ -32,7 +31,7 @@ class Sim2simCfg:
     dt: float = 0.001
     decimation: int = 10
     tau_factor: float = 3
-    cycle_time: float = 0.4
+    cycle_time: float = 0.25
 
 
 
@@ -316,8 +315,8 @@ if __name__ == "__main__":
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = np.random.uniform(0.1, 0.5), 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
-    if args.embodiment == "stompypro":
-        policy_cfg.cycle_time = 0.4
+    if args.embodiment == "gpr":
+        policy_cfg.cycle_time = 0.25
         cfg = Sim2simCfg(
             sim_duration=10.0,
             dt=0.001,
@@ -325,7 +324,7 @@ if __name__ == "__main__":
             tau_factor=4.0,
             cycle_time=policy_cfg.cycle_time,
         )
-    elif args.embodiment == "stompymicro":
+    elif args.embodiment == "zeroth":
         policy_cfg.cycle_time = 0.2
         cfg = Sim2simCfg(
             sim_duration=10.0,
@@ -360,7 +359,6 @@ if __name__ == "__main__":
         "robot_stiffness": metadata["robot_stiffness"],
         "robot_damping": metadata["robot_damping"],
     }
-
 
     run_mujoco(
         args.embodiment,

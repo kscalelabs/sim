@@ -2,7 +2,7 @@
 """Play a trained policy in the environment.
 
 Run:
-    python sim/play.py --task stompypro --log_h5
+    python sim/play.py --task gpr --log_h5
 """
 import argparse
 import copy
@@ -91,14 +91,23 @@ def play(args: argparse.Namespace) -> None:
 
     # export policy as a onnx module (used to run it on web)
     if args.export_onnx:
-        path = ppo_runner.alg.actor_critic
-        policy_cfg = ActorCfg()
+        path = ppo_runner.load_path
+        embodiment = ppo_runner.cfg['experiment_name'].lower()
+        policy_cfg = ActorCfg(embodiment=embodiment)
+
+        if embodiment == "stompypro":
+            policy_cfg.cycle_time = 0.4
+        elif embodiment == "stompymicro":
+            policy_cfg.cycle_time = 0.2
+        else:
+            print(f"Specific policy cfg for {embodiment} not implemented")
+  
         actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
 
         # Merge policy_cfg and sim2sim_info into a single config object
         export_config = {**vars(policy_cfg), **sim2sim_info}
 
-        policy = export_to_onnx(
+        export_to_onnx(
             actor_model,
             input_tensors=input_tensors,
             config=export_config,
