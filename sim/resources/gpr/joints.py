@@ -95,6 +95,21 @@ class Robot(Node):
     rotation = [0, 0, 0, 1]
 
     @classmethod
+    def isaac_to_real_signs(cls) -> Dict[str, int]:
+        return {
+            Robot.legs.left.hip_pitch: 1,
+            Robot.legs.left.hip_yaw: 1,
+            Robot.legs.left.hip_roll: 1,
+            Robot.legs.left.knee_pitch: 1,
+            Robot.legs.left.ankle_pitch: 1,
+            Robot.legs.right.hip_y: -1,
+            Robot.legs.right.hip_x: -1,
+            Robot.legs.right.hip_z: 1,
+            Robot.legs.right.knee_pitch: -1,
+            Robot.legs.right.ankle_pitch: 1,
+        }
+
+    @classmethod
     def isaac_to_mujoco_signs(cls) -> Dict[str, int]:
         return {
             Robot.legs.left.hip_pitch: 1,
