@@ -15,8 +15,8 @@ from typing import Any, Dict, NewType
 import numpy as np
 
 # Importing torch down here to avoid gymtorch issues.
-import torch  # noqa: E402 #  type: ignore[import]
 from isaacgym import gymapi, gymtorch, gymutil
+import torch  # noqa: E402 #  type: ignore[import]
 from matplotlib import pyplot as plt
 
 from sim.env import robot_urdf_path
