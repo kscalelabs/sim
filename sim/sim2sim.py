@@ -1,7 +1,7 @@
 """Sim2sim deployment test.
 
 Run:
-    python sim/sim2sim.py --load_model examples/walking_policy.onnx --embodiment gpr
+    python sim/sim2sim.py --load_model examples/gpr_walking.kinfer --embodiment gpr
 """
 
 import argparse
@@ -315,7 +315,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = np.random.uniform(0.1, 0.5), 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "gpr":

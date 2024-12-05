@@ -30,7 +30,7 @@ warn_redundant_casts = true
 incremental = true
 namespace_packages = false
 
-exclude = ["sim/envs/", "sim/algo/*", "sim/utils/*", "sim/sim2sim.py",
+exclude = ["sim/envs/", "sim/algo/", "sim/utils/", "sim/sim2sim.py",
            "sim/scripts/create_mjcf.py", "sim/scripts/create_fixed_torso.py",
            "sim/sim2sim_old.py", "sim/play_old.py"]
 
@@ -39,7 +39,11 @@ exclude = ["sim/envs/", "sim/algo/*", "sim/utils/*", "sim/sim2sim.py",
 module = [
     "isaacgym.*",
     "mujoco.*",
+    "sim.envs.*",
+    "sim.utils.*",
 ]
+
+ignore_errors = true
 
 [tool.isort]
 

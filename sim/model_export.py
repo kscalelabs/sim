@@ -8,7 +8,7 @@ from typing import List, Optional, Tuple
 import onnx
 import onnxruntime as ort
 import torch
-from scripts.create_mjcf import load_embodiment
+from scripts.create_fixed_torso import load_embodiment
 from torch import Tensor, nn
 from torch.distributions import Normal
 
@@ -47,25 +47,25 @@ class ActorCritic(nn.Module):
         # Policy function.
         actor_layers = []
         actor_layers.append(nn.Linear(mlp_input_dim_a, actor_hidden_dims[0]))
-        actor_layers.append(activation)
+        actor_layers.append(activation)  # type: ignore[arg-type]
         for dim_i in range(len(actor_hidden_dims)):
             if dim_i == len(actor_hidden_dims) - 1:
                 actor_layers.append(nn.Linear(actor_hidden_dims[dim_i], num_actions))
             else:
                 actor_layers.append(nn.Linear(actor_hidden_dims[dim_i], actor_hidden_dims[dim_i + 1]))
-                actor_layers.append(activation)
+                actor_layers.append(activation)  # type: ignore[arg-type]
         self.actor = nn.Sequential(*actor_layers)
 
         # Value function.
         critic_layers = []
         critic_layers.append(nn.Linear(mlp_input_dim_c, critic_hidden_dims[0]))
-        critic_layers.append(activation)
+        critic_layers.append(activation)  # type: ignore[arg-type]
         for dim_i in range(len(critic_hidden_dims)):
             if dim_i == len(critic_hidden_dims) - 1:
                 critic_layers.append(nn.Linear(critic_hidden_dims[dim_i], 1))
             else:
                 critic_layers.append(nn.Linear(critic_hidden_dims[dim_i], critic_hidden_dims[dim_i + 1]))
-                critic_layers.append(activation)
+                critic_layers.append(activation)  # type: ignore[arg-type]
         self.critic = nn.Sequential(*critic_layers)
 
         # Action noise.
@@ -73,7 +73,7 @@ class ActorCritic(nn.Module):
         self.distribution = None
 
         # Disable args validation for speedup.
-        Normal.set_default_validate_args = False
+        Normal.set_default_validate_args = False  # type: ignore[unused-ignore,assignment,method-assign,attr-defined]
 
 
 class Actor(nn.Module):

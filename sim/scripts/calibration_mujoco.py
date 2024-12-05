@@ -10,13 +10,13 @@ import os
 from copy import deepcopy
 from typing import Any
 
-import matplotlib.pyplot as plt  # Add this import for plotting
+import matplotlib.pyplot as plt
 import mujoco
 import mujoco_viewer
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
-from sim.scripts.create_mjcf import load_embodiment
+from sim.scripts.create_fixed_torso import load_embodiment
 
 import torch  # isort: skip
 
@@ -111,7 +111,7 @@ def run_mujoco(cfg: Any, joint_id: int = 0, steps: int = 1000) -> None:  # noqa:
     position_data = []
 
     while step < steps:
-        q, dq, _, _, _, _ = get_obs(data)
+        q, dq, _, _, _, _ = get_obs(data)  # type: ignore[misc]
         q = q[-cfg.num_actions :]
         dq = dq[-cfg.num_actions :]
 
