@@ -10,6 +10,7 @@ numpy==1.19.5
 wandb
 tensorboard==2.14.0
 onnxscript
+mujoco==2.3.6
 # onnxruntime
 
 kinfer

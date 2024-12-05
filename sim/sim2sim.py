@@ -1,8 +1,7 @@
 """Sim2sim deployment test.
 
 Run:
-    python sim/sim2sim.py --load_model kinfer_policy.onnx --embodiment gpr
-    python sim/sim2sim.py --load_model examples/standing_policy.onnx --embodiment zeroth
+    python sim/sim2sim.py --load_model examples/walking_policy.onnx --embodiment gpr
 """
 import argparse
 import math
