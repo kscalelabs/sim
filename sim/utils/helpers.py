@@ -233,6 +233,12 @@ def get_args() -> argparse.Namespace:
             "help": "Enable HDF5 logging",
         },
         {
+            "name": "--log_krec",
+            "action": "store_true",
+            "default": False,
+            "help": "Enable KRec logging",
+        },
+        {
             "name": "--trimesh",
             "action": "store_true",
             "default": False,

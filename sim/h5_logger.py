@@ -1,16 +1,23 @@
 """ Logger for logging data to HDF5 files """
 import os
 import uuid
+from datetime import datetime
 from typing import Dict
 
 import h5py
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # dependency issues with python 3.8
 import numpy as np
-from datetime import datetime
 
 
 class HDF5Logger:
-    def __init__(self, data_name: str, num_actions: int, max_timesteps: int, num_observations: int, h5_out_dir: str = "sim/resources/"):
+    def __init__(
+        self,
+        data_name: str,
+        num_actions: int,
+        max_timesteps: int,
+        num_observations: int,
+        h5_out_dir: str = "sim/resources/",
+    ):
         self.data_name = data_name
         self.num_actions = num_actions
         self.max_timesteps = max_timesteps
@@ -33,7 +40,9 @@ class HDF5Logger:
         h5_file = h5py.File(h5_file_path, "w")
 
         # Create datasets for logging actions and observations
-        dset_prev_actions = h5_file.create_dataset("prev_actions", (self.max_timesteps, self.num_actions), dtype=np.float32)
+        dset_prev_actions = h5_file.create_dataset(
+            "prev_actions", (self.max_timesteps, self.num_actions), dtype=np.float32
+        )
         dset_2D_command = h5_file.create_dataset("observations/2D_command", (self.max_timesteps, 2), dtype=np.float32)
         dset_3D_command = h5_file.create_dataset("observations/3D_command", (self.max_timesteps, 3), dtype=np.float32)
         dset_q = h5_file.create_dataset("observations/q", (self.max_timesteps, self.num_actions), dtype=np.float32)
@@ -41,8 +50,12 @@ class HDF5Logger:
         dset_ang_vel = h5_file.create_dataset("observations/ang_vel", (self.max_timesteps, 3), dtype=np.float32)
         dset_euler = h5_file.create_dataset("observations/euler", (self.max_timesteps, 3), dtype=np.float32)
         dset_t = h5_file.create_dataset("observations/t", (self.max_timesteps, 1), dtype=np.float32)
-        dset_buffer = h5_file.create_dataset("observations/buffer", (self.max_timesteps, self.num_observations), dtype=np.float32)
-        dset_curr_actions = h5_file.create_dataset("curr_actions", (self.max_timesteps, self.num_actions), dtype=np.float32)
+        dset_buffer = h5_file.create_dataset(
+            "observations/buffer", (self.max_timesteps, self.num_observations), dtype=np.float32
+        )
+        dset_curr_actions = h5_file.create_dataset(
+            "curr_actions", (self.max_timesteps, self.num_actions), dtype=np.float32
+        )
 
         # Map datasets for easy access
         h5_dict = {
@@ -63,11 +76,11 @@ class HDF5Logger:
         if self.current_timestep >= self.max_timesteps:
             print(f"Warning: Exceeded maximum timesteps ({self.max_timesteps})")
             return
-            
+
         for key, dataset in self.h5_dict.items():
             if key in data:
                 dataset[self.current_timestep] = data[key]
-        
+
         self.current_timestep += 1
 
     def close(self):
@@ -80,7 +93,7 @@ class HDF5Logger:
                 # Delete the file
                 os.remove(self.h5_file.filename)
                 return
-        
+
         self.h5_file.close()
 
     @staticmethod
