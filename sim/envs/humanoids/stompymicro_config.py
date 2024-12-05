@@ -78,7 +78,7 @@ class StompyMicroCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.0  # scales other values
+        noise_level = 3.0  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
@@ -131,72 +131,72 @@ class StompyMicroCfg(LeggedRobotCfg):
         start_pos_noise = 0.05
         randomize_friction = True
         friction_range = [0.1, 2.0]
-        randomize_base_mass = True
-        added_mass_range = [-1.0, 1.0]
+        randomize_base_mass = False
+        added_mass_range = [-0.5, 0.5]
         push_robots = True
-        push_interval_s = 3
-        max_push_vel_xy = 0.15
-        max_push_ang_vel = 0.15
+        push_interval_s = 1.5
+        max_push_vel_xy = 0.6   # TODO: This was set to make standing significantly harder
+        max_push_ang_vel = 0.6
         # dynamic randomization
         action_delay = 0.5
-        action_noise = 0.05
+        action_noise = 0.1  # TODO: This was set to make standing harder
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
         num_commands = 4
-        resampling_time = 5.0  # time before command are changed[s]
+        resampling_time = 8.0  # time before command are changed[s]
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
             # for each, min / max
-            lin_vel_x = [-0.25, 1.3]  # [m/s]
-            lin_vel_y = [-0.2, 0.2]  # [m/s]
-            ang_vel_yaw = [-np.pi / 12, np.pi / 12]  # [rad/s]
+            lin_vel_x = [-0.4, 0.4]  # [m/s]
+            lin_vel_y = [-0.4, 0.4]  # [m/s]
+            ang_vel_yaw = [-np.pi / 20, np.pi / 20]  # [rad/s]
             heading = [-np.pi, np.pi]  # [rad]
 
     class rewards:
-        base_height_target = Robot.height + 0.02  # to encourage standing taller
-        min_dist = 0.07
-        max_dist = 0.15
+        base_height_target = Robot.height + 0.01
+        min_dist = 0.03
+        max_dist = 0.20
 
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.03  # m
-        cycle_time = 0.4  # sec
+        target_feet_height = 0.05  # m
+        cycle_time = 0.5  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 50  # forces above this value are penalized
+        max_contact_force = 100  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
-            joint_pos = 3.0
+            joint_pos = 2.0
             feet_clearance = 1.5
-            feet_contact_number = 2.0
-            feet_air_time = 1.5
-            foot_slip = -0.5
+            feet_contact_number = 1.5
+            feet_air_time = 2.0
+            foot_slip = -0.3
             feet_distance = 0.2
             knee_distance = 0.2
             # contact
-            feet_contact_forces = -0.2
+            feet_contact_forces = -0.1
             # vel tracking
-            tracking_lin_vel = 1.0
-            tracking_ang_vel = 1.0
-            vel_mismatch_exp = 1.0  # lin_z; ang x,y
+            tracking_lin_vel = 1.6
+            tracking_ang_vel = 1.6
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 1.0
-            track_vel_hard = 1.0
+            track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 2.0
+            default_joint_pos = 1.0
             orientation = 2.0
-            base_height = 1.0
+            base_height = 0.5
             base_acc = 0.2
             # energy
-            action_smoothness = -0.02
-            torques = -1e-3
-            dof_vel = -4e-3
-            dof_acc = -4e-5
+            action_smoothness = -0.01
+            torques = -1e-5
+            dof_vel = -5e-4
+            dof_acc = -1e-7
             collision = -1.0
 
     class normalization:
@@ -241,9 +241,9 @@ class StompyMicroStandingCfg(StompyMicroCfg):
             base_acc = 0.2
             # energy
             action_smoothness = -0.002
-            torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
+            torques = -1e-4
+            dof_vel = -5e-3
+            dof_acc = -1e-6
             collision = -1.0
 
 
@@ -268,12 +268,12 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 6001  # number of policy updates
+        max_iterations = 12001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
         experiment_name = "StompyMicro"
-        run_name = "Exp12.2"
+        run_name = "StandingRobust"
         # load and resume
         resume = False
         load_run = -1  # -1 = last run
