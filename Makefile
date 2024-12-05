@@ -27,16 +27,16 @@ all:
 # ------------------------ #
 
 train-one-vis:
-	@python -m sim.train --task stompymini --num_envs 1
+	@python -m sim.train --task gpr --num_envs 1
 
 train-many-vis:
-	@python -m sim.train --task stompymini --num_envs 16
+	@python -m sim.train --task gpr --num_envs 16
 
 train:
-	@python -m sim.train --task stompymini --num_envs 4096 --headless
+	@python -m sim.train --task gpr --num_envs 4096 --headless
 
 play:
-	@python -m sim.play --task stompymini
+	@python -m sim.play --task gpr
 
 # ------------------------ #
 #          Build           #

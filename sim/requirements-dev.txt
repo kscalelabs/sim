@@ -6,7 +6,7 @@ h5py==3.11.0
 imageio==2.35.1
 matplotlib==3.3.4
 mediapy==1.2.2
-mujoco==3.2.3
+mujoco==2.3.6
 mujoco_python_viewer==0.1.4
 numpy<2.0.0
 onnx==1.15.0

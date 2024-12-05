@@ -2,17 +2,10 @@
 
 echo "If any of the downloads fail, you can manually download the assets and place them in the respective directories."
 
-# Stompymini
+# Stompymicro
 echo
-echo "Downloading Stompymini assets..."
-gdown --id 1Ah92CTN63M2h4uKPLf8eXkX2H9Bg3Kji
-unzip meshes.zip -d sim/resources/stompymini/
-rm meshes.zip
-
-# Stompypro
-echo
-echo "Downloading Stompypro assets..."
-gdown --folder https://drive.google.com/drive/folders/1-iIqy8j4gF6JeuMc_MjxkRe4vSZl8Ozp -O sim/resources/stompypro/
+echo "Downloading Stompymicro assets..."
+gdown --folder https://drive.google.com/drive/folders/1C_v0FKoc6um0tUK2f1e6cWXtfvuc-xsD -O sim/resources/stompymicro/
 
 # Xbot
 echo
@@ -37,9 +30,4 @@ echo "Downloading H1_2 assets..."
 gdown --id 19ih7zG6Ky8xJVJD5M1th2hmqtxaNiZyh
 tar -xzvf meshes.zip -C sim/resources/h1_2/
 rm meshes.zip
-
-# Stompymicro
-echo
-echo "Downloading Stompymicro assets..."
-gdown --folder https://drive.google.com/drive/folders/1C_v0FKoc6um0tUK2f1e6cWXtfvuc-xsD -O sim/resources/stompymicro/
 
