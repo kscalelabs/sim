@@ -81,6 +81,7 @@ def play(args: argparse.Namespace) -> None:
     # export policy as a onnx module (used to run it on web)
     if args.export_onnx:
         path = ppo_runner.alg.actor_critic
+        path = "logs/gpr/Dec04_15-51-54_/model_2700.pt"
         policy_cfg = ActorCfg()
         actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
 

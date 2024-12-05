@@ -15,7 +15,7 @@ from torch.distributions import Normal
 
 @dataclass
 class ActorCfg:
-    embodiment: str = "stompypro"
+    embodiment: str = "gpr"
     cycle_time: float = 0.4  # Cycle time for sinusoidal command input
     action_scale: float = 0.25  # Scale for actions
     lin_vel_scale: float = 2.0  # Scale for linear velocity
