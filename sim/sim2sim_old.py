@@ -1,7 +1,10 @@
+""" Sim2sim script for running a policy in MuJoCo.
+
+Run:
+    python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment gpr
+    python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment zeroth
 """
-python sim/sim2sim.py --load_model examples/standing_pro.pt --embodiment gpr
-python sim/sim2sim.py --load_model examples/standing_micro.pt --embodiment zeroth
-"""
+
 import argparse
 import math
 import os
@@ -17,7 +20,6 @@ import pygame
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
-# from sim.h5_logger import HDF5Logger
 from sim.model_export import ActorCfg, convert_model_to_onnx
 
 
@@ -76,7 +78,7 @@ def quaternion_to_euler_array(quat: np.ndarray) -> np.ndarray:
 
 
 def get_obs(data: mujoco.MjData) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Extracts an observation from the mujoco data structure"""
+    """Extracts an observation from the mujoco data structure."""
     q = data.qpos.astype(np.double)
     dq = data.qvel.astype(np.double)
     quat = data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double)
@@ -95,7 +97,7 @@ def pd_control(
     kd: np.ndarray,
     default: np.ndarray,
 ) -> np.ndarray:
-    """Calculates torques from position commands"""
+    """Calculates torques from position commands."""
     return kp * (target_q + default - q) - kd * dq
 
 
@@ -109,12 +111,16 @@ def run_mujoco(
     render: bool = True,
     h5_out_dir: str = "sim/resources",
 ) -> None:
-    """
-    Run the Mujoco simulation using the provided policy and configuration.
+    """Run the Mujoco simulation using the provided policy and configuration.
 
     Args:
         policy: The policy used for controlling the simulation.
         cfg: The configuration object containing simulation settings.
+        model_info: The model information dictionary.
+        keyboard_use: Whether to use keyboard input.
+        log_h5: Whether to log data to HDF5.
+        render: Whether to render the simulation.
+        h5_out_dir: The directory to save HDF5 files.
 
     Returns:
         None
@@ -173,16 +179,6 @@ def run_mujoco(
         "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
-
-    if log_h5:
-        stop_state_log = int(cfg.sim_duration / cfg.dt) / cfg.decimation
-        logger = HDF5Logger(
-            data_name=embodiment,
-            num_actions=model_info["num_actions"],
-            max_timesteps=stop_state_log,
-            num_observations=model_info["num_observations"],
-            h5_out_dir=h5_out_dir
-        )
 
     # Initialize variables for tracking upright steps and average speed
     upright_steps = 0
@@ -263,9 +259,6 @@ def run_mujoco(
     print(f"Number of upright steps: {upright_steps}")
     print(f"Average speed: {average_speed:.4f} m/s")
 
-    if log_h5:
-        logger.close()
-
 
 def parse_modelmeta(
     modelmeta: List[Tuple[str, str]],
@@ -333,9 +326,7 @@ if __name__ == "__main__":
     if args.load_model.endswith(".onnx"):
         policy = ort.InferenceSession(args.load_model)
     else:
-        policy = convert_model_to_onnx(
-            args.load_model, policy_cfg, save_path="policy.onnx"
-        )
+        policy = convert_model_to_onnx(args.load_model, policy_cfg, save_path="policy.onnx")
 
     model_info = parse_modelmeta(
         policy.get_modelmeta().custom_metadata_map.items(),
