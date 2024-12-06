@@ -166,7 +166,7 @@ def run_mujoco(
 
     count_lowlevel = 0
     force_application_interval = 1000  # Apply force every 1000 steps (1 second at 1000Hz)
-    force_magnitude_range = (-15, 15)  # Force range in Newtons
+    force_magnitude_range = (0, 0) #(-15, 15)  # Force range in Newtons
     force_duration = 100  # Duration of force application in timesteps
     force_timer = 0
 
@@ -341,7 +341,7 @@ if __name__ == "__main__":
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "gpr":
-        policy_cfg.cycle_time = 0.25
+        policy_cfg.cycle_time = 0.5
         cfg = Sim2simCfg(
             sim_duration=10.0,
             dt=0.001,
