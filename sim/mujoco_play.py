@@ -195,6 +195,20 @@ class MujocoSimulator:
         """Clean up resources"""
         self.viewer.close()
 
+    def get_contact_forces(self):
+        """Get contact forces for feet"""
+        # We'll need to identify your feet geoms/bodies first
+        contact_force = np.zeros(2)  # [left_foot, right_foot]
+        for i in range(self.data.ncon):
+            contact = self.data.contact[i]
+            for foot_idx, foot_name in enumerate(['left_foot', 'right_foot']):  # adjust names as needed
+                if self.model.geom(contact.geom1).name == foot_name or \
+                self.model.geom(contact.geom2).name == foot_name:
+                    force = np.zeros(6)
+                    mujoco.mj_contactForce(self.model, self.data, i, force)
+                    contact_force[foot_idx] = force[2]  # vertical force
+        return contact_force > 5.0
+
 
 class PolicyWrapper:
     """Handles policy loading and inference"""
