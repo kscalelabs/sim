@@ -204,14 +204,14 @@ class StompyMicroEnv(LeggedRobot):
         self.privileged_obs_buf = torch.cat(
             (
                 self.command_input,  # 2 + 3
-                (self.dof_pos - self.default_joint_pd_target) * self.obs_scales.dof_pos,  # 12
-                self.dof_vel * self.obs_scales.dof_vel,  # 12
-                self.actions,  # 12
-                diff,  # 12
+                (self.dof_pos - self.default_joint_pd_target) * self.obs_scales.dof_pos,  # 16
+                self.dof_vel * self.obs_scales.dof_vel,  # 16
+                self.actions,  # 16
+                diff,  # 16
                 self.base_lin_vel * self.obs_scales.lin_vel,  # 3
                 self.base_ang_vel * self.obs_scales.ang_vel,  # 3
                 self.base_euler_xyz * self.obs_scales.quat,  # 3
-                self.rand_push_force[:, :2],  # 3
+                self.rand_push_force[:, :2],  # 2
                 self.rand_push_torque,  # 3
                 self.env_frictions,  # 1
                 self.body_mass / 30.0,  # 1
@@ -219,19 +219,19 @@ class StompyMicroEnv(LeggedRobot):
                 contact_mask,  # 2
             ),
             dim=-1,
-        )
-
+        )  # 89
+        
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
-                q,  # 20D
-                dq,  # 20D
-                self.actions,  # 20D
+                q,  # 16D
+                dq,  # 16D
+                self.actions,  # 16D
                 self.base_ang_vel * self.obs_scales.ang_vel,  # 3
                 self.base_euler_xyz * self.obs_scales.quat,  # 3
             ),
             dim=-1,
-        )
+        )  # 59D
 
         if self.cfg.terrain.measure_heights:
             heights = (
