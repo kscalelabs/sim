@@ -165,6 +165,10 @@ def run_mujoco(
     hist_obs = np.zeros((model_info["num_observations"]), dtype=np.double)
 
     count_lowlevel = 0
+    force_application_interval = 1000  # Apply force every 1000 steps (1 second at 1000Hz)
+    force_magnitude_range = (-15, 15)  # Force range in Newtons
+    force_duration = 100  # Duration of force application in timesteps
+    force_timer = 0
 
     input_data = {
         "x_vel.1": np.zeros(1).astype(np.float32),
@@ -276,6 +280,24 @@ def run_mujoco(
         tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
 
         data.ctrl = tau
+
+        # Apply random forces periodically
+        if count_lowlevel % force_application_interval == 0:
+            # Generate random force vector
+            random_force = np.random.uniform(
+                force_magnitude_range[0], 
+                force_magnitude_range[1], 
+                size=3
+            )
+            force_timer = force_duration
+
+        # Apply force if timer is active
+        if force_timer > 0:
+            data.xfrc_applied[1] = np.concatenate([random_force, np.zeros(3)])  # [force_x, force_y, force_z, torque_x, torque_y, torque_z]
+            force_timer -= 1
+        else:
+            data.xfrc_applied[1] = np.zeros(6)
+
         mujoco.mj_step(model, data)
 
         if render:
@@ -337,7 +359,7 @@ if __name__ == "__main__":
             cycle_time=policy_cfg.cycle_time,
         )
 
-    if args.load_model.endswith(".kinfer"):
+    if args.load_model.endswith(".kinfer") or args.load_model.endswith(".onnx"):
         policy = ONNXModel(args.load_model)
     else:
         actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
