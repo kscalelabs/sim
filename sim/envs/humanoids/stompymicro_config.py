@@ -219,14 +219,13 @@ class StompyMicroCfg(LeggedRobotCfg):
 
 class StompyMicroStandingCfg(StompyMicroCfg):
     class rewards:
-        base_height_target = Robot.height
-        min_dist = 0.07
-        max_dist = 0.14
+        base_height_target = Robot.height + 0.01
+        min_dist = 0.06
+        max_dist = 0.16
 
-        # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.02  # m
-        cycle_time = 0.4  # sec
+        cycle_time = 0.5  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -235,15 +234,15 @@ class StompyMicroStandingCfg(StompyMicroCfg):
 
         class scales:
             # base pos
-            default_joint_pos = 1.0
-            orientation = 1
-            base_height = 0.2
+            default_joint_pos = 0.7
+            orientation = 0
+            base_height = 0.3
             base_acc = 0.2
             # energy
-            action_smoothness = -0.002
-            torques = -1e-4
-            dof_vel = -5e-3
-            dof_acc = -1e-6
+            action_smoothness = -0.006
+            torques = -2e-4
+            dof_vel = -8e-3
+            dof_acc = -3e-6
             collision = -1.0
 
 
@@ -273,9 +272,14 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         # logging
         save_interval = 100  # check for potential saves every this many iterations
         experiment_name = "StompyMicro"
-        run_name = "StandingRobust"
+        run_name = "StandingRobust00000"
         # load and resume
         resume = False
         load_run = -1  # -1 = last run
         checkpoint = -1  # -1 = last saved model
         resume_path = None  # updated from load_run and chkpt
+
+
+if __name__ == "__main__":
+    cfg = StompyMicroCfg()
+    print(cfg.__dict__)
