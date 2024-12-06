@@ -319,7 +319,7 @@ if __name__ == "__main__":
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "gpr":
-        policy_cfg.cycle_time = 0.25
+        policy_cfg.cycle_time = 0.5
         cfg = Sim2simCfg(
             sim_duration=10.0,
             dt=0.001,
@@ -337,7 +337,7 @@ if __name__ == "__main__":
             cycle_time=policy_cfg.cycle_time,
         )
 
-    if args.load_model.endswith(".kinfer"):
+    if args.load_model.endswith(".kinfer") or args.load_model.endswith(".onnx"):
         policy = ONNXModel(args.load_model)
     else:
         actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
