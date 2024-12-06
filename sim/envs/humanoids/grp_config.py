@@ -157,7 +157,7 @@ class GprCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 100  # forces above this value are penalized
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
