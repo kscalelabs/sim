@@ -5,12 +5,12 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.stompymicro.joints import Robot
+from sim.resources.zeroth.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())  # 20
 
 
-class StompyMicroCfg(LeggedRobotCfg):
+class ZerothCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):

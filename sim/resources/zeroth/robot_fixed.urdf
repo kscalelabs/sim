@@ -1,0 +1,326 @@
+<robot name="zeroth">
+  <link name="base">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0" />
+      <mass value="0.001" />
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+    </inertial>
+  </link>
+  <joint name="floating_base" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0" />
+    <parent link="base" />
+    <child link="Part_76" />
+  </joint>
+  <link name="Part_76">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Part_76.stl" />
+      </geometry>
+      <material name="Part_76_material">
+        <color rgba="0.91764706 0.91764706 0.91764706 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Part_76.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.6659521039999996" />
+      <inertia ixx="0.003594519079383798" iyy="0.00525902593913726" izz="0.003303800123995831" ixy="4.700328339385156e-08" ixz="1.2617572933798065e-07" iyz="-0.00029072813799480826" />
+      <origin xyz="1.3715674692216277e-05 -0.007508036503697799 -0.000703849283574139" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="left_hip_roll" type="revolute">
+    <origin xyz="-0.0353001417379795 -0.0036199730613269685 -0.07354320094310968" rpy="-0.005235926794896062 2.67948967458409e-08 0.0" />
+    <parent link="Part_76" />
+    <child link="Rotor" />
+    <limit effort="10" velocity="10" lower="-0.78539816" upper="0.78539816" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="Rotor">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Rotor.stl" />
+      </geometry>
+      <material name="Rotor_material">
+        <color rgba="0.91764706 0.91764706 0.91764706 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Rotor.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.052774531" />
+      <inertia ixx="3.0928812751456034e-05" iyy="2.2245909792798926e-05" izz="1.2651261419472649e-05" ixy="-4.2326792188443465e-10" ixz="-9.23448453238186e-10" iyz="-4.861048798725412e-06" />
+      <origin xyz="-1.1707692728183507e-06 0.011381128084104328 0.0051042218699669534" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="right_hip_roll" type="revolute">
+    <origin xyz="0.035299859288700844 -0.0036199727372057573 -0.0735432024963366" rpy="-0.005235980384690442 -2.6794896301751692e-08 2.220446049250313e-16" />
+    <parent link="Part_76" />
+    <child link="Rotor_2" />
+    <limit effort="10" velocity="10" lower="-0.78539816" upper="0.78539816" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="Rotor_2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Rotor_2.stl" />
+      </geometry>
+      <material name="Rotor_material_2">
+        <color rgba="0.91764706 0.91764706 0.91764706 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Rotor_2.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.052774531" />
+      <inertia ixx="3.0928812751456034e-05" iyy="2.2245909792798926e-05" izz="1.2651261419472649e-05" ixy="4.2326792188443465e-10" ixz="9.23448453238186e-10" iyz="-4.861048798725412e-06" />
+      <origin xyz="1.1707692728183507e-06 0.011381128084104328 0.0051042218699669534" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="left_hip_yaw" type="revolute">
+    <origin xyz="0.0 -0.018009991 -0.020898149999999997" rpy="-1.5707963000000003 0.0 0.0" />
+    <parent link="Rotor" />
+    <child link="Robot_-_STS3250_v1" />
+    <limit effort="10" velocity="10" lower="-0.087266463" upper="1.5707963" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="Robot_-_STS3250_v1">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Robot_-_STS3250_v1.stl" />
+      </geometry>
+      <material name="Robot_-_STS3250_v1_material">
+        <color rgba="0.4 0.4 0.4 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Robot_-_STS3250_v1.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.19823244299999998" />
+      <inertia ixx="0.0001288980214027335" iyy="0.00011253897850565667" izz="6.812320840034133e-05" ixy="1.4352694073733687e-07" ixz="-1.5280675037644813e-06" iyz="3.6720970870327294e-06" />
+      <origin xyz="0.0005040107458805387 0.012493056289452048 0.005414764301705825" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="right_hip_yaw" type="revolute">
+    <origin xyz="0.0 -0.018009991 -0.020898149999999997" rpy="-1.5707963000000003 0.0 0.0" />
+    <parent link="Rotor_2" />
+    <child link="Robot_-_STS3250_v1_2" />
+    <limit effort="10" velocity="10" lower="-1.5707963" upper="0.087266463" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="Robot_-_STS3250_v1_2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Robot_-_STS3250_v1_2.stl" />
+      </geometry>
+      <material name="Robot_-_STS3250_v1_material_2">
+        <color rgba="0.4 0.4 0.4 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/Robot_-_STS3250_v1_2.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.19823244299999998" />
+      <inertia ixx="0.00012890693486123327" iyy="0.00011253901558957325" izz="6.813208890852665e-05" ixy="-1.4371132538002443e-07" ixz="1.5280688961005715e-06" iyz="3.709121595090582e-06" />
+      <origin xyz="-0.0005040104376827078 0.012486710104734879 0.005414768088342292" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="left_hip_pitch" type="revolute">
+    <origin xyz="0.018525040302885504 -4.922427119732897e-07 0.0183599908378569" rpy="1.570796353589794 4.641020678874952e-08 -1.5707963000000005" />
+    <parent link="Robot_-_STS3250_v1" />
+    <child link="leg_top_bracket_v9" />
+    <limit effort="10" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="leg_top_bracket_v9">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/leg_top_bracket_v9.stl" />
+      </geometry>
+      <material name="leg_top_bracket_v9_material">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/leg_top_bracket_v9.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.15518776699999998" />
+      <inertia ixx="4.40152180954293e-05" iyy="0.0002576754462750278" izz="0.00023180573068698357" ixy="-4.141837560052671e-09" ixz="1.9547900790093517e-06" iyz="7.458007339959379e-11" />
+      <origin xyz="-0.09027963177901355 -9.619865716231399e-07 0.01932045131266413" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="right_hip_pitch" type="revolute">
+    <origin xyz="0.01852495960295464 -4.235463209323331e-09 0.018359997984461623" rpy="-1.5707963535897924 -4.64102059005711e-08 1.5707963000000003" />
+    <parent link="Robot_-_STS3250_v1_2" />
+    <child link="leg_top_bracket_v9_2" />
+    <limit effort="10" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="leg_top_bracket_v9_2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/leg_top_bracket_v9_2.stl" />
+      </geometry>
+      <material name="leg_top_bracket_v9_material_2">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/leg_top_bracket_v9_2.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.15518776699999998" />
+      <inertia ixx="4.402055552142148e-05" iyy="0.000257680775231911" izz="0.00023180572221725754" ixy="-4.137676641118504e-09" ixz="2.1781725509883785e-06" iyz="7.987596359321841e-11" />
+      <origin xyz="0.0902796310599843 9.61020000592584e-07 0.018365400961737083" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="left_knee_pitch" type="revolute">
+    <origin xyz="-0.12916282413730715 -1.9999999954778414e-09 0.0372749282506018" rpy="0.0 0.0 0.0" />
+    <parent link="leg_top_bracket_v9" />
+    <child link="leg_top_bracket_v8_1" />
+    <limit effort="10" velocity="10" lower="-1.57" upper="0" />
+    <axis xyz="0 0 -1" />
+  </joint>
+  <link name="leg_top_bracket_v8_1">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/leg_top_bracket_v8_1.stl" />
+      </geometry>
+      <material name="leg_top_bracket_v8_1_material">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/leg_top_bracket_v8_1.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.14284619399999998" />
+      <inertia ixx="3.797592496450627e-05" iyy="0.00014832933202230754" izz="0.00012744533964232057" ixy="-3.0129096618860415e-09" ixz="-1.4953568530857623e-06" iyz="5.8428009555147734e-12" />
+      <origin xyz="-0.06877406876791146 -1.0761506499492685e-06 -0.017703540131795367" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="right_knee_pitch" type="revolute">
+    <origin xyz="0.12916282526269282 1.999999997212565e-09 0.0003749122493981972" rpy="-3.1415926071795863 0.0 0.0" />
+    <parent link="leg_top_bracket_v9_2" />
+    <child link="leg_top_bracket_v8_1_2" />
+    <limit effort="10" velocity="10" lower="0" upper="1.57" />
+    <axis xyz="0 0 -1" />
+  </joint>
+  <link name="leg_top_bracket_v8_1_2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/leg_top_bracket_v8_1_2.stl" />
+      </geometry>
+      <material name="leg_top_bracket_v8_1_material_2">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/leg_top_bracket_v8_1_2.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.14284619399999998" />
+      <inertia ixx="3.797494468858281e-05" iyy="0.0001483283574247835" izz="0.00012744534632391704" ixy="3.037412258479129e-09" ixz="1.3479314832646434e-06" iyz="1.0823172083825887e-11" />
+      <origin xyz="0.06877407089321254 -1.0831521767993736e-06 -0.017633978573914535" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="left_ankle_pitch" type="revolute">
+    <origin xyz="-0.09999999473730714 -3.719999999707291e-08 -7.499219426298359e-05" rpy="-3.1415926071795863 0.0 0.0" />
+    <parent link="leg_top_bracket_v8_1" />
+    <child link="foot_bracket_for_5dof_leg_v9" />
+    <limit effort="10" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="foot_bracket_for_5dof_leg_v9">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/foot_bracket_for_5dof_leg_v9.stl" />
+      </geometry>
+      <material name="foot_bracket_for_5dof_leg_v9_material">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/foot_bracket_for_5dof_leg_v9.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.09911156" />
+      <inertia ixx="0.00010319248" iyy="3.7444559e-05" izz="8.358988e-05" ixy="-6.3817294e-06" ixz="2.1688004e-06" iyz="0" />
+      <origin xyz="-0.02364449 -0.012772993 0.017738481" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="right_ankle_pitch" type="revolute">
+    <origin xyz="0.09999999915897508 -5.7487026731006386e-08 2.5007553905526114e-05" rpy="-3.141592607179616 2.6794969798515922e-08 -5.535897937836154e-07" />
+    <parent link="leg_top_bracket_v8_1_2" />
+    <child link="foot_bracket_for_5dof_leg_v9_2" />
+    <limit effort="10" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="foot_bracket_for_5dof_leg_v9_2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/foot_bracket_for_5dof_leg_v9_2.stl" />
+      </geometry>
+      <material name="foot_bracket_for_5dof_leg_v9_material_2">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/foot_bracket_for_5dof_leg_v9_2.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.09911156" />
+      <inertia ixx="0.00010319248" iyy="3.7444559e-05" izz="8.358988e-05" ixy="6.3817294e-06" ixz="-2.1688004e-06" iyz="0" />
+      <origin xyz="0.02364449 -0.012772993 0.017738481" rpy="0 0 0" />
+    </inertial>
+  </link>
+</robot>

@@ -12,8 +12,8 @@ from isaacgym.torch_utils import *  # isort: skip
 import torch  # isort:skip
 
 
-class StompyMicroEnv(LeggedRobot):
-    """StompyFreeEnv is a class that represents a custom environment for a legged robot.
+class ZerothEnv(LeggedRobot):
+    """ZerothFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg: Configuration object for the legged robot.
