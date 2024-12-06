@@ -238,7 +238,7 @@ class PolicyWrapper:
 class Controller:
     """Handles control logic and observation processing"""
 
-    def __init__(self, cfg, policy_wrapper: PolicyWrapper):
+    def __init__(self, cfg: Sim2simCfg, policy_wrapper: PolicyWrapper):
         self.cfg = cfg
         self.policy = policy_wrapper
         
@@ -246,7 +246,11 @@ class Controller:
         self.last_actions = np.zeros(cfg.num_actions, dtype=np.float32)
         self.last_last_actions = np.zeros(cfg.num_actions, dtype=np.float32)
         self.action = np.zeros(cfg.num_actions, dtype=np.float32)
-        
+        self.ref_dof_pos = np.zeros(cfg.num_actions, dtype=np.float32)
+        self.default_dof_pos = np.array(
+            [self.cfg.robot.default_standing()[joint_name] for joint_name in self.cfg.robot.all_joints()]
+        )
+
         # Initialize observation history
         for _ in range(cfg.frame_stack):
             self.obs_history.append(np.zeros([1, cfg.num_single_obs], dtype=np.float32))
@@ -257,7 +261,14 @@ class Controller:
     def _process_observation(self, state: SimulationState, count: int) -> np.ndarray:
         """Process raw state into policy observation"""
         obs = np.zeros([1, self.cfg.num_single_obs], dtype=np.float32)
+
+        # Compute reference state first
+        self.compute_ref_state(count)
         
+        # Calculate diff
+        current_dof_pos = state.q[-self.cfg.num_actions:]
+        diff = current_dof_pos - self.ref_dof_pos
+
         phase = count * self.cfg.dt / self.cfg.cycle_time
         
         # Commands
@@ -285,27 +296,6 @@ class Controller:
         obs[0, (3 * self.cfg.num_actions + 5) + 3:(3 * self.cfg.num_actions + 5) + 2 * 3] = eu_ang
 
         return np.clip(obs, -self.cfg.clip_observations, self.cfg.clip_observations)
-
-    @staticmethod
-    def _quat_to_euler(quat: np.ndarray) -> np.ndarray:
-        """Convert quaternion to euler angles"""
-        x, y, z, w = quat
-
-        # Roll (x-axis rotation)
-        sinr_cosp = 2.0 * (w * x + y * z)
-        cosr_cosp = 1.0 - 2.0 * (x * x + y * y)
-        roll = np.arctan2(sinr_cosp, cosr_cosp)
-
-        # Pitch (y-axis rotation)
-        sinp = 2.0 * (w * y - z * x)
-        pitch = np.arcsin(np.clip(sinp, -1.0, 1.0))
-
-        # Yaw (z-axis rotation)
-        siny_cosp = 2.0 * (w * z + x * y)
-        cosy_cosp = 1.0 - 2.0 * (y * y + z * z)
-        yaw = np.arctan2(siny_cosp, cosy_cosp)
-
-        return np.array([roll, pitch, yaw])
 
     def compute_action(self, state: SimulationState, count: int) -> np.ndarray:
         """Compute control action based on current state"""
@@ -345,6 +335,78 @@ class Controller:
 
         return np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)
 
+    def compute_ref_state(self, count: int):
+        """Compute reference joint positions based on gait phase"""
+        phase = count * self.cfg.dt / self.cfg.cycle_time
+        sin_pos = np.sin(2 * np.pi * phase)
+        
+        # Initialize with default positions
+        self.ref_dof_pos = self.default_dof_pos.copy()
+        
+        # Scale factors for joint movements
+        scale_1 = 0.2  # Equivalent to cfg.rewards.target_joint_pos_scale
+        scale_2 = 2 * scale_1
+        
+        # Get joint names directly from Robot class
+        left_hip_pitch = self.cfg.robot.legs.left.hip_pitch
+        left_knee_pitch = self.cfg.robot.legs.left.knee_pitch
+        left_ankle_pitch = self.cfg.robot.legs.left.ankle_pitch
+        
+        right_hip_pitch = self.cfg.robot.legs.right.hip_pitch
+        right_knee_pitch = self.cfg.robot.legs.right.knee_pitch
+        right_ankle_pitch = self.cfg.robot.legs.right.ankle_pitch
+        
+        # Get indices of these joints in our DOF array
+        joint_order = self.cfg.robot.all_joints()
+        left_indices = {
+            'hip_pitch': joint_order.index(left_hip_pitch),
+            'knee_pitch': joint_order.index(left_knee_pitch),
+            'ankle_pitch': joint_order.index(left_ankle_pitch)
+        }
+        right_indices = {
+            'hip_pitch': joint_order.index(right_hip_pitch),
+            'knee_pitch': joint_order.index(right_knee_pitch),
+            'ankle_pitch': joint_order.index(right_ankle_pitch)
+        }
+        
+        # Left leg (stance when sin_pos > 0)
+        sin_pos_l = sin_pos if sin_pos > 0 else 0
+        self.ref_dof_pos[left_indices['hip_pitch']] += sin_pos_l * scale_1
+        self.ref_dof_pos[left_indices['knee_pitch']] += sin_pos_l * scale_2
+        self.ref_dof_pos[left_indices['ankle_pitch']] += sin_pos_l * scale_1
+        
+        # Right leg (stance when sin_pos < 0)
+        sin_pos_r = sin_pos if sin_pos < 0 else 0
+        self.ref_dof_pos[right_indices['hip_pitch']] += sin_pos_r * scale_1
+        self.ref_dof_pos[right_indices['knee_pitch']] += sin_pos_r * scale_2
+        self.ref_dof_pos[right_indices['ankle_pitch']] += sin_pos_r * scale_1
+        
+        # Double support phase
+        if abs(sin_pos) < 0.1:
+            self.ref_dof_pos[:] = 0
+    ## Helpers
+
+    @staticmethod
+    def _quat_to_euler(quat: np.ndarray) -> np.ndarray:
+        """Convert quaternion to euler angles"""
+        x, y, z, w = quat
+
+        # Roll (x-axis rotation)
+        sinr_cosp = 2.0 * (w * x + y * z)
+        cosr_cosp = 1.0 - 2.0 * (x * x + y * y)
+        roll = np.arctan2(sinr_cosp, cosr_cosp)
+
+        # Pitch (y-axis rotation)
+        sinp = 2.0 * (w * y - z * x)
+        pitch = np.arcsin(np.clip(sinp, -1.0, 1.0))
+
+        # Yaw (z-axis rotation)
+        siny_cosp = 2.0 * (w * z + x * y)
+        cosy_cosp = 1.0 - 2.0 * (y * y + z * z)
+        yaw = np.arctan2(siny_cosp, cosy_cosp)
+
+        return np.array([roll, pitch, yaw])
+
     def _pd_control(self, target_q, q, kp, target_dq, dq, kd, default_dict):
         """PD control calculation"""
         # Convert default dictionary to array in correct order
@@ -375,7 +437,7 @@ def run_simulation(cfg: Sim2simCfg, policy_path: str, command_mode: str = "fixed
         if count % cfg.decimation == 0:
             tau = controller.compute_action(state, count)
             simulator.step(tau)
-            print_debug_state(simulator, count)
+            print_debug_state(simulator, controller, count)
 
     simulator.close()
     cmd_manager.close()
