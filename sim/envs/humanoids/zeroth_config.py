@@ -5,12 +5,12 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.stompymicro.joints import Robot
+from sim.resources.zeroth.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())  # 20
 
 
-class StompyMicroCfg(LeggedRobotCfg):
+class ZerothCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
@@ -34,11 +34,11 @@ class StompyMicroCfg(LeggedRobotCfg):
         terminate_after_contacts_on = []
 
     class asset(LeggedRobotCfg.asset):
-        name = "stompymicro"
+        name = "zeroth"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["foot_left", "foot_right"]
-        knee_name = ["ankle_pitch_left", "ankle_pitch_right"]
+        foot_name = ["foot_bracket_for_5dof_leg_v9", "foot_bracket_for_5dof_leg_v9_2"]
+        knee_name = ["leg_top_bracket_v8_1", "leg_top_bracket_v8_1_2"]
 
         termination_height = 0.05
         default_feet_height = 0.01
@@ -97,7 +97,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 20  # 100hz
+        decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -123,7 +123,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
         randomize_base_mass = True  # True
-        added_mass_range = [-0.5, 0.5]
+        added_mass_range = [-0.25, 0.25]
         push_robots = True  # True
         push_interval_s = 4
         max_push_vel_xy = 0.05
@@ -157,30 +157,25 @@ class StompyMicroCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 50  # forces above this value are penalized
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
-
-            # TODO: add an argument
-            walking = False
-
-            if walking == True:
-                # reference motion tracking
-                joint_pos = 1.6
-                feet_clearance = 1.2
-                feet_contact_number = 1.2
-                feet_air_time = 1.2
-                foot_slip = -0.05
-                feet_distance = 0.2
-                knee_distance = 0.2
-                # contact
-                feet_contact_forces = -0.01
-                # vel tracking
-                tracking_lin_vel = 1.2
-                tracking_ang_vel = 1.1
-                vel_mismatch_exp = 0.5  # lin_z; ang x,y
-                low_speed = 0.4
-                track_vel_hard = 0.5
+            # reference motion tracking
+            joint_pos = 1.6
+            feet_clearance = 1.2
+            feet_contact_number = 1.2
+            feet_air_time = 1.2
+            foot_slip = -0.05
+            feet_distance = 0.2
+            knee_distance = 0.2
+            # contact
+            feet_contact_forces = -0.01
+            # vel tracking
+            tracking_lin_vel = 1.2
+            tracking_ang_vel = 1.1
+            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            low_speed = 0.4
+            track_vel_hard = 0.5
 
             # base pos
             default_joint_pos = 1.0
@@ -212,7 +207,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class StompyMicroCfgPPO(LeggedRobotCfgPPO):
+class ZerothCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -237,7 +232,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 300  # check for potential saves every this many iterations
-        experiment_name = "StompyMicro"
+        experiment_name = "zeroth"
         run_name = ""
         # load and resume
         resume = False

@@ -2,7 +2,7 @@
 """Defines the environment for training the humanoid."""
 
 from sim.envs.base.legged_robot import LeggedRobot
-from sim.resources.stompymicro.joints import Robot
+from sim.resources.zeroth.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
@@ -12,8 +12,8 @@ from isaacgym.torch_utils import *  # isort: skip
 import torch  # isort:skip
 
 
-class StompyMicroEnv(LeggedRobot):
-    """StompyFreeEnv is a class that represents a custom environment for a legged robot.
+class ZerothEnv(LeggedRobot):
+    """ZerothFreeEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg: Configuration object for the legged robot.
