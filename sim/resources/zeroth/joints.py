@@ -105,7 +105,7 @@ class Robot(Node):
             Robot.legs.right.knee_pitch: {
                 "lower": 0,
                 "upper": 1.57,
-            }
+            },
         }
 
     # p_gains
