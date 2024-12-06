@@ -34,7 +34,7 @@ class ZerothCfg(LeggedRobotCfg):
         terminate_after_contacts_on = []
 
     class asset(LeggedRobotCfg.asset):
-        name = "stompymicro"
+        name = "zeroth"
         file = str(robot_urdf_path(name))
 
         foot_name = ["foot_left", "foot_right"]
@@ -212,7 +212,7 @@ class ZerothCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class StompyMicroCfgPPO(LeggedRobotCfgPPO):
+class ZerothCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -237,7 +237,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 300  # check for potential saves every this many iterations
-        experiment_name = "StompyMicro"
+        experiment_name = "zeroth"
         run_name = ""
         # load and resume
         resume = False
