@@ -23,31 +23,42 @@ from sim.scripts.create_mjcf import load_embodiment
 from sim.utils.args_parsing import parse_args_with_extras
 from sim.utils.cmd_manager import CommandManager
 
+from sim.resources.stompymicro.joints import Robot
+
 import torch  # isort: skip
 
 
-def print_debug_state(sim, step_count, label=""):
+def print_debug_state(sim: "MujocoSimulator", controller: "Controller", step_count: int, label: str = ""):
     """Print key state information in concise format"""
     if step_count % 1000 == 0:
-        # Round all values to 3 decimal places
-        base_pos = [round(x, 3) for x in sim.data.qpos[:3]]
-        base_ori = [round(x, 3) for x in sim.data.qpos[3:7]]
-        joints = [round(x, 3) for x in sim.data.qpos[7:]]
-        joint_vel = [round(x, 3) for x in sim.data.qvel[6:]]
+        state = sim.get_state()
+        obs = controller._process_observation(state, step_count)
         
-        # Get base velocities in body frame (keeping your original logic)
-        quat = sim.data.sensor("orientation").data.copy()[[1, 2, 3, 0]]
-        r = R.from_quat(quat)
-        base_lin_vel = [round(x, 3) for x in r.apply(sim.data.qvel[:3], inverse=True)]
-        base_ang_vel = [round(x, 3) for x in sim.data.sensor("angular-velocity").data]
-
         print(f"\n[Step {step_count}] {label}")
-        print(f"pos: {base_pos}")
-        print(f"ori: {base_ori}")
-        print(f"j_pos: {joints}")
-        print(f"j_vel: {joint_vel}")
-        print(f"lin_v: {base_lin_vel}")
-        print(f"ang_v: {base_ang_vel}")
+        print("Basic State:")
+        print(f"pos: {[round(x, 3) for x in state.q[:3]]}")
+        print(f"ori: {[round(x, 3) for x in state.quat]}")
+        print(f"j_pos: {[round(x, 3) for x in state.q[-sim.cfg.num_actions:]]}")
+        print(f"j_vel: {[round(x, 3) for x in state.dq[-sim.cfg.num_actions:]]}")
+        print(f"lin_v: {[round(x, 3) for x in state.base_lin_vel]}")
+        print(f"ang_v: {[round(x, 3) for x in state.base_ang_vel]}")
+        
+        print("\nObservation Components:")
+        print(f"Phase: sin={obs[0,0]:.3f}, cos={obs[0,1]:.3f}")
+        print(f"Commands: {obs[0,2:5]}")
+        print(f"Scaled Joint Positions: {obs[0,5:sim.cfg.num_actions+5]}")
+        print(f"Scaled Joint Velocities: {obs[0,sim.cfg.num_actions+5:2*sim.cfg.num_actions+5]}")
+        print(f"Last Actions: {obs[0,2*sim.cfg.num_actions+5:3*sim.cfg.num_actions+5]}")
+        print(f"Base Angular Velocity: {obs[0,3*sim.cfg.num_actions+5:3*sim.cfg.num_actions+8]}")
+        print(f"Euler Angles: {obs[0,3*sim.cfg.num_actions+8:3*sim.cfg.num_actions+11]}")
+        
+        contacts = sim.get_contact_forces()
+        print(f"Contacts: {contacts}")
+
+        # print("\nJoint Info:")
+        # joint_names = sim.cfg.robot.all_joints()
+        # for i, name in enumerate(joint_names):
+        #     print(f"{name}: ref={controller.ref_dof_pos[i]:.3f}, current={state.q[-sim.cfg.num_actions:][i]:.3f}")
 
 
 class Sim2simCfg:
@@ -72,7 +83,7 @@ class Sim2simCfg:
         action_scale: float = 0.25,
     ):
         self.embodiment = embodiment
-        self.robot = load_embodiment(embodiment)
+        self.robot: Robot = load_embodiment(embodiment)  # TODO: remove hard-coded Robot type later
 
         self.num_actions = len(self.robot.all_joints())
 
@@ -105,6 +116,9 @@ class Sim2simCfg:
         self.clip_actions = clip_actions
 
         self.action_scale = action_scale
+        
+        self.rewards = types.SimpleNamespace()
+        self.rewards.target_joint_pos_scale = 0.17
 
 
 @dataclass
