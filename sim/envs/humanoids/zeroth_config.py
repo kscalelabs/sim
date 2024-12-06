@@ -123,8 +123,8 @@ class ZerothCfg(LeggedRobotCfg):
         randomize_friction = True
         friction_range = [0.1, 2.0]
         randomize_base_mass = True  # True
-        added_mass_range = [-0.5, 0.5]
-        push_robots = True  # True
+        added_mass_range = [-0.25, 0.25]
+        push_robots = False  # True
         push_interval_s = 4
         max_push_vel_xy = 0.05
         max_push_ang_vel = 0.1
@@ -157,7 +157,7 @@ class ZerothCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 50  # forces above this value are penalized
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
 
