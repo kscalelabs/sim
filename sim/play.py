@@ -159,22 +159,6 @@ def play(args: argparse.Namespace) -> None:
 
         obs, critic_obs, rews, dones, infos = env.step(actions.detach())
 
-        if t * env.cfg.control.decimation % 1000 == 0:
-            print("\nPlay.py Raw States:")
-            print(f"Raw Base Lin Vel: {env.base_lin_vel[0]}")
-            print(f"Raw Base Ang Vel: {env.base_ang_vel[0]}")
-            print(f"Raw DOF Pos: {env.dof_pos[0]}")
-            print(f"Raw DOF Vel: {env.dof_vel[0]}")
-
-            print("\nPlay.py Observation Components:")
-            print(f"Phase: sin={obs[0,0]:.3f}, cos={obs[0,1]:.3f}")
-            print(f"Commands: {obs[0,2:5]}")
-            print(f"Joint Positions: {obs[0,5:5+env.num_actions]}")  
-            print(f"Joint Velocities: {obs[0,5+env.num_actions:5+2*env.num_actions]}")
-            print(f"Actions: {obs[0,5+2*env.num_actions:5+3*env.num_actions]}")
-            print(f"Base Angular Velocity: {obs[0,5+3*env.num_actions:8+3*env.num_actions]}")
-            print(f"Euler Angles: {obs[0,8+3*env.num_actions:11+3*env.num_actions]}")
-
         if args.render:
             env.gym.fetch_results(env.sim, True)
             env.gym.step_graphics(env.sim)
