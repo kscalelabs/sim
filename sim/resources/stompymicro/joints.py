@@ -110,15 +110,15 @@ class Robot(Node):
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
-        legs = {
-            cls.legs.left.hip_pitch: 0.23,
-            cls.legs.left.knee_pitch: -0.741,
+        legs = {  # TODO: Set back to previous values
+            cls.legs.left.hip_pitch: 0,
+            cls.legs.left.knee_pitch: 0,
             cls.legs.left.hip_yaw: 0,
             cls.legs.left.hip_roll: 0,
-            cls.legs.left.ankle_pitch: -0.5,
-            cls.legs.right.hip_pitch: -0.23,
-            cls.legs.right.knee_pitch: 0.741,
-            cls.legs.right.ankle_pitch: 0.5,
+            cls.legs.left.ankle_pitch: 0,
+            cls.legs.right.hip_pitch: 0,
+            cls.legs.right.knee_pitch: 0,
+            cls.legs.right.ankle_pitch: 0,
             cls.legs.right.hip_yaw: 0,
             cls.legs.right.hip_roll: 0,
         }
