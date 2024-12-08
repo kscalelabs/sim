@@ -1,10 +1,13 @@
 from dataclasses import dataclass
 import numpy as np
 from typing import Dict, List, Tuple, Any
+import onnxruntime as ort
 from scipy.stats import norm
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, Matern
 from sim.envs.base.mujoco_env import MujocoEnv, MujocoCfg
+from sim.sim2sim.mujoco.play import run_simulation
+from sim.utils.cmd_manager import CommandManager
 
 
 @dataclass
@@ -20,17 +23,19 @@ class BayesianOptimizer:
     def __init__(
         self,
         base_cfg: MujocoCfg,
+        policy: ort.InferenceSession,
         parameters: List[OptimizeParam],
+        cmd_manager: CommandManager,
         n_initial_points: int = 10,
         n_iterations: int = 40,
-        n_episodes: int = 5,
         exploration_weight: float = 0.1
     ):
         self.base_cfg = base_cfg
+        self.policy = policy
         self.parameters = parameters
+        self.cmd_manager = cmd_manager
         self.n_initial_points = n_initial_points
         self.n_iterations = n_iterations
-        self.n_episodes = n_episodes
         self.exploration_weight = exploration_weight
         
         # Initialize storage for observations
@@ -46,7 +51,7 @@ class BayesianOptimizer:
             kernel=kernel,
             n_restarts_optimizer=10,
             normalize_y=True,
-            random_state=42
+            # random_state=42
         )
 
     def _get_cfg_value(self, cfg: MujocoCfg, param_path: str) -> Any:
@@ -100,7 +105,7 @@ class BayesianOptimizer:
         return ei
 
     def _evaluate_parameters(self, params: Dict[str, float]) -> float:
-        """Evaluate a parameter set over multiple episodes"""
+        """Evaluate a parameter set over multiple episodes using the policy"""
         # Create a copy of base config and update with new parameters
         cfg = MujocoCfg()
         cfg.__dict__.update(self.base_cfg.__dict__)
@@ -109,30 +114,14 @@ class BayesianOptimizer:
             self._set_cfg_value(cfg, param_name, value)
         
         env = MujocoEnv(cfg, render=False)
-        rewards = []
         
         try:
-            for _ in range(self.n_episodes):
-                env.reset()
-                episode_reward = 0
-                episode_length = 0
-                done = False
-                
-                while not done:
-                    # Use sinusoidal actions for testing stability
-                    t = episode_length * env.cfg.sim.dt
-                    action = 0.5 * np.sin(2 * np.pi * t)
-                    _, reward, done, info = env.step(action * np.ones(env.num_joints))
-                    
-                    episode_reward += reward
-                    episode_length += 1
-                    
-                    # Early termination for unstable episodes
-                    if info.get('fall', False):
-                        episode_reward *= 0.5  # Penalty for falling
-                        break
-                    
-                rewards.append(episode_reward)
+            rewards = run_simulation(
+                env=env,
+                policy=self.policy,
+                cfg=cfg,
+                cmd_manager=self.cmd_manager,
+            )
             
             # Calculate score with stability consideration
             mean_reward = np.mean(rewards)
@@ -231,28 +220,3 @@ class BayesianOptimizer:
         print(f"Best score: {best_score:.2f}")
         
         return best_params, self.y.tolist()
-
-
-if __name__ == "__main__":
-    cfg = MujocoCfg()
-    parameters = [
-        OptimizeParam(
-            name='gains.kp_scale',
-            min_val=0.003,
-            max_val=1.0,
-        ),
-        OptimizeParam(
-            name='gains.kd_scale',
-            min_val=1.00,
-            max_val=70.0,
-        ),
-    ]
-    
-    optimizer = BayesianOptimizer(
-        cfg,
-        parameters,
-        n_initial_points=10,
-        n_iterations=200,
-    )
-    
-    best_params, history = optimizer.optimize()
