@@ -1,14 +1,12 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
 
-from isaacgym.torch_utils import *  # isort:skip
-
 from sim.envs.base.legged_robot import LeggedRobot
 from sim.resources.dora.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
-
+from isaacgym.torch_utils import *  # isort:skip
 import torch  # isort:skip
 
 

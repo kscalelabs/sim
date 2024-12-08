@@ -135,7 +135,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         added_mass_range = [-0.5, 0.5]
         push_robots = True
         push_interval_s = 1.5
-        max_push_vel_xy = 0.6   # TODO: This was set to make standing significantly harder
+        max_push_vel_xy = 0.6  # TODO: This was set to make standing significantly harder
         max_push_ang_vel = 0.6
         # dynamic randomization
         action_delay = 0.5

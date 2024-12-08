@@ -58,7 +58,7 @@ class StompyMicroEnv(LeggedRobot):
         for name, joint in Robot.arms.left.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.arms_joints["left_" + name] = joint_handle
-        
+
         for name, joint in Robot.arms.right.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.arms_joints["right_" + name] = joint_handle
@@ -122,7 +122,7 @@ class StompyMicroEnv(LeggedRobot):
         self.command_input = torch.cat((sin_pos, cos_pos, self.commands[:, :3] * self.commands_scale), dim=1)
         q = (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos
         dq = self.dof_vel * self.obs_scales.dof_vel
-        
+
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)

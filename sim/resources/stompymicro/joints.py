@@ -5,10 +5,10 @@ The best way to re-generate this snippet for a new robot is to use the
 tree of the various joint names in the robot.
 """
 
+import math
 import textwrap
 from abc import ABC
 from typing import Dict, List, Tuple, Union
-import math
 
 
 class Node(ABC):
@@ -92,14 +92,14 @@ class Arms(Node):
 
 
 def get_facing_direction_quaternion(angle_degrees: float) -> List[float]:
-    theta = angle_degrees * (math.pi/180)
-    half_theta = theta/2
+    theta = angle_degrees * (math.pi / 180)
+    half_theta = theta / 2
     return [0, 0, math.sin(half_theta), math.cos(half_theta)]
 
 
 class Robot(Node):
     height = 0.32
-    angle = 90  # 0?
+    angle = 0
     rotation = get_facing_direction_quaternion(angle)
     print(f"Rotation: {rotation}")
 

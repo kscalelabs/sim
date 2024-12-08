@@ -127,6 +127,7 @@ class LeggedRobot(BaseTask):
         Args:
             env_ids (list[int]): List of environment ids which must be reset
         """
+
         if len(env_ids) == 0:
             return
         self._reset_dofs(env_ids)

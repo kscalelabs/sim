@@ -45,7 +45,7 @@ class StompyMicroEnv(LeggedRobot):
         reset_idx(env_ids): Resets the environment for the specified environment IDs.
     """
 
-    def __init__(self, cfg, sim_params, physics_engine, sim_device, headless):
+    def __init__(self, cfg: StompyMicroCfg, sim_params, physics_engine, sim_device: str, headless: bool):
         super().__init__(cfg, sim_params, physics_engine, sim_device, headless)
         self.last_feet_z = self.cfg.asset.default_feet_height
         self.feet_height = torch.zeros((self.num_envs, 2), device=self.device)
@@ -232,7 +232,7 @@ class StompyMicroEnv(LeggedRobot):
             ),
             dim=-1,
         )  # 89
-        
+
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
@@ -416,7 +416,7 @@ class StompyMicroEnv(LeggedRobot):
         ang_vel_error_exp = torch.exp(-ang_vel_error * 10)
 
         linear_error = 0.2 * (lin_vel_error + ang_vel_error)
-        
+
         reward = (lin_vel_error_exp + ang_vel_error_exp) / 2.0 - linear_error
 
         return reward
