@@ -2,6 +2,7 @@
 """Defines the environment for training the humanoid."""
 
 from sim.envs.base.legged_robot import LeggedRobot
+from sim.envs.humanoids.stompymicro_config import StompyMicroCfg
 from sim.resources.stompymicro.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
 
