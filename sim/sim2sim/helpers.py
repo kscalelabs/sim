@@ -1,7 +1,9 @@
 from typing import Tuple
-from sim.model_export import ActorCfg, Actor
-import torch
 
+import pygame
+
+from sim.model_export import ActorCfg, Actor
+import torch  # isort:skip
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[torch.nn.Module, dict, Tuple[torch.Tensor, ...]]:
     model = torch.jit.load(model_path, map_location="cpu")
@@ -38,3 +40,25 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[torch.nn.Module, d
         },
         input_tensors,
     )
+
+
+def handle_keyboard_input():
+    global x_vel_cmd, y_vel_cmd, yaw_vel_cmd
+
+    keys = pygame.key.get_pressed()
+
+    # Update movement commands based on arrow keys
+    if keys[pygame.K_UP]:
+        x_vel_cmd += 0.0005
+    if keys[pygame.K_DOWN]:
+        x_vel_cmd -= 0.0005
+    if keys[pygame.K_LEFT]:
+        y_vel_cmd += 0.0005
+    if keys[pygame.K_RIGHT]:
+        y_vel_cmd -= 0.0005
+
+    # Yaw control
+    if keys[pygame.K_a]:
+        yaw_vel_cmd += 0.001
+    if keys[pygame.K_z]:
+        yaw_vel_cmd -= 0.001
