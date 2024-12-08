@@ -135,9 +135,9 @@ class StompyMicroCfg(LeggedRobotCfg):
         randomize_base_mass = False
         added_mass_range = [-0.5, 0.5]
         push_robots = True
-        push_interval_s = 1.5
-        max_push_vel_xy = 0.6  # TODO: This was set to make standing significantly harder
-        max_push_ang_vel = 0.6
+        push_interval_s = 3.5
+        max_push_vel_xy = 0.5  # TODO: This was set to make standing significantly harder
+        max_push_ang_vel = 0.7
         # dynamic randomization
         action_delay = 0.5
         action_noise = 0.1  # TODO: This was set to make standing harder
@@ -225,19 +225,14 @@ class StompyMicroStandingCfg(StompyMicroCfg):
         max_dist = 0.16
 
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.02  # m
-        cycle_time = 0.5  # sec
-        # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
-        # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
         max_contact_force = 50  # forces above this value are penalized
 
         class scales:
             # base pos
-            default_joint_pos = 0.7
-            orientation = 0
-            base_height = 0.3
+            default_joint_pos = 2.5
+            base_height = 0.2
             base_acc = 0.2
             # energy
             action_smoothness = -0.006
