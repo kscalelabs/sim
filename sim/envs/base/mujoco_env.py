@@ -15,7 +15,6 @@ np.set_printoptions(precision=2, suppress=True)
 @dataclass
 class MujocoCfg(StompyMicroCfg):  # LeggedRobotCfg):
     class gains:
-        tau_limits: np.ndarray = np.ones((16,))
         tau_factor: float = 4
         kp_scale: float = 3.0
         kd_scale: float = 1.0
