@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
-from typing import Dict, List, Tuple, Any, Union
+from typing import Dict, List, Tuple, Any
 from sim.envs.base.mujoco_env import MujocoEnv, MujocoCfg
 
 
@@ -158,10 +158,7 @@ class ParameterOptimizer:
 
 
 
-from dataclasses import dataclass
-import numpy as np
-from typing import Dict, List, Tuple, Any, Union
-from sim.envs.base.mujoco_env import MujocoEnv, MujocoCfg
+
 
 
 @dataclass
