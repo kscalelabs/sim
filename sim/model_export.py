@@ -8,7 +8,7 @@ from typing import List, Optional, Tuple
 import onnx
 import onnxruntime as ort
 import torch
-from scripts.create_mjcf import load_embodiment
+from sim.scripts.create_mjcf import load_embodiment
 from torch import Tensor, nn
 from torch.distributions import Normal
 
