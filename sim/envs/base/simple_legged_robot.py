@@ -34,7 +34,15 @@ class LeggedRobot(BaseTask):
         self.height_samples = None
         self.debug_viz = False
         self.init_done = False
-        self._parse_cfg(self.cfg)
+
+        self.dt = self.cfg.control.decimation * self.sim_params.dt
+        self.obs_scales = self.cfg.normalization.obs_scales
+        self.command_ranges = class_to_dict(self.cfg.commands.ranges)
+        if self.cfg.terrain.mesh_type not in ["heightfield", "trimesh"]:
+            self.cfg.terrain.curriculum = False
+        self.max_episode_length_s = self.cfg.env.episode_length_s
+        self.max_episode_length = np.ceil(self.max_episode_length_s / self.dt)
+
         super().__init__(self.cfg, sim_params, physics_engine, sim_device, headless)
         if not self.headless:
             self.set_camera(self.cfg.viewer.pos, self.cfg.viewer.lookat)
@@ -81,9 +89,7 @@ class LeggedRobot(BaseTask):
         return obs, privileged_obs
 
     def post_physics_step(self):
-        """Compute observations
-        calls self._post_physics_step_callback() for common computations
-        """
+        """Compute observations"""
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_net_contact_force_tensor(self.sim)
         self.gym.refresh_rigid_body_state_tensor(self.sim)
@@ -108,8 +114,6 @@ class LeggedRobot(BaseTask):
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
         self.projected_gravity[:] = quat_rotate_inverse(self.base_quat, self.gravity_vec)
 
-        self._post_physics_step_callback()
-
         self.compute_observations()
 
         self.last_last_actions[:] = torch.clone(self.last_actions[:])
@@ -120,7 +124,7 @@ class LeggedRobot(BaseTask):
 
     def reset_idx(self, env_ids):
         """Reset some environments.
-            Calls self._reset_dofs(env_ids), self._reset_root_states(env_ids), and self._resample_commands(env_ids)
+            Calls self._reset_dofs(env_ids), self._reset_root_states(env_ids)
             Logs episode info
             Resets some buffers
 
@@ -132,7 +136,6 @@ class LeggedRobot(BaseTask):
             return
         self._reset_dofs(env_ids)
         self._reset_root_states(env_ids)
-        self._resample_commands(env_ids)
 
         # reset buffers
         self.last_last_actions[env_ids] = 0.0
@@ -198,57 +201,6 @@ class LeggedRobot(BaseTask):
             self.body_mass[env_id] += prop.mass
         return props
 
-    def _post_physics_step_callback(self):
-        """Callback called before computing observations
-        Default behaviour: Compute ang vel command based on target and heading, compute measured terrain heights and randomly push robots
-        """
-        env_ids = (
-            (self.episode_length_buf % int(self.cfg.commands.resampling_time / self.dt) == 0)
-            .nonzero(as_tuple=False)
-            .flatten()
-        )
-        self._resample_commands(env_ids)
-        if self.cfg.commands.heading_command:
-            forward = quat_apply(self.base_quat, self.forward_vec)
-            heading = torch.atan2(forward[:, 1], forward[:, 0])
-            self.commands[:, 2] = torch.clip(0.5 * wrap_to_pi(self.commands[:, 3] - heading), -1.0, 1.0)
-
-    def _resample_commands(self, env_ids):
-        """Randommly select commands of some environments
-
-        Args:
-            env_ids (List[int]): Environments ids for which new commands are needed
-        """
-        self.commands[env_ids, 0] = torch_rand_float(
-            self.command_ranges["lin_vel_x"][0],
-            self.command_ranges["lin_vel_x"][1],
-            (len(env_ids), 1),
-            device=self.device,
-        ).squeeze(1)
-        self.commands[env_ids, 1] = torch_rand_float(
-            self.command_ranges["lin_vel_y"][0],
-            self.command_ranges["lin_vel_y"][1],
-            (len(env_ids), 1),
-            device=self.device,
-        ).squeeze(1)
-        if self.cfg.commands.heading_command:
-            self.commands[env_ids, 3] = torch_rand_float(
-                self.command_ranges["heading"][0],
-                self.command_ranges["heading"][1],
-                (len(env_ids), 1),
-                device=self.device,
-            ).squeeze(1)
-        else:
-            self.commands[env_ids, 2] = torch_rand_float(
-                self.command_ranges["ang_vel_yaw"][0],
-                self.command_ranges["ang_vel_yaw"][1],
-                (len(env_ids), 1),
-                device=self.device,
-            ).squeeze(1)
-
-        # set small commands to zero
-        self.commands[env_ids, :2] *= (torch.norm(self.commands[env_ids, :2], dim=1) > 0.2).unsqueeze(1)
-
     def _compute_torques(self, actions):
         """Compute torques from actions.
             Actions can be interpreted as position or velocity targets given to a PD controller, or directly as scaled torques.
@@ -297,21 +249,10 @@ class LeggedRobot(BaseTask):
         Args:
             env_ids (List[int]): Environemnt ids
         """
-        # base position
-        if self.custom_origins:
-            self.root_states[env_ids] = self.base_init_state
-            self.root_states[env_ids, :3] += self.env_origins[env_ids]
-            self.root_states[env_ids, :2] += torch_rand_float(
-                -1.0, 1.0, (len(env_ids), 2), device=self.device
-            )  # xy position within 1m of the center
-        else:
-            self.root_states[env_ids] = self.base_init_state
-            self.root_states[env_ids, :3] += self.env_origins[env_ids]
+        self.root_states[env_ids] = self.base_init_state
+        self.root_states[env_ids, :3] += self.env_origins[env_ids]
         # base velocities
         # self.root_states[env_ids, 7:13] = torch_rand_float(-0.05, 0.05, (len(env_ids), 6), device=self.device) # [7:10]: lin vel, [10:13]: ang vel
-        if self.cfg.asset.fix_base_link:
-            self.root_states[env_ids, 7:13] = 0
-            self.root_states[env_ids, 2] += 1.8
         env_ids_int32 = env_ids.to(dtype=torch.int32)
         self.gym.set_actor_root_state_tensor_indexed(
             self.sim,
@@ -570,12 +511,3 @@ class LeggedRobot(BaseTask):
         self.env_origins[:, 0] = spacing * xx.flatten()[: self.num_envs]
         self.env_origins[:, 1] = spacing * yy.flatten()[: self.num_envs]
         self.env_origins[:, 2] = 0.0
-
-    def _parse_cfg(self, cfg):
-        self.dt = self.cfg.control.decimation * self.sim_params.dt
-        self.obs_scales = self.cfg.normalization.obs_scales
-        self.command_ranges = class_to_dict(self.cfg.commands.ranges)
-        if self.cfg.terrain.mesh_type not in ["heightfield", "trimesh"]:
-            self.cfg.terrain.curriculum = False
-        self.max_episode_length_s = self.cfg.env.episode_length_s
-        self.max_episode_length = np.ceil(self.max_episode_length_s / self.dt)
