@@ -2,32 +2,24 @@
 import numpy as np
 import onnxruntime as ort
 
-from sim.env_helpers import debug_robot_state
 from sim.utils.cmd_manager import CommandManager
 from sim.envs.base.mujoco_env import MujocoCfg, MujocoEnv
 
 np.set_printoptions(precision=2, suppress=True)
 
 
-def run_simulation(env: MujocoEnv, policy: ort.InferenceSession, cfg: MujocoCfg, cmd_manager: CommandManager) -> None:
-    """
-    Run a policy in the Mujoco environment.
-    
-    Args:
-        env: MujocoEnv instance
-        policy: ONNX policy for controlled simulation
-        cfg: Simulation configuration
-    """
+def run_simulation(env: MujocoEnv, policy: ort.InferenceSession, cfg: MujocoCfg, cmd_manager: CommandManager) -> float:
+    """Run a policy in the Mujoco environment."""
     obs = env.reset()
     count = 0
-    fall_count = 0
+    episode_reward = 0
     
     # Initialize policy state
     target_q = np.zeros(env.num_joints)
     prev_actions = np.zeros(env.num_joints)
     hist_obs = np.zeros(policy.get_metadata()["num_observations"])
     
-    commands = cmd_manager.update(cfg.sim.dt)
+    # commands = cmd_manager.update(cfg.sim.dt)
     
     while count * cfg.sim.dt < cfg.env.episode_length_s:
         q, dq, quat, v, omega, euler = obs
@@ -35,7 +27,7 @@ def run_simulation(env: MujocoEnv, policy: ort.InferenceSession, cfg: MujocoCfg,
         command_input = np.array(
             [np.sin(2 * np.pi * phase), np.cos(2 * np.pi * phase), 0, 0, 0]
         )
-        obs_buf = np.concatenate([command_input, q, dq, prev_actions, omega, euler])
+        # obs_buf = np.concatenate([command_input, q, dq, prev_actions, omega, euler])
         policy_output = policy({
             "x_vel.1": np.array([command_input[2]], dtype=np.float32),
             "y_vel.1": np.array([command_input[3]], dtype=np.float32),
@@ -53,26 +45,16 @@ def run_simulation(env: MujocoEnv, policy: ort.InferenceSession, cfg: MujocoCfg,
         prev_actions = policy_output["actions"]
         hist_obs = policy_output["x.3"]
 
-        commands = cmd_manager.update(cfg.sim.dt)
+        # commands = cmd_manager.update(cfg.sim.dt)
         
-        obs, _, done, info = env.step(target_q)
+        obs, reward, done, info = env.step(target_q)
+        episode_reward += reward
         count += 1
         
-        if info.get('fall', False):
-            print("Robot fell, resetting...")
-            fall_count += 1
-            obs = env.reset()
-            target_q = np.zeros(env.num_joints)
-            prev_actions = np.zeros(env.num_joints)
-            hist_obs = np.zeros(policy.get_metadata()["num_observations"])
-        
-        if count % 17 == 0:
-            print(obs_buf)
-            debug_robot_state(obs_buf, policy_output["actions"])
-    
-    print(f"\nSimulation complete:")
-    print(f"Duration: {count * cfg.sim.dt:.1f}s")
-    print(f"Falls: {fall_count}")
+        if info.get('fall', False) or done:
+            break
+            
+    return episode_reward
 
 
 if __name__ == "__main__":
@@ -85,6 +67,9 @@ if __name__ == "__main__":
     from sim.sim2sim.helpers import get_actor_policy
 
     cfg = MujocoCfg()
+    cfg.gains.kp_scale = 2.821
+    cfg.gains.kd_scale = 1.566
+    cfg.gains.tau_factor = 3.508 # 4
     cfg.env.num_envs = 1
     env = MujocoEnv(cfg, render=True)
     cmd_manager = CommandManager(num_envs=cfg.env.num_envs, mode="fixed", default_cmd=[0.0, 0.0, 0.0, 0.0])
