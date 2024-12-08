@@ -29,7 +29,7 @@ def create_base_parser(add_help=False):
     parser.add_argument(
         "--max_iterations",
         type=int,
-        default=1001,
+        # default=1001,
         help="Maximum number of iterations. Refers to training iterations for `train.py` and playing steps for `play.py`.",
     )
 
