@@ -14,16 +14,13 @@ from sim.envs.humanoids.stompymicro_config import StompyMicroCfg
 
 @dataclass
 class MujocoCfg(StompyMicroCfg):  # LeggedRobotCfg):
-    class extras:
-        tau_factor: float = 10.0
-        decimation: int = 10
-        cycle_time: float = 0.5
-
     class gains:
-        tau_factor: float = 10
         tau_limits: np.ndarray = np.ones((16,))
-        kps: np.ndarray = np.ones((16,))
+        tau_factor: float = 10
         kds: np.ndarray = np.ones((16,))
+        kps: np.ndarray = np.ones((16,))
+        kp_scale: float = 1.0
+        kd_scale: float = 1.0
 
 
 class MujocoEnv(Env):
