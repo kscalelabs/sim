@@ -189,12 +189,12 @@ class Controller:
     def __init__(self, cfg, policy_wrapper: PolicyWrapper):
         self.cfg = cfg
         self.policy = policy_wrapper
-        
+
         self.obs_history: Deque = deque(maxlen=cfg.frame_stack)
         self.last_actions = np.zeros(cfg.num_actions, dtype=np.float32)
         self.last_last_actions = np.zeros(cfg.num_actions, dtype=np.float32)
         self.action = np.zeros(cfg.num_actions, dtype=np.float32)
-        
+
         # Initialize observation history
         for _ in range(cfg.frame_stack):
             self.obs_history.append(np.zeros([1, cfg.num_single_obs], dtype=np.float32))
@@ -205,19 +205,21 @@ class Controller:
     def _process_observation(self, state: SimulationState, count: int) -> np.ndarray:
         """Process raw state into policy observation"""
         obs = np.zeros([1, self.cfg.num_single_obs], dtype=np.float32)
-        
+
         phase = count * self.cfg.dt / self.cfg.cycle_time
-        
+
         # Commands
-        commands = np.array([
-            self.x_vel_cmd * self.cfg.obs_scales.lin_vel,
-            self.y_vel_cmd * self.cfg.obs_scales.lin_vel,
-            self.yaw_vel_cmd * self.cfg.obs_scales.ang_vel
-        ])
+        commands = np.array(
+            [
+                self.x_vel_cmd * self.cfg.obs_scales.lin_vel,
+                self.y_vel_cmd * self.cfg.obs_scales.lin_vel,
+                self.yaw_vel_cmd * self.cfg.obs_scales.ang_vel,
+            ]
+        )
 
         # Extract joint states
-        q = state.q[-self.cfg.num_actions:]
-        dq = state.dq[-self.cfg.num_actions:]
+        q = state.q[-self.cfg.num_actions :]
+        dq = state.dq[-self.cfg.num_actions :]
 
         # Extract base states
         eu_ang = self._quat_to_euler(state.quat)
@@ -242,11 +244,11 @@ class Controller:
         obs[0, 0] = math.sin(2 * math.pi * phase)
         obs[0, 1] = math.cos(2 * math.pi * phase)
         obs[0, 2:5] = commands
-        obs[0, 5:(self.cfg.num_actions + 5)] = (q - self.default_dof_pos) * self.cfg.obs_scales.dof_pos
-        obs[0, (self.cfg.num_actions + 5):(2 * self.cfg.num_actions + 5)] = dq * self.cfg.obs_scales.dof_vel
-        obs[0, (2 * self.cfg.num_actions + 5):(3 * self.cfg.num_actions + 5)] = self.action
-        obs[0, (3 * self.cfg.num_actions + 5):(3 * self.cfg.num_actions + 5) + 3] = state.base_ang_vel
-        obs[0, (3 * self.cfg.num_actions + 5) + 3:(3 * self.cfg.num_actions + 5) + 2 * 3] = eu_ang
+        obs[0, 5 : (self.cfg.num_actions + 5)] = (q - self.default_dof_pos) * self.cfg.obs_scales.dof_pos
+        obs[0, (self.cfg.num_actions + 5) : (2 * self.cfg.num_actions + 5)] = dq * self.cfg.obs_scales.dof_vel
+        obs[0, (2 * self.cfg.num_actions + 5) : (3 * self.cfg.num_actions + 5)] = self.action
+        obs[0, (3 * self.cfg.num_actions + 5) : (3 * self.cfg.num_actions + 5) + 3] = state.base_ang_vel
+        obs[0, (3 * self.cfg.num_actions + 5) + 3 : (3 * self.cfg.num_actions + 5) + 2 * 3] = eu_ang
 
         return np.clip(obs, -self.cfg.clip_observations, self.cfg.clip_observations)
 
@@ -280,36 +282,30 @@ class Controller:
         # Stack observations
         policy_input = np.zeros([1, self.cfg.num_observations], dtype=np.float32)
         for i in range(self.cfg.frame_stack):
-            policy_input[0, i * self.cfg.num_single_obs:(i + 1) * self.cfg.num_single_obs] = self.obs_history[i][0, :]
+            policy_input[0, i * self.cfg.num_single_obs : (i + 1) * self.cfg.num_single_obs] = self.obs_history[i][0, :]
 
         # Update action history
         self.last_last_actions = self.last_actions.copy()
         self.last_actions = self.action.copy()
-        
+
         # Get policy output and scale
         self.action[:] = self.policy(policy_input)
         self.action = np.clip(self.action, -self.cfg.clip_actions, self.cfg.clip_actions)
         target_dof_pos = self.action * self.cfg.action_scale
-        
+
         if count % 1000 == 0:
             print("\nAction Computation:")
             print(f"Raw Policy Output: {self.action}")
             print(f"Target DOF Positions: {target_dof_pos}")
 
         # Compute PD control
-        q = state.q[-self.cfg.num_actions:]
-        dq = state.dq[-self.cfg.num_actions:]
+        q = state.q[-self.cfg.num_actions :]
+        dq = state.dq[-self.cfg.num_actions :]
         target_dq = np.zeros(self.cfg.num_actions, dtype=np.double)
 
         # PD control with scaling
         tau = self._pd_control(
-            target_dof_pos, 
-            q, 
-            self.cfg.kps, 
-            target_dq, 
-            dq, 
-            self.cfg.kds, 
-            self.cfg.robot.default_standing()
+            target_dof_pos, q, self.cfg.kps, target_dq, dq, self.cfg.kds, self.cfg.robot.default_standing()
         )
 
         return np.clip(tau, -self.cfg.tau_limit, self.cfg.tau_limit)

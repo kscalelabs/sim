@@ -30,16 +30,17 @@
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 # type: ignore
 
+import json
 import os
 import statistics
 import time
 from collections import deque
 from datetime import datetime
 from typing import Callable, Optional
-import json
-import yaml
+
 import torch
 import wandb
+import yaml
 from torch.utils.tensorboard import SummaryWriter
 
 from sim.algo.ppo.actor_critic import ActorCritic
@@ -74,30 +75,27 @@ def write_config_file(config: dict, log_dir: str) -> None:
     """Writes the configuration to a JSON file in the log directory."""
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
-        
+
     # Add metadata section
     metadata = {
         "creation_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "experiment_name": config["runner"]["experiment_name"],
         "run_name": config["runner"]["run_name"],
     }
-    
+
     serializable_config = make_serializable(config)
-    
-    full_config = {
-        "metadata": metadata,
-        "configuration": serializable_config
-    }
-    
+
+    full_config = {"metadata": metadata, "configuration": serializable_config}
+
     json_path = os.path.join(log_dir, "experiment_config.json")
-    with open(json_path, 'w') as f:
+    with open(json_path, "w") as f:
         json.dump(full_config, f, indent=2, sort_keys=True)
-    
+
     yaml_path = os.path.join(log_dir, "experiment_config.yaml")
-    with open(yaml_path, 'w') as f:
+    with open(yaml_path, "w") as f:
         yaml.dump(full_config, f, default_flow_style=False, sort_keys=False)
 
-    
+
 class OnPolicyRunner:
     def __init__(self, env: VecEnv, train_cfg: dict, log_dir: Optional[str] = None, device: str = "cpu"):
         self.cfg = train_cfg["runner"]

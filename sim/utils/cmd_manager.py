@@ -96,21 +96,25 @@ class CommandManager:
 
                 if self.env_cfg and self.env_cfg.commands.heading_command:
                     new_commands = torch.from_numpy(
-                        np.array([
-                            np.random.uniform(*self.cmd_ranges["lin_vel_x"], size=self.num_envs),
-                            np.random.uniform(*self.cmd_ranges["lin_vel_y"], size=self.num_envs),
-                            np.zeros(self.num_envs),
-                            np.random.uniform(*self.cmd_ranges["heading"], size=self.num_envs),
-                        ]).T  # Transpose to get shape [num_envs, 4]
+                        np.array(
+                            [
+                                np.random.uniform(*self.cmd_ranges["lin_vel_x"], size=self.num_envs),
+                                np.random.uniform(*self.cmd_ranges["lin_vel_y"], size=self.num_envs),
+                                np.zeros(self.num_envs),
+                                np.random.uniform(*self.cmd_ranges["heading"], size=self.num_envs),
+                            ]
+                        ).T  # Transpose to get shape [num_envs, 4]
                     ).to(self.device)
                 else:
                     new_commands = torch.tensor(
-                        np.array([
-                            np.random.uniform(*self.cmd_ranges["lin_vel_x"], size=self.num_envs),
-                            np.random.uniform(*self.cmd_ranges["lin_vel_y"], size=self.num_envs),
-                            np.random.uniform(*self.cmd_ranges["ang_vel_yaw"], size=self.num_envs),
-                            np.zeros(self.num_envs),
-                        ]).T  # Transpose to get shape [num_envs, 4]
+                        np.array(
+                            [
+                                np.random.uniform(*self.cmd_ranges["lin_vel_x"], size=self.num_envs),
+                                np.random.uniform(*self.cmd_ranges["lin_vel_y"], size=self.num_envs),
+                                np.random.uniform(*self.cmd_ranges["ang_vel_yaw"], size=self.num_envs),
+                                np.zeros(self.num_envs),
+                            ]
+                        ).T  # Transpose to get shape [num_envs, 4]
                     ).to(self.device)
                 self.commands = new_commands
 
@@ -123,7 +127,7 @@ class CommandManager:
         return self.commands
 
     def draw(self, gym, viewer, env_handles, robot_positions, actual_vels) -> None:
-        """Draws command and actual velocity arrows for all robots."""
+        """Draws robot heading and velocity vectors."""
         if viewer is None:
             return
 

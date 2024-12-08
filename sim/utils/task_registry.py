@@ -33,6 +33,7 @@
 
 import os
 from datetime import datetime
+from typing import Dict, Tuple
 
 from sim import ROOT_DIR
 from sim.algo.ppo.on_policy_runner import OnPolicyRunner  # mypy: ignore
@@ -120,7 +121,9 @@ class TaskRegistry:
         self.env_cfg_for_wandb = env_cfg
         return env, env_cfg
 
-    def make_alg_runner(self, env, name=None, args=None, train_cfg=None, log_root="default"):
+    def make_alg_runner(
+        self, env, name=None, args=None, train_cfg=None, log_root="default"
+    ) -> Tuple[OnPolicyRunner, Dict]:
         """Creates the training algorithm  either from a registered namme or from the provided config file.
 
         Args:
