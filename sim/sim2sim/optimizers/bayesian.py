@@ -46,12 +46,14 @@ class BayesianOptimizer:
         self.bounds = np.array([[p.min_val, p.max_val] for p in parameters])
         
         # Initialize GP with Matérn kernel (more flexible than RBF for real processes)
-        kernel = ConstantKernel() * Matern(nu=2.5)
+        kernel = (ConstantKernel(1.0) * RBF(length_scale=1.0) + 
+         ConstantKernel(1.0) * Matern(length_scale=1.0, nu=0.5))
+
         self.gp = GaussianProcessRegressor(
             kernel=kernel,
             n_restarts_optimizer=10,
             normalize_y=True,
-            # random_state=42
+            alpha=1e-6
         )
 
     def _get_cfg_value(self, cfg: MujocoCfg, param_path: str) -> Any:
@@ -105,7 +107,7 @@ class BayesianOptimizer:
         return ei
 
     def _evaluate_parameters(self, params: Dict[str, float]) -> float:
-        """Evaluate a parameter set over multiple episodes using the policy"""
+        """Evaluate a parameter set over multiple episodes"""
         # Create a copy of base config and update with new parameters
         cfg = MujocoCfg()
         cfg.__dict__.update(self.base_cfg.__dict__)
@@ -116,12 +118,14 @@ class BayesianOptimizer:
         env = MujocoEnv(cfg, render=False)
         
         try:
-            rewards = run_simulation(
-                env=env,
-                policy=self.policy,
-                cfg=cfg,
-                cmd_manager=self.cmd_manager,
-            )
+            rewards = []
+            for i in range(20):
+                rewards.append(run_simulation(
+                    env=env,
+                    policy=self.policy,
+                    cfg=cfg,
+                    cmd_manager=self.cmd_manager,
+                ))
             
             # Calculate score with stability consideration
             mean_reward = np.mean(rewards)
@@ -142,7 +146,7 @@ class BayesianOptimizer:
         best_ei = -float('inf')
         
         # Random search for point with highest expected improvement
-        for _ in range(100):
+        for _ in range(1000):
             x = self._sample_random_point()
             ei = self._expected_improvement(x.reshape(1, -1))
             if ei > best_ei:
@@ -182,7 +186,10 @@ class BayesianOptimizer:
             print(f"\nIteration {iteration + 1}/{self.n_iterations}")
             
             # Fit GP to all data
-            self.gp.fit(self.X, self.y)
+            y_mean = np.mean(self.y)
+            y_std = np.std(self.y)
+            y_normalized = (self.y - y_mean) / (y_std + 1e-8)  # avoid division by zero
+            self.gp.fit(self.X, y_normalized)
             
             # Find next point to evaluate
             x = self._next_point()
@@ -209,8 +216,8 @@ class BayesianOptimizer:
             print(f"Best score so far: {best_score:.2f}")
             
             # Early stopping
-            if no_improvement_count >= 10:
-                print("\nStopping early: No improvement for 10 iterations")
+            if no_improvement_count >= 200:
+                print("\nStopping early: No improvement for 100 iterations")
                 break
         
         print("\nOptimization complete!")
