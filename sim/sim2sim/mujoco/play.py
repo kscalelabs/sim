@@ -66,10 +66,17 @@ if __name__ == "__main__":
     from sim.model_export import ActorCfg
     from sim.sim2sim.helpers import get_actor_policy
 
+    """
+    Current parameters:
+    gains.kp_scale: 1.445
+    gains.kd_scale: 19.975
+    gains.tau_factor: 6.350
+    """
+
     cfg = MujocoCfg()
-    cfg.gains.kp_scale = 2.821
-    cfg.gains.kd_scale = 1.566
-    cfg.gains.tau_factor = 3.508 # 4
+    cfg.gains.kp_scale = 1.445
+    cfg.gains.kd_scale = 19.975
+    cfg.gains.tau_factor = 6.350
     cfg.env.num_envs = 1
     env = MujocoEnv(cfg, render=True)
     cmd_manager = CommandManager(num_envs=cfg.env.num_envs, mode="fixed", default_cmd=[0.0, 0.0, 0.0, 0.0])
