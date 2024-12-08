@@ -4,22 +4,39 @@ import logging
 import numpy as np
 from tqdm import tqdm
 
+from sim.env_helpers import debug_robot_state
 from sim.envs import task_registry  # noqa: E402
 from sim.utils.args_parsing import parse_args_with_extras
 from sim.utils.cmd_manager import CommandManager  # noqa: E402
 
 from isaacgym import gymapi  # isort: skip
+import torch  # isort: skip
 
-np.set_printoptions(precision=4, suppress=True)  # Customize precision
+np.set_printoptions(precision=3, suppress=True)
+torch.set_printoptions(precision=3)
 
 logger = logging.getLogger(__name__)
 
 
 def play(args: argparse.Namespace) -> None:
     logger.info("Configuring environment and training settings...")
-    print(f"task: {args.task}")
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
-    logger.info("train_cfg.runner_class_name: %s", train_cfg.runner_class_name)
+
+    # override some parameters for testing
+    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
+    env_cfg.sim.max_gpu_contact_pairs = 2**10
+    env_cfg.terrain.num_rows = 5
+    env_cfg.terrain.num_cols = 5
+    env_cfg.terrain.curriculum = False
+    env_cfg.terrain.max_init_terrain_level = 5
+    env_cfg.noise.add_noise = False
+    env_cfg.domain_rand.push_robots = True
+    env_cfg.domain_rand.push_interval_s = 1.5
+    env_cfg.domain_rand.max_push_vel_xy = 0.6
+    env_cfg.domain_rand.max_push_ang_vel = 1.2
+    env_cfg.domain_rand.joint_angle_noise = 0.0
+    env_cfg.noise.curriculum = False
+    env_cfg.noise.noise_level = 0.5
 
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
@@ -50,12 +67,14 @@ def play(args: argparse.Namespace) -> None:
         h1, env.envs[0], body_handle, gymapi.Transform(camera_offset, camera_rotation), gymapi.FOLLOW_POSITION
     )
 
-    for _ in tqdm(range(train_cfg.runner.max_iterations)):
+    for t in tqdm(range(train_cfg.runner.max_iterations)):
         actions = policy(obs.detach())
         commands = cmd_manager.update(env.dt)
         env.commands[:] = commands
 
-        obs, critic_obs, rews, dones, infos = env.step(actions.detach())
+        obs, _, _, _, _ = env.step(actions.detach())
+        if t % 17 == 0:
+            debug_robot_state(obs[0], actions[0])
 
         env.gym.fetch_results(env.sim, True)
         env.gym.step_graphics(env.sim)
@@ -79,4 +98,3 @@ if __name__ == "__main__":
     args = parse_args_with_extras(add_play_arguments)
     print("Arguments:", vars(args))
     play(args)
-
