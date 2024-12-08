@@ -57,25 +57,28 @@ class StompyMicroEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Robot.legs.left.joints_motors():
-            print(f"Robot.legs.left.{name} -> {joint}")
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
+            print(f"Robot.legs.left.{name} -> {joint} ({joint_handle})")
 
         for name, joint in Robot.legs.right.joints_motors():
             print(f"Robot.legs.right.{name} -> {joint}")
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
+            print(f"Robot.legs.right.{name} -> {joint} ({joint_handle})")
 
         self.arms_joints = {}
         for name, joint in Robot.arms.left.joints_motors():
             print(f"Robot.arms.left.{name} -> {joint}")
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.arms_joints["left_" + name] = joint_handle
-        
+            print(f"Robot.arms.left.{name} -> {joint} ({joint_handle})")
+
         for name, joint in Robot.arms.right.joints_motors():
             print(f"Robot.arms.right.{name} -> {joint}")
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.arms_joints["right_" + name] = joint_handle
+            print(f"Robot.arms.right.{name} -> {joint} ({joint_handle})")
 
         self.compute_observations()
 
