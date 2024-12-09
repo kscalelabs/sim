@@ -37,8 +37,8 @@ class ZerothCfg(LeggedRobotCfg):
         name = "zeroth"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["foot_bracket_for_5dof_leg_v9", "foot_bracket_for_5dof_leg_v9_2"]
-        knee_name = ["leg_top_bracket_v8_1", "leg_top_bracket_v8_1_2"]
+        foot_name = ["Z-BOT2_MASTER-v24_DEC07-ASSY_v3_5", "Z-BOT2_MASTER-v24_DEC07-ASSY_v3_6"]
+        knee_name = ["SERVO-DUAL_v2_4", "SERVO-DUAL_v2(Mirror)_3"]
 
         termination_height = 0.05
         default_feet_height = 0.01

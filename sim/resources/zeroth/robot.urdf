@@ -8,7 +8,7 @@
     </inertial>
   </link>
   <joint name="floating_base" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <origin rpy="0 0 1.57" xyz="0 0 0"/>
     <parent link="base"/>
     <child link="Document"/>
   </joint>
