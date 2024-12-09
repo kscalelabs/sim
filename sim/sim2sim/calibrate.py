@@ -1,11 +1,11 @@
-import time
 import multiprocessing as mp
+import time
+
 from tqdm import tqdm
 
-from sim.sim2sim.optimizers.bayesian import BayesianOptimizer, OptimizeParam
-from sim.sim2sim.mujoco.play import run_simulation
 from sim.envs.base.mujoco_env import MujocoCfg, MujocoEnv
-
+from sim.sim2sim.mujoco.play import run_simulation
+from sim.sim2sim.optimizers.bayesian import BayesianOptimizer, OptimizeParam
 
 # def run_parallel_sims(num_threads: int) -> None:
 #     """Run multiple simulation instances in parallel with a delay between each start."""
@@ -37,11 +37,8 @@ if __name__ == "__main__":
     cfg = MujocoCfg()
     cfg.env.num_envs = 1
     env = MujocoEnv(cfg, render=True)
-    cmd_manager = CommandManager(
-        num_envs=1, # cfg.env.num_envs,
-        mode="fixed", default_cmd=[0.0, 0.0, 0.0, 0.0]
-    )
-    LOAD_MODEL_PATH = "policy_1.pt" 
+    cmd_manager = CommandManager(num_envs=1, mode="fixed", default_cmd=[0.0, 0.0, 0.0, 0.0])  # cfg.env.num_envs,
+    LOAD_MODEL_PATH = "policy_1.pt"
 
     policy_cfg = ActorCfg(embodiment=cfg.asset.name)
 
@@ -51,11 +48,11 @@ if __name__ == "__main__":
 
     export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_test.onnx")
     policy = ONNXModel("kinfer_test.onnx")
-    
+
     # gains.kp_scale: 1.566
     # gains.kd_scale: 9.312
     # 940 -> {'gains.kp_scale': 2.7692284239249987, 'gains.kd_scale': 17.73252701327175, 'gains.tau_factor': 3.1723978203087935}
-    
+
     """
     Best parameters found:
     gains.kp_scale: 1.445
@@ -64,17 +61,17 @@ if __name__ == "__main__":
     """
     parameters = [
         OptimizeParam(
-            name='gains.kp_scale',
+            name="gains.kp_scale",
             min_val=0.5,
             max_val=10.0,
         ),
         OptimizeParam(
-            name='gains.kd_scale',
+            name="gains.kd_scale",
             min_val=4.0,
             max_val=30.0,
         ),
         OptimizeParam(
-            name='gains.tau_factor',
+            name="gains.tau_factor",
             min_val=1.0,
             max_val=10.0,
         ),
@@ -86,20 +83,18 @@ if __name__ == "__main__":
         cmd_manager=cmd_manager,
         n_initial_points=200,
         n_iterations=1000,
-        exploration_weight=0.25
+        exploration_weight=0.25,
     )
-    
+
     best_params, history = optimizer.optimize()
-    
+
     print("\nOptimization complete!")
     print("Best parameters found:")
     for name, value in best_params.items():
         print(f"{name}: {value:.3f}")
-    
+
     # Optional: Save results
     import json
+
     with open("optimization_results.json", "w") as f:
-        json.dump({
-            "best_params": best_params,
-            "history": history
-        }, f, indent=2)
+        json.dump({"best_params": best_params, "history": history}, f, indent=2)

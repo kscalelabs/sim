@@ -2,8 +2,10 @@ from typing import Tuple
 
 import pygame
 
-from sim.model_export import ActorCfg, Actor
+from sim.model_export import Actor, ActorCfg
+
 import torch  # isort:skip
+
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[torch.nn.Module, dict, Tuple[torch.Tensor, ...]]:
     model = torch.jit.load(model_path, map_location="cpu")

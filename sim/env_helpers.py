@@ -29,7 +29,7 @@ def debug_robot_state(robot_name: str, obs_buf: np.ndarray, actions: np.ndarray)
     print("  Pos:", " ".join(f"{x:5.2f}" for x in q))
     print("  Vel:", " ".join(f"{x:5.2f}" for x in dq))
     print("  Act:", " ".join(f"{x:5.2f}" for x in actions))
-    
+
     print("Actions:")
     print("  ", " ".join(f"{x:5.2f}" for x in actions))
     print("=================")

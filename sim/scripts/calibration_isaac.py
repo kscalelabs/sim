@@ -16,7 +16,7 @@ import numpy as np
 
 # Importing torch down here to avoid gymtorch issues.
 from isaacgym import gymapi, gymtorch, gymutil
-import torch  # noqa: E402 #  type: ignore[import]
+import torch  # noqa: E402 #  type: ignore[import] # isort: skip
 from matplotlib import pyplot as plt
 
 from sim.env import robot_urdf_path
