@@ -63,35 +63,15 @@ class RightLeg(Node):
     ankle_pitch = "R_ankle_y"
 
 
-class LeftArm(Node):
-    shoulder_pitch = "L_shoulder_y"
-    shoulder_roll = "L_shoulder_z"
-    shoulder_yaw = "L_shoulder_x"
-    elbow_pitch = "L_elbow_x"
-
-
-class RightArm(Node):
-    shoulder_pitch = "R_shoulder_y"
-    shoulder_roll = "R_shoulder_z"
-    shoulder_yaw = "R_shoulder_x"
-    elbow_pitch = "R_elbow_x"
-
-
 class Legs(Node):
     left = LeftLeg()
     right = RightLeg()
 
 
-class Arms(Node):
-    left = LeftArm()
-    right = RightArm()
-
-
 class Robot(Node):
     legs = Legs()
-    # arms = Arms()
 
-    height = 1.06
+    height = 1.05
     rotation = [0, 0, 0, 1]
 
     @classmethod
@@ -156,10 +136,10 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_y": 40,
-            "hip_x": 20,
-            "hip_z": 20,
-            "knee": 40,
+            "hip_y": 120,
+            "hip_x": 60,
+            "hip_z": 60,
+            "knee": 120,
             "ankle_y": 17,
         }
 
@@ -167,10 +147,10 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_y": 5,
+            "hip_y": 10,
             "hip_x": 5,
             "hip_z": 5,
-            "knee": 5,
+            "knee": 10,
             "ankle_y": 5,
         }
 
