@@ -24,7 +24,6 @@ from tqdm import tqdm
 # Local imports third
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
-from sim.h5_logger import HDF5Logger
 from sim.model_export import (  # noqa: E402
     ActorCfg,
     convert_model_to_onnx,
@@ -94,9 +93,9 @@ def play(args: argparse.Namespace) -> None:
         embodiment = ppo_runner.cfg["experiment_name"].lower()
         policy_cfg = ActorCfg(embodiment=embodiment)
 
-        if embodiment == "stompypro":
+        if embodiment == "gpr":
             policy_cfg.cycle_time = 0.4
-        elif embodiment == "stompymicro":
+        elif embodiment == "zeroth":
             policy_cfg.cycle_time = 0.2
         else:
             print(f"Specific policy cfg for {embodiment} not implemented")
@@ -117,6 +116,7 @@ def play(args: argparse.Namespace) -> None:
 
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     if args.log_h5:
+        from sim.h5_logger import HDF5Logger
         # Create directory for HDF5 files
         h5_dir = run_dir() / "h5_out" / args.task / now
         h5_dir.mkdir(parents=True, exist_ok=True)
