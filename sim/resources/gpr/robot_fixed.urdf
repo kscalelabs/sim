@@ -95,7 +95,7 @@
     <origin xyz="-0.008010608503738428 -0.43201043179234816 0.0877000068648673" rpy="-3.1415925071795874 4.641020678874952e-08 -3.1415926535897913" />
     <parent link="body1-part" />
     <child link="leg0_shell" />
-    <limit effort="40" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <limit effort="30" velocity="10" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 -1" />
   </joint>
   <link name="leg0_shell">
@@ -124,7 +124,7 @@
     <origin xyz="-0.008010600340183055 -0.4320104467591277 -0.08819999313513187" rpy="9.99999991702083e-08 4.641020678874952e-08 -3.1415926535897913" />
     <parent link="body1-part" />
     <child link="leg0_shell_2" />
-    <limit effort="40" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <limit effort="30" velocity="10" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 -1" />
   </joint>
   <link name="leg0_shell_2">
@@ -443,7 +443,7 @@
     <origin xyz="0.0 0.0342 -0.14250000009378214" rpy="1.5707963000000003 0.0 0.0" />
     <parent link="leg2_shell" />
     <child link="leg3_shell2" />
-    <limit effort="40" velocity="10" lower="-1.57" upper="0" />
+    <limit effort="30" velocity="10" lower="-1.57" upper="0" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="leg3_shell2">
@@ -472,7 +472,7 @@
     <origin xyz="0.0 0.0342 -0.14250000009378214" rpy="1.5707963000000003 0.0 0.0" />
     <parent link="leg2_shell_2" />
     <child link="leg3_shell22" />
-    <limit effort="40" velocity="10" lower="0" upper="1.57" />
+    <limit effort="30" velocity="10" lower="0" upper="1.57" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="leg3_shell22">
