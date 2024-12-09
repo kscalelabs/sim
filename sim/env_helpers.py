@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def debug_robot_state(obs_buf: np.ndarray, actions: np.ndarray) -> None:
+def debug_robot_state(robot_name: str, obs_buf: np.ndarray, actions: np.ndarray) -> None:
     """Debug function for robot state from observation buffer."""
     # Unpack the obs_buf components
     cmd = obs_buf[:5]  # Command input (sin, cos, vel_x, vel_y, vel_yaw)
@@ -13,20 +13,26 @@ def debug_robot_state(obs_buf: np.ndarray, actions: np.ndarray) -> None:
 
     quat = euler_to_quat(euler)
 
-    print("\n=== Robot State ===")
-    print(f"Command: sin={cmd[0]:.2f} cos={cmd[1]:.2f} " f"vel_x={cmd[2]:.2f} vel_y={cmd[3]:.2f} vel_yaw={cmd[4]:.2f}")
+    # Detailed unpack
+    vel_x = cmd[2]
+    vel_y = cmd[3]
+    vel_yaw = cmd[4]
+
+    # Print the robot state
+    print(f"\n=== {robot_name} State ===")
+    print(f"Command: {vel_x=:.2f} {vel_y=:.2f} {vel_yaw=:.2f}")
     print(f"RPY: [{euler[0]:.2f}, {euler[1]:.2f}, {euler[2]:.2f}]")
     print(f"Quat: [{quat[0]:.2f}, {quat[1]:.2f}, {quat[2]:.2f}, {quat[3]:.2f}]")
     print(f"AngVel: [{ang_vel[0]:.2f}, {ang_vel[1]:.2f}, {ang_vel[2]:.2f}]")
 
-    print("\nJoints:")
+    print("Joints:")
     print("  Pos:", " ".join(f"{x:5.2f}" for x in q))
     print("  Vel:", " ".join(f"{x:5.2f}" for x in dq))
     print("  Act:", " ".join(f"{x:5.2f}" for x in actions))
     
-    print("\nActions:")
+    print("Actions:")
     print("  ", " ".join(f"{x:5.2f}" for x in actions))
-    print("=================\n")
+    print("=================")
 
 
 def euler_to_quat(euler):
