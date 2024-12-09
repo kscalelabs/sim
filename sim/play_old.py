@@ -1,9 +1,8 @@
-# mypy: ignore-errors
 """Play a trained policy in the environment.
 
 Run:
-    python sim/play.py --task g1 --log_h5
-    python sim/play.py --task stompymini --log_h5
+    python sim/play_old.py --task gpr --log_h5
+    python sim/play_old.py --task zeroth --log_h5
 """
 
 import argparse
@@ -145,7 +144,7 @@ def play(args: argparse.Namespace) -> None:
         if args.log_h5:
             dset_actions[t] = actions.detach().numpy()
         if args.fix_command:
-            env.commands[:, 0] = 0.5
+            env.commands[:, 0] = .4
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
