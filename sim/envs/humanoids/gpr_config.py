@@ -30,7 +30,7 @@ class GprCfg(LeggedRobotCfg):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 0.6
+        torque_limit = 1.0
 
     class asset(LeggedRobotCfg.asset):
         name = "gpr"
