@@ -213,7 +213,7 @@ class GprStandingCfg(GprCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 1.06
+        base_height_target = Robot.height
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
