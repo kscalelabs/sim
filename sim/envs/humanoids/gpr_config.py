@@ -30,7 +30,7 @@ class GprCfg(LeggedRobotCfg):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 0.85
+        torque_limit = 0.6
 
     class asset(LeggedRobotCfg.asset):
         name = "gpr"
@@ -51,8 +51,8 @@ class GprCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -152,7 +152,7 @@ class GprCfg(LeggedRobotCfg):
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.05  # m
 
-        cycle_time = 0.5  # sec
+        cycle_time = 0.25  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
