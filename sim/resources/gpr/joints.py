@@ -178,11 +178,11 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_y": 40,
-            "hip_x": 20,
-            "hip_z": 20,
-            "knee": 40,
-            "ankle_y": 17,
+            "hip_y": 20,
+            "hip_x": 10,
+            "hip_z": 10,
+            "knee": 20,
+            "ankle_y": 10,
         }
 
     # # vel_limits
