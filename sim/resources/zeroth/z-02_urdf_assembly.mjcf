@@ -1,0 +1,220 @@
+<mujoco model="z-02_urdf_assembly">
+  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81" />
+
+  <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
+
+  <default>
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01" />
+    <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
+    <motor ctrllimited="true" />
+    <equality solref="0.001 2" />
+    <default class="visualgeom">
+      <geom material="visualgeom" condim="1" contype="0" conaffinity="0" />
+    </default>
+  </default>
+
+  <asset>
+    <mesh name="Document" file="Document.stl" />
+    <mesh name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3" file="Z-BOT2_MASTER-v24_DEC07-ASSY_v3.stl" />
+    <mesh name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_2" file="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_2.stl" />
+    <mesh name="SERVO-DUAL_v2_2" file="SERVO-DUAL_v2_2.stl" />
+    <mesh name="SERVO-DUAL_v2_2_2" file="SERVO-DUAL_v2_2_2.stl" />
+    <mesh name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_3" file="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_3.stl" />
+    <mesh name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_4" file="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_4.stl" />
+    <mesh name="SERVO-DUAL_v2" file="SERVO-DUAL_v2.stl" />
+    <mesh name="SERVO-DUAL_v2(Mirror)" file="SERVO-DUAL_v2(Mirror).stl" />
+    <mesh name="SERVO-DUAL_v2_1" file="SERVO-DUAL_v2_1.stl" />
+    <mesh name="SERVO-DUAL_v2(Mirror)_1" file="SERVO-DUAL_v2(Mirror)_1.stl" />
+    <mesh name="SERVO-DUAL_v2_5" file="SERVO-DUAL_v2_5.stl" />
+    <mesh name="SERVO-DUAL_v2(Mirror)_4" file="SERVO-DUAL_v2(Mirror)_4.stl" />
+    <mesh name="SERVO-DUAL_v2_4" file="SERVO-DUAL_v2_4.stl" />
+    <mesh name="SERVO-DUAL_v2(Mirror)_3" file="SERVO-DUAL_v2(Mirror)_3.stl" />
+    <mesh name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_5" file="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_5.stl" />
+    <mesh name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_6" file="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_6.stl" />
+    <texture name="texplane" type="2d" builtin="checker" rgb1=".0 .0 .0" rgb2=".8 .8 .8" width="100" height="100" />
+    <material name="matplane" reflectance="0." texture="texplane" texrepeat="1 1" texuniform="true" />
+    <material name="visualgeom" rgba="0.5 0.9 0.2 1" />
+  </asset>
+
+  <worldbody>
+    <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
+    <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
+    <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15" />
+    <camera name="fixed" pos="0 -3.0 0.5" xyaxes="1 0 0 0 0 1" />
+    <camera name="track" mode="trackcom" pos="0 -3.0 0.5" xyaxes="1 0 0 0 0 1" />
+    <body name="root" pos="0 0 0.01" quat="1 0 0 0">
+      <freejoint name="root" />
+      <site name="imu" size="0.01" pos="0 0 0" />
+      <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="Document" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+      <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="Document" />
+      <body name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3" pos="0.0571947 0.0162806 0.0210943" quat="0.707107 0.707107 0 0">
+        <inertial pos="0.00688879 0.00104244 0.018825" quat="0.707107 0 0 0.707107" mass="0.0166453" diaginertia="6.45179e-06 6.14193e-06 3.08311e-06" />
+        <joint name="left_shoulder_yaw" pos="0 0 0" axis="0 0 1" range="-0.174533 1.39626" actuatorfrcrange="-80 80" />
+        <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3" />
+        <body name="SERVO-DUAL_v2_2" pos="0.0170677 -0.00481845 0.0188262" quat="-1.64085e-08 0.707107 -1.64085e-08 -0.707107">
+          <inertial pos="-5.23975e-06 0.0224375 -0.022559" quat="0.533099 0.464195 -0.46444 0.533501" mass="0.166183" diaginertia="0.000152049 0.000147452 4.50128e-05" />
+          <joint name="left_shoulder_pitch" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159" actuatorfrcrange="-80 80" />
+          <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_2" />
+          <body name="SERVO-DUAL_v2_1" pos="-0.018825 0.0936838 -0.0234507" quat="1.64085e-08 0.707107 1.64085e-08 -0.707107">
+            <inertial pos="0.00102061 -0.0346483 -0.0187992" quat="0.703848 0.70929 0.0151712 0.0357068" mass="0.165985" diaginertia="0.000223707 0.000222412 4.00551e-05" />
+            <joint name="left_elbow_yaw" pos="0 0 0" axis="0 0 1" range="-2.26893 1.5708" actuatorfrcrange="-80 80" />
+            <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_1" />
+          </body>
+        </body>
+      </body>
+      <body name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_2" pos="-0.0563661 0.0162806 0.0210943" quat="0.707107 0.707107 0 0">
+        <inertial pos="-0.00688879 0.00104244 0.018825" quat="0.707107 0 0 0.707107" mass="0.0166453" diaginertia="6.45179e-06 6.14193e-06 3.08311e-06" />
+        <joint name="right_shoulder_yaw" pos="0 0 0" axis="0 0 1" range="-1.39626 0.174533" actuatorfrcrange="-80 80" />
+        <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_2" />
+        <body name="SERVO-DUAL_v2_2_2" pos="-0.0170677 -0.00481845 0.0188262" quat="0.707107 0 0.707107 0">
+          <inertial pos="-5.22821e-06 -0.0224375 -0.022559" quat="0.464195 0.5331 -0.533501 0.464439" mass="0.166183" diaginertia="0.000152049 0.000147452 4.50128e-05" />
+          <joint name="right_shoulder_pitch" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159" actuatorfrcrange="-80 80" />
+          <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_2_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_2_2" />
+          <body name="SERVO-DUAL_v2(Mirror)_1" pos="-0.018825 -0.0936838 -0.0234507" quat="0.707107 0 -0.707107 0">
+            <inertial pos="-0.00102061 -0.0346483 -0.0187992" quat="0.703848 0.70929 -0.0151712 -0.0357069" mass="0.165985" diaginertia="0.000223707 0.000222412 4.00551e-05" />
+            <joint name="right_elbow_yaw" pos="0 0 0" axis="0 0 1" range="-1.5708 2.26893" actuatorfrcrange="-80 80" />
+            <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2(Mirror)_1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2(Mirror)_1" />
+          </body>
+        </body>
+      </body>
+      <body name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_3" pos="0.0429803 -0.000144909 -0.057946" quat="2.32051e-08 -1 0 0">
+        <inertial pos="0.00370843 -0.00550255 0.0354391" quat="0.976233 0 -0.216724 0" mass="0.0300932" diaginertia="2.0833e-05 1.76325e-05 1.01908e-05" />
+        <joint name="left_hip_roll" pos="0 0 0" axis="0 0 1" range="-1.0472 1.0472" actuatorfrcrange="-80 80" />
+        <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_3" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_3" />
+        <body name="SERVO-DUAL_v2" pos="0.00825001 -0.0245994 0.0566073" quat="0.707107 0.707107 0 0">
+          <inertial pos="-0.012522 0.00235341 -0.019172" quat="0.460257 0.517904 0.482535 0.535816" mass="0.110875" diaginertia="3.09672e-05 2.98293e-05 2.00643e-05" />
+          <joint name="left_hip_yaw" pos="0 0 0" axis="0 0 1" range="-1.91986 0.174533" actuatorfrcrange="-80 80" />
+          <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2" />
+          <body name="SERVO-DUAL_v2_5" pos="0.0102907 0.0316618 -0.0246589" quat="9.47343e-09 0.707107 -9.47343e-09 0.707107">
+            <inertial pos="-0.000135813 -0.0317215 -0.0187573" quat="0.704186 0.70948 0.0214769 0.017302" mass="0.145867" diaginertia="0.000174828 0.00016411 3.55103e-05" />
+            <joint name="left_hip_pitch" pos="0 0 0" axis="0 0 1" range="-1.8326 1.74533" actuatorfrcrange="-80 80" />
+            <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_5" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_5" />
+            <body name="SERVO-DUAL_v2_4" pos="0.0215 -0.100438 -0.000289529" quat="1 -2.32051e-08 0 2.32051e-08">
+              <inertial pos="-0.000995613 -0.0509788 -0.0186821" quat="0.706671 0.70753 0.00098998 -0.00411008" mass="0.226937" diaginertia="0.00033879 0.000325457 4.05469e-05" />
+              <joint name="left_knee_pitch" pos="0 0 0" axis="0 0 1" range="-0.174533 2.96706" actuatorfrcrange="-80 80" />
+              <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_4" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+              <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2_4" />
+              <body name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_5" pos="-3.64965e-09 -0.0996005 -6.45193e-05" quat="2.32051e-08 -1 0 0">
+                <inertial pos="-0.0145276 0.0278842 0.018825" quat="0.512207 0.512207 0.487488 0.487488" mass="0.102093" diaginertia="9.78274e-05 8.48407e-05 2.82233e-05" />
+                <joint name="left_ankle_pitch" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-80 80" />
+                <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_5" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+                <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_5" />
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_4" pos="-0.0426961 -0.000144909 -0.057946" quat="2.32051e-08 -1 0 0">
+        <inertial pos="-0.00370843 -0.00550255 0.0354391" quat="0.976233 0 0.216724 0" mass="0.0300932" diaginertia="2.0833e-05 1.76325e-05 1.01908e-05" />
+        <joint name="right_hip_roll" pos="0 0 0" axis="0 0 1" range="-1.0472 1.0472" actuatorfrcrange="-80 80" />
+        <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_4" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_4" />
+        <body name="SERVO-DUAL_v2(Mirror)" pos="-0.00825001 -0.0245994 0.0566073" quat="0.707107 0.707107 0 0">
+          <inertial pos="0.012522 0.00235341 -0.019172" quat="0.482535 0.535817 0.460256 0.517904" mass="0.110875" diaginertia="3.09673e-05 2.98293e-05 2.00643e-05" />
+          <joint name="right_hip_yaw" pos="0 0 0" axis="0 0 1" range="-0.174533 1.91986" actuatorfrcrange="-80 80" />
+          <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2(Mirror)" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2(Mirror)" />
+          <body name="SERVO-DUAL_v2(Mirror)_4" pos="-0.0102907 0.0316618 -0.0246589" quat="0.707107 9.47343e-09 -0.707107 9.47343e-09">
+            <inertial pos="-0.000135814 0.0317215 -0.0187573" quat="0.70948 0.704186 -0.017302 -0.0214769" mass="0.145867" diaginertia="0.000174828 0.00016411 3.55103e-05" />
+            <joint name="right_hip_pitch" pos="0 0 0" axis="0 0 1" range="-1.74533 1.8326" actuatorfrcrange="-80 80" />
+            <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2(Mirror)_4" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2(Mirror)_4" />
+            <body name="SERVO-DUAL_v2(Mirror)_3" pos="0.0215 0.100438 -0.000289527">
+              <inertial pos="-0.000995604 0.0509788 -0.0186821" quat="0.70753 0.706671 0.00410998 -0.000990042" mass="0.226937" diaginertia="0.00033879 0.000325457 4.05469e-05" />
+              <joint name="right_knee_pitch" pos="0 0 0" axis="0 0 1" range="-2.96706 0.174533" actuatorfrcrange="-80 80" />
+              <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2(Mirror)_3" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+              <geom type="mesh" rgba="0.301961 0.301961 0.301961 1" mesh="SERVO-DUAL_v2(Mirror)_3" />
+              <body name="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_6" pos="-8.17539e-10 0.0996005 -6.45187e-05" quat="0 -1 2.32051e-08 0">
+                <inertial pos="-0.0145276 -0.0278842 0.018825" quat="0.487488 0.487488 0.512207 0.512207" mass="0.102093" diaginertia="9.78274e-05 8.48407e-05 2.82233e-05" />
+                <joint name="right_ankle_pitch" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-80 80" />
+                <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_6" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+                <geom type="mesh" rgba="0.8 0.8 0.8 1" mesh="Z-BOT2_MASTER-v24_DEC07-ASSY_v3_6" />
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="left_shoulder_yaw" joint="left_shoulder_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="left_shoulder_pitch" joint="left_shoulder_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="left_elbow_yaw" joint="left_elbow_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="right_shoulder_yaw" joint="right_shoulder_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="right_shoulder_pitch" joint="right_shoulder_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="right_elbow_yaw" joint="right_elbow_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1" />
+  </actuator>
+
+  <sensor>
+    <actuatorpos name="left_shoulder_yaw_p" actuator="left_shoulder_yaw" />
+    <actuatorvel name="left_shoulder_yaw_v" actuator="left_shoulder_yaw" />
+    <actuatorfrc name="left_shoulder_yaw_f" actuator="left_shoulder_yaw" noise="0.001" />
+    <actuatorpos name="left_shoulder_pitch_p" actuator="left_shoulder_pitch" />
+    <actuatorvel name="left_shoulder_pitch_v" actuator="left_shoulder_pitch" />
+    <actuatorfrc name="left_shoulder_pitch_f" actuator="left_shoulder_pitch" noise="0.001" />
+    <actuatorpos name="left_elbow_yaw_p" actuator="left_elbow_yaw" />
+    <actuatorvel name="left_elbow_yaw_v" actuator="left_elbow_yaw" />
+    <actuatorfrc name="left_elbow_yaw_f" actuator="left_elbow_yaw" noise="0.001" />
+    <actuatorpos name="right_shoulder_yaw_p" actuator="right_shoulder_yaw" />
+    <actuatorvel name="right_shoulder_yaw_v" actuator="right_shoulder_yaw" />
+    <actuatorfrc name="right_shoulder_yaw_f" actuator="right_shoulder_yaw" noise="0.001" />
+    <actuatorpos name="right_shoulder_pitch_p" actuator="right_shoulder_pitch" />
+    <actuatorvel name="right_shoulder_pitch_v" actuator="right_shoulder_pitch" />
+    <actuatorfrc name="right_shoulder_pitch_f" actuator="right_shoulder_pitch" noise="0.001" />
+    <actuatorpos name="right_elbow_yaw_p" actuator="right_elbow_yaw" />
+    <actuatorvel name="right_elbow_yaw_v" actuator="right_elbow_yaw" />
+    <actuatorfrc name="right_elbow_yaw_f" actuator="right_elbow_yaw" noise="0.001" />
+    <actuatorpos name="left_hip_roll_p" actuator="left_hip_roll" />
+    <actuatorvel name="left_hip_roll_v" actuator="left_hip_roll" />
+    <actuatorfrc name="left_hip_roll_f" actuator="left_hip_roll" noise="0.001" />
+    <actuatorpos name="left_hip_yaw_p" actuator="left_hip_yaw" />
+    <actuatorvel name="left_hip_yaw_v" actuator="left_hip_yaw" />
+    <actuatorfrc name="left_hip_yaw_f" actuator="left_hip_yaw" noise="0.001" />
+    <actuatorpos name="left_hip_pitch_p" actuator="left_hip_pitch" />
+    <actuatorvel name="left_hip_pitch_v" actuator="left_hip_pitch" />
+    <actuatorfrc name="left_hip_pitch_f" actuator="left_hip_pitch" noise="0.001" />
+    <actuatorpos name="left_knee_pitch_p" actuator="left_knee_pitch" />
+    <actuatorvel name="left_knee_pitch_v" actuator="left_knee_pitch" />
+    <actuatorfrc name="left_knee_pitch_f" actuator="left_knee_pitch" noise="0.001" />
+    <actuatorpos name="left_ankle_pitch_p" actuator="left_ankle_pitch" />
+    <actuatorvel name="left_ankle_pitch_v" actuator="left_ankle_pitch" />
+    <actuatorfrc name="left_ankle_pitch_f" actuator="left_ankle_pitch" noise="0.001" />
+    <actuatorpos name="right_hip_roll_p" actuator="right_hip_roll" />
+    <actuatorvel name="right_hip_roll_v" actuator="right_hip_roll" />
+    <actuatorfrc name="right_hip_roll_f" actuator="right_hip_roll" noise="0.001" />
+    <actuatorpos name="right_hip_yaw_p" actuator="right_hip_yaw" />
+    <actuatorvel name="right_hip_yaw_v" actuator="right_hip_yaw" />
+    <actuatorfrc name="right_hip_yaw_f" actuator="right_hip_yaw" noise="0.001" />
+    <actuatorpos name="right_hip_pitch_p" actuator="right_hip_pitch" />
+    <actuatorvel name="right_hip_pitch_v" actuator="right_hip_pitch" />
+    <actuatorfrc name="right_hip_pitch_f" actuator="right_hip_pitch" noise="0.001" />
+    <actuatorpos name="right_knee_pitch_p" actuator="right_knee_pitch" />
+    <actuatorvel name="right_knee_pitch_v" actuator="right_knee_pitch" />
+    <actuatorfrc name="right_knee_pitch_f" actuator="right_knee_pitch" noise="0.001" />
+    <actuatorpos name="right_ankle_pitch_p" actuator="right_ankle_pitch" />
+    <actuatorvel name="right_ankle_pitch_v" actuator="right_ankle_pitch" />
+    <actuatorfrc name="right_ankle_pitch_f" actuator="right_ankle_pitch" noise="0.001" />
+    <framequat name="orientation" objtype="site" noise="0.001" objname="imu" />
+    <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
+  </sensor>
+</mujoco>

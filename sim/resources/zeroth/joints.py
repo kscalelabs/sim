@@ -83,14 +83,14 @@ class Robot(Node):
     def default_standing(cls) -> Dict[str, float]:
         return {
             # Legs
-            cls.legs.left.hip_pitch: -0.267,
-            cls.legs.left.knee_pitch: -0.741,
+            cls.legs.left.hip_pitch: -0.455,
+            cls.legs.left.knee_pitch: 0.878,
             cls.legs.left.hip_yaw: 0,
             cls.legs.left.hip_roll: 0,
-            cls.legs.left.ankle_pitch: 0.581,
-            cls.legs.right.hip_pitch: -0.267,
-            cls.legs.right.knee_pitch: 0.741,
-            cls.legs.right.ankle_pitch: -0.581,
+            cls.legs.left.ankle_pitch: 0.408,
+            cls.legs.right.hip_pitch: 0.455,
+            cls.legs.right.knee_pitch: -0.878,
+            cls.legs.right.ankle_pitch: -0.408,
             cls.legs.right.hip_yaw: 0,
             cls.legs.right.hip_roll: 0,
         }
@@ -99,12 +99,12 @@ class Robot(Node):
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
             Robot.legs.left.knee_pitch: {
-                "lower": -1.57,
-                "upper": 0,
-            },
-            Robot.legs.right.knee_pitch: {
                 "lower": 0,
                 "upper": 1.57,
+            },
+            Robot.legs.right.knee_pitch: {
+                "lower": -1.57,
+                "upper": 0,
             },
         }
 
