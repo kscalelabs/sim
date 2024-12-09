@@ -1,3 +1,8 @@
+"""
+E.g. usage:
+python sim/simple_play.py --task=stompymicro --sim_device=cpu --num_envs=1 --max_iterations=300 --load_run=-8
+"""
+
 import argparse
 import logging
 
@@ -49,10 +54,6 @@ def play(args: argparse.Namespace) -> None:
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
 
-    cmd_manager = CommandManager(
-        num_envs=env_cfg.env.num_envs, mode=args.command_mode, device=env.device, env_cfg=env_cfg
-    )
-
     camera_properties = gymapi.CameraProperties()
     camera_properties.width = 1920
     camera_properties.height = 1080
@@ -69,18 +70,14 @@ def play(args: argparse.Namespace) -> None:
 
     for t in tqdm(range(train_cfg.runner.max_iterations)):
         actions = policy(obs.detach())
-        commands = cmd_manager.update(env.dt)
-        env.commands[:] = commands
+        env.commands[:] = torch.zeros(4)
 
         obs, _, _, _, _ = env.step(actions.detach())
         if t % 17 == 0:
-            debug_robot_state(obs[0], actions[0])
-
+            debug_robot_state("Isaac", obs[0], actions[0])
         env.gym.fetch_results(env.sim, True)
         env.gym.step_graphics(env.sim)
         env.gym.render_all_camera_sensors(env.sim)
-
-    cmd_manager.close()
 
 
 def add_play_arguments(parser):
