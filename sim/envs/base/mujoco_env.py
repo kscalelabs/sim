@@ -1,8 +1,9 @@
 import mujoco
 import mujoco_viewer
 import numpy as np
+import onnxruntime as ort
 from dataclasses import dataclass
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 from scipy.spatial.transform import Rotation as R
 
 from sim.envs.base.base_env import Env
@@ -100,10 +101,12 @@ class MujocoEnv(Env):
         tau = np.clip(tau, -self.tau_limits, self.tau_limits)
         self.data.ctrl = tau
         
-        # Step simulation
+        if self.step_count % 3 == 0:  # TODO: Remove this hack
+            self.render()
+
+        # for _ in range(self.cfg.control.decimation):
+            # Apply control
         mujoco.mj_step(self.model, self.data)
-        if self.viewer and self.step_count % 3 == 0:
-            self.viewer.render()
         
         # Get observation
         obs = self._get_obs()
@@ -119,8 +122,13 @@ class MujocoEnv(Env):
         
         return obs_buf, reward, done, info
 
+    def render(self):
+        if self.viewer:
+            self.viewer.render()
+
     def _compute_reward(self, obs: Tuple[np.ndarray, ...]) -> float:
-        """Compute reward based on observation"""
+        """Compute reward based on observation
+        To clarify: These are vibes-based rewards to help the parameter optimizer for sim2sim. It tries to maximize this function's output. They have not been tuned properly, but do seem roughly the right order of magnitude."""
         _, _, _, v, _, euler = obs
         
         orientation_error = np.sum(np.square(euler[:2]))
