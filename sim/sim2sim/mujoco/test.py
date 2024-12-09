@@ -29,27 +29,45 @@ def test_policies(args):
     """Compare outputs from Isaac and Mujoco policies given identical inputs."""
     # Load Isaac policy exactly as in coplay.py
     isaac_policy, env = setup_isaac_policy(args)
+    print("\nIsaac Environment Info:")
+    print("-" * 50)
+    print("Observation space size:", env.num_obs)
+    print("Action space size:", env.num_actions)
     
+    # Load and export policy for Mujoco (following coplay.py)
     LOAD_MODEL_PATH = "examples/experiments/standing/robustv1/policy_1.pt"
     policy_cfg = ActorCfg(embodiment="stompymicro")
     actor_model, sim2sim_info, input_tensors = get_actor_policy(LOAD_MODEL_PATH, policy_cfg)
-    print(input_tensors)
+    
+    print("\nInput Tensors from get_actor_policy:")
+    print("-" * 50)
+    for i, tensor in enumerate(input_tensors):
+        print(f"Tensor {i}: shape={tensor.shape}, dtype={tensor.dtype}")
+    
+    print("\nModel Metadata:")
+    print("-" * 50)
+    print("Number of actions:", sim2sim_info["num_actions"])
+    print("Number of observations:", sim2sim_info["num_observations"])
+    print("Robot effort:", sim2sim_info["robot_effort"])
+    print("Robot stiffness:", sim2sim_info["robot_stiffness"])
+    print("Robot damping:", sim2sim_info["robot_damping"])
     
     # Export and load ONNX model
     export_config = {**vars(policy_cfg), **sim2sim_info}
-    print("Export config:", export_config)
+    print("\nExport config:", export_config)
     export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_test.onnx")
     mujoco_policy = ONNXModel("kinfer_test.onnx")
     
-    # Create zeroed input state
+    # Create zeroed input state matching input_tensors exactly
     x_vel = y_vel = rot = 0.0
     t = 0.0
-    dof_pos = np.zeros(16)
-    dof_vel = np.zeros(16)
-    prev_actions = np.zeros(16)
+    num_actions = sim2sim_info["num_actions"]
+    dof_pos = np.zeros(num_actions)
+    dof_vel = np.zeros(num_actions)
+    prev_actions = np.zeros(num_actions)
     imu_ang_vel = np.zeros(3)
     imu_euler_xyz = np.zeros(3)
-    hist_obs = np.zeros(mujoco_policy.get_metadata()["num_observations"])
+    hist_obs = np.zeros(sim2sim_info["num_observations"])
 
     # Prepare input for Mujoco policy
     mujoco_inputs = {
@@ -66,15 +84,31 @@ def test_policies(args):
     }
 
     # Get Mujoco policy output
+    print("\nRunning Mujoco policy inference...")
     mujoco_outputs = mujoco_policy(mujoco_inputs)
     mujoco_actions = mujoco_outputs["actions"]
     mujoco_actions_scaled = mujoco_outputs["actions_scaled"]
 
-    # Prepare input for Isaac policy
-    command = torch.zeros(1, 4, device=env.device)  # [lin_vel_x, lin_vel_y, ang_vel_yaw, jumping_signal]
-    obs_buf = torch.zeros(1, env.num_obs, device=env.device)
+    # Create matching input for Isaac policy
+    print("\nPreparing Isaac policy input...")
+    # Create observation buffer matching the structure from input_tensors
+    obs_list = [
+        torch.tensor([[x_vel]], device=env.device),
+        torch.tensor([[y_vel]], device=env.device),
+        torch.tensor([[rot]], device=env.device),
+        torch.tensor([[t]], device=env.device),
+        torch.from_numpy(dof_pos).unsqueeze(0).to(env.device),
+        torch.from_numpy(dof_vel).unsqueeze(0).to(env.device),
+        torch.from_numpy(prev_actions).unsqueeze(0).to(env.device),
+        torch.from_numpy(imu_ang_vel).unsqueeze(0).to(env.device),
+        torch.from_numpy(imu_euler_xyz).unsqueeze(0).to(env.device),
+        torch.from_numpy(hist_obs).unsqueeze(0).to(env.device),
+    ]
+    obs_buf = torch.cat(obs_list, dim=1)
+    print("Isaac observation buffer shape:", obs_buf.shape)
     
     # Get Isaac policy output
+    print("Running Isaac policy inference...")
     with torch.no_grad():
         isaac_actions = isaac_policy(obs_buf)
         isaac_actions = isaac_actions.cpu().numpy()
