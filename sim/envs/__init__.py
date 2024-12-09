@@ -13,7 +13,7 @@ from sim.envs.humanoids.dora_env import DoraFreeEnv
 from sim.envs.humanoids.g1_config import G1Cfg, G1CfgPPO
 from sim.envs.humanoids.g1_env import G1FreeEnv
 from sim.envs.humanoids.gpr_env import GprFreeEnv
-from sim.envs.humanoids.grp_config import GprCfg, GprCfgPPO, GprStandingCfg
+from sim.envs.humanoids.gpr_config import GprCfg, GprCfgPPO, GprStandingCfg
 from sim.envs.humanoids.h1_config import H1Cfg, H1CfgPPO
 from sim.envs.humanoids.h1_env import H1FreeEnv
 from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
