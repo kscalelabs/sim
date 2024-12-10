@@ -8,7 +8,6 @@ from sim.env_helpers import debug_robot_state
 from sim.envs.base.mujoco_env import MujocoCfg, MujocoEnv
 from sim.utils.args_parsing import parse_args_with_extras
 from sim.envs.humanoids.stompymicro_config import StompyMicroCfg, StompyMicroCfgPPO
-from sim.envs.base.mujoco_env import MujocoCfg, MujocoEnv
 from sim.envs.humanoids.stompymicro_env import StompyMicroEnv
 from sim.utils.helpers import class_to_dict, parse_sim_params
 from sim.algo.ppo.on_policy_runner import OnPolicyRunner
@@ -50,14 +49,18 @@ def coplay(args: argparse.Namespace) -> None:
     sim_params = {"sim": class_to_dict(cfg.sim)}
     sim_params = parse_sim_params(args, sim_params)
 
+    RENDER_MUJOCO = True
     isaac_env = StompyMicroEnv(
         cfg=cfg,
         sim_params=sim_params,
         physics_engine=args.physics_engine,
         sim_device=args.sim_device,
-        headless=True,
+        headless=RENDER_MUJOCO,
     )
-    mujoco_env = MujocoEnv(cfg, render=True)
+    mujoco_env = MujocoEnv(
+        cfg,
+        render=RENDER_MUJOCO,
+    )
 
     # Setup and load policy
     all_cfg = {**class_to_dict(train_cfg), **class_to_dict(cfg)}
@@ -85,21 +88,25 @@ def coplay(args: argparse.Namespace) -> None:
     ## DEBUG ##
     
     done1 = done2 = False
+    
+    ISAAC = False
 
     steps = int(cfg.env.episode_length_s / (cfg.sim.dt * cfg.control.decimation))
     for t in tqdm(range(steps)):
-        isaac_actions = policy(isaac_obs.detach())
-        isaac_env.commands[:] = torch.zeros(4)
-        isaac_obs, _, _, done1, _ = isaac_env.step(isaac_actions.detach())
+        if ISAAC:
+            isaac_actions = policy(isaac_obs.detach())
+            isaac_env.commands[:] = torch.zeros(4)
+            isaac_obs, _, _, done1, _ = isaac_env.step(isaac_actions.detach())
         
         mujoco_actions = policy(mujoco_obs.detach())
         mujoco_env.commands[:] = torch.zeros(4)
         mujoco_obs_np, _, done2, _ = mujoco_env.step(mujoco_actions.detach().cpu().numpy())
         mujoco_obs = torch.from_numpy(mujoco_obs_np).float().to(DEVICE)
 
-        if t % 50 == 0:
+        if t % 17 == 0:
             print(f"Time: {t * cfg.sim.dt:.2f}s")
-            debug_robot_state("Isaac", isaac_obs[0].detach().cpu().numpy(), isaac_actions[0].detach().cpu().numpy())
+            if ISAAC:
+                debug_robot_state("Isaac", isaac_obs[0].detach().cpu().numpy(), isaac_actions[0].detach().cpu().numpy())
             debug_robot_state("Mujoco", mujoco_obs[0].detach().cpu().numpy(), mujoco_actions[0].detach().cpu().numpy())
 
         if done1 or done2:
