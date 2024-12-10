@@ -21,14 +21,11 @@ from isaacgym import gymapi
 from kinfer.export.pytorch import export_to_onnx
 from tqdm import tqdm
 
-# Local imports third
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
-from sim.model_export import (  # noqa: E402
-    ActorCfg,
-    convert_model_to_onnx,
-    get_actor_policy,
-)
+
+# Local imports third
+from sim.model_export import ActorCfg, get_actor_policy
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
@@ -91,15 +88,22 @@ def play(args: argparse.Namespace) -> None:
     if args.export_onnx:
         path = ppo_runner.load_path
         embodiment = ppo_runner.cfg["experiment_name"].lower()
-        policy_cfg = ActorCfg(embodiment=embodiment)
-
-        if embodiment == "gpr":
-            policy_cfg.cycle_time = 0.4
-        elif embodiment == "zeroth":
-            policy_cfg.cycle_time = 0.2
-        else:
-            print(f"Specific policy cfg for {embodiment} not implemented")
-
+        policy_cfg = ActorCfg(
+            embodiment=embodiment,
+            cycle_time=env_cfg.rewards.cycle_time,
+            sim_dt=env_cfg.sim.dt,
+            sim_decimation=env_cfg.control.decimation,
+            tau_factor=env_cfg.safety.torque_limit,
+            action_scale=env_cfg.control.action_scale,
+            lin_vel_scale=env_cfg.normalization.obs_scales.lin_vel,
+            ang_vel_scale=env_cfg.normalization.obs_scales.ang_vel,
+            quat_scale=env_cfg.normalization.obs_scales.quat,
+            dof_pos_scale=env_cfg.normalization.obs_scales.dof_pos,
+            dof_vel_scale=env_cfg.normalization.obs_scales.dof_vel,
+            frame_stack=env_cfg.env.frame_stack,
+            clip_observations=env_cfg.normalization.clip_observations,
+            clip_actions=env_cfg.normalization.clip_actions,
+        )
         actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
 
         # Merge policy_cfg and sim2sim_info into a single config object
@@ -117,6 +121,7 @@ def play(args: argparse.Namespace) -> None:
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     if args.log_h5:
         from sim.h5_logger import HDF5Logger
+
         # Create directory for HDF5 files
         h5_dir = run_dir() / "h5_out" / args.task / now
         h5_dir.mkdir(parents=True, exist_ok=True)
