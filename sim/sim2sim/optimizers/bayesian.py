@@ -110,24 +110,17 @@ class BayesianOptimizer:
             self._set_cfg_value(cfg, param_name, value)
 
         env = MujocoEnv(cfg, render=False)
-
         try:
-            rewards = []
-            for i in range(20):
-                rewards.append(
-                    run_simulation(
-                        env=env,
-                        policy=self.policy,
-                        cfg=cfg,
-                        cmd_manager=self.cmd_manager,
-                    )
-                )
-
-            # Calculate score with stability consideration
+            rewards = run_simulation(
+                env=env,
+                policy=self.policy,
+                cfg=cfg,
+                cmd_manager=self.cmd_manager,
+                num_episodes=20,
+            )
             mean_reward = np.mean(rewards)
             std_reward = np.std(rewards)
             stability_penalty = 0.1 * std_reward
-
             return mean_reward - stability_penalty
 
         except Exception as e:
