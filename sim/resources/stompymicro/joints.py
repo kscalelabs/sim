@@ -98,7 +98,7 @@ def get_facing_direction_quaternion(angle_degrees: float) -> List[float]:
 
 
 class Robot(Node):
-    height = 0.32
+    height = 0.34
     angle = 0
     rotation = get_facing_direction_quaternion(angle)
     print(f"Rotation: {rotation}")
