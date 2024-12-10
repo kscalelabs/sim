@@ -2,7 +2,7 @@
   <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81"/>
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true"/>
   <default>
-    <joint limited="true" damping="0.53" armature="0.008793405204572328" frictionloss="0.001"/>
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.001"/> <!-- damping="0.53"? armature="0.008793405204572328"? frictionloss="0.01"? -->
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2"/>
     <motor ctrllimited="true"/>
     <equality solref="0.001 2"/>
@@ -29,19 +29,18 @@
     <mesh name="left_knee_pitch_motor" file="left_knee_pitch_motor.stl"/>
     <mesh name="foot_right" file="foot_right.stl"/>
     <mesh name="foot_left" file="foot_left.stl"/>
-
     <texture name="texplane" type="2d" builtin="checker" rgb1=".0 .0 .0" rgb2=".8 .8 .8" width="100" height="100"/>
     <material name="matplane" reflectance="0." texture="texplane" texrepeat="1 1" texuniform="true"/>
     <material name="visualgeom" rgba="0.5 0.9 0.2 1"/>
   </asset>
 
   <worldbody>
-    <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false"/>
+    <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
     <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15"/>
     <camera name="fixed" pos="0 -3.0 0.5" xyaxes="1 0 0 0 0 1"/>
     <camera name="track" mode="trackcom" pos="0 -3.0 0.5" xyaxes="1 0 0 0 0 1"/>
-    <body name="root" pos="0 0 0.32" quat="0 0 0 1">  <!-- OLD WAS: 1 0 0 0 -->
+    <body name="root" pos="0 0 0.32" quat="1 0 0 0">
       <freejoint name="root"/>
       <site name="imu" size="0.01" pos="0 0 0"/>
       <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="Torso" contype="1" conaffinity="0" density="0" group="1" class="visualgeom"/>
@@ -99,12 +98,12 @@
             <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="knee_pitch_left"/>
             <body name="right_knee_pitch_motor" pos="0.018825 0 0.02221" quat="0.5 0.5 -0.5 -0.5">
               <inertial pos="5.2853e-11 0.03886 0.017678" quat="0.707107 0.707107 2.09986e-05 2.09986e-05" mass="0.164074" diaginertia="0.000175989 0.000161732 3.83967e-05"/>
-              <joint name="right_knee_pitch" pos="0 0 0" axis="0 0 -1" range="0 1.0472" actuatorfrcrange="-80 80"/>
+              <joint name="right_knee_pitch" pos="0 0 0" axis="0 0 -1" range="-1.5708 1.5708" actuatorfrcrange="-80 80"/>
               <geom type="mesh" rgba="0.4 0.4 0.4 1" mesh="right_knee_pitch_motor" contype="1" conaffinity="0" density="0" group="1" class="visualgeom"/>
               <geom type="mesh" rgba="0.4 0.4 0.4 1" mesh="right_knee_pitch_motor"/>
               <body name="foot_right" pos="0 0.07772 2.08707e-09" quat="1 4.64102e-08 0 0">
                 <inertial pos="-0.00909654 0.0229469 0.0186337" quat="0.505668 0.505668 0.494267 0.494267" mass="0.0743148" diaginertia="7.16309e-05 6.04794e-05 1.96043e-05"/>
-                <joint name="right_ankle_pitch" pos="0 0 0" axis="0 0 1" range="-1.0472 1.0472" actuatorfrcrange="-80 80"/>
+                <joint name="right_ankle_pitch" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-80 80"/>
                 <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="foot_right" contype="1" conaffinity="0" density="0" group="1" class="visualgeom"/>
                 <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="foot_right"/>
               </body>
@@ -129,12 +128,12 @@
             <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="knee_pitch_right"/>
             <body name="left_knee_pitch_motor" pos="-0.018825 0 0.02221" quat="0.5 -0.5 0.5 -0.5">
               <inertial pos="-1.24277e-10 -0.03886 0.0174509" quat="0.704124 0.710078 -2.0918e-05 -2.10949e-05" mass="0.164074" diaginertia="0.000175991 0.00016174 3.83899e-05"/>
-              <joint name="left_knee_pitch" pos="0 0 0" axis="0 0 -1" range="-1.0472 0" actuatorfrcrange="-80 80"/>
+              <joint name="left_knee_pitch" pos="0 0 0" axis="0 0 -1" range="-1.5708 1.5708" actuatorfrcrange="-80 80"/>
               <geom type="mesh" rgba="0.4 0.4 0.4 1" mesh="left_knee_pitch_motor" contype="1" conaffinity="0" density="0" group="1" class="visualgeom"/>
               <geom type="mesh" rgba="0.4 0.4 0.4 1" mesh="left_knee_pitch_motor"/>
               <body name="foot_left" pos="0 -0.07772 -0.000499991" quat="1 4.64102e-08 0 0">
                 <inertial pos="-0.00909637 -0.0229469 0.0186334" quat="0.494267 0.494267 0.505668 0.505668" mass="0.0743146" diaginertia="7.16302e-05 6.04787e-05 1.96042e-05"/>
-                <joint name="left_ankle_pitch" pos="0 0 0" axis="0 0 1" range="-1.0472 1.0472" actuatorfrcrange="-80 80"/>
+                <joint name="left_ankle_pitch" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-80 80"/>
                 <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="foot_left" contype="1" conaffinity="0" density="0" group="1" class="visualgeom"/>
                 <geom type="mesh" rgba="0.972549 0.529412 0.00392157 1" mesh="foot_left"/>
               </body>
@@ -152,16 +151,16 @@
     <motor name="left_shoulder_pitch" joint="left_shoulder_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
     <motor name="left_shoulder_yaw" joint="left_shoulder_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
     <motor name="left_elbow_yaw" joint="left_elbow_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
-    <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
-    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-2 2" gear="1"/>
+    <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
   </actuator>
 
   <sensor>
