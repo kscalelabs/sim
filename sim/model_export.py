@@ -15,17 +15,20 @@ from torch.distributions import Normal
 
 @dataclass
 class ActorCfg:
-    embodiment: str = "gpr"
-    cycle_time: float = 0.4  # Cycle time for sinusoidal command input
-    action_scale: float = 0.25  # Scale for actions
-    lin_vel_scale: float = 2.0  # Scale for linear velocity
-    ang_vel_scale: float = 1.0  # Scale for angular velocity
-    quat_scale: float = 1.0  # Scale for quaternion
-    dof_pos_scale: float = 1.0  # Scale for joint positions
-    dof_vel_scale: float = 0.05  # Scale for joint velocities
-    frame_stack: int = 15  # Number of frames to stack for the policy input
-    clip_observations: float = 18.0  # Clip observations to this value
-    clip_actions: float = 18.0  # Clip actions to this value
+    embodiment: str
+    cycle_time: float  # Cycle time for sinusoidal command input
+    action_scale: float  # Scale for actions
+    lin_vel_scale: float  # Scale for linear velocity
+    ang_vel_scale: float  # Scale for angular velocity
+    quat_scale: float  # Scale for quaternion
+    dof_pos_scale: float  # Scale for joint positions
+    dof_vel_scale: float  # Scale for joint velocities
+    frame_stack: int  # Number of frames to stack for the policy input
+    clip_observations: float  # Clip observations to this value
+    clip_actions: float  # Clip actions to this value
+    sim_dt: float  # Simulation time step
+    sim_decimation: int  # Simulation decimation
+    tau_factor: float  # Torque limit factor
 
 
 class ActorCritic(nn.Module):
@@ -242,6 +245,8 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
+    default_standing = list(a_model.robot.default_standing().values())
+
     return (
         a_model,
         {
@@ -250,6 +255,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
             "robot_damping": robot_damping,
             "num_actions": num_actions,
             "num_observations": num_observations,
+            "default_standing": default_standing,
         },
         input_tensors,
     )
@@ -338,7 +344,3 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
     buffer2.seek(0)
 
     return ort.InferenceSession(buffer2.read())
-
-
-if __name__ == "__main__":
-    convert_model_to_onnx("model_3000.pt", ActorCfg(), "policy.onnx")

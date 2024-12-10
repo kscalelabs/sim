@@ -30,7 +30,7 @@ class GprCfg(LeggedRobotCfg):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 0.85
+        torque_limit = 1.0
 
     class asset(LeggedRobotCfg.asset):
         name = "gpr"
@@ -123,7 +123,7 @@ class GprCfg(LeggedRobotCfg):
 
         randomize_base_mass = True
         added_mass_range = [-3.0, 3.0]
-        push_robots = False
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
@@ -150,14 +150,14 @@ class GprCfg(LeggedRobotCfg):
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.06  # m
+        target_feet_height = 0.05  # m
 
-        cycle_time = 0.64  # sec
+        cycle_time = 0.25  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
-        max_contact_force = 700  # forces above this value are penalized
+        max_contact_force = 400  # forces above this value are penalized
 
         class scales:
             # reference motion tracking
@@ -213,7 +213,7 @@ class GprStandingCfg(GprCfg):
 
     class rewards:
         # quite important to keep it right
-        base_height_target = 1.06
+        base_height_target = Robot.height
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
