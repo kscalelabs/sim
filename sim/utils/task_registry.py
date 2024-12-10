@@ -77,7 +77,7 @@ class TaskRegistry:
         return env_cfg, train_cfg
 
     def make_env(self, name, args=None, env_cfg=None):
-        """Creates an environment either from a registered namme or from the provided config file.
+        """Creates an environment either from a registered name or from the provided config file.
 
         Args:
             name (string): Name of a registered env.
