@@ -7,11 +7,12 @@ from typing import List, Optional, Tuple
 
 import onnx
 import onnxruntime as ort
-import torch
-from torch import Tensor, nn
-from torch.distributions import Normal
 
 from sim.scripts.create_mjcf import load_embodiment
+
+import torch  # isort: skip
+from torch import Tensor, nn  # isort: skip
+from torch.distributions import Normal  # isort: skip
 
 
 @dataclass
