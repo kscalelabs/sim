@@ -5,15 +5,24 @@ python sim/simple_play.py --task=stompymicro --sim_device=cpu --num_envs=1 --max
 
 import argparse
 import logging
+import os
 
 import numpy as np
-from tqdm import tqdm
+from datetime import datetime
 
+from sim import ROOT_DIR
 from sim.env_helpers import debug_robot_state
-from sim.envs import task_registry  # noqa: E402
 from sim.utils.args_parsing import parse_args_with_extras
-from sim.utils.cmd_manager import CommandManager  # noqa: E402
-
+from sim.envs.humanoids.stompymicro_config import StompyMicroCfgPPO, StompyMicroCfg
+from sim.envs.humanoids.stompymicro_env import StompyMicroEnv
+from sim.utils.helpers import (
+    class_to_dict,
+    get_load_path,
+    parse_sim_params,
+)
+from sim.algo.ppo.on_policy_runner import OnPolicyRunner
+from kinfer.export.pytorch import export_to_onnx  # isort: skip
+from kinfer.inference.python import ONNXModel  # isort: skip
 from isaacgym import gymapi  # isort: skip
 import torch  # isort: skip
 
@@ -24,74 +33,50 @@ logger = logging.getLogger(__name__)
 
 
 def play(args: argparse.Namespace) -> None:
-    logger.info("Configuring environment and training settings...")
-    env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
+    LOAD_MODEL_PATH = "examples/experiments/standing/robustv1/policy_1.pt"
+    DEVICE = "cpu"
 
-    # override some parameters for testing
-    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
-    env_cfg.sim.max_gpu_contact_pairs = 2**10
-    env_cfg.terrain.num_rows = 5
-    env_cfg.terrain.num_cols = 5
-    env_cfg.terrain.curriculum = False
-    env_cfg.terrain.max_init_terrain_level = 5
-    env_cfg.noise.add_noise = False
-    env_cfg.domain_rand.push_robots = True
-    env_cfg.domain_rand.push_interval_s = 1.5
-    env_cfg.domain_rand.max_push_vel_xy = 0.6
-    env_cfg.domain_rand.max_push_ang_vel = 1.2
-    env_cfg.domain_rand.joint_angle_noise = 0.0
-    env_cfg.noise.curriculum = False
-    env_cfg.noise.noise_level = 0.5
-
-    # prepare environment
-    env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
-    env.set_camera(env_cfg.viewer.pos, env_cfg.viewer.lookat)
-
-    obs = env.get_observations()
-
-    # load policy
-    train_cfg.runner.resume = True
-    ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
-    policy = ppo_runner.get_inference_policy(device=env.device)
-
-    camera_properties = gymapi.CameraProperties()
-    camera_properties.width = 1920
-    camera_properties.height = 1080
-    h1 = env.gym.create_camera_sensor(env.envs[0], camera_properties)
-    camera_offset = gymapi.Vec3(3, -3, 1)
-    camera_rotation = gymapi.Quat.from_axis_angle(gymapi.Vec3(-0.3, 0.2, 1), np.deg2rad(135))
-    actor_handle = env.gym.get_actor_handle(env.envs[0], 0)
-    body_handle = env.gym.get_actor_rigid_body_handle(env.envs[0], actor_handle, 0)
-    logger.info("body_handle: %s", body_handle)
-    logger.info("actor_handle: %s", actor_handle)
-    env.gym.attach_camera_to_body(
-        h1, env.envs[0], body_handle, gymapi.Transform(camera_offset, camera_rotation), gymapi.FOLLOW_POSITION
+    ## ISAAC ##
+    args.load_model = LOAD_MODEL_PATH
+    env_cfg, train_cfg = StompyMicroCfg(), StompyMicroCfgPPO()
+    env_cfg.env.num_envs = 1
+    env_cfg.sim.physx.max_gpu_contact_pairs = 2**10
+    train_cfg.runner.load_run = -8
+    train_cfg.seed = 0
+    sim_params = {"sim": class_to_dict(env_cfg.sim)}
+    sim_params = parse_sim_params(args, sim_params)
+    env = StompyMicroEnv(
+        cfg=env_cfg,
+        sim_params=sim_params,
+        physics_engine=args.physics_engine,
+        sim_device=args.sim_device,
+        headless=args.headless,
     )
+    train_cfg_dict = class_to_dict(train_cfg)
+    env_cfg_dict = class_to_dict(env_cfg)
+    all_cfg = {**train_cfg_dict, **env_cfg_dict}
+    log_root = os.path.join(ROOT_DIR, "logs", train_cfg.runner.experiment_name)
+    log_dir = os.path.join(log_root, datetime.now().strftime("%b%d_%H-%M-%S") + "_" + train_cfg.runner.run_name)
+    ppo_runner = OnPolicyRunner(env, all_cfg, log_dir=log_dir, device=DEVICE)
+    resume_path = get_load_path(log_root, load_run=train_cfg.runner.load_run, checkpoint=train_cfg.runner.checkpoint)
+    ppo_runner.load(resume_path, load_optimizer=False)
+    ppo_runner.alg.actor_critic.eval()
+    ppo_runner.alg.actor_critic.to(DEVICE)
+    policy = ppo_runner.alg.actor_critic.act_inference
+    # -> env, policy
+    ## ISAAC ##
 
-    for t in tqdm(range(train_cfg.runner.max_iterations)):
+    obs, _ = env.reset()
+    steps = int(env_cfg.env.episode_length_s / (env_cfg.sim.dt * env_cfg.control.decimation))
+    for t in range(steps):
         actions = policy(obs.detach())
         env.commands[:] = torch.zeros(4)
-
         obs, _, _, _, _ = env.step(actions.detach())
         if t % 17 == 0:
             debug_robot_state("Isaac", obs[0], actions[0])
-        env.gym.fetch_results(env.sim, True)
-        env.gym.step_graphics(env.sim)
-        env.gym.render_all_camera_sensors(env.sim)
-
-
-def add_play_arguments(parser):
-    """Add play-specific arguments."""
-    parser.add_argument(
-        "--command_mode",
-        type=str,
-        default="fixed",
-        choices=["fixed", "oscillating", "random", "keyboard"],
-        help="Control mode for the robot",
-    )
 
 
 if __name__ == "__main__":
-    args = parse_args_with_extras(add_play_arguments)
+    args = parse_args_with_extras(lambda x: x)
     print("Arguments:", vars(args))
     play(args)
