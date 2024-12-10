@@ -67,14 +67,14 @@ if __name__ == "__main__":
         ),
         OptimizeParam(
             name="gains.kd_scale",
-            min_val=4.0,
-            max_val=30.0,
-        ),
-        OptimizeParam(
-            name="gains.tau_factor",
-            min_val=1.0,
+            min_val=0.2,
             max_val=10.0,
         ),
+        # OptimizeParam(
+        #     name="gains.tau_factor",
+        #     min_val=1.0,
+        #     max_val=10.0,
+        # ),
     ]
     optimizer = BayesianOptimizer(
         base_cfg=cfg,
@@ -93,7 +93,6 @@ if __name__ == "__main__":
     for name, value in best_params.items():
         print(f"{name}: {value:.3f}")
 
-    # Optional: Save results
     import json
 
     with open("optimization_results.json", "w") as f:
