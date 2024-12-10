@@ -17,7 +17,6 @@ from sim.envs.humanoids.h1_env import H1FreeEnv
 from sim.envs.humanoids.stompymicro_config import (
     StompyMicroCfg,
     StompyMicroCfgPPO,
-    StompyMicroStandingCfg,
 )
 from sim.envs.humanoids.stompymicro_env import StompyMicroEnv
 from sim.envs.humanoids.stompymini_config import MiniCfg, MiniCfgPPO

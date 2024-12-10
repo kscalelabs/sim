@@ -135,9 +135,9 @@ class StompyMicroCfg(LeggedRobotCfg):
         randomize_base_mass = False
         added_mass_range = [-0.5, 0.5]
         push_robots = True
-        push_interval_s = 3.5
-        max_push_vel_xy = 0.5  # TODO: This was set to make standing significantly harder
-        max_push_ang_vel = 0.7
+        push_interval_s = 1.5
+        max_push_vel_xy = 0.6  # TODO: This was set to make standing significantly harder
+        max_push_ang_vel = 0.8
         # dynamic randomization
         action_delay = 0.5
         action_noise = 0.1  # TODO: This was set to make standing harder
@@ -155,9 +155,10 @@ class StompyMicroCfg(LeggedRobotCfg):
             ang_vel_yaw = [-np.pi / 20, np.pi / 20]  # [rad/s]
             heading = [-np.pi, np.pi]  # [rad]
 
+    # Walking Task
     class rewards:
-        base_height_target = Robot.height + 0.01
-        min_dist = 0.03
+        base_height_target = Robot.height
+        min_dist = 0.14
         max_dist = 0.20
 
         # put some settings here for LLM parameter tuning
@@ -218,28 +219,30 @@ class StompyMicroCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class StompyMicroStandingCfg(StompyMicroCfg):
-    class rewards:
-        base_height_target = Robot.height + 0.01
-        min_dist = 0.06
-        max_dist = 0.16
+# Standing Task
+class rewards:
+    base_height_target = Robot.height
+    min_dist = 0.06
+    max_dist = 0.16
 
-        target_joint_pos_scale = 0.17  # rad
-        only_positive_rewards = True
-        tracking_sigma = 5.0
-        max_contact_force = 50  # forces above this value are penalized
+    cycle_time = 0.5  # sec
+    target_joint_pos_scale = 0.17  # rad
+    only_positive_rewards = True
+    tracking_sigma = 5.0
+    max_contact_force = 50  # forces above this value are penalized
 
-        class scales:
-            # base pos
-            default_joint_pos = 2.5
-            base_height = 0.2
-            base_acc = 0.2
-            # energy
-            action_smoothness = -0.006
-            torques = -2e-4
-            dof_vel = -8e-3
-            dof_acc = -3e-6
-            collision = -1.0
+    class scales:
+        # base pos
+        default_joint_pos = 1.0
+        base_height = 0.2
+        base_acc = 0.2
+        # energy
+        action_smoothness = -0.002
+        torques = -1e-4
+        dof_vel = -5e-3
+        dof_acc = -1e-6
+
+StompyMicroCfg.rewards = rewards  # comment out to use the walking task rewards
 
 
 class StompyMicroCfgPPO(LeggedRobotCfgPPO):
@@ -268,7 +271,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         # logging
         save_interval = 100  # check for potential saves every this many iterations
         experiment_name = "StompyMicro"
-        run_name = "StandingRobust00000"
+        run_name = "StandingRobustFinal"
         # load and resume
         resume = False
         load_run = -1  # -1 = last run

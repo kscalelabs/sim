@@ -231,9 +231,9 @@ class Robot(Node):
             return legs
 
         arms = {
-            "shoulder_pitch": 5.0,
-            "shoulder_yaw": 3.75,
-            "elbow_yaw": 3.5,
+            "shoulder_pitch": 17.681462808698132,
+            "shoulder_yaw": 17.681462808698132,
+            "elbow_yaw": 17.681462808698132,
         }
         return {**legs, **arms}
 
@@ -252,9 +252,9 @@ class Robot(Node):
             return legs
 
         arms = {
-            "shoulder_pitch": 0.3,
-            "shoulder_yaw": 0.3,
-            "elbow_yaw": 0.2,
+            "shoulder_pitch": 0.5354656169048285,
+            "shoulder_yaw": 0.5354656169048285,
+            "elbow_yaw": 0.5354656169048285,
         }
         return {**legs, **arms}
 
@@ -273,9 +273,9 @@ class Robot(Node):
             return legs
 
         arms = {
-            "shoulder_pitch": 80,
-            "shoulder_yaw": 80,
-            "elbow_yaw": 80,
+            "shoulder_pitch": 10,
+            "shoulder_yaw": 10,
+            "elbow_yaw": 10,
         }
         return {**legs, **arms}
 
