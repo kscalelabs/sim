@@ -109,7 +109,7 @@ def play(args: argparse.Namespace) -> None:
         # Merge policy_cfg and sim2sim_info into a single config object
         export_config = {**vars(policy_cfg), **sim2sim_info}
 
-        export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_policy.onnx")
+        export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_policy.kinfer")
         print("Exported policy as kinfer-compatible onnx to: ", path)
 
     # Prepare for logging
