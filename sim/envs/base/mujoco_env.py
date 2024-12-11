@@ -12,6 +12,26 @@ from sim.envs.humanoids.stompymicro_config import StompyMicroCfg
 
 np.set_printoptions(precision=2, suppress=True)
 
+MUJOCO_TO_ISAAC = {
+    7: 13,  # right_shoulder_pitch 
+    8: 14,  # right_shoulder_yaw
+    9: 15,  # right_elbow_yaw
+    10: 5,  # left_shoulder_pitch
+    11: 6,  # left_shoulder_yaw  
+    12: 7,  # left_elbow_yaw
+    13: 8,  # right_hip_pitch
+    14: 9,  # right_hip_yaw
+    15: 10, # right_hip_roll
+    16: 11, # right_knee_pitch
+    17: 12, # right_ankle_pitch
+    18: 0,  # left_hip_pitch
+    19: 1,  # left_hip_yaw
+    20: 2,  # left_hip_roll
+    21: 3,  # left_knee_pitch
+    22: 4,  # left_ankle_pitch
+}
+ISAAC_TO_MUJOCO = {v: k for k, v in MUJOCO_TO_ISAAC.items()}
+
 
 @dataclass
 class MujocoCfg(StompyMicroCfg):  # LeggedRobotCfg):
@@ -35,6 +55,9 @@ class MujocoEnv(Env):
         self.data = mujoco.MjData(self.model)
         self.viewer = mujoco_viewer.MujocoViewer(self.model, self.data) if render else None
 
+        self.mujoco_indices = np.array([k for k in MUJOCO_TO_ISAAC.keys()])
+        self.isaac_order = np.array([MUJOCO_TO_ISAAC[k] for k in self.mujoco_indices])
+        
         stiffness = self.robot.stiffness()
         damping = self.robot.damping()
         effort = self.robot.effort()
@@ -77,8 +100,10 @@ class MujocoEnv(Env):
         cos_pos = np.cos(2 * np.pi * phase)
         command_input = np.array([sin_pos, cos_pos] + list(self.commands[:3] * self.commands_scale))
         
-        q = (self.data.qpos[-self.num_joints:] - self.default_dof_pos) * self.cfg.normalization.obs_scales.dof_pos
-        dq = self.data.qvel[-self.num_joints:] * self.cfg.normalization.obs_scales.dof_vel
+        q = self.data.qpos[-self.num_joints:][self.isaac_order]
+        dq = self.data.qvel[-self.num_joints:][self.isaac_order]
+        q = (q - self.default_dof_pos) * self.cfg.normalization.obs_scales.dof_pos
+        dq = dq * self.cfg.normalization.obs_scales.dof_vel
 
         sensor_quat = self.data.sensor("orientation").data[[1, 2, 3, 0]]  # wxyz to xyzw
         sensor_rotation = R.from_quat(sensor_quat)
@@ -163,9 +188,6 @@ class MujocoEnv(Env):
             self.data.ctrl = self._compute_torques(actions)
             mujoco.mj_step(self.model, self.data)
         
-        # self.data.ctrl = self._compute_torques(actions)
-        # mujoco.mj_step(self.model, self.data)
-        
         ## Post Physics Step ##
         self.episode_length_buf += 1
         
@@ -211,8 +233,16 @@ class MujocoEnv(Env):
 
     def _compute_torques(self, actions: np.ndarray) -> np.ndarray:
         """Calculate torques from position commands"""
-        actions = actions * self.cfg.control.action_scale  # scale actions
-        torques = self.kps * (actions + self.default_dof_pos - self.data.qpos[-self.num_joints:]) - self.kds * self.data.qvel[-self.num_joints:]
+        if actions.ndim == 2:
+            actions = actions.squeeze(0)
+
+        actions_mujoco = actions[self.isaac_order]
+        
+        actions_scaled = actions_mujoco * self.cfg.control.action_scale
+        q_mujoco = self.data.qpos[-self.num_joints:]
+        dq_mujoco = self.data.qvel[-self.num_joints:]
+        
+        torques = self.kps * (actions_scaled + self.default_dof_pos - q_mujoco) - self.kds * dq_mujoco
         return np.clip(torques, -self.tau_limits, self.tau_limits)
 
 
