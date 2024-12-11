@@ -152,7 +152,7 @@ class GprCfg(LeggedRobotCfg):
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.05  # m
 
-        cycle_time = 0.5  # sec
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -162,8 +162,8 @@ class GprCfg(LeggedRobotCfg):
         class scales:
             # reference motion tracking
             joint_pos = 1.6
-            feet_clearance = 1.0
-            feet_contact_number = 1.2
+            feet_clearance = 1.2
+            feet_contact_number = 1.4
             # gait
             feet_air_time = 1.0
             foot_slip = -0.05
