@@ -99,7 +99,7 @@ def run_mujoco(
     keyboard_use: bool = False,
     log_h5: bool = False,
     render: bool = True,
-    sim_duration: float = 60.0,
+    sim_duration: float = 5.0,
     h5_out_dir: str = "sim/resources",
 ) -> None:
     """
@@ -151,6 +151,7 @@ def run_mujoco(
 
     count_lowlevel = 0
 
+    joint_positions = []
     input_data = {
         "x_vel.1": np.zeros(1).astype(np.float32),
         "y_vel.1": np.zeros(1).astype(np.float32),
@@ -256,6 +257,10 @@ def run_mujoco(
                     }
                 )
 
+            idx = 0
+            # joint_positions.append(target_q[idx] + default[idx] - q[idx])
+            joint_positions.append(dq[idx])
+
             prev_actions = curr_actions
 
         # Generate PD control
@@ -268,6 +273,18 @@ def run_mujoco(
         if render:
             viewer.render()
         count_lowlevel += 1
+
+    import matplotlib.pyplot as plt
+
+    plt.figure(figsize=(10, 6))
+    time_steps = np.arange(len(joint_positions)) * model_info["sim_dt"]
+    plt.plot(time_steps, joint_positions)
+    plt.xlabel("Time (s)")
+    plt.ylabel("First Joint Position (rad)")
+    plt.title("First Joint Position over Time")
+    plt.grid(True)
+    plt.savefig('joint_position_plot.png')
+    plt.close()
 
     if render:
         viewer.close()
@@ -302,7 +319,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()

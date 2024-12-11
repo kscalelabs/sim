@@ -304,7 +304,11 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
 
     # Export the model to a buffer
     buffer = BytesIO()
-    torch.onnx.export(jit_model, input_tensors, buffer)
+    torch.onnx.export(
+        jit_model, input_tensors, buffer,
+        input_names=["x_vel", "y_vel", "rot", "t", "dof_pos", "dof_vel", "prev_actions", "imu_ang_vel", "imu_euler_xyz", "buffer"],
+        output_names=["actions_scaled", "actions", "x"],
+    )
     buffer.seek(0)
 
     # Load the model as an onnx model
