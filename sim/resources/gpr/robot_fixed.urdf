@@ -95,9 +95,9 @@
     <origin xyz="-0.008010608503738428 -0.43201043179234816 0.0877000068648673" rpy="-3.1415925071795874 4.641020678874952e-08 -3.1415926535897913" />
     <parent link="body1-part" />
     <child link="leg0_shell" />
-    <limit effort="40" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <limit effort="60" velocity="10" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 -1" />
-  </joint>
+  <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg0_shell">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -124,9 +124,9 @@
     <origin xyz="-0.008010600340183055 -0.4320104467591277 -0.08819999313513187" rpy="9.99999991702083e-08 4.641020678874952e-08 -3.1415926535897913" />
     <parent link="body1-part" />
     <child link="leg0_shell_2" />
-    <limit effort="40" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <limit effort="60" velocity="10" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 -1" />
-  </joint>
+  <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg0_shell_2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -211,9 +211,9 @@
     <origin xyz="0.02649999999999997 -1.5165911463888016e-09 -0.06950000151659115" rpy="-1.5707963 0.0 1.5707963" />
     <parent link="leg0_shell" />
     <child link="leg1_shell" />
-    <limit effort="20" velocity="10" lower="-0.34906585" upper="3.1852259" />
+    <limit effort="40" velocity="10" lower="-0.34906585" upper="3.1852259" />
     <axis xyz="0 0 1" />
-  </joint>
+  <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg1_shell">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -240,9 +240,9 @@
     <origin xyz="0.02649999999999997 -1.5165911463888016e-09 -0.06950000151659115" rpy="1.5707963 -4.641020634466031e-08 -1.5707963535897922" />
     <parent link="leg0_shell_2" />
     <child link="leg1_shell3" />
-    <limit effort="20" velocity="10" lower="-0.34906585" upper="3.1852259" />
+    <limit effort="40" velocity="10" lower="-0.34906585" upper="3.1852259" />
     <axis xyz="0 0 1" />
-  </joint>
+  <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg1_shell3">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -327,9 +327,9 @@
     <origin xyz="-0.15649999999999997 0.0 0.027499998483408852" rpy="-0.0 1.5707963 0.0" />
     <parent link="leg1_shell" />
     <child link="leg2_shell" />
-    <limit effort="20" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <limit effort="40" velocity="10" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 1" />
-  </joint>
+  <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg2_shell">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -356,9 +356,9 @@
     <origin xyz="-0.15649999999999997 0.0 0.027499998483408852" rpy="-3.1415926535897922 -1.5707962732050302 0.0" />
     <parent link="leg1_shell3" />
     <child link="leg2_shell_2" />
-    <limit effort="20" velocity="10" lower="-1.5707963" upper="1.5707963" />
+    <limit effort="40" velocity="10" lower="-1.5707963" upper="1.5707963" />
     <axis xyz="0 0 1" />
-  </joint>
+  <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg2_shell_2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -443,9 +443,9 @@
     <origin xyz="0.0 0.0342 -0.14250000009378214" rpy="1.5707963000000003 0.0 0.0" />
     <parent link="leg2_shell" />
     <child link="leg3_shell2" />
-    <limit effort="40" velocity="10" lower="-1.57" upper="0" />
+    <limit effort="60" velocity="10" lower="-1.57" upper="0" />
     <axis xyz="0 0 1" />
-  </joint>
+  <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg3_shell2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -472,9 +472,9 @@
     <origin xyz="0.0 0.0342 -0.14250000009378214" rpy="1.5707963000000003 0.0 0.0" />
     <parent link="leg2_shell_2" />
     <child link="leg3_shell22" />
-    <limit effort="40" velocity="10" lower="0" upper="1.57" />
+    <limit effort="60" velocity="10" lower="0" upper="1.57" />
     <axis xyz="0 0 1" />
-  </joint>
+  <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg3_shell22">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -559,9 +559,9 @@
     <origin xyz="1.0767167917674625e-08 -0.29999999865410376 0.027200000000000002" rpy="-3.1415926071795868 2.220446049250313e-16 -3.1415926071795868" />
     <parent link="leg3_shell22" />
     <child link="foot3" />
-    <limit effort="17" velocity="10" lower="-0.6981317" upper="0.6981317" />
+    <limit effort="20" velocity="10" lower="-0.6981317" upper="0.6981317" />
     <axis xyz="0 0 1" />
-  </joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="foot3">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -588,9 +588,9 @@
     <origin xyz="0.0 -0.30000000004641003 0.07019999118206069" rpy="9.282041357749903e-08 0.0 0.0" />
     <parent link="leg3_shell2" />
     <child link="foot1" />
-    <limit effort="17" velocity="10" lower="-0.6981317" upper="0.6981317" />
+    <limit effort="20" velocity="10" lower="-0.6981317" upper="0.6981317" />
     <axis xyz="0 0 -1" />
-  </joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="foot1">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
