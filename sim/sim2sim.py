@@ -30,6 +30,7 @@ from kinfer.protos.kinfer_pb2 import (
     JointVelocitiesSchema,
     JointTorquesSchema,
     IMUSchema,
+    JointVelocityValue,
     TimestampSchema,
     VectorCommandSchema,
     AngularVelocitySchema,
@@ -256,91 +257,85 @@ def run_mujoco(
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
-            def put_data_into_value_schema(input_data: Dict[str, np.ndarray]) -> Input:
-                positions = Value(
-                    joint_positions=JointPositionsValue(
-                        values=[
-                            JointPositionValue(joint_name="L_hip_y", value=cur_pos_obs[0], unit=JointPositionUnit.DEGREES),
-                            JointPositionValue(joint_name="L_hip_z", value=cur_pos_obs[1], unit=JointPositionUnit.DEGREES),
-                            JointPositionValue(joint_name="L_knee", value=cur_pos_obs[2], unit=JointPositionUnit.DEGREES),
-                            JointPositionValue(joint_name="L_ankle", value=cur_pos_obs[3], unit=JointPositionUnit.DEGREES),
-                            JointPositionValue(joint_name="R_hip_y", value=cur_pos_obs[4], unit=JointPositionUnit.DEGREES),
-                            JointPositionValue(joint_name="R_hip_z", value=cur_pos_obs[5], unit=JointPositionUnit.DEGREES),
-                            JointPositionValue(joint_name="R_knee", value=cur_pos_obs[6], unit=JointPositionUnit.DEGREES),
-                            JointPositionValue(joint_name="R_ankle", value=cur_pos_obs[7], unit=JointPositionUnit.DEGREES),
-                        ]
-                    )
-                )
-
-                velocities = Value(
-                    joint_velocities=JointVelocitiesValue(
-                        values=[
-                            JointVelocityValue(joint_name="L_hip_y", value=cur_vel_obs[0], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="L_hip_x", value=cur_vel_obs[1], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="L_hip_z", value=cur_vel_obs[2], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="L_knee", value=cur_vel_obs[3], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="L_ankle", value=cur_vel_obs[4], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="R_hip_y", value=cur_vel_obs[5], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="R_hip_z", value=cur_vel_obs[6], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="R_hip_x", value=cur_vel_obs[7], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="R_knee", value=cur_vel_obs[8], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                            JointVelocityValue(joint_name="R_ankle", value=cur_vel_obs[9], unit=JointVelocityUnit.DEGREES_PER_SECOND),
-                        ]
-                    )
-                )
-
-                prev_actions = Value(
-                    prev_actions=StateTensorValue(
-                        values=[
-                            prev_actions[0], 
-                            prev_actions[1], 
-                            prev_actions[2],
-                            prev_actions[3], 
-                            prev_actions[4], 
-                            prev_actions[5],
-                            prev_actions[6], 
-                            prev_actions[7], 
-                            prev_actions[8],
-                            prev_actions[9]
-                        ]
-                    )
-                )
-
-                angular_velocity = Value(
-                    angular_velocity=AngularVelocityValue(
-                        values=[omega[0], omega[1], omega[2]]
-                    )
-                )
-
-                euler_rotation = Value(
-                    euler_rotation=EulerRotationValue(
-                        values=[eu_ang[0], eu_ang[1], eu_ang[2]]
-                    )
-                )
-
-                command = Value(
-                    vector_command=VectorCommandValue(
-                        values=[x_vel_cmd, y_vel_cmd, yaw_vel_cmd]
-                    )
-                )
-
-                timestamp = Value(
-                    timestamp=TimestampValue(
-                        seconds=count_lowlevel * model_info["sim_dt"],
-                        nanos=0
-                    )
-                )
-                input = Input(
-                    inputs=[
-                        velocities,
-                        positions,
-                        prev_actions,
-                        angular_velocity,
-                        euler_rotation,
-                        command,
-                        timestamp
+            # def put_data_into_value_schema(input_data: Dict[str, np.ndarray]) -> Input:
+            positions = Value(
+                joint_positions=JointPositionsValue(
+                    values=[
+                        JointPositionValue(joint_name="L_hip_y", value=cur_pos_obs[0], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="L_hip_z", value=cur_pos_obs[1], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="L_hip_x", value=cur_pos_obs[2], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="L_knee", value=cur_pos_obs[3], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="L_ankle", value=cur_pos_obs[4], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="R_hip_y", value=cur_pos_obs[5], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="R_hip_z", value=cur_pos_obs[6], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="R_hip_x", value=cur_pos_obs[7], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="R_knee", value=cur_pos_obs[8], unit=JointPositionUnit.DEGREES),
+                        JointPositionValue(joint_name="R_ankle", value=cur_pos_obs[9], unit=JointPositionUnit.DEGREES),
                     ]
                 )
+            )
+
+            velocities = Value(
+                joint_velocities=JointVelocitiesValue(
+                    values=[
+                        JointVelocityValue(joint_name="L_hip_y", value=cur_vel_obs[0], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="L_hip_x", value=cur_vel_obs[1], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="L_hip_z", value=cur_vel_obs[2], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="L_knee", value=cur_vel_obs[3], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="L_ankle", value=cur_vel_obs[4], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="R_hip_y", value=cur_vel_obs[5], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="R_hip_z", value=cur_vel_obs[6], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="R_hip_x", value=cur_vel_obs[7], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="R_knee", value=cur_vel_obs[8], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        JointVelocityValue(joint_name="R_ankle", value=cur_vel_obs[9], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                    ]
+                )
+            )
+
+            angular_velocity = Value(
+                angular_velocity=AngularVelocityValue(
+                    x=omega[0],
+                    y=omega[1],
+                    z=omega[2]
+                )
+            )
+
+            euler_rotation = Value(
+                euler_rotation=EulerRotationValue(
+                    x=eu_ang[0],
+                    y=eu_ang[1],
+                    z=eu_ang[2]
+                )
+            )
+
+            command = Value(
+                vector_command=VectorCommandValue(
+                    values=[x_vel_cmd, y_vel_cmd, yaw_vel_cmd]
+                )
+            )
+
+            timestamp = Value(
+                timestamp=TimestampValue(
+                    seconds=count_lowlevel * model_info["sim_dt"],
+                )
+            )
+            # prev_actions = Value(
+            #     state_tensor=StateTensorValue(
+            #         values=[float(x) for x in prev_actions.tolist()]
+            #     )
+            # )
+
+            input = Input(
+                inputs=[
+                    positions,
+                    velocities,
+                    angular_velocity,
+                    euler_rotation,
+                    command,
+                    timestamp,
+                    # prev_actions
+                ]
+            )
         
             breakpoint()
             policy_output = policy(input)
@@ -350,28 +345,6 @@ def run_mujoco(
             hist_obs = policy_output["x.3"]
 
             target_q = positions
-
-            if log_h5:
-                logger.log_data(
-                    {
-                        "t": np.array([count_lowlevel * model_info["sim_dt"]], dtype=np.float32),
-                        "2D_command": np.array(
-                            [
-                                np.sin(2 * math.pi * count_lowlevel * model_info["sim_dt"] / model_info["cycle_time"]),
-                                np.cos(2 * math.pi * count_lowlevel * model_info["sim_dt"] / model_info["cycle_time"]),
-                            ],
-                            dtype=np.float32,
-                        ),
-                        "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
-                        "joint_pos": cur_pos_obs.astype(np.float32),
-                        "joint_vel": cur_vel_obs.astype(np.float32),
-                        "prev_actions": prev_actions.astype(np.float32),
-                        "curr_actions": curr_actions.astype(np.float32),
-                        "ang_vel": omega.astype(np.float32),
-                        "euler_rotation": eu_ang.astype(np.float32),
-                        "buffer": hist_obs.astype(np.float32),
-                    }
-                )
 
             prev_actions = curr_actions
 
@@ -408,31 +381,24 @@ def generate_input_schema() -> InputSchema:
         ValueSchema(
             value_name="joint_positions",
             joint_positions=JointPositionsSchema(
-                joint_names=["L_hip_y", "L_hip_z", "L_knee_y", "L_knee_z", "L_ankle_y", "L_ankle_z", "R_hip_y", "R_hip_z", "R_knee_y", "R_knee_z", "R_ankle_y", "R_ankle_z"],
+                joint_names=["L_hip_y", "L_hip_z", "L_hip_x", "L_knee", "L_ankle", "R_hip_y", "R_hip_z", "R_hip_x", "R_knee", "R_ankle"],
                 unit=JointPositionUnit.DEGREES
             )
         ),
         ValueSchema(
             value_name="joint_velocities",
             joint_velocities=JointVelocitiesSchema(
-                joint_names=["L_hip_y", "L_hip_z", "L_knee_y", "L_knee_z", "L_ankle_y", "L_ankle_z", "R_hip_y", "R_hip_z", "R_knee_y", "R_knee_z", "R_ankle_y", "R_ankle_z"],
+                joint_names=["L_hip_y", "L_hip_z", "L_hip_x", "L_knee", "L_ankle", "R_hip_y", "R_hip_z", "R_hip_x", "R_knee", "R_ankle"],
                 unit=JointVelocityUnit.DEGREES_PER_SECOND
             )
         ),
-        ValueSchema(
-            value_name="prev_actions",
-            state_tensor=StateTensorSchema(
-                shape=[10],
-                dtype=DType.FP32,
-            )
-        ),
-        ValueSchema(
-            value_name="buffer",
-            state_tensor=StateTensorSchema(
-                shape=[615],
-                dtype=DType.FP32
-            )
-        ),
+        # ValueSchema(
+        #     value_name="prev_actions",
+        #     state_tensor=StateTensorSchema(
+        #         shape=[10],
+        #         dtype=DType.FP32,
+        #     )
+        # ),
         ValueSchema(
             value_name="angular_velocity",
             angular_velocity=AngularVelocitySchema()
@@ -445,7 +411,6 @@ def generate_input_schema() -> InputSchema:
             value_name="timestamp",
             timestamp=TimestampSchema(
                 start_seconds=0,
-                start_nanos=0
             )
         ),
         ValueSchema(
@@ -453,7 +418,14 @@ def generate_input_schema() -> InputSchema:
             vector_command=VectorCommandSchema(
                 dimensions=3
             )
-        )
+        ),       
+        # ValueSchema(
+        #     value_name="buffer",
+        #     state_tensor=StateTensorSchema(
+        #         shape=[615],
+        #         dtype=DType.FP32
+        #     )
+        # )
     ])
 
     return input_schema
