@@ -18,13 +18,14 @@ import cv2
 import h5py
 import numpy as np
 from isaacgym import gymapi
-from kinfer.export.pytorch import export_to_onnx
+# from kinfer.export.pytorch import export_to_onnx
 from tqdm import tqdm
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
 
 # Local imports third
+from sim.onnx_export import export_to_onnx
 from sim.model_export import ActorCfg, get_actor_policy
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
@@ -109,6 +110,7 @@ def play(args: argparse.Namespace) -> None:
         # Merge policy_cfg and sim2sim_info into a single config object
         export_config = {**vars(policy_cfg), **sim2sim_info}
 
+        breakpoint()
         export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_policy.onnx")
         print("Exported policy as kinfer-compatible onnx to: ", path)
 
@@ -226,47 +228,14 @@ def play(args: argparse.Namespace) -> None:
             }
         )
         actions = actions.detach().cpu().numpy()
-        if args.log_h5:
-            # Extract the current observation
-            for env_idx in range(env_cfg.env.num_envs):
-                h5_loggers[env_idx].log_data(
-                    {
-                        "t": np.array([t * env.dt], dtype=np.float32),
-                        "2D_command": np.array(
-                            [
-                                np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
-                                np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
-                            ],
-                            dtype=np.float32,
-                        ),
-                        "3D_command": np.array(env.commands[env_idx, :3].cpu().numpy(), dtype=np.float32),
-                        "joint_pos": np.array(env.dof_pos[env_idx].cpu().numpy(), dtype=np.float32),
-                        "joint_vel": np.array(env.dof_vel[env_idx].cpu().numpy(), dtype=np.float32),
-                        "prev_actions": prev_actions[env_idx].astype(np.float32),
-                        "curr_actions": actions[env_idx].astype(np.float32),
-                        "ang_vel": env.base_ang_vel[env_idx].cpu().numpy().astype(np.float32),
-                        "euler_rotation": env.base_euler_xyz[env_idx].cpu().numpy().astype(np.float32),
-                        "buffer": env.obs_buf[env_idx].cpu().numpy().astype(np.float32),
-                    }
-                )
-
-            prev_actions = actions
-
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
             if num_episodes > 0:
                 env_logger.log_rewards(infos["episode"], num_episodes)
 
-    env_logger.print_rewards()
 
     if args.render:
         video.release()
-
-    if args.log_h5:
-        # print(f"Saving HDF5 file to {h5_logger.h5_file_path}") # TODO use code from kdatagen
-        for h5_logger in h5_loggers:
-            h5_logger.close()
-        print(f"HDF5 file(s) saved!")
 
 
 if __name__ == "__main__":

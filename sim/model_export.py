@@ -125,30 +125,26 @@ class Actor(nn.Module):
 
     def forward(
         self,
-        x_vel: Tensor,  # x-coordinate of the target velocity
-        y_vel: Tensor,  # y-coordinate of the target velocity
-        rot: Tensor,  # target angular velocity
+        command_input: Tensor,  # x-coordinate of the target velocity
         t: Tensor,  # current policy time (sec)
-        dof_pos: Tensor,  # current angular position of the DoFs relative to default
-        dof_vel: Tensor,  # current angular velocity of the DoFs
+        joint_positions: Tensor,  # current angular position of the DoFs relative to default
+        joint_velocities: Tensor,  # current angular velocity of the DoFs
         prev_actions: Tensor,  # previous actions taken by the model
-        imu_ang_vel: Tensor,  # angular velocity of the IMU
-        imu_euler_xyz: Tensor,  # euler angles of the IMU
+        angular_velocities: Tensor,  # angular velocity of the IMU
+        euler_rotation: Tensor,  # euler angles of the IMU
         buffer: Tensor,  # buffer of previous observations
     ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
 
         Args:
-            x_vel: The x-coordinate of the target velocity, with shape (1).
-            y_vel: The y-coordinate of the target velocity, with shape (1).
-            rot: The target angular velocity, with shape (1).
+            command_input: The command input, with shape (3).
             t: The current policy time step, with shape (1).
-            dof_pos: The current angular position of the DoFs relative to default, with shape (num_actions).
-            dof_vel: The current angular velocity of the DoFs, with shape (num_actions).
+            joint_positions: The current angular position of the DoFs relative to default, with shape (num_actions).
+            joint_velocities: The current angular velocity of the DoFs, with shape (num_actions).
             prev_actions: The previous actions taken by the model, with shape (num_actions).
-            imu_ang_vel: The angular velocity of the IMU, with shape (3),
+            angular_velocities: The angular velocity of the IMU, with shape (3),
                 in radians per second. If IMU is not used, can be all zeros.
-            imu_euler_xyz: The euler angles of the IMU, with shape (3),
+            euler_rotation: The euler angles of the IMU, with shape (3),
                 in radians. "XYZ" means (roll, pitch, yaw). If IMU is not used,
                 can be all zeros.
             buffer: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
@@ -168,16 +164,16 @@ class Actor(nn.Module):
             (
                 sin_pos,
                 cos_pos,
-                x_vel * self.lin_vel_scale,
-                y_vel * self.lin_vel_scale,
-                rot * self.ang_vel_scale,
+                command_input[0] * self.lin_vel_scale,
+                command_input[1] * self.lin_vel_scale,
+                command_input[2] * self.ang_vel_scale,
             ),
             dim=0,
         )
 
         # Calculate current position and velocity observations
-        q = dof_pos * self.dof_pos_scale
-        dq = dof_vel * self.dof_vel_scale
+        q = joint_positions * self.dof_pos_scale
+        dq = joint_velocities * self.dof_vel_scale
 
         # Construct new observation
         new_x = torch.cat(
@@ -186,8 +182,8 @@ class Actor(nn.Module):
                 q,
                 dq,
                 prev_actions,
-                imu_ang_vel * self.ang_vel_scale,
-                imu_euler_xyz * self.quat_scale,
+                angular_velocities * self.ang_vel_scale,
+                euler_rotation * self.quat_scale,
             ),
             dim=0,
         )
@@ -226,17 +222,24 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     a_model = Actor(ac_model.actor, cfg)
 
     # Gets the model input tensors.
-    x_vel = torch.randn(1)
-    y_vel = torch.randn(1)
-    rot = torch.randn(1)
+    command_input = torch.randn(3)
     t = torch.randn(1)
-    dof_pos = torch.randn(a_model.num_actions)
-    dof_vel = torch.randn(a_model.num_actions)
+    joint_positions = torch.randn(a_model.num_actions)
+    joint_velocities = torch.randn(a_model.num_actions)
     prev_actions = torch.randn(a_model.num_actions)
-    imu_ang_vel = torch.randn(3)
-    imu_euler_xyz = torch.randn(3)
+    angular_velocities = torch.randn(3)
+    euler_rotation = torch.randn(3)
     buffer = a_model.get_init_buffer()
-    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, imu_ang_vel, imu_euler_xyz, buffer)
+    input_tensors = (
+        command_input,
+        t,
+        joint_positions,
+        joint_velocities,
+        prev_actions,
+        angular_velocities,
+        euler_rotation,
+        buffer,
+    )
 
     # Add sim2sim metadata
     robot_effort = list(a_model.robot.effort().values())
@@ -259,88 +262,3 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
         },
         input_tensors,
     )
-
-
-def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
-    """Converts a PyTorch model to a ONNX format.
-
-    Args:
-        model_path: Path to the PyTorch model.
-        cfg: The configuration for the actor.
-        save_path: Path to save the ONNX model.
-
-    Returns:
-        An ONNX inference session.
-    """
-    all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
-    weights = all_weights["model_state_dict"]
-    num_actor_obs = weights["actor.0.weight"].shape[1]
-    num_critic_obs = weights["critic.0.weight"].shape[1]
-    num_actions = weights["std"].shape[0]
-    actor_hidden_dims = [v.shape[0] for k, v in weights.items() if re.match(r"actor\.\d+\.weight", k)]
-    critic_hidden_dims = [v.shape[0] for k, v in weights.items() if re.match(r"critic\.\d+\.weight", k)]
-    actor_hidden_dims = actor_hidden_dims[:-1]
-    critic_hidden_dims = critic_hidden_dims[:-1]
-
-    ac_model = ActorCritic(num_actor_obs, num_critic_obs, num_actions, actor_hidden_dims, critic_hidden_dims)
-    ac_model.load_state_dict(weights)
-
-    a_model = Actor(ac_model.actor, cfg)
-
-    # Gets the model input tensors.
-    x_vel = torch.randn(1)
-    y_vel = torch.randn(1)
-    rot = torch.randn(1)
-    t = torch.randn(1)
-    dof_pos = torch.randn(a_model.num_actions)
-    dof_vel = torch.randn(a_model.num_actions)
-    prev_actions = torch.randn(a_model.num_actions)
-    imu_ang_vel = torch.randn(3)
-    imu_euler_xyz = torch.randn(3)
-    buffer = a_model.get_init_buffer()
-    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, imu_ang_vel, imu_euler_xyz, buffer)
-
-    jit_model = torch.jit.script(a_model)
-
-    # Export the model to a buffer
-    buffer = BytesIO()
-    torch.onnx.export(jit_model, input_tensors, buffer)
-    buffer.seek(0)
-
-    # Load the model as an onnx model
-    model_proto = onnx.load_model(buffer)
-
-    # Add sim2sim metadata
-    robot_effort = list(a_model.robot.effort().values())
-    robot_stiffness = list(a_model.robot.stiffness().values())
-    robot_damping = list(a_model.robot.damping().values())
-    num_actions = a_model.num_actions
-    num_observations = a_model.num_observations
-
-    for field_name, field in [
-        ("robot_effort", robot_effort),
-        ("robot_stiffness", robot_stiffness),
-        ("robot_damping", robot_damping),
-        ("num_actions", num_actions),
-        ("num_observations", num_observations),
-    ]:
-        meta = model_proto.metadata_props.add()
-        meta.key = field_name
-        meta.value = str(field)
-
-    # Add the configuration of the model
-    for field in fields(cfg):
-        value = getattr(cfg, field.name)
-        meta = model_proto.metadata_props.add()
-        meta.key = field.name
-        meta.value = str(value)
-
-    if save_path:
-        onnx.save_model(model_proto, save_path)
-
-    # Convert model to bytes
-    buffer2 = BytesIO()
-    onnx.save_model(model_proto, buffer2)
-    buffer2.seek(0)
-
-    return ort.InferenceSession(buffer2.read())
