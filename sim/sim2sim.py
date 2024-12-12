@@ -17,8 +17,37 @@ import numpy as np
 import onnxruntime as ort
 import pygame
 import torch
-from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
+from kinfer.protos.kinfer_pb2 import (
+    InputSchema,
+    OutputSchema,
+    Input,
+    Output,
+    Value,
+    ValueSchema,
+    DType,
+    JointPositionsSchema,
+    JointVelocitiesSchema,
+    JointTorquesSchema,
+    IMUSchema,
+    TimestampSchema,
+    VectorCommandSchema,
+    AngularVelocitySchema,
+    EulerRotationSchema,
+    StateTensorSchema,
+    JointPositionUnit,
+    JointVelocityUnit,
+    JointTorqueUnit,
+    JointVelocitiesValue,
+    JointPositionsValue,
+    JointPositionValue,
+    StateTensorValue,
+    AngularVelocityValue,
+    EulerRotationValue,
+    TimestampValue,
+    VectorCommandValue
+)
+
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
@@ -99,7 +128,7 @@ def run_mujoco(
     keyboard_use: bool = False,
     log_h5: bool = False,
     render: bool = True,
-    sim_duration: float = 5.0,
+    sim_duration: float = 60.0,
     h5_out_dir: str = "sim/resources",
 ) -> None:
     """
@@ -151,7 +180,6 @@ def run_mujoco(
 
     count_lowlevel = 0
 
-    joint_positions = []
     input_data = {
         "x_vel.1": np.zeros(1).astype(np.float32),
         "y_vel.1": np.zeros(1).astype(np.float32),
@@ -228,7 +256,95 @@ def run_mujoco(
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
-            policy_output = policy(input_data)
+            def put_data_into_value_schema(input_data: Dict[str, np.ndarray]) -> Input:
+                positions = Value(
+                    joint_positions=JointPositionsValue(
+                        values=[
+                            JointPositionValue(joint_name="L_hip_y", value=cur_pos_obs[0], unit=JointPositionUnit.DEGREES),
+                            JointPositionValue(joint_name="L_hip_z", value=cur_pos_obs[1], unit=JointPositionUnit.DEGREES),
+                            JointPositionValue(joint_name="L_knee", value=cur_pos_obs[2], unit=JointPositionUnit.DEGREES),
+                            JointPositionValue(joint_name="L_ankle", value=cur_pos_obs[3], unit=JointPositionUnit.DEGREES),
+                            JointPositionValue(joint_name="R_hip_y", value=cur_pos_obs[4], unit=JointPositionUnit.DEGREES),
+                            JointPositionValue(joint_name="R_hip_z", value=cur_pos_obs[5], unit=JointPositionUnit.DEGREES),
+                            JointPositionValue(joint_name="R_knee", value=cur_pos_obs[6], unit=JointPositionUnit.DEGREES),
+                            JointPositionValue(joint_name="R_ankle", value=cur_pos_obs[7], unit=JointPositionUnit.DEGREES),
+                        ]
+                    )
+                )
+
+                velocities = Value(
+                    joint_velocities=JointVelocitiesValue(
+                        values=[
+                            JointVelocityValue(joint_name="L_hip_y", value=cur_vel_obs[0], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="L_hip_x", value=cur_vel_obs[1], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="L_hip_z", value=cur_vel_obs[2], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="L_knee", value=cur_vel_obs[3], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="L_ankle", value=cur_vel_obs[4], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="R_hip_y", value=cur_vel_obs[5], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="R_hip_z", value=cur_vel_obs[6], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="R_hip_x", value=cur_vel_obs[7], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="R_knee", value=cur_vel_obs[8], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                            JointVelocityValue(joint_name="R_ankle", value=cur_vel_obs[9], unit=JointVelocityUnit.DEGREES_PER_SECOND),
+                        ]
+                    )
+                )
+
+                prev_actions = Value(
+                    prev_actions=StateTensorValue(
+                        values=[
+                            prev_actions[0], 
+                            prev_actions[1], 
+                            prev_actions[2],
+                            prev_actions[3], 
+                            prev_actions[4], 
+                            prev_actions[5],
+                            prev_actions[6], 
+                            prev_actions[7], 
+                            prev_actions[8],
+                            prev_actions[9]
+                        ]
+                    )
+                )
+
+                angular_velocity = Value(
+                    angular_velocity=AngularVelocityValue(
+                        values=[omega[0], omega[1], omega[2]]
+                    )
+                )
+
+                euler_rotation = Value(
+                    euler_rotation=EulerRotationValue(
+                        values=[eu_ang[0], eu_ang[1], eu_ang[2]]
+                    )
+                )
+
+                command = Value(
+                    vector_command=VectorCommandValue(
+                        values=[x_vel_cmd, y_vel_cmd, yaw_vel_cmd]
+                    )
+                )
+
+                timestamp = Value(
+                    timestamp=TimestampValue(
+                        seconds=count_lowlevel * model_info["sim_dt"],
+                        nanos=0
+                    )
+                )
+                input = Input(
+                    inputs=[
+                        velocities,
+                        positions,
+                        prev_actions,
+                        angular_velocity,
+                        euler_rotation,
+                        command,
+                        timestamp
+                    ]
+                )
+        
+            breakpoint()
+            policy_output = policy(input)
+
             positions = policy_output["actions_scaled"]
             curr_actions = policy_output["actions"]
             hist_obs = policy_output["x.3"]
@@ -257,10 +373,6 @@ def run_mujoco(
                     }
                 )
 
-            idx = 0
-            # joint_positions.append(target_q[idx] + default[idx] - q[idx])
-            joint_positions.append(dq[idx])
-
             prev_actions = curr_actions
 
         # Generate PD control
@@ -273,18 +385,6 @@ def run_mujoco(
         if render:
             viewer.render()
         count_lowlevel += 1
-
-    import matplotlib.pyplot as plt
-
-    plt.figure(figsize=(10, 6))
-    time_steps = np.arange(len(joint_positions)) * model_info["sim_dt"]
-    plt.plot(time_steps, joint_positions)
-    plt.xlabel("Time (s)")
-    plt.ylabel("First Joint Position (rad)")
-    plt.title("First Joint Position over Time")
-    plt.grid(True)
-    plt.savefig('joint_position_plot.png')
-    plt.close()
 
     if render:
         viewer.close()
@@ -301,6 +401,75 @@ def run_mujoco(
 
     if log_h5:
         logger.close()
+
+
+def generate_input_schema() -> InputSchema:
+    input_schema = InputSchema(inputs=[
+        ValueSchema(
+            value_name="joint_positions",
+            joint_positions=JointPositionsSchema(
+                joint_names=["L_hip_y", "L_hip_z", "L_knee_y", "L_knee_z", "L_ankle_y", "L_ankle_z", "R_hip_y", "R_hip_z", "R_knee_y", "R_knee_z", "R_ankle_y", "R_ankle_z"],
+                unit=JointPositionUnit.DEGREES
+            )
+        ),
+        ValueSchema(
+            value_name="joint_velocities",
+            joint_velocities=JointVelocitiesSchema(
+                joint_names=["L_hip_y", "L_hip_z", "L_knee_y", "L_knee_z", "L_ankle_y", "L_ankle_z", "R_hip_y", "R_hip_z", "R_knee_y", "R_knee_z", "R_ankle_y", "R_ankle_z"],
+                unit=JointVelocityUnit.DEGREES_PER_SECOND
+            )
+        ),
+        ValueSchema(
+            value_name="prev_actions",
+            state_tensor=StateTensorSchema(
+                shape=[10],
+                dtype=DType.FP32,
+            )
+        ),
+        ValueSchema(
+            value_name="buffer",
+            state_tensor=StateTensorSchema(
+                shape=[615],
+                dtype=DType.FP32
+            )
+        ),
+        ValueSchema(
+            value_name="angular_velocity",
+            angular_velocity=AngularVelocitySchema()
+        ),
+        ValueSchema(
+            value_name="euler_rotation",
+            euler_rotation=EulerRotationSchema()
+        ),
+        ValueSchema(
+            value_name="timestamp",
+            timestamp=TimestampSchema(
+                start_seconds=0,
+                start_nanos=0
+            )
+        ),
+        ValueSchema(
+            value_name="vector_command",
+            vector_command=VectorCommandSchema(
+                dimensions=3
+            )
+        )
+    ])
+
+    return input_schema
+
+
+def generate_output_schema() -> OutputSchema:
+    output_schema = OutputSchema(outputs=[
+        ValueSchema(
+            value_name="joint_positions",
+            joint_positions=JointPositionsSchema(
+                joint_names=["L_hip_y", "L_hip_z", "L_knee_y", "L_knee_z", "L_ankle_y", "L_ankle_z", "R_hip_y", "R_hip_z", "R_knee_y", "R_knee_z", "R_ankle_y", "R_ankle_z"],
+                unit=JointPositionUnit.DEGREES
+            )
+        ),
+    ])
+    return output_schema
 
 
 if __name__ == "__main__":
@@ -321,7 +490,10 @@ if __name__ == "__main__":
     else:
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.4, 0.0, 0.0
 
-    policy = ONNXModel(args.load_model)
+    input_schema = generate_input_schema()
+    output_schema = generate_output_schema()
+
+    policy = ONNXModel(args.load_model, input_schema, output_schema)
     metadata = policy.get_metadata()
     model_info = {
         "num_actions": metadata["num_actions"],
@@ -333,13 +505,12 @@ if __name__ == "__main__":
         "sim_decimation": metadata["sim_decimation"],
         "tau_factor": metadata["tau_factor"],
     }
-
     run_mujoco(
         embodiment=args.embodiment,
         policy=policy,
         model_info=model_info,
         keyboard_use=args.keyboard_use,
         log_h5=args.log_h5,
-        render=args.render,
+        render=False,
         h5_out_dir=args.h5_out_dir,
     )
