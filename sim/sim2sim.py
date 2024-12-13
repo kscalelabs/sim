@@ -52,7 +52,6 @@ from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
 
-
 def quaternion_to_euler_array(quat: np.ndarray) -> np.ndarray:
     # Ensure quaternion is in the correct format [x, y, z, w]
     x, y, z, w = quat
@@ -349,13 +348,13 @@ def generate_input_schema() -> InputSchema:
                 unit=JointVelocityUnit.DEGREES_PER_SECOND
             )
         ),
-        # ValueSchema(
-        #     value_name="prev_actions",
-        #     state_tensor=StateTensorSchema(
-        #         shape=[10],
-        #         dtype=DType.FP32,
-        #     )
-        # ),
+        ValueSchema(
+            value_name="prev_actions",
+            state_tensor=StateTensorSchema(
+                shape=[10],
+                dtype=DType.FP32,
+            )
+        ),
         ValueSchema(
             value_name="angular_velocity",
             angular_velocity=AngularVelocitySchema()

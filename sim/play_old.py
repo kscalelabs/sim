@@ -18,15 +18,13 @@ import cv2
 import h5py
 import numpy as np
 from isaacgym import gymapi
-# from kinfer.export.pytorch import export_to_onnx
 from tqdm import tqdm
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
 
 # Local imports third
-from sim.onnx_export import export_to_onnx
-from sim.model_export import ActorCfg, get_actor_policy
+from sim.model_export_old import ActorCfg, get_actor_policy
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 
@@ -79,34 +77,11 @@ def play(args: argparse.Namespace) -> None:
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
 
-    # export policy as a onnx module (used to run it on web)
-    if args.export_onnx:
-        path = ppo_runner.load_path
-        embodiment = ppo_runner.cfg["experiment_name"].lower()
-        policy_cfg = ActorCfg(
-            embodiment=embodiment,
-            cycle_time=env_cfg.rewards.cycle_time,
-            sim_dt=env_cfg.sim.dt,
-            sim_decimation=env_cfg.control.decimation,
-            tau_factor=env_cfg.safety.torque_limit,
-            action_scale=env_cfg.control.action_scale,
-            lin_vel_scale=env_cfg.normalization.obs_scales.lin_vel,
-            ang_vel_scale=env_cfg.normalization.obs_scales.ang_vel,
-            quat_scale=env_cfg.normalization.obs_scales.quat,
-            dof_pos_scale=env_cfg.normalization.obs_scales.dof_pos,
-            dof_vel_scale=env_cfg.normalization.obs_scales.dof_vel,
-            frame_stack=env_cfg.env.frame_stack,
-            clip_observations=env_cfg.normalization.clip_observations,
-            clip_actions=env_cfg.normalization.clip_actions,
-        )
-        actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
-
-        # Merge policy_cfg and sim2sim_info into a single config object
-        export_config = {**vars(policy_cfg), **sim2sim_info}
-
-        session, model_proto = export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_policy.onnx")
-        model_proto.graph.input
-        print("Exported policy as kinfer-compatible onnx to: ", path)
+    # Export policy if needed
+    if args.export_policy:
+        path = os.path.join(".")
+        export_policy_as_jit(ppo_runner.alg.actor_critic, path)
+        print("Exported policy as jit script to: ", path)
 
     # Prepare for logging
     env_logger = Logger(env.dt)
@@ -144,8 +119,8 @@ def play(args: argparse.Namespace) -> None:
 
     if args.render:
         camera_properties = gymapi.CameraProperties()
-        camera_properties.width = 640
-        camera_properties.height = 480
+        camera_properties.width = 1920
+        camera_properties.height = 1080
         h1 = env.gym.create_camera_sensor(env.envs[0], camera_properties)
         camera_offset = gymapi.Vec3(3, -3, 1)
         camera_rotation = gymapi.Quat.from_axis_angle(gymapi.Vec3(-0.3, 0.2, 1), np.deg2rad(135))
@@ -222,24 +197,57 @@ def play(args: argparse.Namespace) -> None:
             }
         )
         actions = actions.detach().cpu().numpy()
+        if args.log_h5:
+            # Extract the current observation
+            for env_idx in range(env_cfg.env.num_envs):
+                h5_loggers[env_idx].log_data(
+                    {
+                        "t": np.array([t * env.dt], dtype=np.float32),
+                        "2D_command": np.array(
+                            [
+                                np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
+                                np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
+                            ],
+                            dtype=np.float32,
+                        ),
+                        "3D_command": np.array(env.commands[env_idx, :3].cpu().numpy(), dtype=np.float32),
+                        "joint_pos": np.array(env.dof_pos[env_idx].cpu().numpy(), dtype=np.float32),
+                        "joint_vel": np.array(env.dof_vel[env_idx].cpu().numpy(), dtype=np.float32),
+                        "prev_actions": prev_actions[env_idx].astype(np.float32),
+                        "curr_actions": actions[env_idx].astype(np.float32),
+                        "ang_vel": env.base_ang_vel[env_idx].cpu().numpy().astype(np.float32),
+                        "euler_rotation": env.base_euler_xyz[env_idx].cpu().numpy().astype(np.float32),
+                        "buffer": env.obs_buf[env_idx].cpu().numpy().astype(np.float32),
+                    }
+                )
+
+            prev_actions = actions
+
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
             if num_episodes > 0:
                 env_logger.log_rewards(infos["episode"], num_episodes)
 
+    env_logger.print_rewards()
 
     if args.render:
         video.release()
+
+    if args.log_h5:
+        # print(f"Saving HDF5 file to {h5_logger.h5_file_path}") # TODO use code from kdatagen
+        for h5_logger in h5_loggers:
+            h5_logger.close()
+        print(f"HDF5 file(s) saved!")
 
 
 if __name__ == "__main__":
     base_args = get_args()
     parser = argparse.ArgumentParser(description="Extend base arguments with log_h5")
     parser.add_argument("--log_h5", action="store_true", help="Enable HDF5 logging")
-    parser.add_argument("--render", action="store_true", help="Enable rendering", default=False)
+    parser.add_argument("--render", action="store_true", help="Enable rendering", default=True)
     parser.add_argument("--fix_command", action="store_true", help="Fix command", default=True)
     parser.add_argument("--export_onnx", action="store_true", help="Export policy as ONNX", default=True)
-    parser.add_argument("--export_policy", action="store_true", help="Export policy as JIT", default=False)
+    parser.add_argument("--export_policy", action="store_true", help="Export policy as JIT", default=True)
     args, unknown = parser.parse_known_args(namespace=base_args)
 
     play(args)

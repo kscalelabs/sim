@@ -226,10 +226,9 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     a_model = Actor(ac_model.actor, cfg)
 
     # Gets the model input tensors.
-    command = torch.randn(3)
     command_x = torch.randn(1)
-    y_vel = torch.randn(1)
-    rot = torch.randn(1)
+    command_y = torch.randn(1)
+    command_z = torch.randn(1)
     t = torch.randn(1)
     joint_positions = torch.randn(a_model.num_actions)
     joint_velocities = torch.randn(a_model.num_actions)
@@ -237,19 +236,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     angular_velocities = torch.randn(3)
     euler_rotation = torch.randn(3)
     buffer = a_model.get_init_buffer()
-
-    input_tensors = (
-        x_vel,
-        y_vel,
-        rot,
-        t,
-        joint_positions,
-        joint_velocities,
-        prev_actions,
-        angular_velocities,
-        euler_rotation,
-        buffer,
-    )
+    input_tensors = (command_x, command_y, command_z, t, joint_positions, joint_velocities, prev_actions, angular_velocities, euler_rotation, buffer)
 
     # Add sim2sim metadata
     robot_effort = list(a_model.robot.effort().values())
@@ -270,5 +257,90 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
             "num_observations": num_observations,
             "default_standing": default_standing,
         },
-        input_tensors
+        input_tensors,
     )
+
+
+def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
+    """Converts a PyTorch model to a ONNX format.
+
+    Args:
+        model_path: Path to the PyTorch model.
+        cfg: The configuration for the actor.
+        save_path: Path to save the ONNX model.
+
+    Returns:
+        An ONNX inference session.
+    """
+    all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
+    weights = all_weights["model_state_dict"]
+    num_actor_obs = weights["actor.0.weight"].shape[1]
+    num_critic_obs = weights["critic.0.weight"].shape[1]
+    num_actions = weights["std"].shape[0]
+    actor_hidden_dims = [v.shape[0] for k, v in weights.items() if re.match(r"actor\.\d+\.weight", k)]
+    critic_hidden_dims = [v.shape[0] for k, v in weights.items() if re.match(r"critic\.\d+\.weight", k)]
+    actor_hidden_dims = actor_hidden_dims[:-1]
+    critic_hidden_dims = critic_hidden_dims[:-1]
+
+    ac_model = ActorCritic(num_actor_obs, num_critic_obs, num_actions, actor_hidden_dims, critic_hidden_dims)
+    ac_model.load_state_dict(weights)
+
+    a_model = Actor(ac_model.actor, cfg)
+
+    # Gets the model input tensors.
+    command_x = torch.randn(1)
+    command_y = torch.randn(1)
+    command_z = torch.randn(1)
+    t = torch.randn(1)
+    joint_positions = torch.randn(a_model.num_actions)
+    joint_velocities = torch.randn(a_model.num_actions)
+    prev_actions = torch.randn(a_model.num_actions)
+    angular_velocities = torch.randn(3)
+    euler_rotation = torch.randn(3)
+    buffer = a_model.get_init_buffer()
+    input_tensors = (command_x, command_y, command_z, t, joint_positions, joint_velocities, prev_actions, angular_velocities, euler_rotation, buffer)
+
+    jit_model = torch.jit.script(a_model)
+
+    # Export the model to a buffer
+    buffer = BytesIO()
+    torch.onnx.export(jit_model, input_tensors, buffer)
+    buffer.seek(0)
+
+    # Load the model as an onnx model
+    model_proto = onnx.load_model(buffer)
+
+    # Add sim2sim metadata
+    robot_effort = list(a_model.robot.effort().values())
+    robot_stiffness = list(a_model.robot.stiffness().values())
+    robot_damping = list(a_model.robot.damping().values())
+    num_actions = a_model.num_actions
+    num_observations = a_model.num_observations
+
+    for field_name, field in [
+        ("robot_effort", robot_effort),
+        ("robot_stiffness", robot_stiffness),
+        ("robot_damping", robot_damping),
+        ("num_actions", num_actions),
+        ("num_observations", num_observations),
+    ]:
+        meta = model_proto.metadata_props.add()
+        meta.key = field_name
+        meta.value = str(field)
+
+    # Add the configuration of the model
+    for field in fields(cfg):
+        value = getattr(cfg, field.name)
+        meta = model_proto.metadata_props.add()
+        meta.key = field.name
+        meta.value = str(value)
+
+    if save_path:
+        onnx.save_model(model_proto, save_path)
+
+    # Convert model to bytes
+    buffer2 = BytesIO()
+    onnx.save_model(model_proto, buffer2)
+    buffer2.seek(0)
+
+    return ort.InferenceSession(buffer2.read())

@@ -179,6 +179,7 @@ def export_to_onnx(
             model_info["inferred_input_shapes"] = str(
                 input_tensors.shape if isinstance(input_tensors, torch.Tensor) else [t.shape for t in input_tensors]
             )
+
         except ValueError as e:
             raise ValueError(
                 f"Could not automatically infer input shapes. Please provide input_tensors. Error: {str(e)}"
@@ -190,18 +191,11 @@ def export_to_onnx(
 
     # Export model to buffer
     buffer = BytesIO()
-    if TYPE_CHECKING and sys.version_info >= (3, 11):
-        torch.onnx.export(
-            model,
-            (input_tensors,) if isinstance(input_tensors, torch.Tensor) else input_tensors,
-            buffer,  # type: ignore[arg-type]
-        )
-    else:
-        torch.onnx.export(
-            model,
-            (input_tensors,) if isinstance(input_tensors, torch.Tensor) else input_tensors,
-            buffer,
-        )
+    torch.onnx.export(
+        model,
+        (input_tensors,) if isinstance(input_tensors, torch.Tensor) else input_tensors,
+        buffer,
+    )
     buffer.seek(0)
 
     # Load as ONNX model
