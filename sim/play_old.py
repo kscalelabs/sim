@@ -23,6 +23,7 @@ from tqdm import tqdm
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
 
+from sim.onnx_export import export_to_onnx
 # Local imports third
 from sim.model_export_old import ActorCfg, get_actor_policy
 from sim.utils.helpers import get_args  # noqa: E402
@@ -77,11 +78,34 @@ def play(args: argparse.Namespace) -> None:
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
 
-    # Export policy if needed
-    if args.export_policy:
-        path = os.path.join(".")
-        export_policy_as_jit(ppo_runner.alg.actor_critic, path)
-        print("Exported policy as jit script to: ", path)
+    # export policy as a onnx module (used to run it on web)
+    if args.export_onnx:
+        path = ppo_runner.load_path
+        embodiment = ppo_runner.cfg["experiment_name"].lower()
+        policy_cfg = ActorCfg(
+            embodiment=embodiment,
+            cycle_time=env_cfg.rewards.cycle_time,
+            sim_dt=env_cfg.sim.dt,
+            sim_decimation=env_cfg.control.decimation,
+            tau_factor=env_cfg.safety.torque_limit,
+            action_scale=env_cfg.control.action_scale,
+            lin_vel_scale=env_cfg.normalization.obs_scales.lin_vel,
+            ang_vel_scale=env_cfg.normalization.obs_scales.ang_vel,
+            quat_scale=env_cfg.normalization.obs_scales.quat,
+            dof_pos_scale=env_cfg.normalization.obs_scales.dof_pos,
+            dof_vel_scale=env_cfg.normalization.obs_scales.dof_vel,
+            frame_stack=env_cfg.env.frame_stack,
+            clip_observations=env_cfg.normalization.clip_observations,
+            clip_actions=env_cfg.normalization.clip_actions,
+        )
+        actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
+
+        # Merge policy_cfg and sim2sim_info into a single config object
+        export_config = {**vars(policy_cfg), **sim2sim_info}
+
+        session, model_proto = export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_policy.onnx")
+        model_proto.graph.input
+        print("Exported policy as kinfer-compatible onnx to: ", path)
 
     # Prepare for logging
     env_logger = Logger(env.dt)

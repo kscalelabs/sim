@@ -217,4 +217,4 @@ def export_to_onnx(
     onnx.save_model(model_proto, buffer)
     buffer.seek(0)
 
-    return ort.InferenceSession(buffer.read())
+    return ort.InferenceSession(buffer.read()), model_proto
