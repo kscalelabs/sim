@@ -122,7 +122,7 @@ class GprCfg(LeggedRobotCfg):
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-3.0, 3.0]
+        added_mass_range = [-2.0, 2.0]
         push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
@@ -186,8 +186,8 @@ class GprCfg(LeggedRobotCfg):
             # energy
             action_smoothness = -0.002
             torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
+            dof_vel = -5e-4 # -1e-3
+            dof_acc = -1e-7 # -2.5e-7
             collision = -1.0
 
     class normalization:
@@ -211,9 +211,14 @@ class GprCfg(LeggedRobotCfg):
 class GprStandingCfg(GprCfg):
     """Configuration class for the GPR humanoid robot."""
 
+    class init_state(LeggedRobotCfg.init_state):
+        pos = [0.0, 0.0, Robot.standing_height]
+        rot = Robot.rotation
+        default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
+
     class rewards:
         # quite important to keep it right
-        base_height_target = Robot.height
+        base_height_target = Robot.standing_height
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
@@ -221,10 +226,10 @@ class GprStandingCfg(GprCfg):
         target_feet_height = 0.05  # m
         cycle_time = 0.5  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
-        only_positive_rewards = True
+        only_positive_rewards = False
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5
-        max_contact_force = 500  # forces above this value are penalized
+        max_contact_force = 200  # forces above this value are penalized
 
         class scales:
             # base pos
@@ -235,8 +240,8 @@ class GprStandingCfg(GprCfg):
             # energy
             action_smoothness = -0.002
             torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
+            dof_vel = -1e-3
+            dof_acc = -2.5e-7
             collision = -1.0
 
 
