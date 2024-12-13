@@ -50,7 +50,7 @@
     <camera name="track" mode="trackcom" pos="0 -3.0 0.9010549999999999" xyaxes="1 0 0 0 0 1" />
     <body name="root" pos="0 0 0.411055" quat="1 0 0 0">
       <freejoint name="root"/>
-      <site name="imu" size="0.01" pos="0 0 .55"/>
+      <site name="imu" size="0.01" pos="0 0 -0.13"/>
       <body name="base">
         <inertial pos="0.00648939 0.00390843 -0.180571" quat="0.999495 -0.0317223 -0.00110485 0.00149824" mass="18.9034" diaginertia="1.33012 0.801658 0.559678" />
         <geom quat="0.000563312 -0.000562864 0.707388 0.706825" type="mesh" rgba="1 1 1 1" mesh="body1-part" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
