@@ -44,12 +44,10 @@ play:
 
 install:
 	@pip install --verbose -e .
-	@bash sim/scripts/download_assets.sh
 .PHONY: install
 
 install-dev:
 	@pip install --verbose -e '.[dev]'
-	@bash sim/scripts/download_assets.sh
 .PHONY: install
 
 install-third-party:

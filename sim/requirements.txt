@@ -11,4 +11,5 @@ wandb
 tensorboard==2.14.0
 onnxscript
 mujoco==2.3.6
-kinfer
+git+https://github.com/kscalelabs/kinfer.git@b374295c3e4dab#egg=kinfer
+opencv-python
