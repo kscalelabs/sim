@@ -162,10 +162,10 @@ class GprCfg(LeggedRobotCfg):
         class scales:
             # reference motion tracking
             joint_pos = 1.6
-            feet_clearance = 1.0
-            feet_contact_number = 1.2
+            feet_clearance = 1.2
+            feet_contact_number = 1.4
             # gait
-            feet_air_time = 1.0
+            feet_air_time = 1.2
             foot_slip = -0.05
             feet_distance = 0.2
             knee_distance = 0.2
