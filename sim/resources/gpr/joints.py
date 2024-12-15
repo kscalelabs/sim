@@ -107,7 +107,18 @@ class Robot(Node):
 
     @classmethod
     def default_positions(cls) -> Dict[str, float]:
-        return {}
+        return {
+            Robot.legs.left.hip_pitch: 0.0,
+            Robot.legs.left.hip_yaw: 0.0,
+            Robot.legs.left.hip_roll: 0.0,
+            Robot.legs.left.knee_pitch: 0.0,
+            Robot.legs.left.ankle_pitch: 0.0,
+            Robot.legs.right.hip_pitch: 0.0,
+            Robot.legs.right.hip_yaw: 0.0,
+            Robot.legs.right.hip_roll: 0.0,
+            Robot.legs.right.knee_pitch: 0.0,
+            Robot.legs.right.ankle_pitch: 0.0,
+        }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
     # E.g. the first entry should be the angle of the first joint in the policy.
