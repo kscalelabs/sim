@@ -54,6 +54,17 @@ def update_urdf(model_path: str, embodiment: str) -> None:
                 for key, value in friction.items():
                     if key in joint_name:  # type: ignore[operator]
                         dynamics.set("friction", str(value))
+            else:
+                # Create and add new dynamics element
+                dynamics = ET.SubElement(joint, "dynamics")
+                dynamics.set("damping", "0.0")
+                # Set friction if exists for this joint
+                for key, value in friction.items():
+                    if key in joint_name:  # type: ignore[operator]
+                        dynamics.set("friction", str(value))
+                        break
+                else:
+                    dynamics.set("friction", "0.0")
 
     # Save the modified URDF to a new file
     tree.write(Path(model_path) / "robot_fixed.urdf", xml_declaration=False)

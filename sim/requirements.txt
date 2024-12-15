@@ -11,4 +11,5 @@ wandb
 tensorboard==2.14.0
 onnxscript
 mujoco==2.3.6
-kinfer
+kinfer==0.0.5
+opencv-python

@@ -72,6 +72,7 @@ class Robot(Node):
     legs = Legs()
 
     height = 1.05
+    standing_height = 1.05 + 0.025
     rotation = [0, 0, 0, 1]
 
     @classmethod
@@ -106,7 +107,18 @@ class Robot(Node):
 
     @classmethod
     def default_positions(cls) -> Dict[str, float]:
-        return {}
+        return {
+            Robot.legs.left.hip_pitch: 0.0,
+            Robot.legs.left.hip_yaw: 0.0,
+            Robot.legs.left.hip_roll: 0.0,
+            Robot.legs.left.knee_pitch: 0.0,
+            Robot.legs.left.ankle_pitch: 0.0,
+            Robot.legs.right.hip_pitch: 0.0,
+            Robot.legs.right.hip_yaw: 0.0,
+            Robot.legs.right.hip_roll: 0.0,
+            Robot.legs.right.knee_pitch: 0.0,
+            Robot.legs.right.ankle_pitch: 0.0,
+        }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
     # E.g. the first entry should be the angle of the first joint in the policy.
@@ -136,36 +148,36 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_y": 120,
-            "hip_x": 60,
-            "hip_z": 60,
-            "knee": 120,
-            "ankle_y": 17,
+            "hip_y": 300,
+            "hip_x": 120,
+            "hip_z": 120,
+            "knee": 300,
+            "ankle_y": 40,
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_y": 10,
+            "hip_y": 5,
             "hip_x": 5,
             "hip_z": 5,
-            "knee": 10,
+            "knee": 5,
             "ankle_y": 5,
         }
 
-    # # pos_limits
+    # effort_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_y": 40,
-            "hip_x": 20,
-            "hip_z": 20,
-            "knee": 40,
+            "hip_y": 60,
+            "hip_x": 40,
+            "hip_z": 40,
+            "knee": 60,
             "ankle_y": 17,
         }
 
-    # # vel_limits
+    # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {"hip": 10, "knee": 10, "ankle": 10}
@@ -175,7 +187,7 @@ class Robot(Node):
         return {
             "hip": 0,
             "knee": 0,
-            "ankle": 0.01,
+            "ankle": 0.1,
         }
 
 

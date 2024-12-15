@@ -579,7 +579,7 @@ class LeggedRobot(BaseTask):
             if not found:
                 self.p_gains[:, i] = 0.0
                 self.d_gains[:, i] = 0.0
-                print(f"PD gain of joint {name} were not defined, setting them to zero")
+                raise ValueError(f"PD gain of joint {name} were not defined, setting them to zero")
 
         self.rand_push_force = torch.zeros((self.num_envs, 3), dtype=torch.float32, device=self.device)
         self.rand_push_torque = torch.zeros((self.num_envs, 3), dtype=torch.float32, device=self.device)
