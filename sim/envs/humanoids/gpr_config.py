@@ -51,8 +51,8 @@ class GprCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        mesh_type = "plane"
-        # mesh_type = "trimesh"
+        # mesh_type = "plane"
+        mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -186,8 +186,8 @@ class GprCfg(LeggedRobotCfg):
             # energy
             action_smoothness = -0.002
             torques = -1e-5
-            dof_vel = -5e-4 # -1e-3
-            dof_acc = -1e-7 # -2.5e-7
+            dof_vel = -5e-4  # -1e-3
+            dof_acc = -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:
