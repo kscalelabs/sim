@@ -135,7 +135,7 @@ class StompyMicroCfg(LeggedRobotCfg):
         randomize_base_mass = False
         added_mass_range = [-0.5, 0.5]
         push_robots = True
-        push_interval_s = 1.5
+        push_interval_s = 3.5
         max_push_vel_xy = 0.6  # TODO: This was set to make standing significantly harder
         max_push_ang_vel = 0.8
         # dynamic randomization
@@ -173,8 +173,8 @@ class StompyMicroCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 2.0
-            feet_clearance = 1.5
+            joint_pos = 1.0
+            feet_clearance = 1.0
             feet_contact_number = 1.5
             feet_air_time = 2.0
             foot_slip = -0.3
@@ -183,11 +183,11 @@ class StompyMicroCfg(LeggedRobotCfg):
             # contact
             feet_contact_forces = -0.1
             # vel tracking
-            tracking_lin_vel = 1.6
-            tracking_ang_vel = 1.6
-            vel_mismatch_exp = 0.5  # lin_z; ang x,y
+            tracking_lin_vel = 1.0
+            tracking_ang_vel = 1.0
+            vel_mismatch_exp = 1.0  # lin_z; ang x,y
             low_speed = 1.0
-            track_vel_hard = 0.5
+            track_vel_hard = 1.0
 
             # base pos
             default_joint_pos = 1.0
@@ -195,7 +195,7 @@ class StompyMicroCfg(LeggedRobotCfg):
             base_height = 0.5
             base_acc = 0.2
             # energy
-            action_smoothness = -0.01
+            action_smoothness = -0.002
             torques = -1e-5
             dof_vel = -5e-4
             dof_acc = -1e-7
@@ -242,7 +242,7 @@ class rewards:
         dof_vel = -5e-3
         dof_acc = -1e-6
 
-StompyMicroCfg.rewards = rewards  # comment out to use the walking task rewards
+# StompyMicroCfg.rewards = rewards  # comment out to use the walking task rewards
 
 
 class StompyMicroCfgPPO(LeggedRobotCfgPPO):
@@ -271,7 +271,7 @@ class StompyMicroCfgPPO(LeggedRobotCfgPPO):
         # logging
         save_interval = 100  # check for potential saves every this many iterations
         experiment_name = "StompyMicro"
-        run_name = "StandingRobustFinal"
+        run_name = "WalkingRobustFinal"
         # load and resume
         resume = False
         load_run = -1  # -1 = last run
