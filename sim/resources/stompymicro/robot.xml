@@ -145,9 +145,11 @@
   </worldbody>
 
   <actuator>
-    <motor name="right_shoulder_pitch" joint="right_shoulder_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
-    <motor name="right_shoulder_yaw" joint="right_shoulder_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
-    <motor name="right_elbow_yaw" joint="right_elbow_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
     <motor name="left_shoulder_pitch" joint="left_shoulder_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
     <motor name="left_shoulder_yaw" joint="left_shoulder_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
     <motor name="left_elbow_yaw" joint="left_elbow_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
@@ -156,64 +158,62 @@
     <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
     <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
     <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
-    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
-    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
-    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
-    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
-    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="right_shoulder_pitch" joint="right_shoulder_pitch" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="right_shoulder_yaw" joint="right_shoulder_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
+    <motor name="right_elbow_yaw" joint="right_elbow_yaw" ctrllimited="true" ctrlrange="-80 80" gear="1"/>
   </actuator>
 
   <sensor>
-    <actuatorpos name="right_shoulder_pitch_p" actuator="right_shoulder_pitch"/>
-    <actuatorvel name="right_shoulder_pitch_v" actuator="right_shoulder_pitch"/>
-    <actuatorfrc name="right_shoulder_pitch_f" actuator="right_shoulder_pitch" noise="0.001"/>
-    <actuatorpos name="right_shoulder_yaw_p" actuator="right_shoulder_yaw"/>
-    <actuatorvel name="right_shoulder_yaw_v" actuator="right_shoulder_yaw"/>
-    <actuatorfrc name="right_shoulder_yaw_f" actuator="right_shoulder_yaw" noise="0.001"/>
-    <actuatorpos name="right_elbow_yaw_p" actuator="right_elbow_yaw"/>
-    <actuatorvel name="right_elbow_yaw_v" actuator="right_elbow_yaw"/>
-    <actuatorfrc name="right_elbow_yaw_f" actuator="right_elbow_yaw" noise="0.001"/>
-    <actuatorpos name="left_shoulder_pitch_p" actuator="left_shoulder_pitch"/>
-    <actuatorvel name="left_shoulder_pitch_v" actuator="left_shoulder_pitch"/>
-    <actuatorfrc name="left_shoulder_pitch_f" actuator="left_shoulder_pitch" noise="0.001"/>
-    <actuatorpos name="left_shoulder_yaw_p" actuator="left_shoulder_yaw"/>
-    <actuatorvel name="left_shoulder_yaw_v" actuator="left_shoulder_yaw"/>
-    <actuatorfrc name="left_shoulder_yaw_f" actuator="left_shoulder_yaw" noise="0.001"/>
-    <actuatorpos name="left_elbow_yaw_p" actuator="left_elbow_yaw"/>
-    <actuatorvel name="left_elbow_yaw_v" actuator="left_elbow_yaw"/>
-    <actuatorfrc name="left_elbow_yaw_f" actuator="left_elbow_yaw" noise="0.001"/>
-    <actuatorpos name="right_hip_pitch_p" actuator="right_hip_pitch"/>
-    <actuatorvel name="right_hip_pitch_v" actuator="right_hip_pitch"/>
-    <actuatorfrc name="right_hip_pitch_f" actuator="right_hip_pitch" noise="0.001"/>
-    <actuatorpos name="right_hip_yaw_p" actuator="right_hip_yaw"/>
-    <actuatorvel name="right_hip_yaw_v" actuator="right_hip_yaw"/>
-    <actuatorfrc name="right_hip_yaw_f" actuator="right_hip_yaw" noise="0.001"/>
-    <actuatorpos name="right_hip_roll_p" actuator="right_hip_roll"/>
-    <actuatorvel name="right_hip_roll_v" actuator="right_hip_roll"/>
-    <actuatorfrc name="right_hip_roll_f" actuator="right_hip_roll" noise="0.001"/>
-    <actuatorpos name="right_knee_pitch_p" actuator="right_knee_pitch"/>
-    <actuatorvel name="right_knee_pitch_v" actuator="right_knee_pitch"/>
-    <actuatorfrc name="right_knee_pitch_f" actuator="right_knee_pitch" noise="0.001"/>
-    <actuatorpos name="right_ankle_pitch_p" actuator="right_ankle_pitch"/>
-    <actuatorvel name="right_ankle_pitch_v" actuator="right_ankle_pitch"/>
-    <actuatorfrc name="right_ankle_pitch_f" actuator="right_ankle_pitch" noise="0.001"/>
     <actuatorpos name="left_hip_pitch_p" actuator="left_hip_pitch"/>
     <actuatorvel name="left_hip_pitch_v" actuator="left_hip_pitch"/>
-    <actuatorfrc name="left_hip_pitch_f" actuator="left_hip_pitch" noise="0.001"/>
+    <actuatorfrc name="left_hip_pitch_f" actuator="left_hip_pitch"/>
     <actuatorpos name="left_hip_yaw_p" actuator="left_hip_yaw"/>
     <actuatorvel name="left_hip_yaw_v" actuator="left_hip_yaw"/>
-    <actuatorfrc name="left_hip_yaw_f" actuator="left_hip_yaw" noise="0.001"/>
+    <actuatorfrc name="left_hip_yaw_f" actuator="left_hip_yaw"/>
     <actuatorpos name="left_hip_roll_p" actuator="left_hip_roll"/>
     <actuatorvel name="left_hip_roll_v" actuator="left_hip_roll"/>
-    <actuatorfrc name="left_hip_roll_f" actuator="left_hip_roll" noise="0.001"/>
+    <actuatorfrc name="left_hip_roll_f" actuator="left_hip_roll"/>
     <actuatorpos name="left_knee_pitch_p" actuator="left_knee_pitch"/>
     <actuatorvel name="left_knee_pitch_v" actuator="left_knee_pitch"/>
-    <actuatorfrc name="left_knee_pitch_f" actuator="left_knee_pitch" noise="0.001"/>
+    <actuatorfrc name="left_knee_pitch_f" actuator="left_knee_pitch"/>
     <actuatorpos name="left_ankle_pitch_p" actuator="left_ankle_pitch"/>
     <actuatorvel name="left_ankle_pitch_v" actuator="left_ankle_pitch"/>
-    <actuatorfrc name="left_ankle_pitch_f" actuator="left_ankle_pitch" noise="0.001"/>
-    <framequat name="orientation" objtype="site" noise="0.001" objname="imu"/>
-    <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9"/>
+    <actuatorfrc name="left_ankle_pitch_f" actuator="left_ankle_pitch"/>
+    <actuatorpos name="left_shoulder_pitch_p" actuator="left_shoulder_pitch"/>
+    <actuatorvel name="left_shoulder_pitch_v" actuator="left_shoulder_pitch"/>
+    <actuatorfrc name="left_shoulder_pitch_f" actuator="left_shoulder_pitch"/>
+    <actuatorpos name="left_shoulder_yaw_p" actuator="left_shoulder_yaw"/>
+    <actuatorvel name="left_shoulder_yaw_v" actuator="left_shoulder_yaw"/>
+    <actuatorfrc name="left_shoulder_yaw_f" actuator="left_shoulder_yaw"/>
+    <actuatorpos name="left_elbow_yaw_p" actuator="left_elbow_yaw"/>
+    <actuatorvel name="left_elbow_yaw_v" actuator="left_elbow_yaw"/>
+    <actuatorfrc name="left_elbow_yaw_f" actuator="left_elbow_yaw"/>
+    <actuatorpos name="right_hip_pitch_p" actuator="right_hip_pitch"/>
+    <actuatorvel name="right_hip_pitch_v" actuator="right_hip_pitch"/>
+    <actuatorfrc name="right_hip_pitch_f" actuator="right_hip_pitch"/>
+    <actuatorpos name="right_hip_yaw_p" actuator="right_hip_yaw"/>
+    <actuatorvel name="right_hip_yaw_v" actuator="right_hip_yaw"/>
+    <actuatorfrc name="right_hip_yaw_f" actuator="right_hip_yaw"/>
+    <actuatorpos name="right_hip_roll_p" actuator="right_hip_roll"/>
+    <actuatorvel name="right_hip_roll_v" actuator="right_hip_roll"/>
+    <actuatorfrc name="right_hip_roll_f" actuator="right_hip_roll"/>
+    <actuatorpos name="right_knee_pitch_p" actuator="right_knee_pitch"/>
+    <actuatorvel name="right_knee_pitch_v" actuator="right_knee_pitch"/>
+    <actuatorfrc name="right_knee_pitch_f" actuator="right_knee_pitch"/>
+    <actuatorpos name="right_ankle_pitch_p" actuator="right_ankle_pitch"/>
+    <actuatorvel name="right_ankle_pitch_v" actuator="right_ankle_pitch"/>
+    <actuatorfrc name="right_ankle_pitch_f" actuator="right_ankle_pitch"/>
+    <actuatorpos name="right_shoulder_pitch_p" actuator="right_shoulder_pitch"/>
+    <actuatorvel name="right_shoulder_pitch_v" actuator="right_shoulder_pitch"/>
+    <actuatorfrc name="right_shoulder_pitch_f" actuator="right_shoulder_pitch"/>
+    <actuatorpos name="right_shoulder_yaw_p" actuator="right_shoulder_yaw"/>
+    <actuatorvel name="right_shoulder_yaw_v" actuator="right_shoulder_yaw"/>
+    <actuatorfrc name="right_shoulder_yaw_f" actuator="right_shoulder_yaw"/>
+    <actuatorpos name="right_elbow_yaw_p" actuator="right_elbow_yaw"/>
+    <actuatorvel name="right_elbow_yaw_v" actuator="right_elbow_yaw"/>
+    <actuatorfrc name="right_elbow_yaw_f" actuator="right_elbow_yaw"/>
+    <framequat name="orientation" objtype="site" objname="imu"/>
+    <gyro name="angular-velocity" site="imu" cutoff="34.9"/>
   </sensor>
   <keyframe>
   <!-- TODO: Set back to previous values -->
