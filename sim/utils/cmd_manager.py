@@ -22,7 +22,11 @@ class CommandManager:
         self,
         num_envs: int = 1,
         mode: str = "fixed",
-        default_cmd: List[float] = [0.4, 0.0, 0.0, 0.0],
+        default_cmd: List[float] = [0.0, -0.4, 0.0, 0 / 2 * np.pi],  # default
+        # default_cmd: List[float] = [0.0, -0.3, 0.0, 1/2 * np.pi],  # 90
+        # default_cmd: List[float] = [0.0, -0.6, 0.0, 0/2 * np.pi],  # 0
+        # default_cmd: List[float] = [0.0, -0.3, 0.0, 0.5/2 * np.pi],  # 45
+        # default_cmd: List[float] = [0.0, -0.0, 0.0, 0/2 * np.pi],  # test
         device="cpu",
         env_cfg=None,
     ):
@@ -132,10 +136,28 @@ class CommandManager:
             return
 
         gym.clear_lines(viewer)
-        cmd_vels = self.commands[:, :2].cpu().numpy()
-        for env_handle, robot_pos, cmd_vel, actual_vel in zip(env_handles, robot_positions, cmd_vels, actual_vels):
-            draw_vector(gym, viewer, env_handle, robot_pos, cmd_vel, (0.0, 1.0, 0.0))  # cmd vector (green)
-            draw_vector(gym, viewer, env_handle, robot_pos, actual_vel, (1.0, 0.0, 0.0))  # vel vector (red)
+        cmd_vels = self.commands[:, :2].cpu().numpy()  # x,y velocities
+        headings = self.commands[:, 3].cpu().numpy()  # heading angles
+
+        for env_handle, robot_pos, cmd_vel, actual_vel, heading in zip(
+            env_handles, robot_positions, cmd_vels, actual_vels, headings
+        ):
+            # Draw heading direction (black/gray arrow)
+            heading_dir = (np.cos(heading), np.sin(heading))
+            draw_vector(gym, viewer, env_handle, robot_pos, heading_dir, (0.5, 0.5, 0.5), head_scale=0.08)
+
+            # Draw commanded velocity (green)
+            draw_vector(gym, viewer, env_handle, robot_pos, cmd_vel, (0.0, 1.0, 0.0))
+
+            # Draw actual velocity (red)
+            draw_vector(gym, viewer, env_handle, robot_pos, actual_vel, (1.0, 0.0, 0.0))
+
+            # Draw commanded velocity relative to heading: where the robot is trying to go relative to its current heading
+            # cmd_vel_relative = (
+            #     cmd_vel[0] * np.cos(heading) - cmd_vel[1] * np.sin(heading),
+            #     cmd_vel[0] * np.sin(heading) + cmd_vel[1] * np.cos(heading)
+            # )
+            # draw_vector(gym, viewer, env_handle, robot_pos, cmd_vel_relative, (0.0, 0.8, 0.2), head_scale=0.08)
 
     def _handle_keyboard_input(self):
         """Handles keyboard input for command updates."""
