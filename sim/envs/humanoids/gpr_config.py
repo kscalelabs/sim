@@ -69,14 +69,31 @@ class GprCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.6  # scales other values
+        noise_level_range = [0.4, 1.0]
+
+        # IMU filter parameters
+        class filter:
+            enabled = True
+            # Base values
+            alpha = 0.96
+            gyro_noise = 0.01
+            accel_noise = 0.01
+            gyro_cutoff = 34.9
+            accel_cutoff = 157.0
+            
+            # Randomization ranges (multipliers)
+            alpha_range = [0.7, 1.2]  # Complementary filter coefficient range
+            gyro_noise_range = [0.6, 1.2]  # Multiplier for gyro noise
+            accel_noise_range = [0.6, 1.2]  # Multiplier for accel noise
+            gyro_cutoff_range = [0.6, 1.2]  # Multiplier for gyro cutoff
+            accel_cutoff_range = [0.6, 1.2]  # Multiplier for accel cutoff
 
         class noise_scales:
             dof_pos = 0.05
             dof_vel = 0.5
             ang_vel = 0.1
             lin_vel = 0.05
-            quat = 0.03
+            quat = 0.01
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -117,7 +134,7 @@ class GprCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
+        start_pos_noise = 0.2
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -129,7 +146,7 @@ class GprCfg(LeggedRobotCfg):
         max_push_ang_vel = 0.4
         # dynamic randomization
         action_noise = 0.02
-        action_delay = 0.5
+        action_delay = 0.3
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)

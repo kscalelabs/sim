@@ -63,7 +63,8 @@ class GprFreeEnv(LeggedRobot):
         for name, joint in Robot.legs.right.joints_motors():
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["right_" + name] = joint_handle
-
+        
+        self._sample_filter_parameters()  # Initialize filter parameters
         self.compute_observations()
 
     def _push_robots(self):
@@ -245,9 +246,18 @@ class GprFreeEnv(LeggedRobot):
             )
             self.privileged_obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
         if self.add_noise:
-            obs_now = obs_buf.clone() + torch.randn_like(obs_buf) * self.noise_scale_vec * self.cfg.noise.noise_level
+            # Sample random noise level from the configured range
+            noise_level = torch.rand(
+                (self.num_envs, 1), 
+                device=self.device
+            ) * (self.cfg.noise.noise_level_range[1] - self.cfg.noise.noise_level_range[0]) + self.cfg.noise.noise_level_range[0]
+            self._filter_imu_readings()
+            # Apply noise with varying levels per environment
+            obs_now = obs_buf.clone() + torch.randn_like(obs_buf) * self.noise_scale_vec * noise_level
         else:
+            self._filter_imu_readings()
             obs_now = obs_buf.clone()
+    
         self.obs_history.append(obs_now)
         self.critic_history.append(self.privileged_obs_buf)
 
@@ -255,6 +265,7 @@ class GprFreeEnv(LeggedRobot):
 
         self.obs_buf = obs_buf_all.reshape(self.num_envs, -1)  # N, T*K
         self.privileged_obs_buf = torch.cat([self.critic_history[i] for i in range(self.cfg.env.c_frame_stack)], dim=1)
+
 
     def reset_idx(self, env_ids):
         super().reset_idx(env_ids)
@@ -514,3 +525,82 @@ class GprFreeEnv(LeggedRobot):
         )
         term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
         return term_1 + term_2 + term_3
+
+    def _filter_imu_readings(self):
+        """Applies complementary filtering to IMU readings to better approximate real-world behavior."""
+        # Filter coefficient (tune this between 0 and 1)
+        alpha = self.filter_params['alpha'].unsqueeze(1)  # Shape: [num_envs, 1]
+        
+        # Get raw readings
+        gyro = self.base_ang_vel.clone()
+        accel = self.projected_gravity.clone()
+        
+        # Initialize filtered states if not exists
+        if not hasattr(self, 'filtered_orientation'):
+            self.filtered_orientation = self.base_euler_xyz.clone()
+            self.last_gyro_time = torch.zeros_like(self.episode_length_buf)
+        
+        # Time delta
+        dt = self.dt
+        
+        # Integrate gyroscope data
+        gyro_angle = self.filtered_orientation + gyro * dt
+        
+        # Calculate tilt angles from accelerometer
+        accel_angle = torch.atan2(accel[:, 1], accel[:, 2])  # pitch
+        roll = torch.atan2(-accel[:, 0], torch.sqrt(accel[:, 1]**2 + accel[:, 2]**2))  # roll
+        accel_orientation = torch.stack([roll, accel_angle, self.base_euler_xyz[:, 2]], dim=1)
+        
+        # Combine using complementary filter with proper broadcasting
+        self.filtered_orientation = alpha * gyro_angle + (1 - alpha) * accel_orientation
+        
+        # Update the base orientation with filtered values
+        self.base_euler_xyz = self.filtered_orientation.clone()
+
+    def _sample_filter_parameters(self):
+        """Sample IMU filter parameters for the episode"""
+        device = self.device
+        num_envs = self.num_envs
+        
+        # Sample multipliers for each parameter
+        alpha_mult = torch.rand(num_envs, device=device) * (
+            self.cfg.noise.filter.alpha_range[1] - self.cfg.noise.filter.alpha_range[0]
+        ) + self.cfg.noise.filter.alpha_range[0]
+        
+        gyro_noise_mult = torch.rand(num_envs, device=device) * (
+            self.cfg.noise.filter.gyro_noise_range[1] - self.cfg.noise.filter.gyro_noise_range[0]
+        ) + self.cfg.noise.filter.gyro_noise_range[0]
+        
+        accel_noise_mult = torch.rand(num_envs, device=device) * (
+            self.cfg.noise.filter.accel_noise_range[1] - self.cfg.noise.filter.accel_noise_range[0]
+        ) + self.cfg.noise.filter.accel_noise_range[0]
+        
+        gyro_cutoff_mult = torch.rand(num_envs, device=device) * (
+            self.cfg.noise.filter.gyro_cutoff_range[1] - self.cfg.noise.filter.gyro_cutoff_range[0]
+        ) + self.cfg.noise.filter.gyro_cutoff_range[0]
+        
+        accel_cutoff_mult = torch.rand(num_envs, device=device) * (
+            self.cfg.noise.filter.accel_cutoff_range[1] - self.cfg.noise.filter.accel_cutoff_range[0]
+        ) + self.cfg.noise.filter.accel_cutoff_range[0]
+        
+        # Store the sampled parameters
+        self.filter_params = {
+            'alpha': self.cfg.noise.filter.alpha * alpha_mult,
+            'gyro_noise': self.cfg.noise.filter.gyro_noise * gyro_noise_mult,
+            'accel_noise': self.cfg.noise.filter.accel_noise * accel_noise_mult,
+            'gyro_cutoff': self.cfg.noise.filter.gyro_cutoff * gyro_cutoff_mult,
+            'accel_cutoff': self.cfg.noise.filter.accel_cutoff * accel_cutoff_mult
+        }
+
+    def reset(self, env_ids=None):
+        """Reset environments. If env_ids is None, reset all environments."""
+        if env_ids is None:
+            env_ids = torch.arange(self.num_envs, device=self.device)
+        
+        super().reset_idx(env_ids)
+        self._sample_filter_parameters()  # Sample new parameters for all envs
+        
+        # Return required info for gym interface
+        obs = self.obs_buf.clone()
+        privileged_obs = self.privileged_obs_buf.clone()
+        return obs, privileged_obs
