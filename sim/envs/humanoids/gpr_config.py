@@ -71,29 +71,12 @@ class GprCfg(LeggedRobotCfg):
         add_noise = True
         noise_level_range = [0.4, 1.0]
 
-        # IMU filter parameters
-        class filter:
-            enabled = True
-            # Base values
-            alpha = 0.96
-            gyro_noise = 0.01
-            accel_noise = 0.01
-            gyro_cutoff = 34.9
-            accel_cutoff = 157.0
-            
-            # Randomization ranges (multipliers)
-            alpha_range = [0.7, 1.2]  # Complementary filter coefficient range
-            gyro_noise_range = [0.6, 1.2]  # Multiplier for gyro noise
-            accel_noise_range = [0.6, 1.2]  # Multiplier for accel noise
-            gyro_cutoff_range = [0.6, 1.2]  # Multiplier for gyro cutoff
-            accel_cutoff_range = [0.6, 1.2]  # Multiplier for accel cutoff
-
         class noise_scales:
             dof_pos = 0.05
             dof_vel = 0.5
-            ang_vel = 0.1
+            ang_vel = 0.6
             lin_vel = 0.05
-            quat = 0.01
+            quat = 0.5
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):

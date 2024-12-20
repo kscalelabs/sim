@@ -148,10 +148,10 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_y": 300,
+            "hip_y": 200,
             "hip_x": 120,
             "hip_z": 120,
-            "knee": 300,
+            "knee": 200,
             "ankle_y": 40,
         }
 
@@ -159,10 +159,10 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_y": 5,
+            "hip_y": 10,
             "hip_x": 5,
             "hip_z": 5,
-            "knee": 5,
+            "knee": 10,
             "ankle_y": 5,
         }
 
@@ -170,10 +170,10 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_y": 60,
-            "hip_x": 40,
-            "hip_z": 40,
-            "knee": 60,
+            "hip_y": 40,
+            "hip_x": 30,
+            "hip_z": 30,
+            "knee": 40,
             "ankle_y": 17,
         }
 
