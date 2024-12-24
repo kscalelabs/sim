@@ -73,10 +73,10 @@ class GprCfg(LeggedRobotCfg):
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 0.5
-            ang_vel = 0.6
+            dof_vel = 0.3
+            ang_vel = 0.4
             lin_vel = 0.05
-            quat = 0.5
+            quat = 0.3
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -117,7 +117,7 @@ class GprCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.2
+        start_pos_noise = 0.25
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -128,7 +128,7 @@ class GprCfg(LeggedRobotCfg):
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
         # dynamic randomization
-        action_noise = 0.02
+        action_noise = 0.04
         action_delay = 0.3
 
     class commands(LeggedRobotCfg.commands):
@@ -152,7 +152,7 @@ class GprCfg(LeggedRobotCfg):
         target_joint_pos_scale = 0.17  # rad
         target_feet_height = 0.05  # m
 
-        cycle_time = 0.4  # sec
+        cycle_time = 0.25  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
