@@ -51,8 +51,8 @@ class GprCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -69,14 +69,14 @@ class GprCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level_range = [0.4, 1.0]
+        noise_level = 0.7  # scales other values
 
         class noise_scales:
-            dof_pos = 0.05
-            dof_vel = 0.3
-            ang_vel = 0.4
+            dof_pos = 0.07
+            dof_vel = 0.6
+            ang_vel = 0.2
             lin_vel = 0.05
-            quat = 0.3
+            quat = 0.06
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -117,7 +117,7 @@ class GprCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.25
+        start_pos_noise = 0.2
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -125,11 +125,11 @@ class GprCfg(LeggedRobotCfg):
         added_mass_range = [-2.0, 2.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.2
-        max_push_ang_vel = 0.4
+        max_push_vel_xy = 0.3
+        max_push_ang_vel = 0.5
         # dynamic randomization
-        action_noise = 0.04
-        action_delay = 0.3
+        action_noise = 0.03
+        action_delay = 0.5
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)

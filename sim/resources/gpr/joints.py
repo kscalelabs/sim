@@ -160,8 +160,8 @@ class Robot(Node):
     def damping(cls) -> Dict[str, float]:
         return {
             "hip_y": 6,
-            "hip_x": 3,
-            "hip_z": 3,
+            "hip_x": 4,
+            "hip_z": 4,
             "knee": 6,
             "ankle_y": 3,
         }
