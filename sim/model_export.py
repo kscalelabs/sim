@@ -3,7 +3,7 @@
 import re
 from dataclasses import dataclass, fields
 from io import BytesIO
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import onnx
 import onnxruntime as ort
@@ -133,7 +133,7 @@ class Actor(nn.Module):
         imu_ang_vel: Tensor,  # angular velocity of the IMU
         imu_euler_xyz: Tensor,  # euler angles of the IMU
         buffer: Tensor,  # buffer of previous observations
-    ) -> Tuple[Tensor, Tensor, Tensor]:
+    ) -> Dict[str, Tensor]:
         """Runs the actor model forward pass.
 
         Args:
@@ -206,7 +206,9 @@ class Actor(nn.Module):
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale
 
-        return actions_scaled, actions, x
+        return {"actions": actions_scaled,
+                "actions_raw": actions,
+                "buffer": x}
 
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
