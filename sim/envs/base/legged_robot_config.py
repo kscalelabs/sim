@@ -38,6 +38,7 @@ from sim.envs.base.base_config import BaseConfig
 kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "third_party", "kinfer"))
 sys.path.append(kinfer_path)
 
+
 class LeggedRobotCfg(BaseConfig):
     class env:
         num_envs = 4096

@@ -137,9 +137,7 @@ class Actor(nn.Module):
         """Runs the actor model forward pass.
 
         Args:
-            x_vel: The x-coordinate of the target velocity, with shape (1).
-            y_vel: The y-coordinate of the target velocity, with shape (1).
-            rot: The target angular velocity, with shape (1).
+            vector_command: The target velocity vector, with shape (3). It consistes of x_vel, y_vel, and rot.
             t: The current policy time step, with shape (1).
             dof_pos: The current angular position of the DoFs relative to default, with shape (num_actions).
             dof_vel: The current angular velocity of the DoFs, with shape (num_actions).
@@ -206,9 +204,7 @@ class Actor(nn.Module):
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale
 
-        return {"actions": actions_scaled,
-                "actions_raw": actions,
-                "buffer": x}
+        return {"actions": actions_scaled, "actions_raw": actions, "buffer": x}
 
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
