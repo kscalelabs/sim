@@ -19,6 +19,7 @@ import h5py
 import numpy as np
 from isaacgym import gymapi
 from tqdm import tqdm
+import onnx
 
 # Add local kinfer to the path because kinfer requires 3.11 and we are using 3.8
 import sys
@@ -194,7 +195,7 @@ def play(args: argparse.Namespace) -> None:
             model=jit_policy,
             schema=model_schema,
         )
-        kinfer_policy.save_model("policy.kinfer")
+        onnx.save(kinfer_policy, "policy.kinfer")
     # Prepare for logging
     env_logger = Logger(env.dt)
     robot_index = 0
