@@ -107,10 +107,27 @@ def play(args: argparse.Namespace) -> None:
     model_schema = P.ModelSchema(input_schema=env_cfg.env.input_schema, output_schema=env_cfg.env.output_schema)
 
     if args.export_onnx:
-        jit_policy = get_actor_jit(policy)
+        actor_cfg = ActorCfg(
+            embodiment=ppo_runner.cfg["experiment_name"].lower(),
+            cycle_time=env_cfg.rewards.cycle_time,
+            sim_dt=env_cfg.sim.dt,
+            sim_decimation=env_cfg.control.decimation,
+            tau_factor=env_cfg.safety.torque_limit,
+            action_scale=env_cfg.control.action_scale,
+            lin_vel_scale=env_cfg.normalization.obs_scales.lin_vel,
+            ang_vel_scale=env_cfg.normalization.obs_scales.ang_vel,
+            quat_scale=env_cfg.normalization.obs_scales.quat,
+            dof_pos_scale=env_cfg.normalization.obs_scales.dof_pos,
+            dof_vel_scale=env_cfg.normalization.obs_scales.dof_vel,
+            frame_stack=env_cfg.env.frame_stack,
+            clip_observations=env_cfg.normalization.clip_observations,
+            clip_actions=env_cfg.normalization.clip_actions,
+        )
+        jit_policy, metadata, _ = get_actor_policy(ppo_runner.load_path, actor_cfg)
         kinfer_policy = export_model(
             model=jit_policy,
             schema=model_schema,
+            metadata=metadata,
         )
         onnx.save(kinfer_policy, "policy.kinfer")
     # Prepare for logging

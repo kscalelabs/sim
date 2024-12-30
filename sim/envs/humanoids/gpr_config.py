@@ -31,23 +31,13 @@ class GprCfg(LeggedRobotCfg):
         input_schema = P.IOSchema(
             values=[
                 P.ValueSchema(
-                    value_name="observation_buffer",
-                    state_tensor=P.StateTensorSchema(
-                        # 11 is the number of single observation features - 6 from IMU, 5 from command input
-                        # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-                        # -1 comes from the fact that the latest observation is the current state and not part of the buffer
-                        shape=[(frame_stack - 1) * (11 + NUM_JOINTS * 3)],
-                        description="Buffer of previous observations",
-                    ),
-                ),
-                P.ValueSchema(
                     value_name="vector_command",
                     vector_command=P.VectorCommandSchema(
                         dimensions=3,  # x_vel, y_vel, rot
                     ),
                 ),
                 P.ValueSchema(
-                    value_name="timestamp",
+                    value_name="t",
                     timestamp=P.TimestampSchema(
                         unit=P.TimestampUnit.SECONDS, description="Current policy time in seconds"
                     ),
@@ -74,7 +64,7 @@ class GprCfg(LeggedRobotCfg):
                 ),
                 # Abusing the IMU schema to pass in euler and angular velocity instead of raw sensor data
                 P.ValueSchema(
-                    value_name="imu_angular_velocity",
+                    value_name="imu_ang_vel",
                     imu=P.ImuSchema(
                         use_accelerometer=False,
                         use_gyroscope=True,
@@ -82,11 +72,20 @@ class GprCfg(LeggedRobotCfg):
                     ),
                 ),
                 P.ValueSchema(
-                    value_name="imu_orientation",
+                    value_name="imu_euler_xyz",
                     imu=P.ImuSchema(
                         use_accelerometer=True,
                         use_gyroscope=False,
                         use_magnetometer=False,
+                    ),
+                ),
+                P.ValueSchema(
+                    value_name="buffer",
+                    state_tensor=P.StateTensorSchema(
+                        # 11 is the number of single observation features - 6 from IMU, 5 from command input
+                        # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
+                        shape=[frame_stack * (11 + NUM_JOINTS * 3)],
+                        description="Buffer of previous observations",
                     ),
                 ),
             ]
@@ -95,11 +94,24 @@ class GprCfg(LeggedRobotCfg):
         output_schema = P.IOSchema(
             values=[
                 P.ValueSchema(
-                    value_name="joint_positions",
+                    value_name="actions",
                     joint_positions=P.JointPositionsSchema(
                         joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS
                     ),
-                )
+                ),
+                P.ValueSchema(
+                    value_name="actions_raw",
+                    joint_positions=P.JointPositionsSchema(
+                        joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS
+                    ),
+                ),
+                P.ValueSchema(
+                    value_name="buffer",
+                    state_tensor=P.StateTensorSchema(
+                        shape=[frame_stack * (11 + NUM_JOINTS * 3)],
+                        description="Updated buffer of observations",
+                    ),
+                ),
             ]
         )
 

@@ -125,9 +125,7 @@ class Actor(nn.Module):
 
     def forward(
         self,
-        x_vel: Tensor,  # x-coordinate of the target velocity
-        y_vel: Tensor,  # y-coordinate of the target velocity
-        rot: Tensor,  # target angular velocity
+        vector_command: Tensor,  # (x_vel, y_vel, rot)
         t: Tensor,  # current policy time (sec)
         dof_pos: Tensor,  # current angular position of the DoFs relative to default
         dof_vel: Tensor,  # current angular velocity of the DoFs
@@ -162,6 +160,8 @@ class Actor(nn.Module):
         """
         sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
         cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
+
+        x_vel, y_vel, rot = vector_command.split(1)
 
         # Construct command input
         command_input = torch.cat(
