@@ -43,21 +43,21 @@ class GprCfg(LeggedRobotCfg):
                     ),
                 ),
                 P.ValueSchema(
-                    value_name="joint_positions",
+                    value_name="dof_pos",
                     joint_positions=P.JointPositionsSchema(
                         joint_names=Robot.all_joints(),
                         unit=P.JointPositionUnit.RADIANS,
                     ),
                 ),
                 P.ValueSchema(
-                    value_name="joint_velocities",
+                    value_name="dof_vel",
                     joint_velocities=P.JointVelocitiesSchema(
                         joint_names=Robot.all_joints(),
                         unit=P.JointVelocityUnit.RADIANS_PER_SECOND,
                     ),
                 ),
                 P.ValueSchema(
-                    value_name="previous_actions",
+                    value_name="prev_actions",
                     joint_positions=P.JointPositionsSchema(
                         joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS
                     ),
