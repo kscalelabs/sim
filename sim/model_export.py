@@ -186,8 +186,8 @@ class Actor(nn.Module):
                 q,
                 dq,
                 prev_actions,
-                imu_ang_vel * self.ang_vel_scale,
-                imu_euler_xyz * self.quat_scale,
+                imu_ang_vel.squeeze(0) * self.ang_vel_scale,
+                imu_euler_xyz.squeeze(0) * self.quat_scale,
             ),
             dim=0,
         )
