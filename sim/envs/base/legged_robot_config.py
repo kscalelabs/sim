@@ -35,10 +35,8 @@ from enum import Enum
 
 from sim.envs.base.base_config import BaseConfig
 
-kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "third_party", "kinfer"))
+kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "third_party", "kinfer"))
 sys.path.append(kinfer_path)
-from kinfer import proto
-
 
 class LeggedRobotCfg(BaseConfig):
     class env:
@@ -49,8 +47,6 @@ class LeggedRobotCfg(BaseConfig):
         env_spacing = 3.0  # not used with heightfields/trimeshes
         send_timeouts = True  # send time out information to the algorithm
         episode_length_s = 20  # episode length in seconds
-
-        P = proto
 
     class terrain:
         mesh_type = "trimesh"  # "heightfield" # none, plane, heightfield or trimesh

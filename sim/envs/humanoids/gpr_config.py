@@ -26,7 +26,7 @@ class GprCfg(LeggedRobotCfg):
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
-        P = LeggedRobotCfg.env.P
+        from kinfer import proto as P
 
         input_schema = P.IOSchema(
             values=[
