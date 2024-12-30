@@ -7,6 +7,9 @@ Run:
 import argparse
 import math
 import os
+
+# Add local kinfer to the path because kinfer requires 3.11 and we are using 3.8
+import sys
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Union
@@ -17,15 +20,12 @@ import numpy as np
 import onnxruntime as ort
 import pygame
 import torch
-# Add local kinfer to the path because kinfer requires 3.11 and we are using 3.8
-import sys
 
-kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'third_party', 'kinfer'))
+kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "third_party", "kinfer"))
 sys.path.append(kinfer_path)
 
 from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
-
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 

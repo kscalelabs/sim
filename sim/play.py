@@ -9,6 +9,9 @@ import copy
 import logging
 import math
 import os
+
+# Add local kinfer to the path because kinfer requires 3.11 and we are using 3.8
+import sys
 import time
 import uuid
 from datetime import datetime
@@ -17,21 +20,16 @@ from typing import Any, Union
 import cv2
 import h5py
 import numpy as np
+import onnx
 from isaacgym import gymapi
 from tqdm import tqdm
-import onnx
-
-# Add local kinfer to the path because kinfer requires 3.11 and we are using 3.8
-import sys
 
 # Get absolute path relative to this script
-kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'third_party', 'kinfer'))
+kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "third_party", "kinfer"))
 sys.path.append(kinfer_path)
 
-from kinfer import proto as P 
+from kinfer import proto as P
 from kinfer.export.python import export_model
-
-from sim.utils.resources import load_embodiment
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
@@ -40,6 +38,7 @@ from sim.envs import task_registry  # noqa: E402
 from sim.model_export import ActorCfg, get_actor_policy
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
+from sim.utils.resources import load_embodiment
 
 import torch  # special case with isort: skip comment
 
@@ -52,10 +51,12 @@ def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> No
     model = get_actor_jit(actor_critic)
     model.save(path)
 
+
 def get_actor_jit(actor_critic: Any) -> Any:
     model = copy.deepcopy(actor_critic.actor).to("cpu")
     traced_script_module = torch.jit.script(model)
     return traced_script_module
+
 
 def play(args: argparse.Namespace) -> None:
     logger.info("Configuring environment and training settings...")
@@ -114,42 +115,36 @@ def play(args: argparse.Namespace) -> None:
                     # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
                     # -1 comes from the fact that the latest observation is the current state and not part of the buffer
                     shape=[(env_cfg.env.frame_stack - 1) * (11 + env.num_dof * 3)],
-                    description="Buffer of previous observations"
-                )
+                    description="Buffer of previous observations",
+                ),
             ),
             P.ValueSchema(
                 value_name="vector_command",
                 vector_command=P.VectorCommandSchema(
                     dimensions=3,  # x_vel, y_vel, rot
-                )
+                ),
             ),
             P.ValueSchema(
                 value_name="timestamp",
-                timestamp=P.TimestampSchema(
-                    unit=P.TimestampUnit.SECONDS,
-                    description="Current policy time in seconds"
-                )
+                timestamp=P.TimestampSchema(unit=P.TimestampUnit.SECONDS, description="Current policy time in seconds"),
             ),
             P.ValueSchema(
                 value_name="joint_positions",
                 joint_positions=P.JointPositionsSchema(
                     joint_names=JOINT_NAMES,
                     unit=P.JointPositionUnit.RADIANS,
-                )
+                ),
             ),
             P.ValueSchema(
-                value_name="joint_velocities", 
+                value_name="joint_velocities",
                 joint_velocities=P.JointVelocitiesSchema(
                     joint_names=JOINT_NAMES,
                     unit=P.JointVelocityUnit.RADIANS_PER_SECOND,
-                )
+                ),
             ),
             P.ValueSchema(
                 value_name="previous_actions",
-                joint_positions=P.JointPositionsSchema(
-                    joint_names=JOINT_NAMES,
-                    unit=P.JointPositionUnit.RADIANS
-                )
+                joint_positions=P.JointPositionsSchema(joint_names=JOINT_NAMES, unit=P.JointPositionUnit.RADIANS),
             ),
             # Abusing the IMU schema to pass in euler and angular velocity instead of raw sensor data
             P.ValueSchema(
@@ -158,7 +153,7 @@ def play(args: argparse.Namespace) -> None:
                     use_accelerometer=False,
                     use_gyroscope=True,
                     use_magnetometer=False,
-                )
+                ),
             ),
             P.ValueSchema(
                 value_name="imu_orientation",
@@ -166,8 +161,8 @@ def play(args: argparse.Namespace) -> None:
                     use_accelerometer=True,
                     use_gyroscope=False,
                     use_magnetometer=False,
-                )
-            )
+                ),
+            ),
         ]
     )
 
@@ -184,10 +179,7 @@ def play(args: argparse.Namespace) -> None:
     )
 
     # Create the full model schema
-    model_schema = P.ModelSchema(
-        input_schema=input_schema,
-        output_schema=output_schema
-    )
+    model_schema = P.ModelSchema(input_schema=input_schema, output_schema=output_schema)
 
     if args.export_onnx:
         jit_policy = get_actor_jit(policy)
