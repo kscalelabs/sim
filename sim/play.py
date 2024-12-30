@@ -18,8 +18,19 @@ import cv2
 import h5py
 import numpy as np
 from isaacgym import gymapi
-from kinfer.export.pytorch import export_to_onnx
 from tqdm import tqdm
+
+# Add local kinfer to the path because kinfer requires 3.11 and we are using 3.8
+import sys
+
+# Get absolute path relative to this script
+kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'third_party', 'kinfer'))
+sys.path.append(kinfer_path)
+
+from kinfer import proto as P 
+from kinfer.export.python import export_model
+
+from sim.utils.resources import load_embodiment
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
@@ -55,7 +66,7 @@ def play(args: argparse.Namespace) -> None:
     else:
         env_cfg.terrain.mesh_type = "plane"
     env_cfg.terrain.num_rows = 5
-    env_cfg.terrain.num_cols = 5
+    env_cfg.terrain.num_cxols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.terrain.max_init_terrain_level = 5
     env_cfg.noise.add_noise = True
@@ -78,40 +89,108 @@ def play(args: argparse.Namespace) -> None:
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
 
+    embodiment = ppo_runner.cfg["experiment_name"].lower()
+
     # Export policy if needed
     if args.export_policy:
         path = os.path.join(".")
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
 
-    # export policy as a onnx module (used to run it on web)
+    # load the embodiment
+    robot = load_embodiment(embodiment)
+    JOINT_NAMES = robot.Robot.all_joints()
+
+    input_schema = P.IOSchema(
+        values=[
+            P.ValueSchema(
+                value_name="observation_buffer",
+                state_tensor=P.StateTensorSchema(
+                    # 11 is the number of single observation features - 6 from IMU, 5 from command input
+                    # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
+                    # -1 comes from the fact that the latest observation is the current state and not part of the buffer
+                    shape=[(env_cfg.env.frame_stack - 1) * (11 + env.num_dof * 3)],
+                    description="Buffer of previous observations"
+                )
+            ),
+            P.ValueSchema(
+                value_name="vector_command",
+                vector_command=P.VectorCommandSchema(
+                    dimensions=3,  # x_vel, y_vel, rot
+                )
+            ),
+            P.ValueSchema(
+                value_name="timestamp",
+                timestamp=P.TimestampSchema(
+                    unit=P.TimestampUnit.SECONDS,
+                    description="Current policy time in seconds"
+                )
+            ),
+            P.ValueSchema(
+                value_name="joint_positions",
+                joint_positions=P.JointPositionsSchema(
+                    joint_names=JOINT_NAMES,
+                    unit=P.JointPositionUnit.RADIANS,
+                )
+            ),
+            P.ValueSchema(
+                value_name="joint_velocities", 
+                joint_velocities=P.JointVelocitiesSchema(
+                    joint_names=JOINT_NAMES,
+                    unit=P.JointVelocityUnit.RADIANS_PER_SECOND,
+                )
+            ),
+            P.ValueSchema(
+                value_name="previous_actions",
+                joint_positions=P.JointPositionsSchema(
+                    joint_names=JOINT_NAMES,
+                    unit=P.JointPositionUnit.RADIANS
+                )
+            ),
+            # Abusing the IMU schema to pass in euler and angular velocity instead of raw sensor data
+            P.ValueSchema(
+                value_name="imu_angular_velocity",
+                imu=P.ImuSchema(
+                    use_accelerometer=False,
+                    use_gyroscope=True,
+                    use_magnetometer=False,
+                )
+            ),
+            P.ValueSchema(
+                value_name="imu_orientation",
+                imu=P.ImuSchema(
+                    use_accelerometer=True,
+                    use_gyroscope=False,
+                    use_magnetometer=False,
+                )
+            )
+        ]
+    )
+
+    output_schema = P.IOSchema(
+        values=[
+            P.ValueSchema(
+                value_name="joint_positions",
+                joint_pos=P.JointPosSchema(
+                    joint_names=JOINT_NAMES,
+                    unit=P.JointPosUnit.RADIANS,
+                ),
+            )
+        ]
+    )
+
+    # Create the full model schema
+    model_schema = P.ModelSchema(
+        input_schema=input_schema,
+        output_schema=output_schema
+    )
+
     if args.export_onnx:
-        path = ppo_runner.load_path
-        embodiment = ppo_runner.cfg["experiment_name"].lower()
-        policy_cfg = ActorCfg(
-            embodiment=embodiment,
-            cycle_time=env_cfg.rewards.cycle_time,
-            sim_dt=env_cfg.sim.dt,
-            sim_decimation=env_cfg.control.decimation,
-            tau_factor=env_cfg.safety.torque_limit,
-            action_scale=env_cfg.control.action_scale,
-            lin_vel_scale=env_cfg.normalization.obs_scales.lin_vel,
-            ang_vel_scale=env_cfg.normalization.obs_scales.ang_vel,
-            quat_scale=env_cfg.normalization.obs_scales.quat,
-            dof_pos_scale=env_cfg.normalization.obs_scales.dof_pos,
-            dof_vel_scale=env_cfg.normalization.obs_scales.dof_vel,
-            frame_stack=env_cfg.env.frame_stack,
-            clip_observations=env_cfg.normalization.clip_observations,
-            clip_actions=env_cfg.normalization.clip_actions,
+        kinfer_policy = export_model(
+            model=policy,
+            schema=model_schema,
         )
-        actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
-
-        # Merge policy_cfg and sim2sim_info into a single config object
-        export_config = {**vars(policy_cfg), **sim2sim_info}
-
-        export_to_onnx(actor_model, input_tensors=input_tensors, config=export_config, save_path="kinfer_policy.onnx")
-        print("Exported policy as kinfer-compatible onnx to: ", path)
-
+        kinfer_policy.save_model("policy.kinfer")
     # Prepare for logging
     env_logger = Logger(env.dt)
     robot_index = 0
