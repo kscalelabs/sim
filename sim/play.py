@@ -66,7 +66,7 @@ def play(args: argparse.Namespace) -> None:
     else:
         env_cfg.terrain.mesh_type = "plane"
     env_cfg.terrain.num_rows = 5
-    env_cfg.terrain.num_cxols = 5
+    env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.terrain.max_init_terrain_level = 5
     env_cfg.noise.add_noise = True
