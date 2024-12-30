@@ -241,7 +241,7 @@ class GprStandingCfg(GprCfg):
             action_smoothness = -0.002
             torques = -1e-5
             dof_vel = -1e-3
-            dof_acc = -2.5e-7
+            dof_acc = -1e-2
             collision = -1.0
 
 
