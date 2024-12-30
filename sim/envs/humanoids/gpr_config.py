@@ -39,7 +39,7 @@ class GprCfg(LeggedRobotCfg):
                 P.ValueSchema(
                     value_name="t",
                     timestamp=P.TimestampSchema(
-                        unit=P.TimestampUnit.SECONDS, description="Current policy time in seconds"
+                        start_seconds=0,
                     ),
                 ),
                 P.ValueSchema(
@@ -85,7 +85,6 @@ class GprCfg(LeggedRobotCfg):
                         # 11 is the number of single observation features - 6 from IMU, 5 from command input
                         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
                         shape=[frame_stack * (11 + NUM_JOINTS * 3)],
-                        description="Buffer of previous observations",
                     ),
                 ),
             ]
@@ -109,7 +108,6 @@ class GprCfg(LeggedRobotCfg):
                     value_name="buffer",
                     state_tensor=P.StateTensorSchema(
                         shape=[frame_stack * (11 + NUM_JOINTS * 3)],
-                        description="Updated buffer of observations",
                     ),
                 ),
             ]

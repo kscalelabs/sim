@@ -29,7 +29,7 @@ kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "thi
 sys.path.append(kinfer_path)
 
 from kinfer import proto as P
-from kinfer.export.python import export_model
+from kinfer.export.pytorch import export_model
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
