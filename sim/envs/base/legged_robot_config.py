@@ -29,12 +29,11 @@
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
-from enum import Enum
 import os
+import sys
+from enum import Enum
 
 from sim.envs.base.base_config import BaseConfig
-
-import sys
 
 kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "third_party", "kinfer"))
 sys.path.append(kinfer_path)

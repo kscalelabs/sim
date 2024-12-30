@@ -32,67 +32,73 @@ class GprCfg(LeggedRobotCfg):
             values=[
                 P.ValueSchema(
                     value_name="observation_buffer",
-                        state_tensor=P.StateTensorSchema(
-                            # 11 is the number of single observation features - 6 from IMU, 5 from command input
-                            # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-                            # -1 comes from the fact that the latest observation is the current state and not part of the buffer
-                            shape=[(frame_stack - 1) * (11 + NUM_JOINTS * 3)],
-                            description="Buffer of previous observations",
-                        ),
+                    state_tensor=P.StateTensorSchema(
+                        # 11 is the number of single observation features - 6 from IMU, 5 from command input
+                        # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
+                        # -1 comes from the fact that the latest observation is the current state and not part of the buffer
+                        shape=[(frame_stack - 1) * (11 + NUM_JOINTS * 3)],
+                        description="Buffer of previous observations",
                     ),
-                    P.ValueSchema(
-                        value_name="vector_command",
-                        vector_command=P.VectorCommandSchema(
-                            dimensions=3,  # x_vel, y_vel, rot
-                        ),
+                ),
+                P.ValueSchema(
+                    value_name="vector_command",
+                    vector_command=P.VectorCommandSchema(
+                        dimensions=3,  # x_vel, y_vel, rot
                     ),
-                    P.ValueSchema(
-                        value_name="timestamp",
-                        timestamp=P.TimestampSchema(unit=P.TimestampUnit.SECONDS, description="Current policy time in seconds"),
+                ),
+                P.ValueSchema(
+                    value_name="timestamp",
+                    timestamp=P.TimestampSchema(
+                        unit=P.TimestampUnit.SECONDS, description="Current policy time in seconds"
                     ),
-                    P.ValueSchema(
-                        value_name="joint_positions",
-                        joint_positions=P.JointPositionsSchema(
-                            joint_names=Robot.all_joints(),
-                            unit=P.JointPositionUnit.RADIANS,
-                        ),
+                ),
+                P.ValueSchema(
+                    value_name="joint_positions",
+                    joint_positions=P.JointPositionsSchema(
+                        joint_names=Robot.all_joints(),
+                        unit=P.JointPositionUnit.RADIANS,
                     ),
-                    P.ValueSchema(
-                        value_name="joint_velocities",
-                        joint_velocities=P.JointVelocitiesSchema(
-                            joint_names=Robot.all_joints(),
-                            unit=P.JointVelocityUnit.RADIANS_PER_SECOND,
-                        ),
+                ),
+                P.ValueSchema(
+                    value_name="joint_velocities",
+                    joint_velocities=P.JointVelocitiesSchema(
+                        joint_names=Robot.all_joints(),
+                        unit=P.JointVelocityUnit.RADIANS_PER_SECOND,
                     ),
-                    P.ValueSchema(
-                        value_name="previous_actions",
-                        joint_positions=P.JointPositionsSchema(joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS),
+                ),
+                P.ValueSchema(
+                    value_name="previous_actions",
+                    joint_positions=P.JointPositionsSchema(
+                        joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS
                     ),
-                    # Abusing the IMU schema to pass in euler and angular velocity instead of raw sensor data
-                    P.ValueSchema(
-                        value_name="imu_angular_velocity",
-                        imu=P.ImuSchema(
-                            use_accelerometer=False,
-                            use_gyroscope=True,
-                            use_magnetometer=False,
-                        ),
+                ),
+                # Abusing the IMU schema to pass in euler and angular velocity instead of raw sensor data
+                P.ValueSchema(
+                    value_name="imu_angular_velocity",
+                    imu=P.ImuSchema(
+                        use_accelerometer=False,
+                        use_gyroscope=True,
+                        use_magnetometer=False,
                     ),
-                    P.ValueSchema(
-                        value_name="imu_orientation",
-                        imu=P.ImuSchema(
-                            use_accelerometer=True,
-                            use_gyroscope=False,
-                            use_magnetometer=False,
-                        ),
+                ),
+                P.ValueSchema(
+                    value_name="imu_orientation",
+                    imu=P.ImuSchema(
+                        use_accelerometer=True,
+                        use_gyroscope=False,
+                        use_magnetometer=False,
                     ),
-                ]
-            )
-        
+                ),
+            ]
+        )
+
         output_schema = P.IOSchema(
             values=[
                 P.ValueSchema(
                     value_name="joint_positions",
-                    joint_positions=P.JointPositionsSchema(joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS),
+                    joint_positions=P.JointPositionsSchema(
+                        joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS
+                    ),
                 )
             ]
         )
