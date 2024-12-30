@@ -17,8 +17,12 @@ import numpy as np
 import onnxruntime as ort
 import pygame
 import torch
+# Add local kinfer to the path because kinfer requires 3.11 and we are using 3.8
+import sys
+sys.path.append('third_party/kinfer')
 from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
+
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
