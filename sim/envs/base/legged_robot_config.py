@@ -35,6 +35,7 @@ from enum import Enum
 
 from sim.envs.base.base_config import BaseConfig
 
+
 class LeggedRobotCfg(BaseConfig):
     class env:
         num_envs = 4096

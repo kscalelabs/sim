@@ -7,7 +7,6 @@ Run:
 import argparse
 import math
 import os
-
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Union
@@ -18,7 +17,6 @@ import numpy as np
 import onnxruntime as ort
 import pygame
 import torch
-
 from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
 from scipy.spatial.transform import Rotation as R

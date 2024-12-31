@@ -147,7 +147,7 @@ class Actor(nn.Module):
             imu_euler_xyz: The euler angles of the IMU, with shape (3),
                 in radians. "XYZ" means (roll, pitch, yaw). If IMU is not used,
                 can be all zeros.
-            buffer: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
+            state_tensor: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
                 the return value of the previous forward pass. On the first
                 pass, it should be all zeros.
 

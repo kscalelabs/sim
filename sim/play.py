@@ -9,7 +9,6 @@ import copy
 import logging
 import math
 import os
-
 from datetime import datetime
 from typing import Any, Union
 
@@ -18,10 +17,9 @@ import h5py
 import numpy as np
 import onnx
 from isaacgym import gymapi
-from tqdm import tqdm
-
 from kinfer import proto as P
 from kinfer.export.pytorch import export_model
+from tqdm import tqdm
 
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
