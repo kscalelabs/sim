@@ -37,7 +37,7 @@ class GprCfg(LeggedRobotCfg):
                     ),
                 ),
                 P.ValueSchema(
-                    value_name="t",
+                    value_name="timestamp",
                     timestamp=P.TimestampSchema(
                         start_seconds=0,
                     ),

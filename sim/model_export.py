@@ -126,7 +126,7 @@ class Actor(nn.Module):
     def forward(
         self,
         vector_command: Tensor,  # (x_vel, y_vel, rot)
-        t: Tensor,  # current policy time (sec)
+        timestamp: Tensor,  # current policy time (sec)
         dof_pos: Tensor,  # current angular position of the DoFs relative to default
         dof_vel: Tensor,  # current angular velocity of the DoFs
         prev_actions: Tensor,  # previous actions taken by the model
@@ -138,7 +138,7 @@ class Actor(nn.Module):
 
         Args:
             vector_command: The target velocity vector, with shape (3). It consistes of x_vel, y_vel, and rot.
-            t: The current policy time step, with shape (1).
+            timestamp: The current policy time step, with shape (1).
             dof_pos: The current angular position of the DoFs relative to default, with shape (num_actions).
             dof_vel: The current angular velocity of the DoFs, with shape (num_actions).
             prev_actions: The previous actions taken by the model, with shape (num_actions).
@@ -156,8 +156,8 @@ class Actor(nn.Module):
             actions: The actions to take, with shape (num_actions).
             x: The new buffer of observations, with shape (frame_stack * num_single_obs).
         """
-        sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
-        cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
+        sin_pos = torch.sin(2 * torch.pi * timestamp / self.cycle_time)
+        cos_pos = torch.cos(2 * torch.pi * timestamp / self.cycle_time)
 
         x_vel, y_vel, rot = vector_command.split(1)
 
