@@ -8,8 +8,6 @@ import argparse
 import math
 import os
 
-# Add local kinfer to the path because kinfer requires 3.11 and we are using 3.8
-import sys
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Union
