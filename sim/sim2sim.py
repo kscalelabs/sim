@@ -21,9 +21,6 @@ import onnxruntime as ort
 import pygame
 import torch
 
-kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "third_party", "kinfer"))
-sys.path.append(kinfer_path)
-
 from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
 from scipy.spatial.transform import Rotation as R

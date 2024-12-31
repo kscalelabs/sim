@@ -237,24 +237,39 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, imu_ang_vel, imu_euler_xyz, buffer)
 
     # Add sim2sim metadata
-    robot_effort = list(a_model.robot.effort().values())
-    robot_stiffness = list(a_model.robot.stiffness().values())
-    robot_damping = list(a_model.robot.damping().values())
+    robot = a_model.robot
+    robot_effort = robot.effort_mapping()
+    robot_stiffness = robot.stiffness_mapping()
+    robot_damping = robot.damping_mapping()
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
-    default_standing = list(a_model.robot.default_standing().values())
+    default_standing = robot.default_standing()
+
+    metadata = {
+        "num_actions": num_actions,
+        "num_observations": num_observations,
+        "robot_effort": robot_effort,
+        "robot_stiffness": robot_stiffness,
+        "robot_damping": robot_damping,
+        "default_standing": default_standing,
+        "sim_dt": cfg.sim_dt,
+        "sim_decimation": cfg.sim_decimation,
+        "tau_factor": cfg.tau_factor,
+        "action_scale": cfg.action_scale,
+        "lin_vel_scale": cfg.lin_vel_scale,
+        "ang_vel_scale": cfg.ang_vel_scale,
+        "quat_scale": cfg.quat_scale,
+        "dof_pos_scale": cfg.dof_pos_scale,
+        "dof_vel_scale": cfg.dof_vel_scale,
+        "frame_stack": cfg.frame_stack,
+        "clip_observations": cfg.clip_observations,
+        "clip_actions": cfg.clip_actions,
+    }
 
     return (
         a_model,
-        {
-            "robot_effort": robot_effort,
-            "robot_stiffness": robot_stiffness,
-            "robot_damping": robot_damping,
-            "num_actions": num_actions,
-            "num_observations": num_observations,
-            "default_standing": default_standing,
-        },
+        metadata,
         input_tensors,
     )
 

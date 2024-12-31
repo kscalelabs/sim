@@ -24,10 +24,6 @@ import onnx
 from isaacgym import gymapi
 from tqdm import tqdm
 
-# Get absolute path relative to this script
-kinfer_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "third_party", "kinfer"))
-sys.path.append(kinfer_path)
-
 from kinfer import proto as P
 from kinfer.export.pytorch import export_model
 

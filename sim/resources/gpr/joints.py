@@ -159,7 +159,6 @@ class Robot(Node):
     def stiffness_mapping(cls) -> Dict[str, float]:
         mapping = {}
         stiffness = cls.stiffness()
-        breakpoint()
         for side in ["L", "R"]:
             for joint, value in stiffness.items():
                 mapping[f"{side}_{joint}"] = value
@@ -176,6 +175,15 @@ class Robot(Node):
             "ankle_y": 5,
         }
 
+    @classmethod
+    def damping_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        damping = cls.damping()
+        for side in ["L", "R"]:
+            for joint, value in damping.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
+
     # effort_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
@@ -186,6 +194,15 @@ class Robot(Node):
             "knee": 60,
             "ankle_y": 17,
         }
+
+    @classmethod
+    def effort_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        effort = cls.effort()
+        for side in ["L", "R"]:
+            for joint, value in effort.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
 
     # vel_limits
     @classmethod
