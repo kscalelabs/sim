@@ -5,7 +5,7 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.zeroth.joints import Robot
+from sim.resources.zbot2.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())  # 20
 
@@ -34,11 +34,11 @@ class ZerothCfg(LeggedRobotCfg):
         terminate_after_contacts_on = []
 
     class asset(LeggedRobotCfg.asset):
-        name = "zeroth"
+        name = "zbot2"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["foot_bracket_for_5dof_leg_v9", "foot_bracket_for_5dof_leg_v9_2"]
-        knee_name = ["leg_top_bracket_v8_1", "leg_top_bracket_v8_1_2"]
+        foot_name = ["FOOT", "FOOT_1"]
+        knee_name = ["WJ-DP00-0002-FK-AP-020_7_8", "SJ-WK00-0023BOTTOMCASE_12_13"]
 
         termination_height = 0.05
         default_feet_height = 0.01
