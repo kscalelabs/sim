@@ -1,6 +1,5 @@
-"""joints.py
+"""Provides a Pythonic interface for referencing joint names from the given MuJoCo XML.
 
-Provides a Pythonic interface for referencing joint names from the given MuJoCo XML.
 Organizes them by sub-assembly (arms, legs) and defines convenient methods for
 defaults, limits, etc.
 """
@@ -135,8 +134,10 @@ class Robot(Node):
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
-        """Minimal example of per-joint limits. 
-        You can refine these to match your MJCF's 'range' tags or real specs."""
+        """Minimal example of per-joint limits.
+
+        You can refine these to match your MJCF's 'range' tags or real specs.
+        """
         return {
             # Right side
             cls.arms.right.shoulder_yaw: {"lower": -1.22173, "upper": 0.349066},
@@ -173,8 +174,11 @@ class Robot(Node):
 
     @classmethod
     def effort(cls) -> Dict[str, float]:
-        """Max torque/effort per joint. The MuJoCo 'range' was -80 to 80 in the actuator,
-        so we might store 80 here (or a smaller number if you want a realistic limit)."""
+        """Max torque/effort per joint.
+
+        The MuJoCo 'range' was -80 to 80 in the actuator,
+        so we might store 80 here (or a smaller number if you want a realistic limit).
+        """
         return {joint: 80.0 for joint in cls.all_joints()}
 
     @classmethod
