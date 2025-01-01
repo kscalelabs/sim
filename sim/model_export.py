@@ -147,14 +147,14 @@ class Actor(nn.Module):
             imu_euler_xyz: The euler angles of the IMU, with shape (3),
                 in radians. "XYZ" means (roll, pitch, yaw). If IMU is not used,
                 can be all zeros.
-            state_tensor: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
+            hist_obs: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
                 the return value of the previous forward pass. On the first
                 pass, it should be all zeros.
 
         Returns:
             actions_scaled: The actions to take, with shape (num_actions), scaled by the action_scale.
             actions: The actions to take, with shape (num_actions).
-            x: The new buffer of observations, with shape (frame_stack * num_single_obs).
+            new_x: The new buffer of observations, with shape (frame_stack * num_single_obs).
         """
         sin_pos = torch.sin(2 * torch.pi * timestamp / self.cycle_time)
         cos_pos = torch.cos(2 * torch.pi * timestamp / self.cycle_time)

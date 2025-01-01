@@ -17,9 +17,9 @@ import numpy as np
 import onnxruntime as ort
 import pygame
 import torch
+from kinfer import proto as P
 from kinfer.inference.python import ONNXModel
 from kinfer.serialize.numpy import NumpyMultiSerializer
-from kinfer import proto as P
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
@@ -93,7 +93,6 @@ def pd_control(
     return kp * (target_q + default - q) - kd * dq
 
 
-
 def run_mujoco(
     embodiment: str,
     policy: ONNXModel,
@@ -127,7 +126,6 @@ def run_mujoco(
     assert isinstance(model_info["sim_dt"], float)
     assert isinstance(model_info["cycle_time"], float)
     assert isinstance(model_info["sim_decimation"], int)
-    
 
     tau_limit = np.array(list(model_info["robot_effort"])) * model_info["tau_factor"]
     kps = np.array(model_info["robot_stiffness"])
@@ -223,7 +221,7 @@ def run_mujoco(
                         )
                         for name, index in zip(joint_names, range(len(q)))
                     ]
-                )
+                ),
             )
 
             dof_vel = P.Value(
@@ -237,14 +235,14 @@ def run_mujoco(
                         )
                         for name, index in zip(joint_names, range(len(dq)))
                     ]
-                )
+                ),
             )
 
             vector_command = P.Value(
                 value_name="vector_command",
                 vector_command=P.VectorCommandValue(
                     values=[x_vel_cmd, y_vel_cmd, yaw_vel_cmd],
-                )
+                ),
             )
             seconds = int(count_lowlevel * model_info["sim_dt"])
             nanoseconds = int((count_lowlevel * model_info["sim_dt"] - seconds) * 1e9)
@@ -253,7 +251,7 @@ def run_mujoco(
                 timestamp=P.TimestampValue(
                     seconds=seconds,
                     nanos=nanoseconds,
-                )
+                ),
             )
 
             prev_actions_value = P.Value(
@@ -267,7 +265,7 @@ def run_mujoco(
                         )
                         for name, index in zip(joint_names, range(len(prev_actions)))
                     ]
-                )
+                ),
             )
 
             imu_ang_vel = P.Value(
@@ -278,7 +276,7 @@ def run_mujoco(
                         y=omega[1],
                         z=omega[2],
                     )
-                )
+                ),
             )
 
             imu_euler_xyz = P.Value(
@@ -289,14 +287,14 @@ def run_mujoco(
                         y=eu_ang[1],
                         z=eu_ang[2],
                     ),
-                )
+                ),
             )
 
             state_tensor = P.Value(
                 value_name="hist_obs",
                 state_tensor=P.StateTensorValue(
                     data=hist_obs.tobytes(),
-                )
+                ),
             )
 
             policy_input = P.IO(
@@ -408,9 +406,11 @@ if __name__ == "__main__":
             "joint_names": metadata["joint_names"],
         }
     except Exception as e:
-        print(f"Error finding required metadata 'num_actions', 'num_observations', 'robot_effort', 'robot_stiffness', 'robot_damping', 'sim_dt', 'sim_decimation', 'tau_factor' in metadata: {metadata}")
+        print(
+            f"Error finding required metadata 'num_actions', 'num_observations', 'robot_effort', 'robot_stiffness', 'robot_damping', 'sim_dt', 'sim_decimation', 'tau_factor' in metadata: {metadata}"
+        )
         raise e
-    
+
     run_mujoco(
         embodiment=args.embodiment,
         policy=policy,
