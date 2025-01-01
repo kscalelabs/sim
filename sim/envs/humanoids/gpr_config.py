@@ -45,21 +45,21 @@ class GprCfg(LeggedRobotCfg):
                 P.ValueSchema(
                     value_name="dof_pos",
                     joint_positions=P.JointPositionsSchema(
-                        joint_names=Robot.all_joints(),
+                        joint_names=Robot.joint_names(),
                         unit=P.JointPositionUnit.RADIANS,
                     ),
                 ),
                 P.ValueSchema(
                     value_name="dof_vel",
                     joint_velocities=P.JointVelocitiesSchema(
-                        joint_names=Robot.all_joints(),
+                        joint_names=Robot.joint_names(),
                         unit=P.JointVelocityUnit.RADIANS_PER_SECOND,
                     ),
                 ),
                 P.ValueSchema(
                     value_name="prev_actions",
                     joint_positions=P.JointPositionsSchema(
-                        joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS
+                        joint_names=Robot.joint_names(), unit=P.JointPositionUnit.RADIANS
                     ),
                 ),
                 # Abusing the IMU schema to pass in euler and angular velocity instead of raw sensor data
@@ -96,13 +96,13 @@ class GprCfg(LeggedRobotCfg):
                 P.ValueSchema(
                     value_name="actions",
                     joint_positions=P.JointPositionsSchema(
-                        joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS
+                        joint_names=Robot.joint_names(), unit=P.JointPositionUnit.RADIANS
                     ),
                 ),
                 P.ValueSchema(
                     value_name="actions_raw",
                     joint_positions=P.JointPositionsSchema(
-                        joint_names=Robot.all_joints(), unit=P.JointPositionUnit.RADIANS
+                        joint_names=Robot.joint_names(), unit=P.JointPositionUnit.RADIANS
                     ),
                 ),
                 P.ValueSchema(
