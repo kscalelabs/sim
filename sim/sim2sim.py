@@ -127,8 +127,8 @@ def run_mujoco(
     
 
     tau_limit = np.array(list(model_info["robot_effort"])) * model_info["tau_factor"]
-    kps = np.array(list(model_info["robot_stiffness"]))
-    kds = np.array(list(model_info["robot_damping"]))
+    kps = np.array(model_info["robot_stiffness"])
+    kds = np.array(model_info["robot_damping"])
 
     joint_names = model_info["joint_names"]
 
@@ -206,6 +206,7 @@ def run_mujoco(
             cur_pos_obs = q - default
             cur_vel_obs = dq
 
+            mm = q
 
             # Form input
             dof_pos = P.Value(
