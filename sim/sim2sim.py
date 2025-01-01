@@ -124,6 +124,9 @@ def run_mujoco(
     assert isinstance(model_info["robot_stiffness"], list)
     assert isinstance(model_info["robot_damping"], list)
     assert isinstance(model_info["joint_names"], list)
+    assert isinstance(model_info["sim_dt"], float)
+    assert isinstance(model_info["cycle_time"], float)
+    assert isinstance(model_info["sim_decimation"], int)
     
 
     tau_limit = np.array(list(model_info["robot_effort"])) * model_info["tau_factor"]
@@ -197,7 +200,7 @@ def run_mujoco(
 
         # Calculate speed and accumulate for average speed calculation
         speed = np.linalg.norm(v[:2])  # Speed in the x-y plane
-        total_speed += speed
+        total_speed += float(speed)
         step_count += 1
 
         # 1000hz -> 50hz
@@ -308,24 +311,6 @@ def run_mujoco(
                     state_tensor,
                 ]
             )
-
-            # input_data["x_vel.1"] = np.array([x_vel_cmd], dtype=np.float32)
-            # input_data["y_vel.1"] = np.array([y_vel_cmd], dtype=np.float32)
-            # input_data["rot.1"] = np.array([yaw_vel_cmd], dtype=np.float32)
-
-            # input_data["t.1"] = np.array([count_lowlevel * model_info["sim_dt"]], dtype=np.float32)
-
-            # input_data["dof_pos.1"] = cur_pos_obs.astype(np.float32)
-            # input_data["dof_vel.1"] = cur_vel_obs.astype(np.float32)
-
-            # input_data["prev_actions.1"] = prev_actions.astype(np.float32)
-
-            # input_data["imu_ang_vel.1"] = omega.astype(np.float32)
-            # input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
-
-            # input_data["buffer.1"] = hist_obs.astype(np.float32)
-
-            # policy_output = policy(input_data)
 
             policy_output = policy(policy_input)
 
