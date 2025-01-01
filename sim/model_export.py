@@ -132,7 +132,7 @@ class Actor(nn.Module):
         prev_actions: Tensor,  # previous actions taken by the model
         imu_ang_vel: Tensor,  # angular velocity of the IMU
         imu_euler_xyz: Tensor,  # euler angles of the IMU
-        state_tensor: Tensor,  # buffer of previous observations
+        hist_obs: Tensor,  # buffer of previous observations
     ) -> Dict[str, Tensor]:
         """Runs the actor model forward pass.
 
@@ -194,7 +194,7 @@ class Actor(nn.Module):
         new_x = torch.clamp(new_x, -self.clip_observations, self.clip_observations)
 
         # Add the new frame to the buffer
-        x = torch.cat((state_tensor, new_x), dim=0)
+        x = torch.cat((hist_obs, new_x), dim=0)
         # Pop the oldest frame
         x = x[self.num_single_obs :]
 
@@ -204,7 +204,7 @@ class Actor(nn.Module):
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale
 
-        return {"actions": actions_scaled, "actions_raw": actions, "state_tensor": x}
+        return {"actions": actions_scaled, "actions_raw": actions, "new_x": x}
 
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
@@ -265,6 +265,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
         "frame_stack": cfg.frame_stack,
         "clip_observations": cfg.clip_observations,
         "clip_actions": cfg.clip_actions,
+        "joint_names": robot.all_joints(),
     }
 
     return (
