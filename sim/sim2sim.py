@@ -393,7 +393,7 @@ if __name__ == "__main__":
     metadata = policy.attached_metadata
 
     joint_names = []
-    for value_schema in policy.input_schema.values + policy.output_schema.values:
+    for value_schema in policy.input_schema.values:
         if value_schema.HasField("joint_positions"):
             joint_names = list(value_schema.joint_positions.joint_names)
             break

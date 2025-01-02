@@ -6,6 +6,8 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfgPPO,
 )
 from sim.resources.gpr.joints import Robot
+from kinfer import proto as P
+
 
 NUM_JOINTS = len(Robot.all_joints())
 
@@ -25,8 +27,6 @@ class GprCfg(LeggedRobotCfg):
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
-
-        from kinfer import proto as P
 
         input_schema = P.IOSchema(
             values=[
