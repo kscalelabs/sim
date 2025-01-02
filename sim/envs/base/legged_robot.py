@@ -801,6 +801,7 @@ class LeggedRobot(BaseTask):
         )
         if self.imu_indices == -1:
             self.imu_indices = None
+            print(f"Warning: IMU {self.cfg.asset.imu_name} not found in the asset. Defaulting to base link.")
 
         self.penalised_contact_indices = torch.zeros(
             len(penalized_contact_names), dtype=torch.long, device=self.device, requires_grad=False
