@@ -392,6 +392,12 @@ if __name__ == "__main__":
     policy = ONNXModel(args.load_model)
     metadata = policy.attached_metadata
 
+    joint_names = []
+    for value_schema in policy.input_schema.values + policy.output_schema.values:
+        if value_schema.HasField("joint_positions"):
+            joint_names = list(value_schema.joint_positions.joint_names)
+            break
+
     try:
         model_info = {
             "num_actions": metadata["num_actions"],
@@ -402,7 +408,7 @@ if __name__ == "__main__":
             "sim_dt": metadata["sim_dt"],
             "sim_decimation": metadata["sim_decimation"],
             "tau_factor": metadata["tau_factor"],
-            "joint_names": metadata["joint_names"],
+            "joint_names": joint_names,
             "cycle_time": metadata["cycle_time"],
         }
     except Exception as e:
