@@ -168,7 +168,7 @@ class GprCfg(LeggedRobotCfg):
             quat = 0.03
             height_measurements = 0.1
 
-        class nosie_ranges:
+        class noise_ranges:
             default_pos = 0.03 # +- 0.05 rad
 
     class init_state(LeggedRobotCfg.init_state):
