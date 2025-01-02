@@ -471,7 +471,6 @@ class LeggedRobot(BaseTask):
                 self.command_ranges["lin_vel_x"][1] + 0.5, 0.0, self.cfg.commands.max_curriculum
             )
 
-
     def _resample_default_positions(self):
         self.default_dof_pos = torch.zeros(self.num_dof, dtype=torch.float, device=self.device, requires_grad=False)
         for i in range(self.num_dofs):
