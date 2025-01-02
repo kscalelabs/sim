@@ -81,6 +81,7 @@ class LeggedRobot(BaseTask):
     def reset(self):
         """Reset all robots"""
         self.reset_idx(torch.arange(self.num_envs, device=self.device))
+        self._resample_default_positions()
         obs, privileged_obs, _, _, _ = self.step(
             torch.zeros(self.num_envs, self.num_actions, device=self.device, requires_grad=False)
         )
@@ -469,6 +470,16 @@ class LeggedRobot(BaseTask):
             self.command_ranges["lin_vel_x"][1] = np.clip(
                 self.command_ranges["lin_vel_x"][1] + 0.5, 0.0, self.cfg.commands.max_curriculum
             )
+
+
+    def _resample_default_positions(self):
+        self.default_dof_pos = torch.zeros(self.num_dof, dtype=torch.float, device=self.device, requires_grad=False)
+        for i in range(self.num_dofs):
+            name = self.dof_names[i]
+            self.default_dof_pos[i] = self.cfg.init_state.default_joint_angles[name]
+
+            if self.add_noise:
+                self.default_dof_pos[i] *= self.cfg.noise.noise_scales.default_pos
 
     # ----------------------------------------
     def _init_buffers(self):
