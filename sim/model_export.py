@@ -266,6 +266,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
         "clip_observations": cfg.clip_observations,
         "clip_actions": cfg.clip_actions,
         "joint_names": robot.joint_names(),
+        "cycle_time": cfg.cycle_time,
     }
 
     return (

@@ -207,8 +207,6 @@ def run_mujoco(
             cur_pos_obs = q - default
             cur_vel_obs = dq
 
-            mm = q
-
             # Form input
             dof_pos = P.Value(
                 value_name="dof_pos",
@@ -244,6 +242,7 @@ def run_mujoco(
                     values=[x_vel_cmd, y_vel_cmd, yaw_vel_cmd],
                 ),
             )
+
             seconds = int(count_lowlevel * model_info["sim_dt"])
             nanoseconds = int((count_lowlevel * model_info["sim_dt"] - seconds) * 1e9)
             timestamp = P.Value(
@@ -404,6 +403,7 @@ if __name__ == "__main__":
             "sim_decimation": metadata["sim_decimation"],
             "tau_factor": metadata["tau_factor"],
             "joint_names": metadata["joint_names"],
+            "cycle_time": metadata["cycle_time"],
         }
     except Exception as e:
         print(
