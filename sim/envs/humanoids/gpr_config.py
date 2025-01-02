@@ -167,7 +167,9 @@ class GprCfg(LeggedRobotCfg):
             lin_vel = 0.05
             quat = 0.03
             height_measurements = 0.1
-            default_pos = 0.05
+
+        class nosie_ranges:
+            default_pos = 0.05 # +- 0.05 rad
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, Robot.height]

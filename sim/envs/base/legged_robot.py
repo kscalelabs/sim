@@ -479,7 +479,7 @@ class LeggedRobot(BaseTask):
             self.default_dof_pos[i] = self.cfg.init_state.default_joint_angles[name]
 
             if self.add_noise:
-                self.default_dof_pos[i] *= self.cfg.noise.noise_scales.default_pos
+                self.default_dof_pos[i] += torch.randn(1) * self.cfg.noise.noise_ranges.default_pos
 
     # ----------------------------------------
     def _init_buffers(self):
