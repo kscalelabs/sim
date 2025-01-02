@@ -1,13 +1,13 @@
 """Defines the environment configuration for the Getting up task"""
 
+from kinfer import proto as P
+
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
 from sim.resources.gpr.joints import Robot
-from kinfer import proto as P
-
 
 NUM_JOINTS = len(Robot.all_joints())
 
