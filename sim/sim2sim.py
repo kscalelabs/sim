@@ -400,11 +400,11 @@ if __name__ == "__main__":
 
     try:
         model_info = {
-            "num_actions": metadata["num_actions"],
+            "num_actions": len(joint_names),
             "num_observations": metadata["num_observations"],
-            "robot_effort": [metadata["robot_effort"][joint] for joint in metadata["joint_names"]],
-            "robot_stiffness": [metadata["robot_stiffness"][joint] for joint in metadata["joint_names"]],
-            "robot_damping": [metadata["robot_damping"][joint] for joint in metadata["joint_names"]],
+            "robot_effort": [metadata["robot_effort"][joint] for joint in joint_names],
+            "robot_stiffness": [metadata["robot_stiffness"][joint] for joint in joint_names],
+            "robot_damping": [metadata["robot_damping"][joint] for joint in joint_names],
             "sim_dt": metadata["sim_dt"],
             "sim_decimation": metadata["sim_decimation"],
             "tau_factor": metadata["tau_factor"],
