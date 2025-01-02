@@ -7,20 +7,26 @@
     </inertial>
   </link>
   <link name="imu_link">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <visual>
       <geometry>
-        <box size="0.05 0.05 0.05"/>
+        <box size="0.3 0.01 0.01"/>
       </geometry>
-      <material name="imu_material">
-        <color rgba="1 0 0 0.5"/>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
       </material>
     </visual>
   </link>
-  <joint name="imu_joint" type="fixed">
-    <origin xyz="-0.008 -0.32 0" rpy="0 0 0"/>
-    <parent link="body1-part"/>
-    <child link="imu_link"/>
+  <joint
+    name="imu_joint"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="0.03 0.0 -0.08"
+      rpy="0 0 0" />
+    <parent
+      link="base" />
+    <child
+      link="imu_link" />
   </joint>
   <joint name="floating_base" type="fixed">
     <origin rpy="-1.57 3.14 0" xyz="0 0 0" />
