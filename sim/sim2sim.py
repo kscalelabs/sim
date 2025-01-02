@@ -392,17 +392,23 @@ if __name__ == "__main__":
     policy = ONNXModel(args.load_model)
     metadata = policy.attached_metadata
 
+    joint_names = []
+    for value_schema in policy.input_schema.values:
+        if value_schema.HasField("joint_positions"):
+            joint_names = list(value_schema.joint_positions.joint_names)
+            break
+
     try:
         model_info = {
-            "num_actions": metadata["num_actions"],
+            "num_actions": len(joint_names),
             "num_observations": metadata["num_observations"],
-            "robot_effort": [metadata["robot_effort"][joint] for joint in metadata["joint_names"]],
-            "robot_stiffness": [metadata["robot_stiffness"][joint] for joint in metadata["joint_names"]],
-            "robot_damping": [metadata["robot_damping"][joint] for joint in metadata["joint_names"]],
+            "robot_effort": [metadata["robot_effort"][joint] for joint in joint_names],
+            "robot_stiffness": [metadata["robot_stiffness"][joint] for joint in joint_names],
+            "robot_damping": [metadata["robot_damping"][joint] for joint in joint_names],
             "sim_dt": metadata["sim_dt"],
             "sim_decimation": metadata["sim_decimation"],
             "tau_factor": metadata["tau_factor"],
-            "joint_names": metadata["joint_names"],
+            "joint_names": joint_names,
             "cycle_time": metadata["cycle_time"],
         }
     except Exception as e:

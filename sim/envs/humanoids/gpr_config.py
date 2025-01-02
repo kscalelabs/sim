@@ -1,5 +1,7 @@
 """Defines the environment configuration for the Getting up task"""
 
+from kinfer import proto as P
+
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
@@ -25,8 +27,6 @@ class GprCfg(LeggedRobotCfg):
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
-
-        from kinfer import proto as P
 
         input_schema = P.IOSchema(
             values=[
@@ -169,7 +169,7 @@ class GprCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
         class noise_ranges:
-            default_pos = 0.03 # +- 0.05 rad
+            default_pos = 0.03  # +- 0.05 rad
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, Robot.height]
