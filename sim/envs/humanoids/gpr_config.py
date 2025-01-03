@@ -73,9 +73,9 @@ class GprCfg(LeggedRobotCfg):
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 0.5
-            ang_vel = 0.1
-            lin_vel = 0.05
+            dof_vel = 1.5
+            lin_vel = 0.1
+            ang_vel = 0.2
             quat = 0.03
             height_measurements = 0.1
 
@@ -124,9 +124,9 @@ class GprCfg(LeggedRobotCfg):
         randomize_base_mass = True
         added_mass_range = [-2.0, 2.0]
         push_robots = True
-        push_interval_s = 4
-        max_push_vel_xy = 0.2
-        max_push_ang_vel = 0.4
+        push_interval_s = 3
+        max_push_vel_xy = 1.7
+        max_push_ang_vel = 1.0
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
@@ -179,7 +179,7 @@ class GprCfg(LeggedRobotCfg):
             track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 0.5
+            default_joint_pos = 0.3
             orientation = 1.0
             base_height = 0.2
             base_acc = 0.2
