@@ -98,38 +98,38 @@ class Legs(Node):
 
 # ----- Top-level Robot ------------------------------------------------------------
 class Robot(Node):
-    height = 0.34
+    height = 0.44
     rotation = [0, 0, 0, 1.0]
 
-    arms = Arms()
+    # arms = Arms()
     legs = Legs()
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         """Example angles for a nominal 'standing' pose. Adjust as needed."""
         return {
-            # Right Arm
-            cls.arms.right.shoulder_yaw: 0.0,
-            cls.arms.right.shoulder_pitch: 0.0,
-            cls.arms.right.elbow_yaw: 0.0,
-            cls.arms.right.gripper: 0.0,
-            # Left Arm
-            cls.arms.left.shoulder_yaw: 0.0,
-            cls.arms.left.shoulder_pitch: 0.0,
-            cls.arms.left.elbow_yaw: 0.0,
-            cls.arms.left.gripper: 0.0,
-            # Right Leg
+            # # Right Arm
+            # cls.arms.right.shoulder_yaw: 0.0,
+            # cls.arms.right.shoulder_pitch: 0.0,
+            # cls.arms.right.elbow_yaw: 0.0,
+            # cls.arms.right.gripper: 0.0,
+            # # Left Arm
+            # cls.arms.left.shoulder_yaw: 0.0,
+            # cls.arms.left.shoulder_pitch: 0.0,
+            # cls.arms.left.elbow_yaw: 0.0,
+            # cls.arms.left.gripper: 0.0,
+            # # Right Leg
             cls.legs.right.hip_roll: 0.0,
             cls.legs.right.hip_yaw: 0.0,
-            cls.legs.right.hip_pitch: -0.2,
-            cls.legs.right.knee_pitch: 0.4,
-            cls.legs.right.ankle_pitch: -0.2,
+            cls.legs.right.hip_pitch: 0.0,
+            cls.legs.right.knee_pitch: 0.0,
+            cls.legs.right.ankle_pitch: 0.0,
             # Left Leg
             cls.legs.left.hip_roll: 0.0,
             cls.legs.left.hip_yaw: 0.0,
-            cls.legs.left.hip_pitch: -0.2,
-            cls.legs.left.knee_pitch: 0.4,
-            cls.legs.left.ankle_pitch: -0.2,
+            cls.legs.left.hip_pitch: 0.0,
+            cls.legs.left.knee_pitch: 2.76,
+            cls.legs.left.ankle_pitch: 1.1,
         }
 
     @classmethod
@@ -140,20 +140,20 @@ class Robot(Node):
         """
         return {
             # Right side
-            cls.arms.right.shoulder_yaw: {"lower": -1.22173, "upper": 0.349066},
-            cls.arms.right.shoulder_pitch: {"lower": -3.14159, "upper": 3.14159},
-            cls.arms.right.elbow_yaw: {"lower": -1.5708, "upper": 2.0944},
-            cls.arms.right.gripper: {"lower": -0.349066, "upper": 0.872665},
+            # cls.arms.right.shoulder_yaw: {"lower": -1.22173, "upper": 0.349066},
+            # cls.arms.right.shoulder_pitch: {"lower": -3.14159, "upper": 3.14159},
+            # cls.arms.right.elbow_yaw: {"lower": -1.5708, "upper": 2.0944},
+            # cls.arms.right.gripper: {"lower": -0.349066, "upper": 0.872665},
             cls.legs.right.hip_roll: {"lower": -1.0472, "upper": 1.0472},
             cls.legs.right.hip_yaw: {"lower": -0.174533, "upper": 1.91986},
             cls.legs.right.hip_pitch: {"lower": -1.74533, "upper": 1.8326},
             cls.legs.right.knee_pitch: {"lower": -0.174533, "upper": 2.96706},
             cls.legs.right.ankle_pitch: {"lower": -1.5708, "upper": 1.5708},
             # Left side
-            cls.arms.left.shoulder_yaw: {"lower": -0.349066, "upper": 1.22173},
-            cls.arms.left.shoulder_pitch: {"lower": -3.14159, "upper": 3.14159},
-            cls.arms.left.elbow_yaw: {"lower": -2.0944, "upper": 1.5708},
-            cls.arms.left.gripper: {"lower": -0.872665, "upper": 0.349066},
+            # cls.arms.left.shoulder_yaw: {"lower": -0.349066, "upper": 1.22173},
+            # cls.arms.left.shoulder_pitch: {"lower": -3.14159, "upper": 3.14159},
+            # cls.arms.left.elbow_yaw: {"lower": -2.0944, "upper": 1.5708},
+            # cls.arms.left.gripper: {"lower": -0.872665, "upper": 0.349066},
             cls.legs.left.hip_roll: {"lower": -1.0472, "upper": 1.0472},
             cls.legs.left.hip_yaw: {"lower": -1.91986, "upper": 0.174533},
             cls.legs.left.hip_pitch: {"lower": -1.8326, "upper": 1.74533},
@@ -161,30 +161,49 @@ class Robot(Node):
             cls.legs.left.ankle_pitch: {"lower": -1.5708, "upper": 1.5708},
         }
 
+    # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
-        """Example of a uniform stiffness for all joints."""
-        # Adjust per your controller’s needs
-        return {joint: 20.0 for joint in cls.all_joints()}
+        return {
+            "hip_pitch": 17.681462808698132,
+            "hip_yaw": 17.681462808698132,
+            "hip_roll": 17.681462808698132,
+            "knee_pitch": 17.681462808698132,
+            "ankle_pitch": 17.681462808698132,
+        }
 
+    # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
-        """Example of a uniform damping for all joints."""
-        return {joint: 0.5 for joint in cls.all_joints()}
-
+        return {
+            "hip_pitch": 0.5354656169048285,
+            "hip_yaw": 0.5354656169048285,
+            "hip_roll": 0.5354656169048285,
+            "knee_pitch": 0.5354656169048285,
+            "ankle_pitch": 0.5354656169048285,
+        }
     @classmethod
     def effort(cls) -> Dict[str, float]:
-        """Max torque/effort per joint.
+        return {
+            "hip_pitch": 10,
+            "hip_yaw": 10,
+            "hip_roll": 10,
+            "knee_pitch": 10,
+            "ankle_pitch": 10,
+        }
 
-        The MuJoCo 'range' was -80 to 80 in the actuator,
-        so we might store 80 here (or a smaller number if you want a realistic limit).
-        """
-        return {joint: 80.0 for joint in cls.all_joints()}
 
+    # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
-        """Max velocity (rad/s) for each joint, arbitrary example."""
-        return {joint: 10.0 for joint in cls.all_joints()}
+        return {
+            "hip_pitch": 10,
+            "hip_yaw": 10,
+            "hip_roll": 10,
+            "knee_pitch": 10,
+            "ankle_pitch": 10,
+        }
+
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
