@@ -5,12 +5,12 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.zeroth.joints import Robot
+from sim.resources.zbot2.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())  # 20
 
 
-class ZerothCfg(LeggedRobotCfg):
+class ZBot2Cfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
@@ -34,17 +34,15 @@ class ZerothCfg(LeggedRobotCfg):
         terminate_after_contacts_on = []
 
     class asset(LeggedRobotCfg.asset):
-        name = "zeroth"
+        name = "zbot2"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["foot_bracket_for_5dof_leg_v9", "foot_bracket_for_5dof_leg_v9_2"]
-        knee_name = ["leg_top_bracket_v8_1", "leg_top_bracket_v8_1_2"]
+        foot_name = ["FOOT", "FOOT_1"]
+        knee_name = ["WJ-DP00-0002-FK-AP-020_7_8", "SJ-WK00-0023BOTTOMCASE_12_13"]
 
         termination_height = 0.05
         default_feet_height = 0.01
-
-        terminate_after_contacts_on = ["torso"]
-
+    
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
@@ -207,7 +205,7 @@ class ZerothCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class ZerothCfgPPO(LeggedRobotCfgPPO):
+class ZBot2CfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -232,7 +230,7 @@ class ZerothCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 300  # check for potential saves every this many iterations
-        experiment_name = "zeroth"
+        experiment_name = "zbot2"
         run_name = ""
         # load and resume
         resume = False

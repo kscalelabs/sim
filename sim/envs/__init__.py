@@ -20,6 +20,8 @@ from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
 from sim.envs.humanoids.xbot_env import XBotLFreeEnv
 from sim.envs.humanoids.zeroth_config import ZerothCfg, ZerothCfgPPO
 from sim.envs.humanoids.zeroth_env import ZerothEnv
+from sim.envs.humanoids.zbot2_config import ZBot2Cfg, ZBot2CfgPPO
+from sim.envs.humanoids.zbot2_env import ZBot2Env
 from sim.utils.task_registry import TaskRegistry  # noqa: E402
 
 task_registry = TaskRegistry()
@@ -29,4 +31,5 @@ task_registry.register("dora", DoraFreeEnv, DoraCfg(), DoraCfgPPO())
 task_registry.register("h1", H1FreeEnv, H1Cfg(), H1CfgPPO())
 task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
 task_registry.register("XBotL_free", XBotLFreeEnv, XBotCfg(), XBotCfgPPO())
-task_registry.register("zbot2", ZerothEnv, ZerothCfg(), ZerothCfgPPO())
+task_registry.register("zeroth", ZerothEnv, ZerothCfg(), ZerothCfgPPO())
+task_registry.register("zbot2", ZBot2Env, ZBot2Cfg(), ZBot2CfgPPO())
