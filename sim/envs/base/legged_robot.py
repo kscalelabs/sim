@@ -102,7 +102,6 @@ class LeggedRobot(BaseTask):
         # prepare quantities
         if self.imu_indices:
             self.base_quat = self.rigid_state[:, self.imu_indices, 3:7]
-            breakpoint()
             self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 7:10])
             self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 10:13])
         else:
@@ -858,7 +857,7 @@ class LeggedRobot(BaseTask):
             self.cfg.terrain.curriculum = False
         self.max_episode_length_s = self.cfg.env.episode_length_s
         self.max_episode_length = np.ceil(self.max_episode_length_s / self.dt)
-
+    
         self.cfg.domain_rand.push_interval = np.ceil(self.cfg.domain_rand.push_interval_s / self.dt)
 
     def _draw_debug_vis(self):

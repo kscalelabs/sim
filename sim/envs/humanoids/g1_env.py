@@ -73,7 +73,7 @@ class G1FreeEnv(LeggedRobot):
             -max_vel, max_vel, (self.num_envs, 2), device=self.device
         )  # lin vel x/y
         self.root_states[:, 7:9] = self.rand_push_force[:, :2]
-
+        
         self.rand_push_torque = torch_rand_float(
             -max_push_angular, max_push_angular, (self.num_envs, 3), device=self.device
         )
