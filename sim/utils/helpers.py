@@ -47,7 +47,8 @@ def class_to_dict(obj) -> dict:
         return obj
     result = {}
     for key in dir(obj):
-        if key.startswith("_"):
+        # Skip private attributes and known problematic ones
+        if key.startswith("_") or key in ["P", "input_schema", "output_schema"]:
             continue
         element = []
         val = getattr(obj, key)

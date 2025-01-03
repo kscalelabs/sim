@@ -137,6 +137,12 @@ class Robot(Node):
             Robot.legs.right.ankle_pitch: 0.195,
         }
 
+    # CONTRACT - this should be ordered according to how the policy is trained.
+    # E.g. the first entry should be the name of the first joint in the policy.
+    @classmethod
+    def joint_names(cls) -> List[str]:
+        return list(cls.default_standing().keys())
+
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
@@ -155,6 +161,15 @@ class Robot(Node):
             "ankle_y": 40,
         }
 
+    @classmethod
+    def stiffness_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        stiffness = cls.stiffness()
+        for side in ["L", "R"]:
+            for joint, value in stiffness.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
+
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
@@ -166,6 +181,15 @@ class Robot(Node):
             "ankle_y": 5,
         }
 
+    @classmethod
+    def damping_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        damping = cls.damping()
+        for side in ["L", "R"]:
+            for joint, value in damping.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
+
     # effort_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
@@ -176,6 +200,15 @@ class Robot(Node):
             "knee": 100,
             "ankle_y": 17,
         }
+
+    @classmethod
+    def effort_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        effort = cls.effort()
+        for side in ["L", "R"]:
+            for joint, value in effort.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
 
     # vel_limits
     @classmethod
