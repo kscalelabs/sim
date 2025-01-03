@@ -100,12 +100,9 @@ class LeggedRobot(BaseTask):
         self.common_step_counter += 1
 
         # prepare quantities
-        # TODO(pfb30) - debug this
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
-
         if self.imu_indices:
-            self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])
+            self.base_quat = self.rigid_state[:, self.imu_indices, 3:7]
+            breakpoint()
             self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 7:10])
             self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 10:13])
         else:
@@ -194,13 +191,10 @@ class LeggedRobot(BaseTask):
             self.extras["time_outs"] = self.time_out_buf
 
         # fix reset gravity bug
-        # TODO(pfb30) - debug this
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
         if self.imu_indices:
-            self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.rigid_state[env_ids, self.imu_indices, 3:7])
+            self.base_quat[env_ids] = self.rigid_state[env_ids, self.imu_indices, 3:7]
         else:
-            self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.root_states[env_ids, 3:7])
+            self.base_quat[env_ids] = self.root_states[env_ids, 3:7]
 
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
         self.projected_gravity[env_ids] = quat_rotate_inverse(self.base_quat[env_ids], self.gravity_vec[env_ids])
@@ -502,15 +496,11 @@ class LeggedRobot(BaseTask):
 
         self.rigid_state = gymtorch.wrap_tensor(rigid_body_state)  # .view(self.num_envs, -1, 13)
         self.rigid_state = self.rigid_state.view(self.num_envs, -1, 13)
-        # TODO(pfb30): debug this
-        # self.base_quat = self.root_states[:, 3:7]
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
 
         if self.imu_indices:
-            self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])
+            self.base_quat = self.rigid_state[:, self.imu_indices, 3:7]
         else:
-            self.base_quat = quat_mul(origin, self.root_states[:, 3:7])
+            self.base_quat = self.root_states[:, 3:7]
 
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
 
