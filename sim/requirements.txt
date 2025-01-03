@@ -10,6 +10,7 @@ numpy==1.21.6
 wandb
 tensorboard==2.14.0
 onnxscript
+onnx
 mujoco==2.3.6
 kinfer==0.0.5
 opencv-python

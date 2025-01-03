@@ -17,8 +17,9 @@ import numpy as np
 import onnxruntime as ort
 import pygame
 import torch
-from kinfer.export.pytorch import export_to_onnx
+from kinfer import proto as P
 from kinfer.inference.python import ONNXModel
+from kinfer.serialize.numpy import NumpyMultiSerializer
 from scipy.spatial.transform import Rotation as R
 from tqdm import tqdm
 
@@ -94,7 +95,7 @@ def pd_control(
 
 def run_mujoco(
     embodiment: str,
-    policy: ort.InferenceSession,
+    policy: ONNXModel,
     model_info: Dict[str, Union[float, List[float], str]],
     keyboard_use: bool = False,
     log_h5: bool = False,
@@ -121,10 +122,18 @@ def run_mujoco(
     assert isinstance(model_info["robot_effort"], list)
     assert isinstance(model_info["robot_stiffness"], list)
     assert isinstance(model_info["robot_damping"], list)
+    assert isinstance(model_info["joint_names"], list)
+    assert isinstance(model_info["sim_dt"], float)
+    assert isinstance(model_info["cycle_time"], float)
+    assert isinstance(model_info["sim_decimation"], int)
 
-    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"]
-    kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
-    kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
+    tau_limit = np.array(list(model_info["robot_effort"])) * model_info["tau_factor"]
+    kps = np.array(model_info["robot_stiffness"])
+    kds = np.array(model_info["robot_damping"])
+
+    joint_names = model_info["joint_names"]
+
+    kinfer_serializer = NumpyMultiSerializer(policy.output_schema)
 
     try:
         data.qpos = model.keyframe("default").qpos
@@ -147,22 +156,9 @@ def run_mujoco(
 
     target_q = np.zeros((model_info["num_actions"]), dtype=np.double)
     prev_actions = np.zeros((model_info["num_actions"]), dtype=np.double)
-    hist_obs = np.zeros((model_info["num_observations"]), dtype=np.double)
+    hist_obs = np.zeros((model_info["num_observations"]), dtype=np.float32)
 
     count_lowlevel = 0
-
-    input_data = {
-        "x_vel.1": np.zeros(1).astype(np.float32),
-        "y_vel.1": np.zeros(1).astype(np.float32),
-        "rot.1": np.zeros(1).astype(np.float32),
-        "t.1": np.zeros(1).astype(np.float32),
-        "dof_pos.1": np.zeros(model_info["num_actions"]).astype(np.float32),
-        "dof_vel.1": np.zeros(model_info["num_actions"]).astype(np.float32),
-        "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
-        "imu_ang_vel.1": np.zeros(3).astype(np.float32),
-        "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
-        "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
-    }
 
     if log_h5:
         from sim.h5_logger import HDF5Logger
@@ -202,7 +198,7 @@ def run_mujoco(
 
         # Calculate speed and accumulate for average speed calculation
         speed = np.linalg.norm(v[:2])  # Speed in the x-y plane
-        total_speed += speed
+        total_speed += float(speed)
         step_count += 1
 
         # 1000hz -> 50hz
@@ -211,26 +207,115 @@ def run_mujoco(
             cur_pos_obs = q - default
             cur_vel_obs = dq
 
-            input_data["x_vel.1"] = np.array([x_vel_cmd], dtype=np.float32)
-            input_data["y_vel.1"] = np.array([y_vel_cmd], dtype=np.float32)
-            input_data["rot.1"] = np.array([yaw_vel_cmd], dtype=np.float32)
+            # Form input
+            dof_pos = P.Value(
+                value_name="dof_pos",
+                joint_positions=P.JointPositionsValue(
+                    values=[
+                        P.JointPositionValue(
+                            joint_name=name,
+                            value=q[index],
+                            unit=P.JointPositionUnit.RADIANS,
+                        )
+                        for name, index in zip(joint_names, range(len(q)))
+                    ]
+                ),
+            )
 
-            input_data["t.1"] = np.array([count_lowlevel * model_info["sim_dt"]], dtype=np.float32)
+            dof_vel = P.Value(
+                value_name="dof_vel",
+                joint_velocities=P.JointVelocitiesValue(
+                    values=[
+                        P.JointVelocityValue(
+                            joint_name=name,
+                            value=dq[index],
+                            unit=P.JointVelocityUnit.RADIANS_PER_SECOND,
+                        )
+                        for name, index in zip(joint_names, range(len(dq)))
+                    ]
+                ),
+            )
 
-            input_data["dof_pos.1"] = cur_pos_obs.astype(np.float32)
-            input_data["dof_vel.1"] = cur_vel_obs.astype(np.float32)
+            vector_command = P.Value(
+                value_name="vector_command",
+                vector_command=P.VectorCommandValue(
+                    values=[x_vel_cmd, y_vel_cmd, yaw_vel_cmd],
+                ),
+            )
 
-            input_data["prev_actions.1"] = prev_actions.astype(np.float32)
+            seconds = int(count_lowlevel * model_info["sim_dt"])
+            nanoseconds = int((count_lowlevel * model_info["sim_dt"] - seconds) * 1e9)
+            timestamp = P.Value(
+                value_name="timestamp",
+                timestamp=P.TimestampValue(
+                    seconds=seconds,
+                    nanos=nanoseconds,
+                ),
+            )
 
-            input_data["imu_ang_vel.1"] = omega.astype(np.float32)
-            input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
+            prev_actions_value = P.Value(
+                value_name="prev_actions",
+                joint_positions=P.JointPositionsValue(
+                    values=[
+                        P.JointPositionValue(
+                            joint_name=name,
+                            value=prev_actions[index],
+                            unit=P.JointPositionUnit.RADIANS,
+                        )
+                        for name, index in zip(joint_names, range(len(prev_actions)))
+                    ]
+                ),
+            )
 
-            input_data["buffer.1"] = hist_obs.astype(np.float32)
+            imu_ang_vel = P.Value(
+                value_name="imu_ang_vel",
+                imu=P.ImuValue(
+                    angular_velocity=P.ImuGyroscopeValue(
+                        x=omega[0],
+                        y=omega[1],
+                        z=omega[2],
+                    )
+                ),
+            )
 
-            policy_output = policy(input_data)
-            positions = policy_output["actions_scaled"]
-            curr_actions = policy_output["actions"]
-            hist_obs = policy_output["x.3"]
+            imu_euler_xyz = P.Value(
+                value_name="imu_euler_xyz",
+                imu=P.ImuValue(
+                    linear_acceleration=P.ImuAccelerometerValue(
+                        x=eu_ang[0],
+                        y=eu_ang[1],
+                        z=eu_ang[2],
+                    ),
+                ),
+            )
+
+            state_tensor = P.Value(
+                value_name="hist_obs",
+                state_tensor=P.StateTensorValue(
+                    data=hist_obs.tobytes(),
+                ),
+            )
+
+            policy_input = P.IO(
+                values=[
+                    vector_command,
+                    timestamp,
+                    dof_pos,
+                    dof_vel,
+                    prev_actions_value,
+                    imu_ang_vel,
+                    imu_euler_xyz,
+                    state_tensor,
+                ]
+            )
+
+            policy_output = policy(policy_input)
+
+            outputs = kinfer_serializer.serialize_io(policy_output, as_dict=True)
+
+            positions = outputs["actions"]
+            curr_actions = outputs["actions_raw"]
+            hist_obs = outputs["new_x"]
 
             target_q = positions
 
@@ -305,17 +390,32 @@ if __name__ == "__main__":
         x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
-    metadata = policy.get_metadata()
-    model_info = {
-        "num_actions": metadata["num_actions"],
-        "num_observations": metadata["num_observations"],
-        "robot_effort": metadata["robot_effort"],
-        "robot_stiffness": metadata["robot_stiffness"],
-        "robot_damping": metadata["robot_damping"],
-        "sim_dt": metadata["sim_dt"],
-        "sim_decimation": metadata["sim_decimation"],
-        "tau_factor": metadata["tau_factor"],
-    }
+    metadata = policy.attached_metadata
+
+    joint_names = []
+    for value_schema in policy.input_schema.values:
+        if value_schema.HasField("joint_positions"):
+            joint_names = list(value_schema.joint_positions.joint_names)
+            break
+
+    try:
+        model_info = {
+            "num_actions": len(joint_names),
+            "num_observations": metadata["num_observations"],
+            "robot_effort": [metadata["robot_effort"][joint] for joint in joint_names],
+            "robot_stiffness": [metadata["robot_stiffness"][joint] for joint in joint_names],
+            "robot_damping": [metadata["robot_damping"][joint] for joint in joint_names],
+            "sim_dt": metadata["sim_dt"],
+            "sim_decimation": metadata["sim_decimation"],
+            "tau_factor": metadata["tau_factor"],
+            "joint_names": joint_names,
+            "cycle_time": metadata["cycle_time"],
+        }
+    except Exception as e:
+        print(
+            f"Error finding required metadata 'num_actions', 'num_observations', 'robot_effort', 'robot_stiffness', 'robot_damping', 'sim_dt', 'sim_decimation', 'tau_factor' in metadata: {metadata}"
+        )
+        raise e
 
     run_mujoco(
         embodiment=args.embodiment,

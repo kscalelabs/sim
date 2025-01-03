@@ -3,7 +3,7 @@
 import re
 from dataclasses import dataclass, fields
 from io import BytesIO
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import onnx
 import onnxruntime as ort
@@ -125,24 +125,20 @@ class Actor(nn.Module):
 
     def forward(
         self,
-        x_vel: Tensor,  # x-coordinate of the target velocity
-        y_vel: Tensor,  # y-coordinate of the target velocity
-        rot: Tensor,  # target angular velocity
-        t: Tensor,  # current policy time (sec)
+        vector_command: Tensor,  # (x_vel, y_vel, rot)
+        timestamp: Tensor,  # current policy time (sec)
         dof_pos: Tensor,  # current angular position of the DoFs relative to default
         dof_vel: Tensor,  # current angular velocity of the DoFs
         prev_actions: Tensor,  # previous actions taken by the model
         imu_ang_vel: Tensor,  # angular velocity of the IMU
         imu_euler_xyz: Tensor,  # euler angles of the IMU
-        buffer: Tensor,  # buffer of previous observations
-    ) -> Tuple[Tensor, Tensor, Tensor]:
+        hist_obs: Tensor,  # buffer of previous observations
+    ) -> Dict[str, Tensor]:
         """Runs the actor model forward pass.
 
         Args:
-            x_vel: The x-coordinate of the target velocity, with shape (1).
-            y_vel: The y-coordinate of the target velocity, with shape (1).
-            rot: The target angular velocity, with shape (1).
-            t: The current policy time step, with shape (1).
+            vector_command: The target velocity vector, with shape (3). It consistes of x_vel, y_vel, and rot.
+            timestamp: The current policy time step, with shape (1).
             dof_pos: The current angular position of the DoFs relative to default, with shape (num_actions).
             dof_vel: The current angular velocity of the DoFs, with shape (num_actions).
             prev_actions: The previous actions taken by the model, with shape (num_actions).
@@ -151,17 +147,19 @@ class Actor(nn.Module):
             imu_euler_xyz: The euler angles of the IMU, with shape (3),
                 in radians. "XYZ" means (roll, pitch, yaw). If IMU is not used,
                 can be all zeros.
-            buffer: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
+            hist_obs: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
                 the return value of the previous forward pass. On the first
                 pass, it should be all zeros.
 
         Returns:
             actions_scaled: The actions to take, with shape (num_actions), scaled by the action_scale.
             actions: The actions to take, with shape (num_actions).
-            x: The new buffer of observations, with shape (frame_stack * num_single_obs).
+            new_x: The new buffer of observations, with shape (frame_stack * num_single_obs).
         """
-        sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
-        cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
+        sin_pos = torch.sin(2 * torch.pi * timestamp / self.cycle_time)
+        cos_pos = torch.cos(2 * torch.pi * timestamp / self.cycle_time)
+
+        x_vel, y_vel, rot = vector_command.split(1)
 
         # Construct command input
         command_input = torch.cat(
@@ -186,8 +184,8 @@ class Actor(nn.Module):
                 q,
                 dq,
                 prev_actions,
-                imu_ang_vel * self.ang_vel_scale,
-                imu_euler_xyz * self.quat_scale,
+                imu_ang_vel.squeeze(0) * self.ang_vel_scale,
+                imu_euler_xyz.squeeze(0) * self.quat_scale,
             ),
             dim=0,
         )
@@ -196,7 +194,7 @@ class Actor(nn.Module):
         new_x = torch.clamp(new_x, -self.clip_observations, self.clip_observations)
 
         # Add the new frame to the buffer
-        x = torch.cat((buffer, new_x), dim=0)
+        x = torch.cat((hist_obs, new_x), dim=0)
         # Pop the oldest frame
         x = x[self.num_single_obs :]
 
@@ -206,7 +204,7 @@ class Actor(nn.Module):
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale
 
-        return actions_scaled, actions, x
+        return {"actions": actions_scaled, "actions_raw": actions, "new_x": x}
 
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
@@ -239,24 +237,41 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, imu_ang_vel, imu_euler_xyz, buffer)
 
     # Add sim2sim metadata
-    robot_effort = list(a_model.robot.effort().values())
-    robot_stiffness = list(a_model.robot.stiffness().values())
-    robot_damping = list(a_model.robot.damping().values())
+    robot = a_model.robot
+    robot_effort = robot.effort_mapping()
+    robot_stiffness = robot.stiffness_mapping()
+    robot_damping = robot.damping_mapping()
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
-    default_standing = list(a_model.robot.default_standing().values())
+    default_standing = robot.default_standing()
+
+    metadata = {
+        "num_actions": num_actions,
+        "num_observations": num_observations,
+        "robot_effort": robot_effort,
+        "robot_stiffness": robot_stiffness,
+        "robot_damping": robot_damping,
+        "default_standing": default_standing,
+        "sim_dt": cfg.sim_dt,
+        "sim_decimation": cfg.sim_decimation,
+        "tau_factor": cfg.tau_factor,
+        "action_scale": cfg.action_scale,
+        "lin_vel_scale": cfg.lin_vel_scale,
+        "ang_vel_scale": cfg.ang_vel_scale,
+        "quat_scale": cfg.quat_scale,
+        "dof_pos_scale": cfg.dof_pos_scale,
+        "dof_vel_scale": cfg.dof_vel_scale,
+        "frame_stack": cfg.frame_stack,
+        "clip_observations": cfg.clip_observations,
+        "clip_actions": cfg.clip_actions,
+        "joint_names": robot.joint_names(),
+        "cycle_time": cfg.cycle_time,
+    }
 
     return (
         a_model,
-        {
-            "robot_effort": robot_effort,
-            "robot_stiffness": robot_stiffness,
-            "robot_damping": robot_damping,
-            "num_actions": num_actions,
-            "num_observations": num_observations,
-            "default_standing": default_standing,
-        },
+        metadata,
         input_tensors,
     )
 
