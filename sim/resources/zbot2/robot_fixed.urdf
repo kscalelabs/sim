@@ -95,7 +95,7 @@
     <origin xyz="-0.043008175 0.007649730000000001 -0.1218181485" rpy="0.0 0.0 0.0" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="U-HIP_1" />
-    <limit effort="10" velocity="10" lower="-1.0472" upper="1.0472" />
+    <limit effort="1" velocity="20" lower="-1.0472" upper="1.0472" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="U-HIP_1">
@@ -124,7 +124,7 @@
     <origin xyz="0.042868184999999996 0.007649730000000002 -0.1218181485" rpy="0.0 0.0 0.0" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="U-HIP" />
-    <limit effort="10" velocity="10" lower="-1.0472" upper="1.0472" />
+    <limit effort="1" velocity="20" lower="-1.0472" upper="1.0472" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="U-HIP">
@@ -211,7 +211,7 @@
     <origin xyz="-3.3737499e-05 0.018699632 -0.019" rpy="-1.5707963 0 0.0018041779" />
     <parent link="U-HIP_1" />
     <child link="WJ-DP00-0002-FK-AP-020_7_10" />
-    <limit effort="10" velocity="10" lower="-0.174533" upper="1.91986" />
+    <limit effort="1" velocity="20" lower="-0.174533" upper="1.91986" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="WJ-DP00-0002-FK-AP-020_7_10">
@@ -240,7 +240,7 @@
     <origin xyz="0 0.018699662 -0.019" rpy="-1.5707963 0 0" />
     <parent link="U-HIP" />
     <child link="SJ-WK00-0021TOPCABINETCASE_104_7" />
-    <limit effort="10" velocity="10" lower="-1.91986" upper="0.174533" />
+    <limit effort="1" velocity="20" lower="-1.91986" upper="0.174533" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="SJ-WK00-0021TOPCABINETCASE_104_7">
@@ -269,7 +269,7 @@
     <origin xyz="0.0302 0.032000000747204306 -0.01869999899057799" rpy="-5.358979280578589e-08 1.5707962464102065 0.0" />
     <parent link="WJ-DP00-0002-FK-AP-020_7_10" />
     <child link="SJ-WK00-0023BOTTOMCASE_12_12" />
-    <limit effort="10" velocity="10" lower="-1.74533" upper="1.8326" />
+    <limit effort="1" velocity="20" lower="-1.74533" upper="1.8326" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="SJ-WK00-0023BOTTOMCASE_12_12">
@@ -298,7 +298,7 @@
     <origin xyz="-0.0302 0.032000000747204306 -0.01869999899057799" rpy="1.5707963535897942 4.6410207010794124e-08 -1.5707963000000003" />
     <parent link="SJ-WK00-0021TOPCABINETCASE_104_7" />
     <child link="SJ-WK00-0023BOTTOMCASE_12_8" />
-    <limit effort="10" velocity="10" lower="-1.8326" upper="1.74533" />
+    <limit effort="1" velocity="20" lower="-1.8326" upper="1.74533" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="SJ-WK00-0023BOTTOMCASE_12_8">
@@ -385,7 +385,7 @@
     <origin xyz="-0.010000010500000002 0.099999999 0.0004600000000000021" rpy="0.0 0.0 0.0" />
     <parent link="SJ-WK00-0023BOTTOMCASE_12_12" />
     <child link="SJ-WK00-0023BOTTOMCASE_12_13" />
-    <limit effort="10" velocity="10" lower="-0.174533" upper="2.96706" />
+    <limit effort="1" velocity="20" lower="-0.174533" upper="2.96706" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="SJ-WK00-0023BOTTOMCASE_12_13">
@@ -414,7 +414,7 @@
     <origin xyz="-0.1 0.010000000082118056 -5.999906019330356e-05" rpy="9.282041357749903e-08 0.0 0.0" />
     <parent link="SJ-WK00-0023BOTTOMCASE_12_8" />
     <child link="WJ-DP00-0002-FK-AP-020_7_8" />
-    <limit effort="10" velocity="10" lower="-0.174533" upper="2.96706" />
+    <limit effort="1" velocity="20" lower="-0.174533" upper="2.96706" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="WJ-DP00-0002-FK-AP-020_7_8">
@@ -501,7 +501,7 @@
     <origin xyz="0.00018899753000000026 0.09999981929420682 1.3467926079924197e-09" rpy="-3.141592607179586 0.0 0.0" />
     <parent link="SJ-WK00-0023BOTTOMCASE_12_13" />
     <child link="FOOT_1" />
-    <limit effort="10" velocity="10" lower="-1.5708" upper="1.5708" />
+    <limit effort="1" velocity="20" lower="-1.5708" upper="1.5708" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.01" /></joint>
   <link name="FOOT_1">
@@ -530,7 +530,7 @@
     <origin xyz="0.09347657200000001 0.03552647508420684 3.347702670630781e-11" rpy="-3.141592653589792 4.6410207010794124e-08 -1.5707963" />
     <parent link="WJ-DP00-0002-FK-AP-020_7_8" />
     <child link="FOOT" />
-    <limit effort="10" velocity="10" lower="-1.5708" upper="1.5708" />
+    <limit effort="1" velocity="20" lower="-1.5708" upper="1.5708" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.01" /></joint>
   <link name="FOOT">
