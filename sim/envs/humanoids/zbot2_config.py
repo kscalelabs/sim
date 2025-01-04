@@ -42,7 +42,7 @@ class ZBot2Cfg(LeggedRobotCfg):
 
         termination_height = 0.05
         default_feet_height = 0.01
-    
+
         penalize_contacts_on = []
         self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False

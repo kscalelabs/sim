@@ -182,6 +182,7 @@ class Robot(Node):
             "knee_pitch": 0.3,
             "ankle_pitch": 0.3,
         }
+
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
@@ -191,7 +192,6 @@ class Robot(Node):
             "knee_pitch": 1,
             "ankle_pitch": 1,
         }
-
 
     # vel_limits
     @classmethod
@@ -203,7 +203,6 @@ class Robot(Node):
             "knee_pitch": 20,
             "ankle_pitch": 20,
         }
-
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
