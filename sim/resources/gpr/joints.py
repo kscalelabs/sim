@@ -52,7 +52,7 @@ class LeftLeg(Node):
     hip_yaw = "L_hip_x"
     hip_roll = "L_hip_z"
     knee_pitch = "L_knee"
-    ankle_pitch = "L_ankle_y"
+    ankle_pitch = "L_ankle"
 
 
 class RightLeg(Node):
@@ -60,7 +60,7 @@ class RightLeg(Node):
     hip_yaw = "R_hip_x"
     hip_roll = "R_hip_z"
     knee_pitch = "R_knee"
-    ankle_pitch = "R_ankle_y"
+    ankle_pitch = "R_ankle"
 
 
 class Legs(Node):
@@ -125,16 +125,16 @@ class Robot(Node):
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         return {
-            Robot.legs.left.hip_pitch: -0.23,
+            Robot.legs.left.hip_pitch: 0.23,
             Robot.legs.left.hip_yaw: 0.0,
             Robot.legs.left.hip_roll: 0.0,
             Robot.legs.left.knee_pitch: -0.441,
             Robot.legs.left.ankle_pitch: -0.195,
-            Robot.legs.right.hip_pitch: 0.23,
+            Robot.legs.right.hip_pitch: -0.23,
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
-            Robot.legs.right.knee_pitch: 0.441,
-            Robot.legs.right.ankle_pitch: 0.195,
+            Robot.legs.right.knee_pitch: -0.441,
+            Robot.legs.right.ankle_pitch: -0.195,
         }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
@@ -147,7 +147,7 @@ class Robot(Node):
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
             Robot.legs.left.knee_pitch: {"lower": -1.57, "upper": 0},
-            Robot.legs.right.knee_pitch: {"lower": 0, "upper": 1.57},
+            Robot.legs.right.knee_pitch: {"lower": -1.57, "upper": 0},
         }
 
     # p_gains
@@ -158,7 +158,7 @@ class Robot(Node):
             "hip_x": 120,
             "hip_z": 120,
             "knee": 300,
-            "ankle_y": 40,
+            "ankle": 40,
         }
 
     @classmethod
@@ -178,7 +178,7 @@ class Robot(Node):
             "hip_x": 5,
             "hip_z": 5,
             "knee": 5,
-            "ankle_y": 5,
+            "ankle": 5,
         }
 
     @classmethod
@@ -194,11 +194,11 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_y": 60,
+            "hip_y": 100,
             "hip_x": 40,
             "hip_z": 40,
-            "knee": 60,
-            "ankle_y": 17,
+            "knee": 100,
+            "ankle": 17,
         }
 
     @classmethod
@@ -213,7 +213,7 @@ class Robot(Node):
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
-        return {"hip": 10, "knee": 10, "ankle": 10}
+        return {"hip": 15, "knee": 15, "ankle": 15}
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
