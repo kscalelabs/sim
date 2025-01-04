@@ -47,12 +47,12 @@
     <camera name="fixed" pos="0 -3.0 0.67377" xyaxes="1 0 0 0 0 1" />
     <camera name="track" mode="trackcom" pos="0 -3.0 0.67377" xyaxes="1 0 0 0 0 1" />
     <body name="root" pos="0 0 0.18377000000000002" quat="1 0 0 0">
+      <inertial pos="0 0 0" mass="1.0" diaginertia="0.01 0.01 0.01"/>
       <freejoint name="root" />
       <site name="imu" size="0.01" pos="0 0 0" />
       <body name="base" pos="0 0 0" quat="1 0 0 0">
-        <body name="base">
+        <body name="base_1">
           <inertial pos="-0.000331937 0.0096524 -0.0631412" quat="0.706878 -0.0165716 -0.00441017 0.707127" mass="2.35276" diaginertia="0.0178114 0.0104369 0.00970654" />
-          <joint name="base_free_joint" type="free" />
           <geom type="mesh" rgba="0.494118 0.623529 0.74902 1" mesh="Z-BOT2_MASTER-BODY-SKELETON" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
           <geom type="mesh" rgba="0.494118 0.623529 0.74902 1" mesh="Z-BOT2_MASTER-BODY-SKELETON" />
           <geom pos="-0.055995 0.0277897 -0.00952781" quat="0.707107 0.707107 0 0" type="mesh" rgba="0.364706 0.360784 0.74902 1" mesh="Z-BOT2-MASTER-SHOULDER2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
@@ -137,7 +137,6 @@
   </worldbody>
 
   <actuator>
-    <motor name="base_free_joint" joint="base_free_joint" ctrllimited="true" ctrlrange="-1 1" gear="1" />
     <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-1 1" gear="1" />
     <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-1 1" gear="1" />
     <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-1 1" gear="1" />
@@ -151,9 +150,6 @@
   </actuator>
 
   <sensor>
-    <actuatorpos name="base_free_joint_p" actuator="base_free_joint" />
-    <actuatorvel name="base_free_joint_v" actuator="base_free_joint" />
-    <actuatorfrc name="base_free_joint_f" actuator="base_free_joint" noise="0.001" />
     <actuatorpos name="right_hip_roll_p" actuator="right_hip_roll" />
     <actuatorvel name="right_hip_roll_v" actuator="right_hip_roll" />
     <actuatorfrc name="right_hip_roll_f" actuator="right_hip_roll" noise="0.001" />
@@ -187,4 +183,8 @@
     <framequat name="orientation" objtype="site" noise="0.001" objname="imu" />
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
   </sensor>
+
+  <keyframe>
+    <key name="default" qpos="0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 2.76 1.1" />
+  </keyframe>
 </mujoco>
