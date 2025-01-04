@@ -43,7 +43,7 @@
   <worldbody>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
-    <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15" />
+    <!-- <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15" /> -->
     <camera name="fixed" pos="0 -3.0 0.901051" xyaxes="1 0 0 0 0 1" />
     <camera name="track" mode="trackcom" pos="0 -3.0 0.901051" xyaxes="1 0 0 0 0 1" />
     <body name="root" pos="0 0 0.411051" quat="1 0 0 0">
@@ -71,8 +71,6 @@
       <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell2" pos="0.0263708 -0.255174 -0.218609" quat="-0.706543 0.000281709 0.70767 -0.000281346" />
       <geom pos="0.00515984 -0.255319 -0.400143" quat="-1 0.000398163 0.000796317 2.57264e-07" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
       <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell_2" pos="0.00515984 -0.255319 -0.400143" quat="-1 0.000398163 0.000796317 2.57264e-07" />
-      <geom size="0.05 0.05 0.05" pos="0.03 0 -0.08" type="box" rgba="1 0 0 1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-      <geom type="box" rgba="1 0 0 1" size="0.05 0.05 0.05" pos="0.03 0 -0.08" />
       <body name="leg0_shell" pos="0.000698762 0.087356 -0.43208" quat="-0.707388 -0.706825 0.000563329 -0.000562847">
         <inertial pos="-0.00374632 -5.30704e-10 -0.0681251" quat="0.999982 0 -0.00597565 0" mass="1.32345" diaginertia="0.0018859 0.00142483 0.00129962" />
         <joint name="L_hip_y" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-100 100" />
@@ -120,7 +118,7 @@
             <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell_2" />
             <body name="leg3_shell22" pos="0 0.0342 -0.1425" quat="0.707107 0.707107 0 0">
               <inertial pos="-0.00103303 -0.12548 0.0366712" quat="0.691727 0.665164 -0.198928 0.198742" mass="1.17968" diaginertia="0.00753955 0.0075026 0.00111462" />
-              <joint name="R_knee" pos="0 0 0" axis="0 0 -1" range="0 1.57" actuatorfrcrange="-100 100" />
+              <joint name="R_knee" pos="0 0 0" axis="0 0 -1" range="-1.57 0" actuatorfrcrange="-100 100" />
               <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell22" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
               <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell22" />
               <body name="foot3" pos="1.07672e-08 -0.3 0.0272" quat="0 -2.32051e-08 1 -2.32051e-08">
