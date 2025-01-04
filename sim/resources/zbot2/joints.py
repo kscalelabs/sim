@@ -165,31 +165,31 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 17.681462808698132,
-            "hip_yaw": 17.681462808698132,
-            "hip_roll": 17.681462808698132,
-            "knee_pitch": 17.681462808698132,
-            "ankle_pitch": 17.681462808698132,
+            "hip_pitch": 5,
+            "hip_yaw": 5,
+            "hip_roll": 5,
+            "knee_pitch": 5,
+            "ankle_pitch": 5,
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 0.5354656169048285,
-            "hip_yaw": 0.5354656169048285,
-            "hip_roll": 0.5354656169048285,
-            "knee_pitch": 0.5354656169048285,
-            "ankle_pitch": 0.5354656169048285,
+            "hip_pitch": 0.3,
+            "hip_yaw": 0.3,
+            "hip_roll": 0.3,
+            "knee_pitch": 0.3,
+            "ankle_pitch": 0.3,
         }
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 10,
-            "hip_yaw": 10,
-            "hip_roll": 10,
-            "knee_pitch": 10,
-            "ankle_pitch": 10,
+            "hip_pitch": 1,
+            "hip_yaw": 1,
+            "hip_roll": 1,
+            "knee_pitch": 1,
+            "ankle_pitch": 1,
         }
 
 
@@ -197,11 +197,11 @@ class Robot(Node):
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 10,
-            "hip_yaw": 10,
-            "hip_roll": 10,
-            "knee_pitch": 10,
-            "ankle_pitch": 10,
+            "hip_pitch": 20,
+            "hip_yaw": 20,
+            "hip_roll": 20,
+            "knee_pitch": 20,
+            "ankle_pitch": 20,
         }
 
 
