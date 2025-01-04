@@ -43,10 +43,10 @@
   <worldbody>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
-    <!-- <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15" /> -->
+    <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15" />
     <camera name="fixed" pos="0 -3.0 0.901051" xyaxes="1 0 0 0 0 1" />
     <camera name="track" mode="trackcom" pos="0 -3.0 0.901051" xyaxes="1 0 0 0 0 1" />
-    <body name="root" pos="0 0 0.411051" quat="1 0 0 0">
+    <body name="root" pos="0 0 1.07" quat="1 0 0 0">
       <freejoint name="root" />
       <site name="imu" size="0.01" rgba="1 0 0 1" pos="0.03 0 0" />
       <geom pos="0 0 0" quat="0.000563312 -0.000562864 0.707388 0.706825" type="mesh" rgba="1 1 1 1" mesh="body1-part" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
@@ -78,7 +78,7 @@
         <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell" />
         <body name="leg1_shell" pos="0.0265 -1.51659e-09 -0.0695" quat="0.5 -0.5 -0.5 0.5">
           <inertial pos="-0.116471 0.00323117 0.025411" quat="0.162954 0.777613 0.0974626 0.599387" mass="1.36077" diaginertia="0.00293018 0.00283394 0.00156523" />
-          <joint name="L_hip_x" pos="0 0 0" axis="0 0 1" range="-0.349066 3.18523" actuatorfrcrange="-40 40" />
+          <joint name="L_hip_x" pos="0 0 0" axis="0 0 1" range="-3.18523 0.349066" actuatorfrcrange="-40 40" />
           <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
           <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell" />
           <body name="leg2_shell" pos="-0.1565 0.000119814 0.0275" quat="0.707107 0 0.707107 0">

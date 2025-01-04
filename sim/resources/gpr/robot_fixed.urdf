@@ -291,7 +291,7 @@
     <origin xyz="0.02649999999999997 -1.5165911463888016e-09 -0.06950000151659115" rpy="-1.5707963 0.0 1.5707963" />
     <parent link="leg0_shell" />
     <child link="leg1_shell" />
-    <limit effort="40" velocity="15" lower="-0.34906585" upper="3.1852259" />
+    <limit effort="40" velocity="15" lower="-3.1852259" upper="0.34906585" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <link name="leg1_shell">
