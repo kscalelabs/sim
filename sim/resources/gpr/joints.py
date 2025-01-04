@@ -158,7 +158,7 @@ class Robot(Node):
             "hip_x": 120,
             "hip_z": 120,
             "knee": 300,
-            "ankle_y": 40,
+            "ankle": 40,
         }
 
     @classmethod
@@ -178,7 +178,7 @@ class Robot(Node):
             "hip_x": 5,
             "hip_z": 5,
             "knee": 5,
-            "ankle_y": 5,
+            "ankle": 5,
         }
 
     @classmethod
@@ -198,7 +198,7 @@ class Robot(Node):
             "hip_x": 40,
             "hip_z": 40,
             "knee": 100,
-            "ankle_y": 17,
+            "ankle": 17,
         }
 
     @classmethod
