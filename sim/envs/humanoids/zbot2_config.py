@@ -40,7 +40,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         foot_name = ["FOOT", "FOOT_1"]
         knee_name = ["WJ-DP00-0002-FK-AP-020_7_8", "SJ-WK00-0023BOTTOMCASE_12_13"]
 
-        termination_height = 0.05
+        termination_height = 0.1
         default_feet_height = 0.01
 
         penalize_contacts_on = []
@@ -203,6 +203,46 @@ class ZBot2Cfg(LeggedRobotCfg):
         ref_env = 0
         pos = [4, -4, 2]
         lookat = [0, -2, 0]
+
+
+class ZBot2StandingCfg(ZBot2Cfg):
+    """Standing configuration for the ZBot2 humanoid robot."""
+
+    class init_state(LeggedRobotCfg.init_state):
+        # Use the same or slightly higher base position if you'd like a different "standing" height
+        pos = [0.0, 0.0, Robot.height]
+        rot = Robot.rotation
+
+        # Start with all zeros
+        default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
+
+        # Overwrite with the default standing angles from Robot
+        default_positions = Robot.default_standing()
+        for joint in default_positions:
+            default_joint_angles[joint] = default_positions[joint]
+
+    class rewards:
+        base_height_target = Robot.height
+        min_dist = 0.2
+        max_dist = 0.5
+        target_joint_pos_scale = 0.17  # rad
+        target_feet_height = 0.05  # m
+        cycle_time = 0.5  # sec
+        only_positive_rewards = False
+        tracking_sigma = 5
+        max_contact_force = 200
+
+        class scales:
+            # You can keep or change these from ZBot2Cfg
+            default_joint_pos = 1.0
+            orientation = 1
+            base_height = 0.2
+            base_acc = 0.2
+            action_smoothness = -0.002
+            torques = -1e-5
+            dof_vel = -1e-3
+            dof_acc = -2.5e-7
+            collision = -1.0
 
 
 class ZBot2CfgPPO(LeggedRobotCfgPPO):
