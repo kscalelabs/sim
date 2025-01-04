@@ -52,7 +52,7 @@ class LeftLeg(Node):
     hip_yaw = "L_hip_x"
     hip_roll = "L_hip_z"
     knee_pitch = "L_knee"
-    ankle_pitch = "L_ankle_y"
+    ankle_pitch = "L_ankle"
 
 
 class RightLeg(Node):
@@ -60,7 +60,7 @@ class RightLeg(Node):
     hip_yaw = "R_hip_x"
     hip_roll = "R_hip_z"
     knee_pitch = "R_knee"
-    ankle_pitch = "R_ankle_y"
+    ankle_pitch = "R_ankle"
 
 
 class Legs(Node):
