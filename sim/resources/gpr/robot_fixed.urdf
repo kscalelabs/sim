@@ -11,6 +11,28 @@
     <parent link="base" />
     <child link="body1-part" />
   </joint>
+  <link name="imu_link">
+      <visual>
+      <geometry>
+        <box size="0.3 0.01 0.01"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+  <joint
+    name="imu_joint"
+    type="fixed"
+    dont_collapse="true">
+    <origin
+      xyz="0.03 0.0 -0.08"
+      rpy="0 0 0" />
+    <parent
+      link="base" />
+    <child
+      link="imu_link" />
+  </joint>
   <link name="body1-part">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
