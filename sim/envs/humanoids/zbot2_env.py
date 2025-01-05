@@ -57,7 +57,7 @@ class ZBot2Env(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Robot.legs.left.joints_motors():
-            print(name)
+            # print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 

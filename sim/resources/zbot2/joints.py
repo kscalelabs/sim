@@ -139,6 +139,8 @@ class Robot(Node):
             cls.legs.right.ankle_pitch: 0.0,
         }
 
+    # CONTRACT - this should be ordered according to how the policy is trained.
+    # E.g. the first entry should be the name of the first joint in the policy.
     @classmethod
     def joint_names(cls) -> List[str]:
         return list(cls.default_standing().keys())
