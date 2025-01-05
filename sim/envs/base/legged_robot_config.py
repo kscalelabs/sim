@@ -29,6 +29,8 @@
 #
 # Copyright (c) 2024 Beijing RobotEra TECHNOLOGY CO.,LTD. All rights reserved.
 
+import os
+import sys
 from enum import Enum
 
 from sim.envs.base.base_config import BaseConfig
