@@ -96,29 +96,36 @@ class Legs(Node):
     left = LeftLeg()
 
 
-# ----- Top-level Robot ------------------------------------------------------------
 class Robot(Node):
-    height = 0.44
+    legs = Legs()
+
+    height = 0.40
+    standing_height = 0.407
     rotation = [0, 0, 0, 1.0]
 
-    # arms = Arms()
-    legs = Legs()
+    @classmethod
+    def default_walking(cls) -> Dict[str, float]:
+        """Example angles for a nominal 'standing' pose. Adjust as needed."""
+        return {
+            # Right Leg
+            cls.legs.right.hip_roll: 0.0,
+            cls.legs.right.hip_yaw: 0.0,
+            cls.legs.right.hip_pitch: -0.296,
+            cls.legs.right.knee_pitch: 0.579,
+            cls.legs.right.ankle_pitch: 0.283,
+            # Left Leg
+            cls.legs.left.hip_roll: 0.0,
+            cls.legs.left.hip_yaw: 0.0,
+            cls.legs.left.hip_pitch: 0.296,
+            cls.legs.left.knee_pitch: 2.2,
+            cls.legs.left.ankle_pitch: 0.927,
+        }
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         """Example angles for a nominal 'standing' pose. Adjust as needed."""
         return {
-            # # Right Arm
-            # cls.arms.right.shoulder_yaw: 0.0,
-            # cls.arms.right.shoulder_pitch: 0.0,
-            # cls.arms.right.elbow_yaw: 0.0,
-            # cls.arms.right.gripper: 0.0,
-            # # Left Arm
-            # cls.arms.left.shoulder_yaw: 0.0,
-            # cls.arms.left.shoulder_pitch: 0.0,
-            # cls.arms.left.elbow_yaw: 0.0,
-            # cls.arms.left.gripper: 0.0,
-            # # Right Leg
+            # Right Leg
             cls.legs.right.hip_roll: 0.0,
             cls.legs.right.hip_yaw: 0.0,
             cls.legs.right.hip_pitch: 0.0,
@@ -129,7 +136,7 @@ class Robot(Node):
             cls.legs.left.hip_yaw: 0.0,
             cls.legs.left.hip_pitch: 0.0,
             cls.legs.left.knee_pitch: 2.76,
-            cls.legs.left.ankle_pitch: 1.1,
+            cls.legs.left.ankle_pitch: 1.2,
         }
 
     @classmethod
@@ -176,21 +183,21 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 0.3,
-            "hip_yaw": 0.3,
-            "hip_roll": 0.3,
-            "knee_pitch": 0.3,
-            "ankle_pitch": 0.3,
+            "hip_pitch": 1.0,
+            "hip_yaw": 1.0,
+            "hip_roll": 1.0,
+            "knee_pitch": 1.0,
+            "ankle_pitch": 1.0,
         }
 
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 1,
-            "hip_yaw": 1,
-            "hip_roll": 1,
-            "knee_pitch": 1,
-            "ankle_pitch": 1,
+            "hip_pitch": 0.3,
+            "hip_yaw": 0.3,
+            "hip_roll": 0.3,
+            "knee_pitch": 0.3,
+            "ankle_pitch": 0.3,
         }
 
     # vel_limits

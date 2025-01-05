@@ -84,7 +84,7 @@ class ZBot2Cfg(LeggedRobotCfg):
 
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
-        default_positions = Robot.default_standing()
+        default_positions = Robot.default_walking()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
 
@@ -120,9 +120,9 @@ class ZBot2Cfg(LeggedRobotCfg):
         start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
-        randomize_base_mass = True  # True
+        randomize_base_mass = True
         added_mass_range = [-0.25, 0.25]
-        push_robots = True  # True
+        push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.05
         max_push_ang_vel = 0.1
@@ -209,14 +209,11 @@ class ZBot2StandingCfg(ZBot2Cfg):
     """Standing configuration for the ZBot2 humanoid robot."""
 
     class init_state(LeggedRobotCfg.init_state):
-        # Use the same or slightly higher base position if you'd like a different "standing" height
-        pos = [0.0, 0.0, Robot.height]
+        pos = [0.0, 0.0, Robot.standing_height]
         rot = Robot.rotation
 
-        # Start with all zeros
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
-        # Overwrite with the default standing angles from Robot
         default_positions = Robot.default_standing()
         for joint in default_positions:
             default_joint_angles[joint] = default_positions[joint]
@@ -233,7 +230,6 @@ class ZBot2StandingCfg(ZBot2Cfg):
         max_contact_force = 200
 
         class scales:
-            # You can keep or change these from ZBot2Cfg
             default_joint_pos = 1.0
             orientation = 1
             base_height = 0.2
@@ -247,7 +243,7 @@ class ZBot2StandingCfg(ZBot2Cfg):
 
 class ZBot2CfgPPO(LeggedRobotCfgPPO):
     seed = 5
-    runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
+    runner_class_name = "OnPolicyRunner"
 
     class policy:
         init_noise_std = 1.0
@@ -269,7 +265,7 @@ class ZBot2CfgPPO(LeggedRobotCfgPPO):
         max_iterations = 3001  # number of policy updates
 
         # logging
-        save_interval = 300  # check for potential saves every this many iterations
+        save_interval = 100  # check for potential saves every this many iterations
         experiment_name = "zbot2"
         run_name = ""
         # load and resume

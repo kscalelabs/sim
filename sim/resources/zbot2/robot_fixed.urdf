@@ -1,13 +1,13 @@
 <robot name="assembly_1">
   <link name="base">
     <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
+      <origin rpy="1.57 0 0" xyz="0 0 0" />
       <mass value="0.001" />
       <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
     </inertial>
   </link>
   <joint name="floating_base" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0" />
+    <origin rpy="0 0 1.57" xyz="0 0 0" />
     <parent link="base" />
     <child link="Z-BOT2_MASTER-BODY-SKELETON" />
   </joint>
