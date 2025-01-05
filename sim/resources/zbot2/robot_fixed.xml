@@ -47,6 +47,7 @@
     <camera name="fixed" pos="0 -3.0 0.67377" xyaxes="1 0 0 0 0 1" />
     <camera name="track" mode="trackcom" pos="0 -3.0 0.67377" xyaxes="1 0 0 0 0 1" />
     <body name="root" pos="0 0 0.18377000000000002" quat="1 0 0 0">
+      <inertial pos="0 0 0" mass="1.0" diaginertia="0.01 0.01 0.01"/>
       <freejoint name="root" />
       <site name="imu" size="0.01" pos="0 0 0" />
       <body name="base" >
