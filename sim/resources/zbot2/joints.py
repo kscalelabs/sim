@@ -107,37 +107,41 @@ class Robot(Node):
     def default_walking(cls) -> Dict[str, float]:
         """Example angles for a nominal 'standing' pose. Adjust as needed."""
         return {
-            # Right Leg
-            cls.legs.right.hip_roll: 0.0,
-            cls.legs.right.hip_yaw: 0.0,
-            cls.legs.right.hip_pitch: -0.296,
-            cls.legs.right.knee_pitch: 0.579,
-            cls.legs.right.ankle_pitch: 0.283,
             # Left Leg
             cls.legs.left.hip_roll: 0.0,
             cls.legs.left.hip_yaw: 0.0,
             cls.legs.left.hip_pitch: 0.296,
             cls.legs.left.knee_pitch: 2.2,
             cls.legs.left.ankle_pitch: 0.927,
+            # Right Leg
+            cls.legs.right.hip_roll: 0.0,
+            cls.legs.right.hip_yaw: 0.0,
+            cls.legs.right.hip_pitch: -0.296,
+            cls.legs.right.knee_pitch: 0.579,
+            cls.legs.right.ankle_pitch: 0.283,
         }
 
     @classmethod
     def default_standing(cls) -> Dict[str, float]:
         """Example angles for a nominal 'standing' pose. Adjust as needed."""
         return {
-            # Right Leg
-            cls.legs.right.hip_roll: 0.0,
-            cls.legs.right.hip_yaw: 0.0,
-            cls.legs.right.hip_pitch: 0.0,
-            cls.legs.right.knee_pitch: 0.0,
-            cls.legs.right.ankle_pitch: 0.0,
             # Left Leg
             cls.legs.left.hip_roll: 0.0,
             cls.legs.left.hip_yaw: 0.0,
             cls.legs.left.hip_pitch: 0.0,
             cls.legs.left.knee_pitch: 2.76,
             cls.legs.left.ankle_pitch: 1.2,
+            # Right Leg
+            cls.legs.right.hip_roll: 0.0,
+            cls.legs.right.hip_yaw: 0.0,
+            cls.legs.right.hip_pitch: 0.0,
+            cls.legs.right.knee_pitch: 0.0,
+            cls.legs.right.ankle_pitch: 0.0,
         }
+
+    @classmethod
+    def joint_names(cls) -> List[str]:
+        return list(cls.default_standing().keys())
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
@@ -146,26 +150,18 @@ class Robot(Node):
         You can refine these to match your MJCF's 'range' tags or real specs.
         """
         return {
-            # Right side
-            # cls.arms.right.shoulder_yaw: {"lower": -1.22173, "upper": 0.349066},
-            # cls.arms.right.shoulder_pitch: {"lower": -3.14159, "upper": 3.14159},
-            # cls.arms.right.elbow_yaw: {"lower": -1.5708, "upper": 2.0944},
-            # cls.arms.right.gripper: {"lower": -0.349066, "upper": 0.872665},
-            cls.legs.right.hip_roll: {"lower": -1.0472, "upper": 1.0472},
-            cls.legs.right.hip_yaw: {"lower": -0.174533, "upper": 1.91986},
-            cls.legs.right.hip_pitch: {"lower": -1.74533, "upper": 1.8326},
-            cls.legs.right.knee_pitch: {"lower": -0.174533, "upper": 2.96706},
-            cls.legs.right.ankle_pitch: {"lower": -1.5708, "upper": 1.5708},
             # Left side
-            # cls.arms.left.shoulder_yaw: {"lower": -0.349066, "upper": 1.22173},
-            # cls.arms.left.shoulder_pitch: {"lower": -3.14159, "upper": 3.14159},
-            # cls.arms.left.elbow_yaw: {"lower": -2.0944, "upper": 1.5708},
-            # cls.arms.left.gripper: {"lower": -0.872665, "upper": 0.349066},
             cls.legs.left.hip_roll: {"lower": -1.0472, "upper": 1.0472},
             cls.legs.left.hip_yaw: {"lower": -1.91986, "upper": 0.174533},
             cls.legs.left.hip_pitch: {"lower": -1.8326, "upper": 1.74533},
             cls.legs.left.knee_pitch: {"lower": -0.174533, "upper": 2.96706},
             cls.legs.left.ankle_pitch: {"lower": -1.5708, "upper": 1.5708},
+            # Right side
+            cls.legs.right.hip_roll: {"lower": -1.0472, "upper": 1.0472},
+            cls.legs.right.hip_yaw: {"lower": -0.174533, "upper": 1.91986},
+            cls.legs.right.hip_pitch: {"lower": -1.74533, "upper": 1.8326},
+            cls.legs.right.knee_pitch: {"lower": -0.174533, "upper": 2.96706},
+            cls.legs.right.ankle_pitch: {"lower": -1.5708, "upper": 1.5708},
         }
 
     # p_gains
@@ -220,6 +216,33 @@ class Robot(Node):
             cls.legs.right.ankle_pitch: 0.01,
             # etc...
         }
+
+    @classmethod
+    def effort_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        effort = cls.effort()
+        for side in ["left", "right"]:
+            for joint, value in effort.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
+
+    @classmethod
+    def stiffness_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        stiffness = cls.stiffness()
+        for side in ["left", "right"]:
+            for joint, value in stiffness.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
+
+    @classmethod
+    def damping_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        damping = cls.damping()
+        for side in ["left", "right"]:
+            for joint, value in damping.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
 
 
 def print_joints() -> None:
