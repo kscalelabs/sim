@@ -4,7 +4,7 @@
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
   <default>
-    <joint limited="true" damping="1." armature="0.001" frictionloss="0.001" />
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01" />
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
     <motor ctrllimited="true" />
     <equality solref="0.001 2" />
@@ -138,17 +138,16 @@
   </worldbody>
 
   <actuator>
-    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-10 10" />
-    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-10 10" />
-
+    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-20 20" />
+    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-20 20" />
   </actuator>
 
   <sensor>
