@@ -233,7 +233,7 @@ class ZBot2Cfg(LeggedRobotCfg):
 
     class rewards:
         base_height_target = Robot.height
-        min_dist = 0.07
+        min_dist = 0.03
         max_dist = 0.14
 
         # put some settings here for LLM parameter tuning
