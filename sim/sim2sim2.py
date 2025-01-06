@@ -20,7 +20,7 @@ import torch
 from tqdm import tqdm
 
 from sim.h5_logger import HDF5Logger
-from model_export import ActorCfg, get_actor_policy
+from model_export2 import ActorCfg, get_actor_policy
 from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
 
@@ -312,7 +312,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = np.random.uniform(0.1, 0.5), 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
 
     policy_cfg = ActorCfg(embodiment=args.embodiment)
     if args.embodiment == "gpr":
@@ -324,7 +324,7 @@ if __name__ == "__main__":
             tau_factor=4.0,
             cycle_time=policy_cfg.cycle_time,
         )
-    elif args.embodiment == "zeroth":
+    elif args.embodiment == "zbot2":
         policy_cfg.cycle_time = 0.2
         cfg = Sim2simCfg(
             sim_duration=10.0,
@@ -334,7 +334,7 @@ if __name__ == "__main__":
             cycle_time=policy_cfg.cycle_time,
         )
 
-    if args.load_model.endswith(".kinfer"):
+    if args.load_model.endswith(".onnx"):
         policy = ONNXModel(args.load_model)
     else:
         actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
