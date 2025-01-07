@@ -80,8 +80,9 @@ class LeggedRobot(BaseTask):
 
     def reset(self):
         """Reset all robots"""
+
         self.reset_idx(torch.arange(self.num_envs, device=self.device))
-        # self._resample_default_positions()
+        
         obs, privileged_obs, _, _, _ = self.step(
             torch.zeros(self.num_envs, self.num_actions, device=self.device, requires_grad=False)
         )
@@ -160,6 +161,11 @@ class LeggedRobot(BaseTask):
         # avoid updating command curriculum at each step since the maximum command is common to all envs
         if self.cfg.commands.curriculum and (self.common_step_counter % self.max_episode_length == 0):
             self.update_command_curriculum(env_ids)
+
+        # pfb30
+        # Add noise to the PD gains
+        self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * 7
+        self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * 0.3
 
         # reset robot states
         self._reset_dofs(env_ids)
@@ -590,6 +596,10 @@ class LeggedRobot(BaseTask):
                 self.p_gains[:, i] = 0.0
                 self.d_gains[:, i] = 0.0
                 raise ValueError(f"PD gain of joint {name} were not defined, setting them to zero")
+
+        # pfb30 Add noise to the PD gains
+        self.original_p_gains = self.p_gains.clone()
+        self.original_d_gains = self.d_gains.clone()
 
         self.rand_push_force = torch.zeros((self.num_envs, 3), dtype=torch.float32, device=self.device)
         self.rand_push_torque = torch.zeros((self.num_envs, 3), dtype=torch.float32, device=self.device)
