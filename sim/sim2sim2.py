@@ -1,8 +1,10 @@
 """Sim2sim deployment test.
 
 Run:
-    python sim/sim2sim.py --load_model examples/walking_policy.onnx --embodiment gpr
+    python sim/sim2sim2.py --load_model examples/gpr_walking.kinfer --embodiment gpr
+    python sim/sim2sim2.py --load_model kinfer_policy.onnx --embodiment zbot2
 """
+
 import argparse
 import math
 import os
@@ -15,24 +17,11 @@ import mujoco_viewer
 import numpy as np
 import onnxruntime as ort
 import pygame
-from scipy.spatial.transform import Rotation as R
 import torch
-from tqdm import tqdm
-
-from sim.h5_logger import HDF5Logger
-from model_export2 import ActorCfg, get_actor_policy
 from kinfer.export.pytorch import export_to_onnx
 from kinfer.inference.python import ONNXModel
-
-
-@dataclass
-class Sim2simCfg:
-    sim_duration: float = 60.0
-    dt: float = 0.001
-    decimation: int = 10
-    tau_factor: float = 3
-    cycle_time: float = 0.25
-
+from scipy.spatial.transform import Rotation as R
+from tqdm import tqdm
 
 
 def handle_keyboard_input() -> None:
@@ -107,11 +96,11 @@ def pd_control(
 def run_mujoco(
     embodiment: str,
     policy: ort.InferenceSession,
-    cfg: Sim2simCfg,
     model_info: Dict[str, Union[float, List[float], str]],
     keyboard_use: bool = False,
     log_h5: bool = False,
     render: bool = True,
+    sim_duration: float = 60.0,
     h5_out_dir: str = "sim/resources",
 ) -> None:
     """
@@ -120,15 +109,12 @@ def run_mujoco(
     Args:
         policy: The policy used for controlling the simulation.
         cfg: The configuration object containing simulation settings.
-
-    Returns:
-        None
     """
     model_dir = os.environ.get("MODEL_DIR", "sim/resources")
     mujoco_model_path = f"{model_dir}/{embodiment}/robot_fixed.xml"
 
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
-    model.opt.timestep = cfg.dt
+    model.opt.timestep = model_info["sim_dt"]
     data = mujoco.MjData(model)
 
     assert isinstance(model_info["num_actions"], int)
@@ -137,7 +123,7 @@ def run_mujoco(
     assert isinstance(model_info["robot_stiffness"], list)
     assert isinstance(model_info["robot_damping"], list)
 
-    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * cfg.tau_factor
+    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"] *4
     kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
     kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
 
@@ -180,13 +166,15 @@ def run_mujoco(
     }
 
     if log_h5:
-        stop_state_log = int(cfg.sim_duration / cfg.dt) / cfg.decimation
+        from sim.h5_logger import HDF5Logger
+
+        stop_state_log = int(sim_duration / model_info["sim_dt"]) / model_info["sim_decimation"]
         logger = HDF5Logger(
             data_name=embodiment,
             num_actions=model_info["num_actions"],
             max_timesteps=stop_state_log,
             num_observations=model_info["num_observations"],
-            h5_out_dir=h5_out_dir
+            h5_out_dir=h5_out_dir,
         )
 
     # Initialize variables for tracking upright steps and average speed
@@ -194,7 +182,7 @@ def run_mujoco(
     total_speed = 0.0
     step_count = 0
 
-    for _ in tqdm(range(int(cfg.sim_duration / cfg.dt)), desc="Simulating..."):
+    for _ in tqdm(range(int(sim_duration / model_info["sim_dt"])), desc="Simulating..."):
         if keyboard_use:
             handle_keyboard_input()
 
@@ -206,20 +194,16 @@ def run_mujoco(
         eu_ang = quaternion_to_euler_array(quat)
         eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
-        # Check if the robot is upright (roll and pitch within ±30 degrees)
-        if abs(eu_ang[0]) > math.radians(30) or abs(eu_ang[1]) > math.radians(30):
-            print("Robot tilted heavily, ending simulation.")
-            break
-        else:
-            upright_steps += 1  # Increment upright steps
-
+        eu_ang = np.array([0.0, 0.0, 0.0])
+        omega = np.array([0.0, 0.0, 0.0])
+        
         # Calculate speed and accumulate for average speed calculation
         speed = np.linalg.norm(v[:2])  # Speed in the x-y plane
         total_speed += speed
         step_count += 1
 
         # 1000hz -> 50hz
-        if count_lowlevel % cfg.decimation == 0:
+        if count_lowlevel % model_info["sim_decimation"] == 0:
             # Convert sim coordinates to policy coordinates
             cur_pos_obs = q - default
             cur_vel_obs = dq
@@ -228,7 +212,7 @@ def run_mujoco(
             input_data["y_vel.1"] = np.array([y_vel_cmd], dtype=np.float32)
             input_data["rot.1"] = np.array([yaw_vel_cmd], dtype=np.float32)
 
-            input_data["t.1"] = np.array([count_lowlevel * cfg.dt], dtype=np.float32)
+            input_data["t.1"] = np.array([count_lowlevel * model_info["sim_dt"]], dtype=np.float32)
 
             input_data["dof_pos.1"] = cur_pos_obs.astype(np.float32)
             input_data["dof_vel.1"] = cur_vel_obs.astype(np.float32)
@@ -246,27 +230,29 @@ def run_mujoco(
             hist_obs = policy_output["x.3"]
 
             target_q = positions
-            
+
             if log_h5:
-                logger.log_data({
-                    "t": np.array([count_lowlevel * cfg.dt], dtype=np.float32),
-                    "2D_command": np.array(
-                        [
-                            np.sin(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
-                            np.cos(2 * math.pi * count_lowlevel * cfg.dt / cfg.cycle_time),
-                        ],
-                        dtype=np.float32,
-                    ),
-                    "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
-                    "joint_pos": cur_pos_obs.astype(np.float32),
-                    "joint_vel": cur_vel_obs.astype(np.float32),
-                    "prev_actions": prev_actions.astype(np.float32),
-                    "curr_actions": curr_actions.astype(np.float32),
-                    "ang_vel": omega.astype(np.float32),
-                    "euler_rotation": eu_ang.astype(np.float32),
-                    "buffer": hist_obs.astype(np.float32)
-                })
-                
+                logger.log_data(
+                    {
+                        "t": np.array([count_lowlevel * model_info["sim_dt"]], dtype=np.float32),
+                        "2D_command": np.array(
+                            [
+                                np.sin(2 * math.pi * count_lowlevel * model_info["sim_dt"] / model_info["cycle_time"]),
+                                np.cos(2 * math.pi * count_lowlevel * model_info["sim_dt"] / model_info["cycle_time"]),
+                            ],
+                            dtype=np.float32,
+                        ),
+                        "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
+                        "joint_pos": cur_pos_obs.astype(np.float32),
+                        "joint_vel": cur_vel_obs.astype(np.float32),
+                        "prev_actions": prev_actions.astype(np.float32),
+                        "curr_actions": curr_actions.astype(np.float32),
+                        "ang_vel": omega.astype(np.float32),
+                        "euler_rotation": eu_ang.astype(np.float32),
+                        "buffer": hist_obs.astype(np.float32),
+                    }
+                )
+
             prev_actions = curr_actions
 
         # Generate PD control
@@ -296,6 +282,7 @@ def run_mujoco(
     if log_h5:
         logger.close()
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--embodiment", type=str, required=True, help="Embodiment name.")
@@ -312,61 +299,27 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.2, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.1, 0.0, 0.0
 
-    policy_cfg = ActorCfg(embodiment=args.embodiment)
-    if args.embodiment == "gpr":
-        policy_cfg.cycle_time = 0.25
-        cfg = Sim2simCfg(
-            sim_duration=10.0,
-            dt=0.001,
-            decimation=10,
-            tau_factor=4.0,
-            cycle_time=policy_cfg.cycle_time,
-        )
-    elif args.embodiment == "zbot2":
-        policy_cfg.cycle_time = 0.2
-        cfg = Sim2simCfg(
-            sim_duration=10.0,
-            dt=0.001,
-            decimation=10,
-            tau_factor=4,
-            cycle_time=policy_cfg.cycle_time,
-        )
-
-    if args.load_model.endswith(".onnx"):
-        policy = ONNXModel(args.load_model)
-    else:
-        actor_model, sim2sim_info, input_tensors = get_actor_policy(args.load_model, policy_cfg)
-
-        # Merge policy_cfg and sim2sim_info into a single config object
-        export_config = {**vars(policy_cfg), **sim2sim_info}
-        print(export_config)
-        export_to_onnx(
-            actor_model,
-            input_tensors=input_tensors,
-            config=export_config,
-            save_path="kinfer_test.onnx"
-        )
-        policy = ONNXModel("kinfer_test.onnx")
-
+    policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
-
     model_info = {
         "num_actions": metadata["num_actions"],
         "num_observations": metadata["num_observations"],
         "robot_effort": metadata["robot_effort"],
         "robot_stiffness": metadata["robot_stiffness"],
         "robot_damping": metadata["robot_damping"],
+        "sim_dt": metadata["sim_dt"],
+        "sim_decimation": metadata["sim_decimation"],
+        "tau_factor": metadata["tau_factor"],
     }
 
     run_mujoco(
-        args.embodiment,
-        policy,
-        cfg,
-        model_info,
-        args.keyboard_use,
-        args.log_h5,
-        args.render,
-        args.h5_out_dir,
+        embodiment=args.embodiment,
+        policy=policy,
+        model_info=model_info,
+        keyboard_use=args.keyboard_use,
+        log_h5=args.log_h5,
+        render=args.render,
+        h5_out_dir=args.h5_out_dir,
     )

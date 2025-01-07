@@ -93,15 +93,23 @@ def play(args: argparse.Namespace) -> None:
     if args.export_onnx:
         path = ppo_runner.load_path
         embodiment = ppo_runner.cfg['experiment_name'].lower()
-        policy_cfg = ActorCfg(embodiment=embodiment)
+        policy_cfg = ActorCfg(
+            embodiment=embodiment,
+            cycle_time=env_cfg.rewards.cycle_time,
+            sim_dt=env_cfg.sim.dt,
+            sim_decimation=env_cfg.control.decimation,
+            tau_factor=env_cfg.safety.torque_limit,
+            action_scale=env_cfg.control.action_scale,
+            lin_vel_scale=env_cfg.normalization.obs_scales.lin_vel,
+            ang_vel_scale=env_cfg.normalization.obs_scales.ang_vel,
+            quat_scale=env_cfg.normalization.obs_scales.quat,
+            dof_pos_scale=env_cfg.normalization.obs_scales.dof_pos,
+            dof_vel_scale=env_cfg.normalization.obs_scales.dof_vel,
+            frame_stack=env_cfg.env.frame_stack,
+            clip_observations=env_cfg.normalization.clip_observations,
+            clip_actions=env_cfg.normalization.clip_actions,
+        )
 
-        if embodiment == "stompypro":
-            policy_cfg.cycle_time = 0.4
-        elif embodiment == "stompymicro":
-            policy_cfg.cycle_time = 0.2
-        else:
-            print(f"Specific policy cfg for {embodiment} not implemented")
-  
         actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
 
         # Merge policy_cfg and sim2sim_info into a single config object
@@ -178,7 +186,7 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
 
         if args.fix_command:
-            env.commands[:, 0] = 0.1
+            env.commands[:, 0] = 0.3
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
