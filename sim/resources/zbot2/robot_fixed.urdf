@@ -1,4 +1,4 @@
-<robot name="assembly_1">
+<robot name="z-bot2_al_limits">
   <link name="base">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
@@ -7,7 +7,7 @@
     </inertial>
   </link>
   <joint name="floating_base" type="fixed">
-    <origin rpy="0 0 1.57" xyz="0 0 0" />
+    <origin rpy="0 0 0" xyz="0 0 0" />
     <parent link="base" />
     <child link="Z-BOT2_MASTER-BODY-SKELETON" />
   </joint>
@@ -28,16 +28,16 @@
       </geometry>
     </collision>
     <inertial>
-      <mass value="1.5916352207" />
-      <inertia ixx="0.0036302949956171114" iyy="0.004145298346457156" izz="0.0025406345168328833" ixy="7.664658594702625e-06" ixz="7.530793879865667e-06" iyz="-6.0571524521709215e-05" />
-      <origin xyz="-0.0004717077766015265 0.010226167319200534 -0.04013604544506424" rpy="0 0 0" />
+      <mass value="1.00556824628" />
+      <inertia ixx="0.00256264164199097" iyy="0.0030180149797369394" izz="0.0014586922712122663" ixy="8.521719525537774e-06" ixz="1.0577553871431714e-05" iyz="-2.32709785265081e-05" />
+      <origin xyz="-0.00019427549448658383 0.010179273955138882 -0.041014326661093246" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="right_shoulder_yaw" type="fixed">
-    <origin xyz="-0.055994975 0.02778973027464769 -0.009527810430333267" rpy="1.5707963999999996 0.0 0.0" />
+  <joint name="L_Shoulder_Pitch" type="fixed">
+    <origin xyz="0.05599502633660092 -0.009609988350796515 -0.00952781042498181" rpy="1.5707963999999994 0.0 -3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="Z-BOT2-MASTER-SHOULDER2" />
-    <limit effort="80" velocity="5" lower="-1.2217305" upper="0.34906585" />
+    <limit effort="80" velocity="5" lower="0" upper="0" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="Z-BOT2-MASTER-SHOULDER2">
@@ -57,277 +57,306 @@
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.0240976" />
-      <inertia ixx="7.4193846e-06" iyy="7.798111e-06" izz="2.9824626e-06" ixy="0" ixz="0" iyz="0" />
+      <mass value="0.0082269514" />
+      <inertia ixx="2.5329873e-06" iyy="2.662285e-06" izz="1.0182165e-06" ixy="0" ixz="0" iyz="0" />
       <origin xyz="-0.012788045 0.0013741162 0.018800156" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="left_shoulder_yaw" type="fixed">
-    <origin xyz="0.055995025000000004 0.02778973027464769 -0.009527810430333267" rpy="1.5707963999999996 0.0 0.0" />
+  <joint name="R_Shoulder_Pitch" type="fixed">
+    <origin xyz="-0.05599497353346345 -0.009609990641140206 -0.009527810424981806" rpy="-1.5707963071795867 0.0 9.282041324443213e-08" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
-    <child link="Z-BOT2-MASTER-SHOULDER2_1" />
-    <limit effort="80" velocity="5" lower="-0.34906585" upper="1.2217305" />
+    <child link="Z-BOT2-MASTER-SHOULDER2_2" />
+    <limit effort="80" velocity="5" lower="0" upper="0" />
     <axis xyz="0 0 1" />
   </joint>
-  <link name="Z-BOT2-MASTER-SHOULDER2_1">
+  <link name="Z-BOT2-MASTER-SHOULDER2_2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Z-BOT2-MASTER-SHOULDER2_1.stl" />
+        <mesh filename="meshes/Z-BOT2-MASTER-SHOULDER2_2.stl" />
       </geometry>
-      <material name="Z-BOT2-MASTER-SHOULDER2_1_material">
+      <material name="Z-BOT2-MASTER-SHOULDER2_material_2">
         <color rgba="0.36470588 0.36078431 0.74901961 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/Z-BOT2-MASTER-SHOULDER2_1.stl" />
+        <mesh filename="meshes/Z-BOT2-MASTER-SHOULDER2_2.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.0240976" />
-      <inertia ixx="7.4193846e-06" iyy="7.798111e-06" izz="2.9824626e-06" ixy="0" ixz="0" iyz="0" />
-      <origin xyz="0.012788045 0.0013741162 0.018799844" rpy="0 0 0" />
+      <mass value="0.0082269514" />
+      <inertia ixx="2.5329873e-06" iyy="2.662285e-06" izz="1.0182165e-06" ixy="0" ixz="0" iyz="0" />
+      <origin xyz="-0.012788045 -0.0013741162 0.018799844" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="right_hip_roll" type="revolute">
-    <origin xyz="-0.043008175 0.007649730000000001 -0.1218181485" rpy="0.0 0.0 0.0" />
+  <joint name="L_Hip_Roll" type="revolute">
+    <origin xyz="0.04280822375832449 0.007735076030833816 -0.08441842862429541" rpy="3.1415926071795863 -2.220446049250313e-15 3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
-    <child link="U-HIP_1" />
+    <child link="U-HIP-L" />
     <limit effort="1.0" velocity="10" lower="-1.0472" upper="1.0472" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
-  <link name="U-HIP_1">
+  <link name="U-HIP-L">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/U-HIP_1.stl" />
+        <mesh filename="meshes/U-HIP-L.stl" />
       </geometry>
-      <material name="U-HIP_1_material">
-        <color rgba="0.49803922 0.49803922 0.49803922 1" />
+      <material name="U-HIP-L_material">
+        <color rgba="0.76862745 0.88627451 0.95294118 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/U-HIP_1.stl" />
+        <mesh filename="meshes/U-HIP-L.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.047132399" />
-      <inertia ixx="2.8702303e-05" iyy="2.9947457e-05" izz="1.8876006e-05" ixy="4.4073885e-06" ixz="8.0081775e-06" iyz="-3.8214685e-06" />
-      <origin xyz="-0.0011526894 -0.0043982909 0.0020038104" rpy="0 0 0" />
+      <mass value="0.016091061" />
+      <inertia ixx="9.8044336e-06" iyy="1.0218669e-05" izz="6.4442923e-06" ixy="1.5054452e-06" ixz="-2.7316437e-06" iyz="1.3095847e-06" />
+      <origin xyz="-0.0011606228 -0.0043962041 0.03539619" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="left_hip_roll" type="revolute">
-    <origin xyz="0.042868184999999996 0.007649730000000002 -0.1218181485" rpy="0.0 0.0 0.0" />
+  <joint name="R_Hip_Roll" type="revolute">
+    <origin xyz="-0.04286813624167551 0.007735076030833816 -0.08441842862429541" rpy="3.1415926071795863 -2.220446049250313e-15 3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
-    <child link="U-HIP" />
+    <child link="U-HIP-R" />
     <limit effort="1.0" velocity="10" lower="-1.0472" upper="1.0472" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
-  <link name="U-HIP">
+  <link name="U-HIP-R">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/U-HIP.stl" />
+        <mesh filename="meshes/U-HIP-R.stl" />
       </geometry>
-      <material name="U-HIP_material">
-        <color rgba="0.98039216 0.71372549 0.0039215686 1" />
+      <material name="U-HIP-R_material">
+        <color rgba="0.76862745 0.88627451 0.95294118 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/U-HIP.stl" />
+        <mesh filename="meshes/U-HIP-R.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.047132399" />
-      <inertia ixx="2.871821e-05" iyy="2.9931549e-05" izz="1.8876006e-05" ixy="-4.4096062e-06" ixz="-8.0012699e-06" iyz="-3.8359105e-06" />
-      <origin xyz="0.0011606228 -0.0043962041 0.0020038104" rpy="0 0 0" />
+      <mass value="0.016091061" />
+      <inertia ixx="9.8044336e-06" iyy="1.0218669e-05" izz="6.4442923e-06" ixy="-1.5054452e-06" ixz="2.7316437e-06" iyz="1.3095847e-06" />
+      <origin xyz="0.0011606228 -0.0043962041 0.03539619" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="right_shoulder_pitch" type="fixed">
-    <origin xyz="-0.019845 -0.0049 0.0188" rpy="0 1.5707963 0" />
+  <joint name="L_Shoulder_Roll" type="fixed">
+    <origin xyz="-0.019845 -0.0049 0.0188" rpy="-1.5707963 0 -1.5707963" />
     <parent link="Z-BOT2-MASTER-SHOULDER2" />
-    <child link="FK-AP-019-25T_11_5" />
-    <limit effort="80" velocity="5" lower="-3.1415927" upper="3.1415927" />
+    <child link="FK-AP-019-25T_11" />
+    <limit effort="80" velocity="5" lower="0" upper="0" />
     <axis xyz="0 0 1" />
   </joint>
-  <link name="FK-AP-019-25T_11_5">
+  <link name="FK-AP-019-25T_11">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/FK-AP-019-25T_11_5.stl" />
+        <mesh filename="meshes/FK-AP-019-25T_11.stl" />
       </geometry>
-      <material name="FK-AP-019-25T_11_5_material">
+      <material name="FK-AP-019-25T_11_material">
         <color rgba="0.74901961 0.49803922 0.7254902 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/FK-AP-019-25T_11_5.stl" />
+        <mesh filename="meshes/FK-AP-019-25T_11.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.1408833515" />
-      <inertia ixx="0.000154152345869379" iyy="4.662190992727495e-05" izz="0.00015595641799693116" ixy="-1.7464927229047775e-06" ixz="-6.464013679518296e-08" iyz="-9.229943166826548e-06" />
-      <origin xyz="-0.00023348251515803385 -0.028005716191538133 -0.019847135983077906" rpy="0 0 0" />
+      <mass value="0.14822332759999998" />
+      <inertia ixx="3.709762331781961e-05" iyy="0.00021277571545790143" izz="0.0002140900095725872" ixy="3.521209635374722e-06" ixz="4.421317667143704e-06" iyz="-5.143516341895591e-08" />
+      <origin xyz="0.0412811264582103 -0.0006580634966903457 -0.018485627595925685" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="left_shoulder_pitch" type="fixed">
-    <origin xyz="0.019845 -0.0049 0.0188" rpy="3.1415927 1.5707963 0" />
-    <parent link="Z-BOT2-MASTER-SHOULDER2_1" />
-    <child link="FK-AP-019-25T_11_16" />
-    <limit effort="80" velocity="5" lower="-3.1415927" upper="3.1415927" />
+  <joint name="R_Shoulder_Roll" type="fixed">
+    <origin xyz="-0.019845 0.0049 0.0188" rpy="1.5707963 0 1.5707963" />
+    <parent link="Z-BOT2-MASTER-SHOULDER2_2" />
+    <child link="FK-AP-019-25T_11_2" />
+    <limit effort="80" velocity="5" lower="0" upper="0" />
     <axis xyz="0 0 1" />
   </joint>
-  <link name="FK-AP-019-25T_11_16">
+  <link name="FK-AP-019-25T_11_2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/FK-AP-019-25T_11_16.stl" />
+        <mesh filename="meshes/FK-AP-019-25T_11_2.stl" />
       </geometry>
-      <material name="FK-AP-019-25T_11_16_material">
+      <material name="FK-AP-019-25T_11_material_2">
         <color rgba="0.74901961 0.49803922 0.7254902 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/FK-AP-019-25T_11_16.stl" />
+        <mesh filename="meshes/FK-AP-019-25T_11_2.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.1408833525" />
-      <inertia ixx="0.0001541573970382367" iyy="4.661886211407575e-05" izz="0.0001559562836540137" ixy="1.618632606853853e-06" ixz="-6.431525660223596e-08" iyz="9.211630122024593e-06" />
-      <origin xyz="-0.0002030806504241258 0.02800597229003001 -0.019844668159711042" rpy="0 0 0" />
+      <mass value="0.1482233276" />
+      <inertia ixx="3.709519749173821e-05" iyy="0.00021277535723548442" izz="0.00021408793703516085" ixy="-3.476317506575768e-06" ixz="4.362212169397791e-06" iyz="4.643080305604169e-08" />
+      <origin xyz="0.04128112623275346 0.000668589577342187 -0.018475606843300234" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="right_hip_yaw" type="revolute">
-    <origin xyz="-3.3737499e-05 0.018699632 -0.019" rpy="-1.5707963 0 0.0018041779" />
-    <parent link="U-HIP_1" />
-    <child link="WJ-DP00-0002-FK-AP-020_7_10" />
-    <limit effort="1.0" velocity="10" lower="-0.174533" upper="1.91986" />
+  <joint name="L_Hip_Yaw" type="revolute">
+    <origin xyz="0 0.018699662 0.0564" rpy="-1.5707963 0 0" />
+    <parent link="U-HIP-L" />
+    <child link="WJ-DP00-0002-FK-AP-020_7" />
+    <limit effort="1.0" velocity="10" lower="-1.91986" upper="0.174533" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
-  <link name="WJ-DP00-0002-FK-AP-020_7_10">
+  <link name="WJ-DP00-0002-FK-AP-020_7">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_10.stl" />
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7.stl" />
       </geometry>
-      <material name="WJ-DP00-0002-FK-AP-020_7_10_material">
+      <material name="WJ-DP00-0002-FK-AP-020_7_material">
         <color rgba="1 0 0 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_10.stl" />
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.045121525999999995" />
-      <inertia ixx="1.1467057931933392e-05" iyy="1.5408629936776894e-05" izz="1.596509642734979e-05" ixy="-1.2033215078969472e-08" ixz="-5.836884080803909e-10" iyz="-1.4417502452714832e-07" />
-      <origin xyz="0.012756102149950384 0.013603595612444223 -0.018547219129262164" rpy="0 0 0" />
+      <mass value="0.066367059" />
+      <inertia ixx="1.67996950693012e-05" iyy="2.3378736419143892e-05" izz="2.1847779128913976e-05" ixy="1.5042622256030773e-07" ixz="-1.5862531654188153e-08" iyz="3.373071203044659e-07" />
+      <origin xyz="0.01205753316807989 -0.0031696318131923975 -0.01912293141399788" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="left_hip_yaw" type="revolute">
-    <origin xyz="0 0.018699662 -0.019" rpy="-1.5707963 0 0" />
-    <parent link="U-HIP" />
-    <child link="SJ-WK00-0021TOPCABINETCASE_104_7" />
-    <limit effort="1.0" velocity="10" lower="-1.91986" upper="0.174533" />
-    <axis xyz="0 0 1" />
+  <joint name="R_Hip_Yaw" type="revolute">
+    <origin xyz="0 -0.018699662 0.0564" rpy="-1.5707963 0 0" />
+    <parent link="U-HIP-R" />
+    <child link="WJ-DP00-0002-FK-AP-020_7_2" />
+    <limit effort="1.0" velocity="10" lower="-0.174533" upper="1.91986" />
+    <axis xyz="0 0 -1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
-  <link name="SJ-WK00-0021TOPCABINETCASE_104_7">
+  <link name="WJ-DP00-0002-FK-AP-020_7_2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/SJ-WK00-0021TOPCABINETCASE_104_7.stl" />
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_2.stl" />
       </geometry>
-      <material name="SJ-WK00-0021TOPCABINETCASE_104_7_material">
+      <material name="WJ-DP00-0002-FK-AP-020_7_material_2">
+        <color rgba="1 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_2.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.066367059" />
+      <inertia ixx="1.6791146428802378e-05" iyy="2.3360804959479186e-05" izz="2.1857161922606146e-05" ixy="-1.5064663028147487e-07" ixz="1.1170095235928905e-08" iyz="2.3787362957845464e-07" />
+      <origin xyz="-0.012057533034462324 -0.0031472511307989886 0.017378334661612708" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="L_Hip_Pitch" type="revolute">
+    <origin xyz="-0.007399653999999995 -0.032 -0.017899999999999996" rpy="1.5707963 0.0 -1.5707963" />
+    <parent link="WJ-DP00-0002-FK-AP-020_7" />
+    <child link="WJ-DP00-0002-FK-AP-020_7_3" />
+    <limit effort="1.0" velocity="10" lower="-1.8326" upper="1.74533" />
+    <axis xyz="0 0 1" />
+  <dynamics damping="0.0" friction="0.0" /></joint>
+  <link name="WJ-DP00-0002-FK-AP-020_7_3">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_3.stl" />
+      </geometry>
+      <material name="WJ-DP00-0002-FK-AP-020_7_material_3">
+        <color rgba="1 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_3.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.091986251" />
+      <inertia ixx="2.5882417524313463e-05" iyy="8.89599969523953e-05" izz="7.883326606638047e-05" ixy="3.833049372687857e-06" ixz="1.7547432998562063e-06" iyz="-1.568911358441216e-07" />
+      <origin xyz="0.02880127148540462 -0.0015134756854695258 -0.017878699749289483" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="R_Hip_Pitch" type="revolute">
+    <origin xyz="0.007399655009421977 -0.03199999927137579 0.0188997194" rpy="-1.5707963 0.0 -1.5707963071795867" />
+    <parent link="WJ-DP00-0002-FK-AP-020_7_2" />
+    <child link="WJ-DP00-0002-FK-AP-020_7_4" />
+    <limit effort="1.0" velocity="10" lower="-1.74533" upper="1.8326" />
+    <axis xyz="0 0 1" />
+  <dynamics damping="0.0" friction="0.0" /></joint>
+  <link name="WJ-DP00-0002-FK-AP-020_7_4">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_4.stl" />
+      </geometry>
+      <material name="WJ-DP00-0002-FK-AP-020_7_material_4">
+        <color rgba="1 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_4.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.091986251" />
+      <inertia ixx="2.5878935943605884e-05" iyy="8.896103821562248e-05" izz="7.882874882275135e-05" ixy="-3.8079588540164983e-06" ixz="1.7590832578706518e-06" iyz="1.564822760317595e-07" />
+      <origin xyz="0.028801272089239004 0.0015296231250472238 -0.01788484938063362" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="L_Elbow_Pitch" type="fixed">
+    <origin xyz="0.09298379437380097 -0.01879971801611121 -0.018600374777602353" rpy="-1.570796346410206 -1.5707963071795867 0.0" />
+    <parent link="FK-AP-019-25T_11" />
+    <child link="R-ARM-1" />
+    <limit effort="80" velocity="5" lower="0" upper="0" />
+    <axis xyz="0 0 1" />
+  </joint>
+  <link name="R-ARM-1">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/R-ARM-1.stl" />
+      </geometry>
+      <material name="R-ARM-1_material">
         <color rgba="0.61568627 0.81176471 0.92941176 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/SJ-WK00-0021TOPCABINETCASE_104_7.stl" />
+        <mesh filename="meshes/R-ARM-1.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.045121527999999994" />
-      <inertia ixx="1.1457611381912953e-05" iyy="1.5408630337655687e-05" izz="1.5955650176462713e-05" ixy="1.2014078171850916e-08" ixz="5.836884809194242e-10" iyz="-1.4394573705090883e-07" />
-      <origin xyz="-0.012756102147506622 0.013611288248109579 -0.01854721915854193" rpy="0 0 0" />
+      <mass value="0.113768495" />
+      <inertia ixx="0.00011271331104463494" iyy="3.403271757707913e-05" izz="0.00010633241366588767" ixy="-8.014400695378506e-06" ixz="5.222298844598899e-07" iyz="2.310218341682604e-07" />
+      <origin xyz="-0.0017623733763005801 0.0562661596573799 0.01962829030968923" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="right_hip_pitch" type="revolute">
-    <origin xyz="0.0302 0.032000000747204306 -0.01869999899057799" rpy="-5.358979280578589e-08 1.5707962464102065 0.0" />
-    <parent link="WJ-DP00-0002-FK-AP-020_7_10" />
-    <child link="SJ-WK00-0023BOTTOMCASE_12_12" />
-    <limit effort="1.0" velocity="10" lower="-1.74533" upper="1.8326" />
-    <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
-  <link name="SJ-WK00-0023BOTTOMCASE_12_12">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/SJ-WK00-0023BOTTOMCASE_12_12.stl" />
-      </geometry>
-      <material name="SJ-WK00-0023BOTTOMCASE_12_12_material">
-        <color rgba="0.64705882 0.64705882 0.64705882 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/SJ-WK00-0023BOTTOMCASE_12_12.stl" />
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.120162816" />
-      <inertia ixx="0.00011119942912727132" iyy="4.35730718242839e-05" izz="9.230498641875082e-05" ixy="-1.79623990151393e-07" ixz="-4.136285963254142e-08" iyz="-5.096469771815035e-07" />
-      <origin xyz="0.0034131609150334845 0.04986381109293299 -0.018505154255758775" rpy="0 0 0" />
-    </inertial>
-  </link>
-  <joint name="left_hip_pitch" type="revolute">
-    <origin xyz="-0.0302 0.032000000747204306 -0.01869999899057799" rpy="1.5707963535897942 4.6410207010794124e-08 -1.5707963000000003" />
-    <parent link="SJ-WK00-0021TOPCABINETCASE_104_7" />
-    <child link="SJ-WK00-0023BOTTOMCASE_12_8" />
-    <limit effort="1.0" velocity="10" lower="-1.8326" upper="1.74533" />
-    <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
-  <link name="SJ-WK00-0023BOTTOMCASE_12_8">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/SJ-WK00-0023BOTTOMCASE_12_8.stl" />
-      </geometry>
-      <material name="SJ-WK00-0023BOTTOMCASE_12_8_material">
-        <color rgba="0.91764706 0.91764706 0.91764706 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/SJ-WK00-0023BOTTOMCASE_12_8.stl" />
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.120162817" />
-      <inertia ixx="4.357025950662993e-05" iyy="0.00011119425028208937" izz="9.230735635044803e-05" ixy="-1.925307505605285e-07" ixz="4.678129026675985e-08" iyz="8.74733170914427e-09" />
-      <origin xyz="-0.04986381088208059 -0.0034102765126529733 -0.018828274368304445" rpy="0 0 0" />
-    </inertial>
-  </link>
-  <joint name="right_elbow_yaw" type="fixed">
-    <origin xyz="0.018490802801497393 -0.09300556993952785 -0.018300660954374583" rpy="-0.0011742071795850747 -1.5707962301843608 0.0" />
-    <parent link="FK-AP-019-25T_11_5" />
+  <joint name="R_Elbow_Pitch" type="fixed">
+    <origin xyz="0.09298379516154365 0.018799715578725902 -0.018600375932454845" rpy="1.570796273205104 -1.570796288901191 0.0" />
+    <parent link="FK-AP-019-25T_11_2" />
     <child link="L-ARM_1" />
-    <limit effort="80" velocity="5" lower="-1.5707963" upper="2.0943951" />
+    <limit effort="80" velocity="5" lower="0" upper="0" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="L-ARM_1">
@@ -347,103 +376,74 @@
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.1697714245" />
-      <inertia ixx="0.00021755780858965086" iyy="5.684147661540873e-05" izz="0.00019930955688960046" ixy="2.226057384066212e-05" ixz="2.951381275395214e-06" iyz="9.428338905839929e-07" />
-      <origin xyz="0.001995818108992696 -0.051430034344113945 0.01968007371756068" rpy="0 0 0" />
+      <mass value="0.113768642" />
+      <inertia ixx="0.00011284147462546325" iyy="3.405835797976148e-05" izz="0.00010646436834818219" ixy="8.024847181600115e-06" ixz="5.785972862176867e-07" iyz="-5.479263618425482e-07" />
+      <origin xyz="-0.0017754677551559904 -0.05627134602260508 0.019583295830642812" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="left_elbow_yaw" type="fixed">
-    <origin xyz="0.01859999985563785 0.09298379323429216 -0.018300646603477883" rpy="-3.1415926071795846 1.570796230184361 0.0" />
-    <parent link="FK-AP-019-25T_11_16" />
-    <child link="R-ARM-1" />
-    <limit effort="80" velocity="5" lower="-2.0943951" upper="1.5707963" />
-    <axis xyz="0 0 1" />
-  </joint>
-  <link name="R-ARM-1">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/R-ARM-1.stl" />
-      </geometry>
-      <material name="R-ARM-1_material">
-        <color rgba="0.64705882 0.64705882 0.64705882 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/R-ARM-1.stl" />
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.1697709975" />
-      <inertia ixx="0.00021755050496273748" iyy="5.681362943667684e-05" izz="0.000199303219842173" ixy="-2.2260337516723314e-05" ixz="-2.9142963979352063e-06" iyz="1.301614138099032e-06" />
-      <origin xyz="-0.001997729758646413 -0.051430599921448085 0.019716604537413206" rpy="0 0 0" />
-    </inertial>
-  </link>
-  <joint name="right_knee_pitch" type="revolute">
-    <origin xyz="-0.010000010500000002 0.099999999 0.0004600000000000021" rpy="0.0 0.0 0.0" />
-    <parent link="SJ-WK00-0023BOTTOMCASE_12_12" />
-    <child link="SJ-WK00-0023BOTTOMCASE_12_13" />
+  <joint name="L_Knee_Pitch" type="revolute">
+    <origin xyz="0.10000000066047848 0.009999997542907974 -0.0002597236558159702" rpy="4.641020790984154e-08 4.641020678874952e-08 2.6469779601696886e-23" />
+    <parent link="WJ-DP00-0002-FK-AP-020_7_3" />
+    <child link="WJ-DP00-0002-FK-AP-020_7_5" />
     <limit effort="1.0" velocity="10" lower="-0.174533" upper="2.96706" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
-  <link name="SJ-WK00-0023BOTTOMCASE_12_13">
+  <link name="WJ-DP00-0002-FK-AP-020_7_5">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/SJ-WK00-0023BOTTOMCASE_12_13.stl" />
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_5.stl" />
       </geometry>
-      <material name="SJ-WK00-0023BOTTOMCASE_12_13_material">
-        <color rgba="0.97254902 0.52941176 0.0039215686 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/SJ-WK00-0023BOTTOMCASE_12_13.stl" />
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.081865261" />
-      <inertia ixx="6.925128911844195e-05" iyy="2.564087694951645e-05" izz="6.393044885037816e-05" ixy="-4.9242667199167035e-08" ixz="-3.7419804208227185e-14" iyz="-3.906674756829595e-12" />
-      <origin xyz="9.450092767628554e-05 0.049999853248664294 -0.01878722609840844" rpy="0 0 0" />
-    </inertial>
-  </link>
-  <joint name="left_knee_pitch" type="revolute">
-    <origin xyz="-0.1 0.010000000082118056 -5.999906019330356e-05" rpy="9.282041357749903e-08 0.0 0.0" />
-    <parent link="SJ-WK00-0023BOTTOMCASE_12_8" />
-    <child link="WJ-DP00-0002-FK-AP-020_7_8" />
-    <limit effort="1.0" velocity="10" lower="-0.174533" upper="2.96706" />
-    <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
-  <link name="WJ-DP00-0002-FK-AP-020_7_8">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_8.stl" />
-      </geometry>
-      <material name="WJ-DP00-0002-FK-AP-020_7_8_material">
+      <material name="WJ-DP00-0002-FK-AP-020_7_material_5">
         <color rgba="1 0 0 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_8.stl" />
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_5.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.081865261" />
-      <inertia ixx="3.116153540698499e-05" iyy="6.373062569385707e-05" izz="6.393044561015512e-05" ixy="-1.33551234220519e-05" ixz="-2.4237516126490235e-12" iyz="-1.0080231819719615e-12" />
-      <origin xyz="0.0467382333772487 0.01776321540186806 -0.01878722666189501" rpy="0 0 0" />
+      <mass value="0.1298739283" />
+      <inertia ixx="3.0079348382867383e-05" iyy="0.00020815533623079276" izz="0.00019860513275534965" ixy="5.65732688804165e-08" ixz="4.189905770550154e-07" iyz="-1.488363313445504e-10" />
+      <origin xyz="0.04999998795029383 1.5546816502597473e-09 -0.017494854035019106" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="right_gripper" type="fixed">
-    <origin xyz="-0.011451791834 -0.06635827004390536 0.037039996637536134" rpy="-3.1415925143591727 0.0 0.0" />
-    <parent link="L-ARM_1" />
+  <joint name="R_Knee_Pitch" type="revolute">
+    <origin xyz="0.10000000042471463 -0.00999999754290798 -0.00025971514418403357" rpy="4.641020790984154e-08 -4.641020678874952e-08 -2.6469779601696886e-23" />
+    <parent link="WJ-DP00-0002-FK-AP-020_7_4" />
+    <child link="WJ-DP00-0002-FK-AP-020_7_6" />
+    <limit effort="1.0" velocity="10" lower="-0.174533" upper="2.96706" />
+    <axis xyz="0 0 1" />
+  <dynamics damping="0.0" friction="0.0" /></joint>
+  <link name="WJ-DP00-0002-FK-AP-020_7_6">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_6.stl" />
+      </geometry>
+      <material name="WJ-DP00-0002-FK-AP-020_7_material_6">
+        <color rgba="1 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/WJ-DP00-0002-FK-AP-020_7_6.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1298739283" />
+      <inertia ixx="3.0132388073937516e-05" iyy="0.00020820837592186241" izz="0.0001986051327553494" ixy="5.65732400327035e-08" ixz="-9.166269716046277e-12" iyz="-7.591828552976823e-14" />
+      <origin xyz="0.04999998797128728 1.6483578938166268e-09 -0.017394839146368447" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="L_Hand_Pitch" type="fixed">
+    <origin xyz="-0.011778207168971242 0.06620574802540724 0.037339718524295344" rpy="-3.141592653589792 -4.641020678874952e-08 0.3490658" />
+    <parent link="R-ARM-1" />
     <child link="FINGER_1" />
-    <limit effort="80" velocity="5" lower="-0.34906585" upper="0.87266463" />
+    <limit effort="80" velocity="5" lower="0" upper="0" />
     <axis xyz="0 0 1" />
   </joint>
   <link name="FINGER_1">
@@ -463,72 +463,43 @@
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.045310716" />
-      <inertia ixx="2.353805518638389e-05" iyy="1.0427918195992692e-05" izz="1.6623371680484835e-05" ixy="2.7631121255331006e-06" ixz="1.7779555573406367e-12" iyz="-5.327199138027944e-11" />
-      <origin xyz="-0.011324313647822635 0.02905538636712616 0.01879948129171579" rpy="0 0 0" />
+      <mass value="0.022322296" />
+      <inertia ixx="1.060067630383204e-05" iyy="4.344197966285887e-06" izz="7.458542268938181e-06" ixy="9.355448433646859e-08" ixz="-4.315304836460205e-13" iyz="-3.347330952272503e-11" />
+      <origin xyz="-0.010724395664788779 -0.03346494500657079 0.018799715912314913" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="left_gripper" type="fixed">
-    <origin xyz="0.011451791834 -0.06635826991859772 0.03613999603753614" rpy="-3.1415925143591727 0.0 0.0" />
-    <parent link="R-ARM-1" />
-    <child link="FINGER_1_1" />
-    <limit effort="80" velocity="5" lower="-0.87266463" upper="0.34906585" />
+  <joint name="R_Hand_Pitch" type="fixed">
+    <origin xyz="-0.011778203442038957 -0.06620574861365118 0.037339718524295344" rpy="-3.141592653589792 4.6410207010794124e-08 -0.3490658" />
+    <parent link="L-ARM_1" />
+    <child link="FINGER_1_2" />
+    <limit effort="80" velocity="5" lower="0" upper="0" />
     <axis xyz="0 0 1" />
   </joint>
-  <link name="FINGER_1_1">
+  <link name="FINGER_1_2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/FINGER_1_1.stl" />
+        <mesh filename="meshes/FINGER_1_2.stl" />
       </geometry>
-      <material name="FINGER_1_1_material">
+      <material name="FINGER_1_material_2">
         <color rgba="0.62745098 0.62745098 0.62745098 1" />
       </material>
     </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh filename="meshes/FINGER_1_1.stl" />
+        <mesh filename="meshes/FINGER_1_2.stl" />
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.045310724000000004" />
-      <inertia ixx="2.3654746740030112e-05" iyy="1.0311233853059686e-05" izz="1.6623372091239476e-05" ixy="-2.4680723938859205e-06" ixz="6.52072194677929e-13" iyz="5.271762512268374e-11" />
-      <origin xyz="0.01067354339388106 0.02930069796239446 0.01879978865836815" rpy="0 0 0" />
+      <mass value="0.022322296" />
+      <inertia ixx="1.060067629421708e-05" iyy="4.3441979649728695e-06" izz="7.458542258011555e-06" ixy="-9.355453933978546e-08" ixz="3.676582852402543e-13" iyz="-3.344855064307933e-11" />
+      <origin xyz="-0.010724395403627135 0.03346494498372212 0.018799557996469728" rpy="0 0 0" />
     </inertial>
   </link>
-  <joint name="right_ankle_pitch" type="revolute">
-    <origin xyz="0.00018899753000000026 0.09999981929420682 1.3467926079924197e-09" rpy="-3.141592607179586 0.0 0.0" />
-    <parent link="SJ-WK00-0023BOTTOMCASE_12_13" />
-    <child link="FOOT_1" />
-    <limit effort="1.0" velocity="10" lower="-1.5708" upper="1.5708" />
-    <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.01" /></joint>
-  <link name="FOOT_1">
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/FOOT_1.stl" />
-      </geometry>
-      <material name="FOOT_1_material">
-        <color rgba="0.62745098 0.62745098 0.62745098 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry>
-        <mesh filename="meshes/FOOT_1.stl" />
-      </geometry>
-    </collision>
-    <inertial>
-      <mass value="0.096390725" />
-      <inertia ixx="2.3450069612523988e-05" iyy="6.978937423001742e-05" izz="5.959636251743274e-05" ixy="3.5264461980791924e-06" ixz="-3.268376253336344e-08" iyz="-5.740424757335317e-11" />
-      <origin xyz="0.013462410440043033 -0.023503500990304915 0.01869998738311388" rpy="0 0 0" />
-    </inertial>
-  </link>
-  <joint name="left_ankle_pitch" type="revolute">
-    <origin xyz="0.09347657200000001 0.03552647508420684 3.347702670630781e-11" rpy="-3.141592653589792 4.6410207010794124e-08 -1.5707963" />
-    <parent link="WJ-DP00-0002-FK-AP-020_7_8" />
+  <joint name="L_Ankle_Pitch" type="revolute">
+    <origin xyz="0.09999999987006428 3.364079596487879e-09 -0.0001999952684794198" rpy="-3.141592653589792 4.641020900919557e-08 1.5707964071795835" />
+    <parent link="WJ-DP00-0002-FK-AP-020_7_5" />
     <child link="FOOT" />
     <limit effort="1.0" velocity="10" lower="-1.5708" upper="1.5708" />
     <axis xyz="0 0 1" />
@@ -550,9 +521,38 @@
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.096390673" />
-      <inertia ixx="6.977577639142842e-05" iyy="2.3463517729235008e-05" izz="5.9596473720615954e-05" ixy="3.6145341830580945e-06" ixz="7.081236086336525e-12" iyz="-2.7596526130307363e-12" />
-      <origin xyz="-0.023529058880212384 0.013417697511934504 0.01869997826916326" rpy="0 0 0" />
+      <mass value="0.09495736199999999" />
+      <inertia ixx="1.5343513753539845e-05" iyy="7.007870367600065e-05" izz="6.20910573295403e-05" ixy="6.441604553393503e-07" ixz="-9.580632187529158e-13" iyz="-3.268115640137576e-13" />
+      <origin xyz="-0.015077854169254825 0.027835259208153267 0.018700000506988612" rpy="0 0 0" />
+    </inertial>
+  </link>
+  <joint name="R_Ankle_Pitch" type="revolute">
+    <origin xyz="0.09999999987006428 3.364079596487879e-09 4.731520579850934e-09" rpy="-3.141592560769378 -4.6410206566704915e-08 -1.5707963000000027" />
+    <parent link="WJ-DP00-0002-FK-AP-020_7_6" />
+    <child link="FOOT_2" />
+    <limit effort="1.0" velocity="10" lower="-1.5708" upper="1.5708" />
+    <axis xyz="0 0 1" />
+  <dynamics damping="0.0" friction="0.01" /></joint>
+  <link name="FOOT_2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/FOOT_2.stl" />
+      </geometry>
+      <material name="FOOT_material_2">
+        <color rgba="0.62745098 0.62745098 0.62745098 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="meshes/FOOT_2.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.09495736199999999" />
+      <inertia ixx="1.5343513115415027e-05" iyy="7.007870364497019e-05" izz="6.2091056660385e-05" ixy="-6.441628047314956e-07" ixz="9.580632264007358e-13" iyz="-3.2681143979281195e-13" />
+      <origin xyz="-0.015077853983675935 -0.02783525773689716 0.018699999493011384" rpy="0 0 0" />
     </inertial>
   </link>
 </robot>

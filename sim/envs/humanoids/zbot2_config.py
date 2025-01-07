@@ -127,8 +127,8 @@ class ZBot2Cfg(LeggedRobotCfg):
         name = "zbot2"
         file = str(robot_urdf_path(name))
 
-        foot_name = ["FOOT", "FOOT_1"]
-        knee_name = ["WJ-DP00-0002-FK-AP-020_7_8", "SJ-WK00-0023BOTTOMCASE_12_13"]
+        foot_name = ["FOOT", "FOOT_2"]
+        knee_name = ["WJ-DP00-0002-FK-AP-020_7_5", "WJ-DP00-0002-FK-AP-020_7_6"]
 
         termination_height = 0.1
         default_feet_height = 0.01
@@ -214,8 +214,8 @@ class ZBot2Cfg(LeggedRobotCfg):
         added_mass_range = [-0.25, 0.25]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.05
-        max_push_ang_vel = 0.1
+        max_push_vel_xy = 0.1
+        max_push_ang_vel = 0.2
         # dynamic randomization
         action_delay = 0.5
         action_noise = 0.02
