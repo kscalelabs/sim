@@ -4,7 +4,8 @@
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
   <default>
-    <joint limited="true" damping="5" armature="0.01" frictionloss="0.001" />
+    <joint limited="true" damping="0.01" armature="0.001" frictionloss="0.001" />
+    <position kp="17" kv="0.53" forcerange="-10 10"/>
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
     <motor ctrllimited="true" />
     <equality solref="0.001 2" />
@@ -138,20 +139,20 @@
   </worldbody>
 
   <actuator>
-    <motor name="left_hip_roll" joint="left_hip_roll" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="left_hip_yaw" joint="left_hip_yaw" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="left_hip_pitch" joint="left_hip_pitch" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="left_knee_pitch" joint="left_knee_pitch" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="left_ankle_pitch" joint="left_ankle_pitch" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="right_hip_roll" joint="right_hip_roll" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="right_hip_yaw" joint="right_hip_yaw" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="right_hip_pitch" joint="right_hip_pitch" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="right_knee_pitch" joint="right_knee_pitch" ctrllimited="true" ctrlrange="-40 40" />
-    <motor name="right_ankle_pitch" joint="right_ankle_pitch" ctrllimited="true" ctrlrange="-40 40" />
+    <position name="left_hip_roll" joint="left_hip_roll" inheritrange="1" />
+    <position name="left_hip_yaw" joint="left_hip_yaw"  inheritrange="1" />
+    <position name="left_hip_pitch" joint="left_hip_pitch"  inheritrange="1" />
+    <position name="left_knee_pitch" joint="left_knee_pitch"  inheritrange="1" />
+    <position name="left_ankle_pitch" joint="left_ankle_pitch"  inheritrange="1" />
+    <position name="right_hip_roll" joint="right_hip_roll"  inheritrange="1" />
+    <position name="right_hip_yaw" joint="right_hip_yaw"  inheritrange="1" />
+    <position name="right_hip_pitch" joint="right_hip_pitch"  inheritrange="1" />
+    <position name="right_knee_pitch" joint="right_knee_pitch"  inheritrange="1" />
+    <position name="right_ankle_pitch" joint="right_ankle_pitch"  inheritrange="1" />
   </actuator>
 
   <sensor>
-    <actuatorpos name="left_hip_roll_p" actuator="left_hip_roll" />
+    <!-- <actuatorpos name="left_hip_roll_p" actuator="left_hip_roll" />
     <actuatorvel name="left_hip_roll_v" actuator="left_hip_roll" />
     <actuatorfrc name="left_hip_roll_f" actuator="left_hip_roll" noise="0.001" />
     <actuatorpos name="left_hip_yaw_p" actuator="left_hip_yaw" />
@@ -180,7 +181,7 @@
     <actuatorfrc name="right_knee_pitch_f" actuator="right_knee_pitch" noise="0.001" />
     <actuatorpos name="right_ankle_pitch_p" actuator="right_ankle_pitch" />
     <actuatorvel name="right_ankle_pitch_v" actuator="right_ankle_pitch" />
-    <actuatorfrc name="right_ankle_pitch_f" actuator="right_ankle_pitch" noise="0.001" />
+    <actuatorfrc name="right_ankle_pitch_f" actuator="right_ankle_pitch" noise="0.001" /> -->
     <framequat name="orientation" objtype="site" noise="0.001" objname="imu" />
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
   </sensor>

@@ -1,6 +1,6 @@
 """Defines the environment configuration for the Getting up task"""
 
-# from kinfer import proto as P
+
 
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
@@ -28,6 +28,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
+        # from kinfer import proto as P
         # input_schema = P.IOSchema(
         #     values=[
         #         P.ValueSchema(

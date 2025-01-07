@@ -330,7 +330,7 @@ if __name__ == "__main__":
             sim_duration=10.0,
             dt=0.001,
             decimation=10,
-            tau_factor=2,
+            tau_factor=4,
             cycle_time=policy_cfg.cycle_time,
         )
 
