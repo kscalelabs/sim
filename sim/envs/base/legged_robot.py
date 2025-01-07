@@ -162,10 +162,10 @@ class LeggedRobot(BaseTask):
         if self.cfg.commands.curriculum and (self.common_step_counter % self.max_episode_length == 0):
             self.update_command_curriculum(env_ids)
 
-        # pfb30
         # Add noise to the PD gains
-        self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * 7
-        self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * 0.3
+        if self.cfg.domain_rand.randomize_pd_gains:
+            self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * 7
+            self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * 0.3
 
         # reset robot states
         self._reset_dofs(env_ids)
@@ -597,7 +597,6 @@ class LeggedRobot(BaseTask):
                 self.d_gains[:, i] = 0.0
                 raise ValueError(f"PD gain of joint {name} were not defined, setting them to zero")
 
-        # pfb30 Add noise to the PD gains
         self.original_p_gains = self.p_gains.clone()
         self.original_d_gains = self.d_gains.clone()
 

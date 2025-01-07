@@ -191,6 +191,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
+        use_projected_gravity = True
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
@@ -214,11 +215,12 @@ class ZBot2Cfg(LeggedRobotCfg):
         added_mass_range = [-0.25, 0.25]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.1
-        max_push_ang_vel = 0.2
+        max_push_vel_xy = 0.2
+        max_push_ang_vel = 0.4
         # dynamic randomization
         action_delay = 0.5
         action_noise = 0.02
+        randomize_pd_gains = False
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)

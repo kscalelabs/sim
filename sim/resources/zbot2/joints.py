@@ -76,19 +76,19 @@ class Arms(Node):
 
 
 class RightLeg(Node):
-    hip_roll = "right_hip_roll"
-    hip_yaw = "right_hip_yaw"
-    hip_pitch = "right_hip_pitch"
-    knee_pitch = "right_knee_pitch"
-    ankle_pitch = "right_ankle_pitch"
+    hip_roll = "R_Hip_Roll"
+    hip_yaw = "R_Hip_Yaw"
+    hip_pitch = "R_Hip_Pitch"
+    knee_pitch = "R_Knee_Pitch"
+    ankle_pitch = "R_Ankle_Pitch"
 
 
 class LeftLeg(Node):
-    hip_roll = "left_hip_roll"
-    hip_yaw = "left_hip_yaw"
-    hip_pitch = "left_hip_pitch"
-    knee_pitch = "left_knee_pitch"
-    ankle_pitch = "left_ankle_pitch"
+    hip_roll = "L_Hip_Roll"
+    hip_yaw = "L_Hip_Yaw"
+    hip_pitch = "L_Hip_Pitch"
+    knee_pitch = "L_Knee_Pitch"
+    ankle_pitch = "L_Ankle_Pitch"
 
 
 class Legs(Node):
@@ -110,15 +110,15 @@ class Robot(Node):
             # Left Leg
             cls.legs.left.hip_roll: 0.0,
             cls.legs.left.hip_yaw: 0.0,
-            cls.legs.left.hip_pitch: 0.296,
-            cls.legs.left.knee_pitch: 2.2,
-            cls.legs.left.ankle_pitch: 0.927,
+            cls.legs.left.hip_pitch: -0.377,
+            cls.legs.left.knee_pitch: 0.796,
+            cls.legs.left.ankle_pitch: 0.377,
             # Right Leg
             cls.legs.right.hip_roll: 0.0,
             cls.legs.right.hip_yaw: 0.0,
-            cls.legs.right.hip_pitch: -0.296,
-            cls.legs.right.knee_pitch: 0.579,
-            cls.legs.right.ankle_pitch: 0.283,
+            cls.legs.right.hip_pitch: 0.377,
+            cls.legs.right.knee_pitch: -0.796,
+            cls.legs.right.ankle_pitch: -0.377,
         }
 
     @classmethod
@@ -129,8 +129,8 @@ class Robot(Node):
             cls.legs.left.hip_roll: 0.0,
             cls.legs.left.hip_yaw: 0.0,
             cls.legs.left.hip_pitch: 0.0,
-            cls.legs.left.knee_pitch: 2.76,
-            cls.legs.left.ankle_pitch: 1.2,
+            cls.legs.left.knee_pitch: 0.0,
+            cls.legs.left.ankle_pitch: 0.0,
             # Right Leg
             cls.legs.right.hip_roll: 0.0,
             cls.legs.right.hip_yaw: 0.0,
@@ -153,60 +153,60 @@ class Robot(Node):
         """
         return {
             # Left side
-            cls.legs.left.hip_roll: {"lower": -1.0472, "upper": 1.0472},
-            cls.legs.left.hip_yaw: {"lower": -1.91986, "upper": 0.174533},
-            cls.legs.left.hip_pitch: {"lower": -1.8326, "upper": 1.74533},
-            cls.legs.left.knee_pitch: {"lower": -0.174533, "upper": 2.96706},
-            cls.legs.left.ankle_pitch: {"lower": -1.5708, "upper": 1.5708},
+            cls.legs.left.hip_roll: {"lower": -0.9, "upper": 0.9},
+            cls.legs.left.hip_yaw: {"lower": -0.9, "upper": 0.9},
+            cls.legs.left.hip_pitch: {"lower": -0.9, "upper": 0.9},
+            cls.legs.left.knee_pitch: {"lower": -0.9, "upper": 0.9},
+            cls.legs.left.ankle_pitch: {"lower": -0.9, "upper": 0.9},
             # Right side
-            cls.legs.right.hip_roll: {"lower": -1.0472, "upper": 1.0472},
-            cls.legs.right.hip_yaw: {"lower": -0.174533, "upper": 1.91986},
-            cls.legs.right.hip_pitch: {"lower": -1.74533, "upper": 1.8326},
-            cls.legs.right.knee_pitch: {"lower": -0.174533, "upper": 2.96706},
-            cls.legs.right.ankle_pitch: {"lower": -1.5708, "upper": 1.5708},
+            cls.legs.right.hip_roll: {"lower": -0.9, "upper": 0.9},
+            cls.legs.right.hip_yaw: {"lower": -0.9, "upper": 0.9},
+            cls.legs.right.hip_pitch: {"lower": -0.9, "upper": 0.9},
+            cls.legs.right.knee_pitch: {"lower": -0.9, "upper": 0.9},
+            cls.legs.right.ankle_pitch: {"lower": -0.9, "upper": 0.9},
         }
 
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 17.68,
-            "hip_yaw": 17.68,
-            "hip_roll": 17.68,
-            "knee_pitch": 17.68,
-            "ankle_pitch": 17.68,
+            "Hip_Pitch": 17.68,
+            "Hip_Yaw": 17.68,
+            "Hip_Roll": 17.68,
+            "Knee_Pitch": 17.68,
+            "Ankle_Pitch": 17.68,
         }
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 0.53,
-            "hip_yaw": 0.53,
-            "hip_roll": 0.53,
-            "knee_pitch": 0.53,
-            "ankle_pitch": 0.53,
+            "Hip_Pitch": 0.53,
+            "Hip_Yaw": 0.53,
+            "Hip_Roll": 0.53,
+            "Knee_Pitch": 0.53,
+            "Ankle_Pitch": 0.53,
         }
 
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 1.0,
-            "hip_yaw": 1.0,
-            "hip_roll": 1.0,
-            "knee_pitch": 1.0,
-            "ankle_pitch": 1.0,
+            "Hip_Pitch": 1.0,
+            "Hip_Yaw": 1.0,
+            "Hip_Roll": 1.0,
+            "Knee_Pitch": 1.0,
+            "Ankle_Pitch": 1.0,
         }
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "hip_pitch": 10,
-            "hip_yaw": 10,
-            "hip_roll": 10,
-            "knee_pitch": 10,
-            "ankle_pitch": 10,
+            "Hip_Pitch": 10,
+            "Hip_Yaw": 10,
+            "Hip_Roll": 10,
+            "Knee_Pitch": 10,
+            "Ankle_Pitch": 10,
         }
 
     @classmethod

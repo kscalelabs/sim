@@ -203,6 +203,12 @@ class ZBot2Env(LeggedRobot):
         dq = self.dof_vel * self.obs_scales.dof_vel
 
         diff = self.dof_pos - self.ref_dof_pos
+
+        if self.cfg.sim.use_projected_gravity:
+            observation_imu = self.projected_gravity.clone()
+        else:
+            observation_imu = self.base_euler_xyz.clone() * self.obs_scales.quat
+
         self.privileged_obs_buf = torch.cat(
             (
                 self.command_input,  # 2 + 3
@@ -212,7 +218,7 @@ class ZBot2Env(LeggedRobot):
                 diff,  # 12
                 self.base_lin_vel * self.obs_scales.lin_vel,  # 3
                 self.base_ang_vel * self.obs_scales.ang_vel,  # 3
-                self.base_euler_xyz * self.obs_scales.quat,  # 3
+                observation_imu,  # 3
                 self.rand_push_force[:, :2],  # 3
                 self.rand_push_torque,  # 3
                 self.env_frictions,  # 1
@@ -230,7 +236,7 @@ class ZBot2Env(LeggedRobot):
                 dq,  # 20D
                 self.actions,  # 20D
                 self.base_ang_vel * self.obs_scales.ang_vel,  # 3
-                self.base_euler_xyz * self.obs_scales.quat,  # 3
+                observation_imu,  # 3
             ),
             dim=-1,
         )
