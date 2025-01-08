@@ -139,9 +139,13 @@ class ZBot2Cfg(LeggedRobotCfg):
         replace_cylinder_with_capsule = False
         fix_base_link = False
 
+        # pfb30
+        friction = 0.013343597773929877
+        armature = 0.008793405204572328
+
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"
-        # mesh_type = 'trimesh'
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -191,7 +195,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
-        use_projected_gravity = True
+        use_projected_gravity = False
 
         class physx(LeggedRobotCfg.sim.physx):
             num_threads = 10
@@ -208,15 +212,15 @@ class ZBot2Cfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
+        start_pos_noise = 0.03
         randomize_friction = True
-        friction_range = [0.1, 2.0]
+        friction_range = [0.1, 1.5]
         randomize_base_mass = True
-        added_mass_range = [-0.25, 0.25]
+        added_mass_range = [-0.1, 0.1]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.2
-        max_push_ang_vel = 0.4
+        max_push_vel_xy = 0.05
+        max_push_ang_vel = 0.2
         # dynamic randomization
         action_delay = 0.5
         action_noise = 0.02
@@ -240,9 +244,10 @@ class ZBot2Cfg(LeggedRobotCfg):
         max_dist = 0.14
 
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.02  # m
-        cycle_time = 0.2  # sec
+        # pfb30
+        target_joint_pos_scale = 0.24  # rad
+        target_feet_height = 0.03  # m
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -252,17 +257,17 @@ class ZBot2Cfg(LeggedRobotCfg):
         class scales:
             # reference motion tracking
             joint_pos = 1.6
-            feet_clearance = 1.2
-            feet_contact_number = 1.2
-            feet_air_time = 1.2
-            foot_slip = -0.05
+            feet_clearance = 1.5
+            feet_contact_number = 1.5
+            feet_air_time = 1.4
+            foot_slip = -0.1
             feet_distance = 0.2
             knee_distance = 0.2
             # contact
             feet_contact_forces = -0.01
             # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
+            tracking_lin_vel = 1.6
+            tracking_ang_vel = 1.6
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 0.4
             track_vel_hard = 0.5
