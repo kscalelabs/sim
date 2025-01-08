@@ -1,6 +1,5 @@
-<?xml version="1.0" ?>
 <robot name="z-bot2_al_limits">
-  <link name="base">
+  <!-- <link name="base">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="0.001"/>
@@ -11,7 +10,7 @@
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="base"/>
     <child link="Z-BOT2_MASTER-BODY-SKELETON"/>
-  </joint>
+  </joint> -->
   <link name="Z-BOT2_MASTER-BODY-SKELETON">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>

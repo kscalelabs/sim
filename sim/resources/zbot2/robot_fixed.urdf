@@ -6,7 +6,7 @@
       <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
     </inertial>
   </link>
-  <joint name="floating_base" type="fixed">
+  <joint name="floating_base" type="floating">
     <origin rpy="0 0 0" xyz="0 0 0" />
     <parent link="base" />
     <child link="Z-BOT2_MASTER-BODY-SKELETON" />
