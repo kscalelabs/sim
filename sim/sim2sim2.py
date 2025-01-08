@@ -123,7 +123,7 @@ def run_mujoco(
     assert isinstance(model_info["robot_stiffness"], list)
     assert isinstance(model_info["robot_damping"], list)
 
-    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"] *4
+    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"]
     kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
     kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
 
@@ -224,6 +224,7 @@ def run_mujoco(
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
+            print(eu_ang)
             policy_output = policy(input_data)
             positions = policy_output["actions_scaled"]
             curr_actions = policy_output["actions"]
@@ -299,7 +300,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.05, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.15, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
