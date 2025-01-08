@@ -38,6 +38,7 @@ class ActorCfg:
     sim_dt: float  # Simulation time step
     sim_decimation: int  # Simulation decimation
     tau_factor: float  # Torque limit factor
+    use_projected_gravity: bool  # Use projected gravity as IMU observation
 
 
 class ActorCritic(nn.Module):
@@ -128,6 +129,7 @@ class Actor(nn.Module):
         self.clip_actions = cfg.clip_actions
 
         self.cycle_time = cfg.cycle_time
+        self.use_projected_gravity = cfg.use_projected_gravity
 
     def get_init_buffer(self) -> Tensor:
         return torch.zeros(self.num_observations)
@@ -188,6 +190,10 @@ class Actor(nn.Module):
         q = dof_pos * self.dof_pos_scale
         dq = dof_vel * self.dof_vel_scale
 
+        if self.use_projected_gravity:
+            imu_observation = imu_euler_xyz
+        else:
+            imu_observation = imu_euler_xyz * self.quat_scale
         # Construct new observation
         new_x = torch.cat(
             (
@@ -196,7 +202,7 @@ class Actor(nn.Module):
                 dq,
                 prev_actions,
                 imu_ang_vel * self.ang_vel_scale,
-                imu_euler_xyz * self.quat_scale,
+                imu_observation,
             ),
             dim=0,
         )

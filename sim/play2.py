@@ -24,9 +24,6 @@ from tqdm import tqdm
 from sim.env import run_dir
 from sim.envs import task_registry
 from sim.h5_logger import HDF5Logger
-from sim.model_export import ActorCfg, convert_model_to_onnx
-from sim.utils.helpers import get_args
-from sim.utils.logger import Logger
 
 import torch  # special case with isort: skip comment
 from sim.env import run_dir  # noqa: E402
@@ -64,7 +61,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.terrain.curriculum = False
     env_cfg.terrain.max_init_terrain_level = 5
     env_cfg.noise.add_noise = True
-    env_cfg.domain_rand.push_robots = True
+    env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.joint_angle_noise = 0.0
     env_cfg.noise.curriculum = False
     env_cfg.noise.noise_level = 0.5
@@ -108,6 +105,7 @@ def play(args: argparse.Namespace) -> None:
             frame_stack=env_cfg.env.frame_stack,
             clip_observations=env_cfg.normalization.clip_observations,
             clip_actions=env_cfg.normalization.clip_actions,
+            use_projected_gravity=env_cfg.sim.use_projected_gravity,
         )
 
         actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
@@ -186,7 +184,7 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
 
         if args.fix_command:
-            env.commands[:, 0] = 0.3
+            env.commands[:, 0] = 0.2
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
