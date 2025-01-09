@@ -9,7 +9,7 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
 )
 from sim.resources.zbot2.joints import Robot
 
-NUM_JOINTS = len(Robot.all_joints())  # 20
+NUM_JOINTS = len(Robot.all_joints())
 
 
 class ZBot2Cfg(LeggedRobotCfg):
@@ -20,7 +20,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         frame_stack = 15
         c_frame_stack = 3
         # num_single_obs = 11 + NUM_JOINTS * 3
-        num_single_obs = 9 + NUM_JOINTS * 3 # pfb30
+        num_single_obs = 8 + NUM_JOINTS * 3 # pfb30
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -242,11 +242,11 @@ class ZBot2Cfg(LeggedRobotCfg):
     class rewards:
         base_height_target = Robot.height
         min_dist = 0.07
-        max_dist = 0.2
+        max_dist = 0.14
 
         # put some settings here for LLM parameter tuning
         # pfb30
-        target_joint_pos_scale = 0.27  # rad
+        target_joint_pos_scale = 0.24  # rad
         target_feet_height = 0.03  # m
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)

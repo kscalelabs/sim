@@ -69,15 +69,39 @@ def quaternion_to_euler_array(quat: np.ndarray) -> np.ndarray:
     return np.array([roll_x, pitch_y, yaw_z])
 
 
+def get_gravity_orientation(quaternion):
+    """
+    Args:
+        quaternion: np.ndarray[float, float, float, float]
+    
+    Returns:
+        gravity_orientation: np.ndarray[float, float, float]
+    """
+    qw = quaternion[0]
+    qx = quaternion[1]
+    qy = quaternion[2]
+    qz = quaternion[3]
+
+    gravity_orientation = np.zeros(3)
+
+    gravity_orientation[0] = 2 * (-qz * qx + qw * qy)
+    gravity_orientation[1] = -2 * (qz * qy + qw * qx)
+    gravity_orientation[2] = 1 - 2 * (qw * qw + qz * qz)
+
+    return gravity_orientation
+
+
 def get_obs(data: mujoco.MjData) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Extracts an observation from the mujoco data structure"""
     q = data.qpos.astype(np.double)
     dq = data.qvel.astype(np.double)
     quat = data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double)
     r = R.from_quat(quat)
+    gvec = r.apply(np.array([0.0, 0.0, -1.0]), inverse=True).astype(np.double)
     v = r.apply(data.qvel[:3], inverse=True).astype(np.double)  # In the base frame
     omega = data.sensor("angular-velocity").data.astype(np.double)
-    gvec = r.apply(np.array([0.0, 0.0, -1.0]), inverse=True).astype(np.double)
+
+    # gvec = get_gravity_orientation(data.sensor("orientation").data)
     return (q, dq, quat, v, omega, gvec)
 
 
@@ -162,7 +186,7 @@ def run_mujoco(
         "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         # "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
-        "quat.1": np.zeros(4).astype(np.float32),
+        "projected_gravity.1": np.zeros(3).astype(np.float32),
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
 
@@ -220,13 +244,12 @@ def run_mujoco(
 
             input_data["prev_actions.1"] = prev_actions.astype(np.float32)
 
-            input_data["quat.1"] = quat.astype(np.float32)
+            input_data["projected_gravity.1"] = gvec.astype(np.float32)
             # input_data["imu_ang_vel.1"] = omega.astype(np.float32)
             # input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
-            print(quat)
             policy_output = policy(input_data)
             positions = policy_output["actions_scaled"]
             curr_actions = policy_output["actions"]
@@ -280,7 +303,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.15, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.3, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
