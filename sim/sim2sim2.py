@@ -303,7 +303,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.3, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.25, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
