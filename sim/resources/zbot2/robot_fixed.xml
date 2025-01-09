@@ -162,7 +162,6 @@
     <motor name="R_Knee_Pitch" joint="R_Knee_Pitch" ctrllimited="true" ctrlrange="-10 10" gear="1" />
     <motor name="R_Ankle_Pitch" joint="R_Ankle_Pitch" ctrllimited="true" ctrlrange="-10 10" gear="1" /> -->
  
- 
   </actuator>
 
   <sensor>

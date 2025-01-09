@@ -108,8 +108,9 @@ class Actor(nn.Module):
         self.frame_stack = cfg.frame_stack
 
         # 11 is the number of single observation features - 6 from IMU, 5 from command input
+        # 9 is the number of single observation features - 4 from IMU(quat), 5 from command input
         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        self.num_single_obs = 11 + self.num_actions * 3
+        self.num_single_obs = 9 + self.num_actions * 3 # pfb30
         self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.policy = policy
@@ -143,8 +144,8 @@ class Actor(nn.Module):
         dof_pos: Tensor,  # current angular position of the DoFs relative to default
         dof_vel: Tensor,  # current angular velocity of the DoFs
         prev_actions: Tensor,  # previous actions taken by the model
-        imu_ang_vel: Tensor,  # angular velocity of the IMU
-        imu_euler_xyz: Tensor,  # euler angles of the IMU
+        quat: Tensor,  # quaternion of the IMU
+        # imu_euler_xyz: Tensor,  # euler angles of the IMU
         buffer: Tensor,  # buffer of previous observations
     ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
@@ -190,10 +191,10 @@ class Actor(nn.Module):
         q = dof_pos * self.dof_pos_scale
         dq = dof_vel * self.dof_vel_scale
 
-        if self.use_projected_gravity:
-            imu_observation = imu_euler_xyz
-        else:
-            imu_observation = imu_euler_xyz * self.quat_scale
+        # if self.use_projected_gravity:
+        #     imu_observation = imu_euler_xyz
+        # else:
+        #     imu_observation = imu_euler_xyz * self.quat_scale
         # Construct new observation
         new_x = torch.cat(
             (
@@ -201,8 +202,9 @@ class Actor(nn.Module):
                 q,
                 dq,
                 prev_actions,
-                imu_ang_vel * self.ang_vel_scale,
-                imu_observation,
+                quat
+                # imu_ang_vel * self.ang_vel_scale,
+                # imu_observation,
             ),
             dim=0,
         )
@@ -248,10 +250,10 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     dof_pos = torch.randn(a_model.num_actions)
     dof_vel = torch.randn(a_model.num_actions)
     prev_actions = torch.randn(a_model.num_actions)
-    imu_ang_vel = torch.randn(3)
-    imu_euler_xyz = torch.randn(3)
+    quat = torch.randn(4)
+    # imu_euler_xyz = torch.randn(3)
     buffer = a_model.get_init_buffer()
-    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, imu_ang_vel, imu_euler_xyz, buffer)
+    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, quat, buffer)
 
     jit_model = torch.jit.script(a_model)
 

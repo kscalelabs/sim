@@ -235,8 +235,10 @@ class ZBot2Env(LeggedRobot):
                 q,  # 20D
                 dq,  # 20D
                 self.actions,  # 20D
-                self.base_ang_vel * self.obs_scales.ang_vel,  # 3
-                observation_imu,  # 3
+                # pfb30
+                self.base_quat, # 4
+                # self.base_ang_vel * self.obs_scales.ang_vel,  # 3
+                # observation_imu,  # 3
             ),
             dim=-1,
         )

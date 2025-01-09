@@ -160,8 +160,9 @@ def run_mujoco(
         "dof_pos.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "dof_vel.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
-        "imu_ang_vel.1": np.zeros(3).astype(np.float32),
-        "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
+        # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
+        # "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
+        "quat.1": np.zeros(4).astype(np.float32),
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
 
@@ -191,8 +192,8 @@ def run_mujoco(
         q = q[-model_info["num_actions"] :]
         dq = dq[-model_info["num_actions"] :]
 
-        eu_ang = quaternion_to_euler_array(quat)
-        eu_ang[eu_ang > math.pi] -= 2 * math.pi
+        # eu_ang = quaternion_to_euler_array(quat)
+        # eu_ang[eu_ang > math.pi] -= 2 * math.pi
 
         # eu_ang = np.array([0.0, 0.0, 0.0])
         # omega = np.array([0.0, 0.0, 0.0])
@@ -219,40 +220,19 @@ def run_mujoco(
 
             input_data["prev_actions.1"] = prev_actions.astype(np.float32)
 
-            input_data["imu_ang_vel.1"] = omega.astype(np.float32)
-            input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
+            input_data["quat.1"] = quat.astype(np.float32)
+            # input_data["imu_ang_vel.1"] = omega.astype(np.float32)
+            # input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
-            print(eu_ang)
+            print(quat)
             policy_output = policy(input_data)
             positions = policy_output["actions_scaled"]
             curr_actions = policy_output["actions"]
             hist_obs = policy_output["x.3"]
 
             target_q = positions
-
-            if log_h5:
-                logger.log_data(
-                    {
-                        "t": np.array([count_lowlevel * model_info["sim_dt"]], dtype=np.float32),
-                        "2D_command": np.array(
-                            [
-                                np.sin(2 * math.pi * count_lowlevel * model_info["sim_dt"] / model_info["cycle_time"]),
-                                np.cos(2 * math.pi * count_lowlevel * model_info["sim_dt"] / model_info["cycle_time"]),
-                            ],
-                            dtype=np.float32,
-                        ),
-                        "3D_command": np.array([x_vel_cmd, y_vel_cmd, yaw_vel_cmd], dtype=np.float32),
-                        "joint_pos": cur_pos_obs.astype(np.float32),
-                        "joint_vel": cur_vel_obs.astype(np.float32),
-                        "prev_actions": prev_actions.astype(np.float32),
-                        "curr_actions": curr_actions.astype(np.float32),
-                        "ang_vel": omega.astype(np.float32),
-                        "euler_rotation": eu_ang.astype(np.float32),
-                        "buffer": hist_obs.astype(np.float32),
-                    }
-                )
 
             prev_actions = curr_actions
 
