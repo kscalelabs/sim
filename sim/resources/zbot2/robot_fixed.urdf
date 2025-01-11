@@ -1,5 +1,5 @@
 <robot name="z-bot2_al_limits">
-  <link name="base">
+   <link name="base">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <mass value="0.001" />
@@ -95,9 +95,9 @@
     <origin xyz="0.04280822375832449 0.007735076030833816 -0.08441842862429541" rpy="3.1415926071795863 -2.220446049250313e-15 3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="U-HIP-L" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-0.7" upper="0.7" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="U-HIP-L">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -124,9 +124,9 @@
     <origin xyz="-0.04286813624167551 0.007735076030833816 -0.08441842862429541" rpy="3.1415926071795863 -2.220446049250313e-15 3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="U-HIP-R" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-0.7" upper="0.7" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="U-HIP-R">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -211,9 +211,9 @@
     <origin xyz="0 0.018699662 0.0564" rpy="-1.5707963 0 0" />
     <parent link="U-HIP-L" />
     <child link="WJ-DP00-0002-FK-AP-020_7" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-1.54" upper="0.157" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="WJ-DP00-0002-FK-AP-020_7">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -240,9 +240,9 @@
     <origin xyz="0 -0.018699662 0.0564" rpy="-1.5707963 0 0" />
     <parent link="U-HIP-R" />
     <child link="WJ-DP00-0002-FK-AP-020_7_2" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-1.54" upper="0.157" />
     <axis xyz="0 0 -1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="WJ-DP00-0002-FK-AP-020_7_2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -269,9 +269,9 @@
     <origin xyz="-0.007399653999999995 -0.032 -0.017899999999999996" rpy="1.5707963 0.0 -1.5707963" />
     <parent link="WJ-DP00-0002-FK-AP-020_7" />
     <child link="WJ-DP00-0002-FK-AP-020_7_3" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-1.54" upper="1.0" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="WJ-DP00-0002-FK-AP-020_7_3">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -298,9 +298,9 @@
     <origin xyz="0.007399655009421977 -0.03199999927137579 0.0188997194" rpy="-1.5707963 0.0 -1.5707963071795867" />
     <parent link="WJ-DP00-0002-FK-AP-020_7_2" />
     <child link="WJ-DP00-0002-FK-AP-020_7_4" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-1.0" upper="1.54" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="WJ-DP00-0002-FK-AP-020_7_4">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -385,9 +385,9 @@
     <origin xyz="0.10000000066047848 0.009999997542907974 -0.0002597236558159702" rpy="4.641020790984154e-08 4.641020678874952e-08 2.6469779601696886e-23" />
     <parent link="WJ-DP00-0002-FK-AP-020_7_3" />
     <child link="WJ-DP00-0002-FK-AP-020_7_5" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="0" upper="1.57" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="WJ-DP00-0002-FK-AP-020_7_5">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -414,9 +414,9 @@
     <origin xyz="0.10000000042471463 -0.00999999754290798 -0.00025971514418403357" rpy="4.641020790984154e-08 -4.641020678874952e-08 -2.6469779601696886e-23" />
     <parent link="WJ-DP00-0002-FK-AP-020_7_4" />
     <child link="WJ-DP00-0002-FK-AP-020_7_6" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-1.57" upper="0" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.0" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="WJ-DP00-0002-FK-AP-020_7_6">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -501,7 +501,7 @@
     <origin xyz="0.09999999987006428 3.364079596487879e-09 -0.0001999952684794198" rpy="-3.141592653589792 4.641020900919557e-08 1.5707964071795835" />
     <parent link="WJ-DP00-0002-FK-AP-020_7_5" />
     <child link="FOOT" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-0.9" upper="0.9" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="FOOT">
@@ -530,7 +530,7 @@
     <origin xyz="0.09999999987006428 3.364079596487879e-09 4.731520579850934e-09" rpy="-3.141592560769378 -4.6410206566704915e-08 -1.5707963000000027" />
     <parent link="WJ-DP00-0002-FK-AP-020_7_6" />
     <child link="FOOT_2" />
-    <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
+    <limit effort="3.0" velocity="15" lower="-0.9" upper="0.9" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="FOOT_2">
