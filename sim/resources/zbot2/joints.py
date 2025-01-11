@@ -214,8 +214,8 @@ class Robot(Node):
         """Example friction dictionary for certain joints."""
         # Usually you'd have more specific friction values or a model.
         return {
-            cls.legs.left.ankle_pitch: 0.01,
-            cls.legs.right.ankle_pitch: 0.01,
+            cls.legs.left.ankle_pitch: 0.1,
+            cls.legs.right.ankle_pitch: 0.1,
             # etc...
         }
 

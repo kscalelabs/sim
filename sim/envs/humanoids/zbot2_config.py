@@ -242,7 +242,7 @@ class ZBot2Cfg(LeggedRobotCfg):
     class rewards:
         base_height_target = Robot.height
         min_dist = 0.07
-        max_dist = 0.14
+        max_dist = 0.25
 
         # put some settings here for LLM parameter tuning
         # pfb30
@@ -274,7 +274,7 @@ class ZBot2Cfg(LeggedRobotCfg):
             track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 1.0
+            default_joint_pos = 0.5
             orientation = 1
             base_height = 0.2
             base_acc = 0.2

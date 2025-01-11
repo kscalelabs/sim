@@ -4,8 +4,8 @@
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
   <default>
-    <joint limited="true" damping="0.01" armature="0.008" frictionloss="0.00001" />
-    <position kp="17" kv="0.5" forcerange="-10 10"/>
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01" />
+    <!-- <position kp="17" kv="0.5" forcerange="-10 10"/> -->
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
     <motor ctrllimited="true" />
     <equality solref="0.001 2" />
@@ -139,7 +139,7 @@
   <actuator>
     
 
-    <position name="L_Hip_Roll" joint="L_Hip_Roll" inheritrange="1" />
+    <!-- <position name="L_Hip_Roll" joint="L_Hip_Roll" inheritrange="1" />
     <position name="L_Hip_Yaw" joint="L_Hip_Yaw" inheritrange="1" />
     <position name="L_Hip_Pitch" joint="L_Hip_Pitch" inheritrange="1" />
     <position name="L_Knee_Pitch" joint="L_Knee_Pitch" inheritrange="1" />
@@ -149,8 +149,8 @@
     <position name="R_Hip_Pitch" joint="R_Hip_Pitch" inheritrange="1" />
     <position name="R_Knee_Pitch" joint="R_Knee_Pitch" inheritrange="1" />
     <position name="R_Ankle_Pitch" joint="R_Ankle_Pitch" inheritrange="1" /> 
-   
-<!-- 
+    -->
+
     <motor name="L_Hip_Roll" joint="L_Hip_Roll" ctrllimited="true" ctrlrange="-10 10" gear="1" />
     <motor name="L_Hip_Yaw" joint="L_Hip_Yaw" ctrllimited="true" ctrlrange="-10 10" gear="1" />
     <motor name="L_Hip_Pitch" joint="L_Hip_Pitch" ctrllimited="true" ctrlrange="-10 10" gear="1" />
@@ -160,7 +160,7 @@
     <motor name="R_Hip_Yaw" joint="R_Hip_Yaw" ctrllimited="true" ctrlrange="-10 10" gear="1" />
     <motor name="R_Hip_Pitch" joint="R_Hip_Pitch" ctrllimited="true" ctrlrange="-10 10" gear="1" />
     <motor name="R_Knee_Pitch" joint="R_Knee_Pitch" ctrllimited="true" ctrlrange="-10 10" gear="1" />
-    <motor name="R_Ankle_Pitch" joint="R_Ankle_Pitch" ctrllimited="true" ctrlrange="-10 10" gear="1" /> -->
+    <motor name="R_Ankle_Pitch" joint="R_Ankle_Pitch" ctrllimited="true" ctrlrange="-10 10" gear="1" />
  
   </actuator>
 

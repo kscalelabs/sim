@@ -503,7 +503,7 @@
     <child link="FOOT" />
     <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.01" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="FOOT">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -532,7 +532,7 @@
     <child link="FOOT_2" />
     <limit effort="3.0" velocity="10" lower="-0.9" upper="0.9" />
     <axis xyz="0 0 1" />
-  <dynamics damping="0.0" friction="0.01" /></joint>
+  <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="FOOT_2">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />

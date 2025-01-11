@@ -158,7 +158,7 @@ def run_mujoco(
     except:
         print("No default position found, using zero initialization")
         default = np.zeros(model_info["num_actions"])  # 3 for pos, 4 for quat, cfg.num_actions for joints
-    default += np.random.uniform(-0.03, 0.03, size=default.shape)
+    # default += np.random.uniform(-0.03, 0.03, size=default.shape)
     print("Default position:", default)
     mujoco.mj_step(model, data)
     for ii in range(len(data.ctrl) + 1):
@@ -303,7 +303,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.3, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.15, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
