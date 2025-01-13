@@ -5,7 +5,7 @@
 
   <default>
     <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01" />
-    <!-- <position kp="17" kv="0.5" forcerange="-10 10"/> -->
+    <position kp="10" kv="1" forcerange="-10 10"/>
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
     <motor ctrllimited="true" />
     <equality solref="0.001 2" />
@@ -15,119 +15,95 @@
   </default>
 
   <asset>
-    <mesh name="Z-BOT2_MASTER-BODY-SKELETON" file="Z-BOT2_MASTER-BODY-SKELETON.stl" />
-    <mesh name="Z-BOT2-MASTER-SHOULDER2" file="Z-BOT2-MASTER-SHOULDER2.stl" />
-    <mesh name="Z-BOT2-MASTER-SHOULDER2_2" file="Z-BOT2-MASTER-SHOULDER2_2.stl" />
-    <mesh name="U-HIP-L" file="U-HIP-L.stl" />
-    <mesh name="U-HIP-R" file="U-HIP-R.stl" />
-    <mesh name="FK-AP-019-25T_11" file="FK-AP-019-25T_11.stl" />
-    <mesh name="FK-AP-019-25T_11_2" file="FK-AP-019-25T_11_2.stl" />
-    <mesh name="WJ-DP00-0002-FK-AP-020_7" file="WJ-DP00-0002-FK-AP-020_7.stl" />
-    <mesh name="WJ-DP00-0002-FK-AP-020_7_2" file="WJ-DP00-0002-FK-AP-020_7_2.stl" />
-    <mesh name="WJ-DP00-0002-FK-AP-020_7_3" file="WJ-DP00-0002-FK-AP-020_7_3.stl" />
-    <mesh name="WJ-DP00-0002-FK-AP-020_7_4" file="WJ-DP00-0002-FK-AP-020_7_4.stl" />
-    <mesh name="R-ARM-1" file="R-ARM-1.stl" />
-    <mesh name="L-ARM_1" file="L-ARM_1.stl" />
-    <mesh name="WJ-DP00-0002-FK-AP-020_7_5" file="WJ-DP00-0002-FK-AP-020_7_5.stl" />
-    <mesh name="WJ-DP00-0002-FK-AP-020_7_6" file="WJ-DP00-0002-FK-AP-020_7_6.stl" />
-    <mesh name="FINGER_1" file="FINGER_1.stl" />
-    <mesh name="FINGER_1_2" file="FINGER_1_2.stl" />
-    <mesh name="FOOT" file="FOOT.stl" />
-    <mesh name="FOOT_2" file="FOOT_2.stl" />
-    <texture name="texplane" type="2d" builtin="checker" rgb1=".0 .0 .0" rgb2=".8 .8 .8" width="100" height="100" />
+    <mesh name="Z-BOT2_MASTER-BODY-SKELETON" file="Z-BOT2_MASTER-BODY-SKELETON.stl"/>
+    <mesh name="Z-BOT2-MASTER-SHOULDER2" file="Z-BOT2-MASTER-SHOULDER2.stl"/>
+    <mesh name="Z-BOT2-MASTER-SHOULDER2_2" file="Z-BOT2-MASTER-SHOULDER2_2.stl"/>
+    <mesh name="U-HIP-L" file="U-HIP-L.stl"/>
+    <mesh name="U-HIP-R" file="U-HIP-R.stl"/>
+    <mesh name="3215_1Flange" file="3215_1Flange.stl"/>
+    <mesh name="3215_1Flange_2" file="3215_1Flange_2.stl"/>
+    <mesh name="3215_BothFlange" file="3215_BothFlange.stl"/>
+    <mesh name="3215_BothFlange_2" file="3215_BothFlange_2.stl"/>
+    <mesh name="3215_BothFlange_3" file="3215_BothFlange_3.stl"/>
+    <mesh name="3215_BothFlange_4" file="3215_BothFlange_4.stl"/>
+    <mesh name="R-ARM-MIRROR-1" file="R-ARM-MIRROR-1.stl"/>
+    <mesh name="L-ARM-MIRROR_1" file="L-ARM-MIRROR_1.stl"/>
+    <mesh name="3215_BothFlange_5" file="3215_BothFlange_5.stl"/>
+    <mesh name="3215_BothFlange_6" file="3215_BothFlange_6.stl"/>
+    <mesh name="FINGER_1" file="FINGER_1.stl"/>
+    <mesh name="FINGER_1_2" file="FINGER_1_2.stl"/>
+    <mesh name="FOOT" file="FOOT.stl"/>
+    <mesh name="FOOT_2" file="FOOT_2.stl"/>
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".0 .0 .0" rgb2=".8 .8 .8" width="100" height="100" />
     <material name="matplane" reflectance="0." texture="texplane" texrepeat="1 1" texuniform="true" />
     <material name="visualgeom" rgba="0.5 0.9 0.2 1" />
   </asset>
 
   <worldbody>
-    <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
+      <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
     <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15" />
-    <camera name="fixed" pos="0 -3.0 0.673617" xyaxes="1 0 0 0 0 1" />
-    <camera name="track" mode="trackcom" pos="0 -3.0 0.673617" xyaxes="1 0 0 0 0 1" />
-    <!-- <camera name="left_eye" pos="0 0 1" euler="180 0 0" fovy="196" />
-    <camera name="right_eye" pos="0 0 1" euler="180 0 0" fovy="196" /> -->
-    <body name="root" pos="0 0 0" quat="1 0 0 0">
+    <camera name="fixed" pos="0 -3.0 0.5" xyaxes="1 0 0 0 0 1" />
+    <camera name="track" mode="trackcom" pos="0 -3.0 0.5" xyaxes="1 0 0 0 0 1" />
+
+    <body name="Z-BOT2_MASTER-BODY-SKELETON">
       <freejoint name="root" />
-      
-      <site name="imu" size="0.01" />
-      
-      <body name="Z-BOT2_MASTER-BODY-SKELETON">
-        <inertial pos="-0.000122819 0.009831 -0.0654614" quat="0.485488 0.514835 0.518927 0.479543" mass="1.59065" diaginertia="0.0129269 0.00716721 0.00694406" />
-        <geom type="mesh" rgba="0.494118 0.623529 0.74902 1" mesh="Z-BOT2_MASTER-BODY-SKELETON" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.494118 0.623529 0.74902 1" mesh="Z-BOT2_MASTER-BODY-SKELETON" />
-        <geom pos="0.055995 -0.00960999 -0.00952781" quat="1.64085e-08 1.64085e-08 -0.707107 -0.707107" type="mesh" rgba="0.364706 0.360784 0.74902 1" mesh="Z-BOT2-MASTER-SHOULDER2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.364706 0.360784 0.74902 1" mesh="Z-BOT2-MASTER-SHOULDER2" pos="0.055995 -0.00960999 -0.00952781" quat="1.64085e-08 1.64085e-08 -0.707107 -0.707107" />
-        <geom pos="0.07584 0.00919001 -0.0144278" quat="3.2817e-08 0.707107 -1.89469e-08 -0.707107" type="mesh" rgba="0.74902 0.498039 0.72549 1" mesh="FK-AP-019-25T_11" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.74902 0.498039 0.72549 1" mesh="FK-AP-019-25T_11" pos="0.07584 0.00919001 -0.0144278" quat="3.2817e-08 0.707107 -1.89469e-08 -0.707107" />
-        <geom pos="0.0944404 0.0279897 -0.107412" quat="4.39669e-09 -9.47343e-09 0.707107 -0.707107" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="R-ARM-1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="R-ARM-1" pos="0.0944404 0.0279897 -0.107412" quat="4.39669e-09 -9.47343e-09 0.707107 -0.707107" />
-        <geom pos="0.106219 -0.00935 -0.173617" quat="0.122788 -0.122788 0.696364 0.696364" type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FINGER_1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FINGER_1" pos="0.106219 -0.00935 -0.173617" quat="0.122788 -0.122788 0.696364 0.696364" />
-        <geom pos="-0.055995 -0.00960999 -0.00952781" quat="0.707107 -0.707107 -3.2817e-08 3.2817e-08" type="mesh" rgba="0.364706 0.360784 0.74902 1" mesh="Z-BOT2-MASTER-SHOULDER2_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.364706 0.360784 0.74902 1" mesh="Z-BOT2-MASTER-SHOULDER2_2" pos="-0.055995 -0.00960999 -0.00952781" quat="0.707107 -0.707107 -3.2817e-08 3.2817e-08" />
-        <geom pos="-0.07584 0.00919001 -0.0144278" quat="0.707107 -3.53553e-08 0.707107 4.92255e-08" type="mesh" rgba="0.74902 0.498039 0.72549 1" mesh="FK-AP-019-25T_11_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.74902 0.498039 0.72549 1" mesh="FK-AP-019-25T_11_2" pos="-0.07584 0.00919001 -0.0144278" quat="0.707107 -3.53553e-08 0.707107 4.92255e-08" />
-        <geom pos="-0.0944404 0.0279897 -0.107412" quat="0.707107 0.707107 4.62144e-08 3.83664e-08" type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="L-ARM_1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="L-ARM_1" pos="-0.0944404 0.0279897 -0.107412" quat="0.707107 0.707107 4.62144e-08 3.83664e-08" />
-        <geom pos="-0.106219 -0.00935 -0.173617" quat="0.696364 -0.696364 0.122788 0.122788" type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FINGER_1_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FINGER_1_2" pos="-0.106219 -0.00935 -0.173617" quat="0.696364 -0.696364 0.122788 0.122788" />
-        <body name="U-HIP-L" pos="0.0428082 0.00773508 -0.0844184" quat="0 2.32051e-08 1 2.32051e-08">
-          <inertial pos="-0.00116062 -0.0043962 0.0353962" quat="0.921476 0.220762 0.207667 0.242942" mass="0.0160911" diaginertia="1.17706e-05 1.0383e-05 4.31372e-06" />
-          <joint name="L_Hip_Roll" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" />
-          <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="U-HIP-L" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-          <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="U-HIP-L" />
-          <body name="WJ-DP00-0002-FK-AP-020_7" pos="0 0.0186997 0.0564" quat="0.707107 -0.707107 0 0">
-            <inertial pos="0.0120575 -0.00316963 -0.0191229" quat="0.453064 0.552765 0.438304 0.545044" mass="0.0663671" diaginertia="2.34529e-05 2.17772e-05 1.67961e-05" />
-            <joint name="L_Hip_Yaw" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" />
-            <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-            <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7" />
-            <body name="WJ-DP00-0002-FK-AP-020_7_3" pos="-0.00739965 -0.032 -0.0179" quat="0.5 0.5 -0.5 -0.5">
-              <inertial pos="0.0288013 -0.00151348 -0.0178787" quat="0.507479 0.522125 0.493877 0.475328" mass="0.0919863" diaginertia="8.91923e-05 7.88913e-05 2.55921e-05" />
-              <joint name="L_Hip_Pitch" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" />
-              <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_3" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-              <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_3" />
-              <body name="WJ-DP00-0002-FK-AP-020_7_5" pos="0.1 0.01 -0.000259724" quat="1 2.32051e-08 2.32051e-08 0">
-                <inertial pos="0.05 1.55468e-09 -0.0174949" quat="0.499458 0.5007 0.500542 0.499299" mass="0.129874" diaginertia="0.000208155 0.000198606 3.00783e-05" />
-                <joint name="L_Knee_Pitch" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" />
-                <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_5" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-                <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_5" />
-                <body name="FOOT" pos="0.1 3.36408e-09 -0.000199995" quat="-1.64085e-08 -0.707107 -0.707107 1.64085e-08">
-                  <inertial pos="-0.0150779 0.0278353 0.0187" quat="0.502933 0.502933 0.49705 0.49705" mass="0.0949574" diaginertia="7.00863e-05 6.20911e-05 1.53359e-05" />
-                  <joint name="L_Ankle_Pitch" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" frictionloss="0.01" />
-                  <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FOOT" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-                  <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FOOT" />
-                </body>
+      <site name="imu" size="0.01" pos="0 0 0" />
+      <inertial pos="-8.68153e-05 0.00960053 -0.0589276" quat="0.707354 -0.00845854 0.000660632 0.706809" mass="2.42118" diaginertia="0.0213218 0.0124974 0.0110819"/>
+      <geom type="mesh" rgba="0.494118 0.623529 0.74902 1" mesh="Z-BOT2_MASTER-BODY-SKELETON"/>
+      <geom pos="0.055995 -0.00960999 -0.00952781" quat="1.64085e-08 1.64085e-08 -0.707107 -0.707107" type="mesh" rgba="0.364706 0.360784 0.74902 1" mesh="Z-BOT2-MASTER-SHOULDER2"/>
+      <geom pos="0.07584 0.00919001 -0.0144278" quat="3.2817e-08 0.707107 -1.89469e-08 -0.707107" type="mesh" rgba="0.74902 0.498039 0.72549 1" mesh="3215_1Flange"/>
+      <geom pos="0.0944404 -0.00960971 -0.107412" quat="0.5 0.5 -0.5 0.5" type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="R-ARM-MIRROR-1"/>
+      <geom pos="0.106219 -0.00986943 -0.173617" quat="0.122788 -0.122788 0.696364 0.696364" type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FINGER_1"/>
+      <geom pos="-0.055995 -0.00960999 -0.00952781" quat="0.707107 -0.707107 -3.2817e-08 3.2817e-08" type="mesh" rgba="0.364706 0.360784 0.74902 1" mesh="Z-BOT2-MASTER-SHOULDER2_2"/>
+      <geom pos="-0.07584 0.00919001 -0.0144278" quat="0.707107 -3.53553e-08 0.707107 4.92255e-08" type="mesh" rgba="0.74902 0.498039 0.72549 1" mesh="3215_1Flange_2"/>
+      <geom pos="-0.0944403 -0.00960971 -0.107412" quat="0.707107 -0.707107 -4.48288e-08 3.9752e-08" type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="L-ARM-MIRROR_1"/>
+      <geom pos="-0.106219 -0.00986943 -0.173617" quat="0.696364 -0.696364 0.122788 0.122788" type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FINGER_1_2"/>
+      <body name="U-HIP-L" pos="0.0428082 0.00773508 -0.0844184" quat="0 2.32051e-08 1 2.32051e-08">
+        <inertial pos="-0.00116062 -0.0043962 0.0353962" quat="0.921476 0.220762 0.207667 0.242942" mass="0.0471324" diaginertia="3.44774e-05 3.0413e-05 1.26353e-05"/>
+        <joint name="L_Hip_Roll" pos="0 0 0" axis="0 0 1" range="-0.7 0.7" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+        <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="U-HIP-L"/>
+        <body name="3215_BothFlange" pos="0 0.0186997 0.0564" quat="0.707107 -0.707107 0 0">
+          <inertial pos="0.0123316 -0.00899712 -0.0185084" quat="0.145714 0.695819 0.101439 0.695926" mass="0.0682953" diaginertia="2.54323e-05 2.35496e-05 1.92309e-05"/>
+          <joint name="L_Hip_Yaw" pos="0 0 0" axis="0 0 1" range="-1.54 0.157" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+          <geom type="mesh" rgba="1 0 0 1" mesh="3215_BothFlange"/>
+          <body name="3215_BothFlange_3" pos="-0.00739965 -0.032 -0.0179" quat="0.5 0.5 -0.5 -0.5">
+            <inertial pos="0.0436622 -0.00285684 -0.0185251" quat="0.501297 0.512271 0.501533 0.484504" mass="0.143337" diaginertia="0.000148209 0.000127579 4.86495e-05"/>
+            <joint name="L_Hip_Pitch" pos="0 0 0" axis="0 0 1" range="-1.54 1" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+            <geom type="mesh" rgba="1 0 0 1" mesh="3215_BothFlange_3"/>
+            <body name="3215_BothFlange_5" pos="0.1 0.01 -0.000259724" quat="1 2.32051e-08 2.32051e-08 0">
+              <inertial pos="0.05 2.60326e-09 -0.0179884" quat="0.49947 0.500681 0.50053 0.499318" mass="0.128213" diaginertia="0.000154386 0.000145408 3.53654e-05"/>
+              <joint name="L_Knee_Pitch" pos="0 0 0" axis="0 0 1" range="0 1.57" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+              <geom type="mesh" rgba="1 0 0 1" mesh="3215_BothFlange_5"/>
+              <body name="FOOT" pos="0.1 3.36408e-09 -0.000199995" quat="-1.64085e-08 -0.707107 -0.707107 1.64085e-08">
+                <inertial pos="-0.0150779 0.0278353 0.0187" quat="0.507219 0.507219 0.492675 0.492675" mass="0.27814" diaginertia="0.000205404 0.000181871 4.48069e-05"/>
+                <joint name="L_Ankle_Pitch" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+                <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FOOT"/>
               </body>
             </body>
           </body>
         </body>
-        <body name="U-HIP-R" pos="-0.0428681 0.00773508 -0.0844184" quat="0 2.32051e-08 1 2.32051e-08">
-          <inertial pos="0.00116062 -0.0043962 0.0353962" quat="0.921476 0.220762 -0.207667 -0.242942" mass="0.0160911" diaginertia="1.17706e-05 1.0383e-05 4.31372e-06" />
-          <joint name="R_Hip_Roll" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" />
-          <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="U-HIP-R" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-          <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="U-HIP-R" />
-          <body name="WJ-DP00-0002-FK-AP-020_7_2" pos="0 -0.0186997 0.0564" quat="0.707107 -0.707107 0 0">
-            <inertial pos="-0.0120575 -0.00314725 0.0173783" quat="0.453448 0.532215 0.467321 0.541057" mass="0.0663671" diaginertia="2.34008e-05 2.18207e-05 1.67876e-05" />
-            <joint name="R_Hip_Yaw" pos="0 0 0" axis="0 0 -1" range="-0.9 0.9" actuatorfrcrange="-1 1" />
-            <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-            <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_2" />
-            <body name="WJ-DP00-0002-FK-AP-020_7_4" pos="0.00739966 -0.032 0.0188997" quat="0.5 -0.5 0.5 -0.5">
-              <inertial pos="0.0288013 0.00152962 -0.0178848" quat="0.475407 0.494001 0.522047 0.507363" mass="0.0919863" diaginertia="8.91903e-05 7.8887e-05 2.55914e-05" />
-              <joint name="R_Hip_Pitch" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" />
-              <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_4" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-              <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_4" />
-              <body name="WJ-DP00-0002-FK-AP-020_7_6" pos="0.1 -0.01 -0.000259715" quat="1 2.32051e-08 -2.32051e-08 0">
-                <inertial pos="0.05 1.64836e-09 -0.0173948" quat="0.500079 0.500079 0.499921 0.499921" mass="0.129874" diaginertia="0.000208208 0.000198605 3.01324e-05" />
-                <joint name="R_Knee_Pitch" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" />
-                <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_6" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-                <geom type="mesh" rgba="1 0 0 1" mesh="WJ-DP00-0002-FK-AP-020_7_6" />
-                <body name="FOOT_2" pos="0.1 3.36408e-09 4.73152e-09" quat="1.64085e-08 -0.707107 0.707107 -4.92255e-08">
-                  <inertial pos="-0.0150779 -0.0278353 0.0187" quat="0.49705 0.49705 0.502933 0.502933" mass="0.0949574" diaginertia="7.00863e-05 6.20911e-05 1.53359e-05" />
-                  <joint name="R_Ankle_Pitch" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1 1" frictionloss="0.01" />
-                  <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FOOT_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-                  <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FOOT_2" />
-                </body>
+      </body>
+      <body name="U-HIP-R" pos="-0.0428681 0.00773508 -0.0844184" quat="0 2.32051e-08 1 2.32051e-08">
+        <inertial pos="0.00116062 -0.0043962 0.0353962" quat="0.921476 0.220762 -0.207667 -0.242942" mass="0.0471324" diaginertia="3.44774e-05 3.0413e-05 1.26353e-05"/>
+        <joint name="R_Hip_Roll" pos="0 0 0" axis="0 0 1" range="-0.7 0.7" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+        <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="U-HIP-R"/>
+        <body name="3215_BothFlange_2" pos="0 -0.0186997 0.0564" quat="0.707107 -0.707107 0 0">
+          <inertial pos="-0.0123316 -0.00898328 0.0178111" quat="0.0705026 0.700607 0.114113 0.700826" mass="0.0682953" diaginertia="2.5341e-05 2.36252e-05 1.92157e-05"/>
+          <joint name="R_Hip_Yaw" pos="0 0 0" axis="0 0 -1" range="-1.54 0.157" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+          <geom type="mesh" rgba="1 0 0 1" mesh="3215_BothFlange_2"/>
+          <body name="3215_BothFlange_4" pos="0.00739966 -0.032 0.0188997" quat="0.5 -0.5 0.5 -0.5">
+            <inertial pos="0.0436622 0.00286343 -0.0185366" quat="0.484624 0.501567 0.512165 0.501256" mass="0.143337" diaginertia="0.000148208 0.000127573 4.86473e-05"/>
+            <joint name="R_Hip_Pitch" pos="0 0 0" axis="0 0 1" range="-1 1.54" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+            <geom type="mesh" rgba="1 0 0 1" mesh="3215_BothFlange_4"/>
+            <body name="3215_BothFlange_6" pos="0.1 -0.01 -0.000259715" quat="1 2.32051e-08 -2.32051e-08 0">
+              <inertial pos="0.05 2.88121e-09 -0.0178883" quat="0.500076 0.500076 0.499924 0.499924" mass="0.128213" diaginertia="0.000154544 0.000145407 3.5524e-05"/>
+              <joint name="R_Knee_Pitch" pos="0 0 0" axis="0 0 1" range="-1.57 0" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+              <geom type="mesh" rgba="1 0 0 1" mesh="3215_BothFlange_6"/>
+              <body name="FOOT_2" pos="0.1 3.36408e-09 4.73152e-09" quat="1.64085e-08 -0.707107 0.707107 -4.92255e-08">
+                <inertial pos="-0.0150779 -0.0278353 0.0187" quat="0.492675 0.492675 0.507219 0.507219" mass="0.27814" diaginertia="0.000205404 0.000181871 4.48069e-05"/>
+                <joint name="R_Ankle_Pitch" pos="0 0 0" axis="0 0 1" range="-0.9 0.9" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+                <geom type="mesh" rgba="0.627451 0.627451 0.627451 1" mesh="FOOT_2"/>
               </body>
             </body>
           </body>
@@ -136,9 +112,8 @@
     </body>
   </worldbody>
 
-  <actuator>
-    
 
+ <actuator>
     <!-- <position name="L_Hip_Roll" joint="L_Hip_Roll" inheritrange="1" />
     <position name="L_Hip_Yaw" joint="L_Hip_Yaw" inheritrange="1" />
     <position name="L_Hip_Pitch" joint="L_Hip_Pitch" inheritrange="1" />
@@ -165,38 +140,6 @@
   </actuator>
 
   <sensor>
-  <!--
-    <actuatorpos name="L_Hip_Roll_p" actuator="L_Hip_Roll" />
-    <actuatorvel name="L_Hip_Roll_v" actuator="L_Hip_Roll" />
-    <actuatorfrc name="L_Hip_Roll_f" actuator="L_Hip_Roll" noise="0.001" />
-    <actuatorpos name="L_Hip_Yaw_p" actuator="L_Hip_Yaw" />
-    <actuatorvel name="L_Hip_Yaw_v" actuator="L_Hip_Yaw" />
-    <actuatorfrc name="L_Hip_Yaw_f" actuator="L_Hip_Yaw" noise="0.001" />
-    <actuatorpos name="L_Hip_Pitch_p" actuator="L_Hip_Pitch" />
-    <actuatorvel name="L_Hip_Pitch_v" actuator="L_Hip_Pitch" />
-    <actuatorfrc name="L_Hip_Pitch_f" actuator="L_Hip_Pitch" noise="0.001" />
-    <actuatorpos name="L_Knee_Pitch_p" actuator="L_Knee_Pitch" />
-    <actuatorvel name="L_Knee_Pitch_v" actuator="L_Knee_Pitch" />
-    <actuatorfrc name="L_Knee_Pitch_f" actuator="L_Knee_Pitch" noise="0.001" />
-    <actuatorpos name="L_Ankle_Pitch_p" actuator="L_Ankle_Pitch" />
-    <actuatorvel name="L_Ankle_Pitch_v" actuator="L_Ankle_Pitch" />
-    <actuatorfrc name="L_Ankle_Pitch_f" actuator="L_Ankle_Pitch" noise="0.001" />
-    <actuatorpos name="R_Hip_Roll_p" actuator="R_Hip_Roll" />
-    <actuatorvel name="R_Hip_Roll_v" actuator="R_Hip_Roll" />
-    <actuatorfrc name="R_Hip_Roll_f" actuator="R_Hip_Roll" noise="0.001" />
-    <actuatorpos name="R_Hip_Yaw_p" actuator="R_Hip_Yaw" />
-    <actuatorvel name="R_Hip_Yaw_v" actuator="R_Hip_Yaw" />
-    <actuatorfrc name="R_Hip_Yaw_f" actuator="R_Hip_Yaw" noise="0.001" />
-    <actuatorpos name="R_Hip_Pitch_p" actuator="R_Hip_Pitch" />
-    <actuatorvel name="R_Hip_Pitch_v" actuator="R_Hip_Pitch" />
-    <actuatorfrc name="R_Hip_Pitch_f" actuator="R_Hip_Pitch" noise="0.001" />
-    <actuatorpos name="R_Knee_Pitch_p" actuator="R_Knee_Pitch" />
-    <actuatorvel name="R_Knee_Pitch_v" actuator="R_Knee_Pitch" />
-    <actuatorfrc name="R_Knee_Pitch_f" actuator="R_Knee_Pitch" noise="0.001" />
-    <actuatorpos name="R_Ankle_Pitch_p" actuator="R_Ankle_Pitch" />
-    <actuatorvel name="R_Ankle_Pitch_v" actuator="R_Ankle_Pitch" />
-    <actuatorfrc name="R_Ankle_Pitch_f" actuator="R_Ankle_Pitch" noise="0.001" />
-     -->
     <framequat name="orientation" objtype="site" noise="0.001" objname="imu" />
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
     <accelerometer name='linear-acceleration' site='imu' noise='0.005' cutoff='157'/>

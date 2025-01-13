@@ -153,16 +153,16 @@ class Robot(Node):
         """
         return {
             # Left side
-            cls.legs.left.hip_roll: {"lower": -0.9, "upper": 0.9},
-            cls.legs.left.hip_yaw: {"lower": -0.9, "upper": 0.9},
-            cls.legs.left.hip_pitch: {"lower": -0.9, "upper": 0.9},
-            cls.legs.left.knee_pitch: {"lower": -0.9, "upper": 0.9},
+            cls.legs.left.hip_roll: {"lower": -0.7, "upper": 0.7},
+            cls.legs.left.hip_yaw: {"lower": -1.54, "upper": 0.157},
+            cls.legs.left.hip_pitch: {"lower": -1.54, "upper": 1.0},
+            cls.legs.left.knee_pitch: {"lower": 0, "upper": 1.57},
             cls.legs.left.ankle_pitch: {"lower": -0.9, "upper": 0.9},
             # Right side
-            cls.legs.right.hip_roll: {"lower": -0.9, "upper": 0.9},
-            cls.legs.right.hip_yaw: {"lower": -0.9, "upper": 0.9},
-            cls.legs.right.hip_pitch: {"lower": -0.9, "upper": 0.9},
-            cls.legs.right.knee_pitch: {"lower": -0.9, "upper": 0.9},
+            cls.legs.right.hip_roll: {"lower": -0.7, "upper": 0.7},
+            cls.legs.right.hip_yaw: {"lower": -1.54, "upper": 0.157},
+            cls.legs.right.hip_pitch: {"lower": -1.0, "upper": 1.54},
+            cls.legs.right.knee_pitch: {"lower": -1.57, "upper": 0},
             cls.legs.right.ankle_pitch: {"lower": -0.9, "upper": 0.9},
         }
 
@@ -191,22 +191,22 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "Hip_Pitch": 3.0,
-            "Hip_Yaw": 3.0,
-            "Hip_Roll": 3.0,
-            "Knee_Pitch": 3.0,
-            "Ankle_Pitch": 3.0,
+            "Hip_Pitch": 1.91,
+            "Hip_Yaw": 1.91,
+            "Hip_Roll": 1.91,
+            "Knee_Pitch": 1.91,
+            "Ankle_Pitch": 1.91,
         }
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "Hip_Pitch": 10,
-            "Hip_Yaw": 10,
-            "Hip_Roll": 10,
-            "Knee_Pitch": 10,
-            "Ankle_Pitch": 10,
+            "Hip_Pitch": 15,
+            "Hip_Yaw": 15,
+            "Hip_Roll": 15,
+            "Knee_Pitch": 15,
+            "Ankle_Pitch": 15,
         }
 
     @classmethod
@@ -214,9 +214,11 @@ class Robot(Node):
         """Example friction dictionary for certain joints."""
         # Usually you'd have more specific friction values or a model.
         return {
-            cls.legs.left.ankle_pitch: 0.1,
-            cls.legs.right.ankle_pitch: 0.1,
-            # etc...
+            "Hip_Pitch": 0.0,
+            "Hip_Yaw": 0.0,
+            "Hip_Roll": 0.0,
+            "Knee_Pitch": 0.0,
+            "Ankle_Pitch": 0.01,
         }
 
     @classmethod

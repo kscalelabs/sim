@@ -129,7 +129,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         file = str(robot_urdf_path(name))
 
         foot_name = ["FOOT", "FOOT_2"]
-        knee_name = ["WJ-DP00-0002-FK-AP-020_7_5", "WJ-DP00-0002-FK-AP-020_7_6"]
+        knee_name = ["3215_BothFlange_6", "3215_BothFlange_5"]
 
         termination_height = 0.1
         default_feet_height = 0.01
@@ -140,9 +140,9 @@ class ZBot2Cfg(LeggedRobotCfg):
         replace_cylinder_with_capsule = False
         fix_base_link = False
 
-        # pfb30
-        friction = 0.013343597773929877
-        armature = 0.008793405204572328
+        # # pfb30
+        # friction = 0.013343597773929877
+        # armature = 0.008793405204572328
 
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"
@@ -158,7 +158,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         num_cols = 10  # number of terrain cols (types)
         max_init_terrain_level = 10  # starting curriculum state
         # plane; obstacles; uniform; slope_up; slope_down, stair_up, stair_down
-        terrain_proportions = [0.2, 0.2, 0.4, 0.1, 0.1, 0, 0]
+        terrain_proportions = [0.8, 0.1, 0.1, 0.1, 0.1, 0, 0]
         restitution = 0.0
 
     class noise:
@@ -242,12 +242,12 @@ class ZBot2Cfg(LeggedRobotCfg):
     class rewards:
         base_height_target = Robot.height
         min_dist = 0.07
-        max_dist = 0.25
+        max_dist = 0.4
 
         # put some settings here for LLM parameter tuning
         # pfb30
         target_joint_pos_scale = 0.24  # rad
-        target_feet_height = 0.03  # m
+        target_feet_height = 0.025  # m
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
@@ -256,34 +256,34 @@ class ZBot2Cfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
-            # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.5
-            feet_contact_number = 1.5
-            feet_air_time = 1.4
+            joint_pos = 2.2
+            feet_clearance = 1.6
+            feet_contact_number = 1.4
+            # gait
+            feet_air_time = 1.5
             foot_slip = -0.1
             feet_distance = 0.2
             knee_distance = 0.2
-            # contact
-            feet_contact_forces = -0.01
+            # contact 
+            feet_contact_forces = -0.02
             # vel tracking
-            tracking_lin_vel = 1.6
-            tracking_ang_vel = 1.6
+            tracking_lin_vel = 1.4
+            tracking_ang_vel = 1.1
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.4
+            low_speed = 0.2
             track_vel_hard = 0.5
-
+            # stand_still = 5
             # base pos
-            default_joint_pos = 0.5
-            orientation = 1
+            default_joint_pos = 0.8
+            orientation = 1.
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.002
-            torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
-            collision = -1.0
+            action_smoothness = -0.003
+            torques = -1e-10
+            dof_vel = -1e-5
+            dof_acc = -5e-9
+            collision = -1.
 
     class normalization:
         class obs_scales:
