@@ -1,3 +1,7 @@
+<!--URDF generated from Onshape:
+https://cad.onshape.com/documents/f28ce19847c3eb365231071d/w/0aa440ddae524d8892fbb4b4/e/61213ecae58e63e861749fab
+with default config example.
+-->
 <robot name="z-bot2_fe_urdf">
   <link name="base">
     <inertial>
@@ -7,7 +11,7 @@
     </inertial>
   </link>
   <joint name="floating_base" type="fixed">
-    <origin rpy="0 0 1.57" xyz="0 0 0" />
+    <origin rpy="0 0 1.5707963" xyz="0 0 0" />
     <parent link="base" />
     <child link="Z-BOT2_MASTER-BODY-SKELETON" />
   </joint>
@@ -95,7 +99,7 @@
     <origin xyz="0.04280822375832449 0.007735076030833816 -0.08441842862429541" rpy="3.1415926071795863 -2.220446049250313e-15 3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="U-HIP-L" />
-    <limit effort="1.91" velocity="15" lower="-0.7" upper="0.7" />
+    <limit effort="1.91" velocity="2" lower="-0.7" upper="0.7" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="U-HIP-L">
@@ -124,7 +128,7 @@
     <origin xyz="-0.04286813624167551 0.007735076030833816 -0.08441842862429541" rpy="3.1415926071795863 -2.220446049250313e-15 3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="U-HIP-R" />
-    <limit effort="1.91" velocity="15" lower="-0.7" upper="0.7" />
+    <limit effort="1.91" velocity="2" lower="-0.7" upper="0.7" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="U-HIP-R">
@@ -211,7 +215,7 @@
     <origin xyz="0 0.018699662 0.0564" rpy="-1.5707963 0 0" />
     <parent link="U-HIP-L" />
     <child link="3215_BothFlange" />
-    <limit effort="1.91" velocity="15" lower="-1.54" upper="0.157" />
+    <limit effort="1.91" velocity="2" lower="-1.54" upper="0.157" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="3215_BothFlange">
@@ -240,7 +244,7 @@
     <origin xyz="0 -0.018699662 0.0564" rpy="-1.5707963 0 0" />
     <parent link="U-HIP-R" />
     <child link="3215_BothFlange_2" />
-    <limit effort="1.91" velocity="15" lower="-1.54" upper="0.157" />
+    <limit effort="1.91" velocity="2" lower="-1.54" upper="0.157" />
     <axis xyz="0 0 -1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="3215_BothFlange_2">
@@ -269,7 +273,7 @@
     <origin xyz="-0.007399653999999995 -0.032 -0.017899999999999996" rpy="1.5707963 0.0 -1.5707963" />
     <parent link="3215_BothFlange" />
     <child link="3215_BothFlange_3" />
-    <limit effort="1.91" velocity="15" lower="-1.54" upper="1.0" />
+    <limit effort="1.91" velocity="2" lower="-1.54" upper="1.0" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="3215_BothFlange_3">
@@ -298,7 +302,7 @@
     <origin xyz="0.007399655009421977 -0.03199999927137579 0.0188997194" rpy="-1.5707963 0.0 -1.5707963071795867" />
     <parent link="3215_BothFlange_2" />
     <child link="3215_BothFlange_4" />
-    <limit effort="1.91" velocity="15" lower="-1.0" upper="1.54" />
+    <limit effort="1.91" velocity="2" lower="-1.0" upper="1.54" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="3215_BothFlange_4">
@@ -385,7 +389,7 @@
     <origin xyz="0.10000000066047848 0.009999997542907974 -0.0002597236558159702" rpy="4.641020790984154e-08 4.641020678874952e-08 2.6469779601696886e-23" />
     <parent link="3215_BothFlange_3" />
     <child link="3215_BothFlange_5" />
-    <limit effort="1.91" velocity="15" lower="0" upper="1.57" />
+    <limit effort="1.91" velocity="2" lower="0" upper="1.57" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="3215_BothFlange_5">
@@ -414,7 +418,7 @@
     <origin xyz="0.10000000042471463 -0.00999999754290798 -0.00025971514418403357" rpy="4.641020790984154e-08 -4.641020678874952e-08 -2.6469779601696886e-23" />
     <parent link="3215_BothFlange_4" />
     <child link="3215_BothFlange_6" />
-    <limit effort="1.91" velocity="15" lower="-1.57" upper="0" />
+    <limit effort="1.91" velocity="2" lower="-1.57" upper="0" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="3215_BothFlange_6">
@@ -501,7 +505,7 @@
     <origin xyz="0.09999999987006428 3.364079596487879e-09 -0.0001999952684794198" rpy="-3.141592653589792 4.641020900919557e-08 1.5707964071795835" />
     <parent link="3215_BothFlange_5" />
     <child link="FOOT" />
-    <limit effort="1.91" velocity="15" lower="-0.9" upper="0.9" />
+    <limit effort="1.91" velocity="2" lower="-0.9" upper="0.9" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.01" /></joint>
   <link name="FOOT">
@@ -530,7 +534,7 @@
     <origin xyz="0.09999999987006428 3.364079596487879e-09 4.731520579850934e-09" rpy="-3.141592560769378 -4.6410206566704915e-08 -1.5707963000000027" />
     <parent link="3215_BothFlange_6" />
     <child link="FOOT_2" />
-    <limit effort="1.91" velocity="15" lower="-0.9" upper="0.9" />
+    <limit effort="1.91" velocity="2" lower="-0.9" upper="0.9" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.01" /></joint>
   <link name="FOOT_2">

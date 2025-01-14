@@ -1,4 +1,7 @@
-<?xml version="1.0" ?>
+<!--URDF generated from Onshape:
+https://cad.onshape.com/documents/f28ce19847c3eb365231071d/w/0aa440ddae524d8892fbb4b4/e/61213ecae58e63e861749fab
+with default config example.
+-->
 <robot name="z-bot2_fe_urdf">
   <link name="base">
     <inertial>

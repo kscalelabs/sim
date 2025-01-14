@@ -140,9 +140,9 @@ class ZBot2Cfg(LeggedRobotCfg):
         replace_cylinder_with_capsule = False
         fix_base_link = False
 
-        # # pfb30
-        # friction = 0.013343597773929877
-        # armature = 0.008793405204572328
+        # pfb30
+        friction = 0.013
+        armature = 0.008
 
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"
@@ -190,7 +190,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 10  # 100hz
+        decimation = 20  # 50hz 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
