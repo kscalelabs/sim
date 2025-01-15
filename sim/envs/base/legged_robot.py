@@ -80,8 +80,9 @@ class LeggedRobot(BaseTask):
 
     def reset(self):
         """Reset all robots"""
+
         self.reset_idx(torch.arange(self.num_envs, device=self.device))
-        # self._resample_default_positions()
+        
         obs, privileged_obs, _, _, _ = self.step(
             torch.zeros(self.num_envs, self.num_actions, device=self.device, requires_grad=False)
         )
@@ -99,13 +100,8 @@ class LeggedRobot(BaseTask):
         self.episode_length_buf += 1
         self.common_step_counter += 1
 
-        # prepare quantities
-        # TODO(pfb30) - debug this
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
-
         if self.imu_indices:
-            self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])
+            self.base_quat = self.rigid_state[:, self.imu_indices, 3:7]
             self.base_lin_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 7:10])
             self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 10:13])
         else:
@@ -161,6 +157,11 @@ class LeggedRobot(BaseTask):
         if self.cfg.commands.curriculum and (self.common_step_counter % self.max_episode_length == 0):
             self.update_command_curriculum(env_ids)
 
+        # Add noise to the PD gains
+        if self.cfg.domain_rand.randomize_pd_gains:
+            self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * 7
+            self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * 0.3
+
         # reset robot states
         self._reset_dofs(env_ids)
 
@@ -193,14 +194,10 @@ class LeggedRobot(BaseTask):
         if self.cfg.env.send_timeouts:
             self.extras["time_outs"] = self.time_out_buf
 
-        # fix reset gravity bug
-        # TODO(pfb30) - debug this
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
         if self.imu_indices:
-            self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.rigid_state[env_ids, self.imu_indices, 3:7])
+            self.base_quat[env_ids] = self.rigid_state[env_ids, self.imu_indices, 3:7]
         else:
-            self.base_quat[env_ids] = quat_mul(origin[env_ids, :], self.root_states[env_ids, 3:7])
+            self.base_quat[env_ids] = self.root_states[env_ids, 3:7]
 
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
         self.projected_gravity[env_ids] = quat_rotate_inverse(self.base_quat[env_ids], self.gravity_vec[env_ids])
@@ -502,15 +499,11 @@ class LeggedRobot(BaseTask):
 
         self.rigid_state = gymtorch.wrap_tensor(rigid_body_state)  # .view(self.num_envs, -1, 13)
         self.rigid_state = self.rigid_state.view(self.num_envs, -1, 13)
-        # TODO(pfb30): debug this
-        # self.base_quat = self.root_states[:, 3:7]
-        origin = torch.tensor(self.cfg.init_state.rot, device=self.device).repeat(self.num_envs, 1)
-        origin = quat_conjugate(origin)
 
         if self.imu_indices:
-            self.base_quat = quat_mul(origin, self.rigid_state[:, self.imu_indices, 3:7])
+            self.base_quat = self.rigid_state[:, self.imu_indices, 3:7]
         else:
-            self.base_quat = quat_mul(origin, self.root_states[:, 3:7])
+            self.base_quat = self.root_states[:, 3:7]
 
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
 
@@ -577,7 +570,7 @@ class LeggedRobot(BaseTask):
         self.default_dof_pos = torch.zeros(self.num_dof, dtype=torch.float, device=self.device, requires_grad=False)
         for i in range(self.num_dofs):
             name = self.dof_names[i]
-            print(name)
+            print(i, name)
             self.default_dof_pos[i] = self.cfg.init_state.default_joint_angles[name]
             found = False
 
@@ -590,6 +583,9 @@ class LeggedRobot(BaseTask):
                 self.p_gains[:, i] = 0.0
                 self.d_gains[:, i] = 0.0
                 raise ValueError(f"PD gain of joint {name} were not defined, setting them to zero")
+
+        self.original_p_gains = self.p_gains.clone()
+        self.original_d_gains = self.d_gains.clone()
 
         self.rand_push_force = torch.zeros((self.num_envs, 3), dtype=torch.float32, device=self.device)
         self.rand_push_torque = torch.zeros((self.num_envs, 3), dtype=torch.float32, device=self.device)
