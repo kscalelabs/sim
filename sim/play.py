@@ -2,35 +2,36 @@
 """Play a trained policy in the environment.
 
 Run:
-    python sim/play.py --task gpr --log_h5
+    python sim/play2.py --task zbot2
 """
 import argparse
 import copy
 import logging
 import math
 import os
+import time
+import uuid
 from datetime import datetime
 from typing import Any, Union
 
 import cv2
 import h5py
 import numpy as np
-import onnx
 from isaacgym import gymapi
-from kinfer import proto as P
-from kinfer.export.pytorch import export_model
 from tqdm import tqdm
 
-from sim.env import run_dir  # noqa: E402
-from sim.envs import task_registry  # noqa: E402
-
 # Local imports third
-from sim.model_export import ActorCfg, get_actor_policy
-from sim.utils.helpers import get_args  # noqa: E402
-from sim.utils.logger import Logger  # noqa: E402
-from sim.utils.resources import load_embodiment
+from sim.env import run_dir
+from sim.envs import task_registry
+from sim.h5_logger import HDF5Logger
 
 import torch  # special case with isort: skip comment
+from sim.env import run_dir  # noqa: E402
+from sim.envs import task_registry  # noqa: E402
+from sim.model_export2 import ActorCfg, get_actor_policy  # noqa: E402
+from sim.utils.helpers import get_args  # noqa: E402
+from sim.utils.logger import Logger  # noqa: E402
+from kinfer.export.pytorch import export_to_onnx
 
 logger = logging.getLogger(__name__)
 
@@ -38,14 +39,9 @@ logger = logging.getLogger(__name__)
 def export_policy_as_jit(actor_critic: Any, path: Union[str, os.PathLike]) -> None:
     os.makedirs(path, exist_ok=True)
     path = os.path.join(path, "policy_1.pt")
-    model = get_actor_jit(actor_critic)
-    model.save(path)
-
-
-def get_actor_jit(actor_critic: Any) -> Any:
     model = copy.deepcopy(actor_critic.actor).to("cpu")
     traced_script_module = torch.jit.script(model)
-    return traced_script_module
+    traced_script_module.save(path)
 
 
 def play(args: argparse.Namespace) -> None:
@@ -65,7 +61,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.terrain.curriculum = False
     env_cfg.terrain.max_init_terrain_level = 5
     env_cfg.noise.add_noise = True
-    env_cfg.domain_rand.push_robots = False
+    env_cfg.domain_rand.push_robots = True
     env_cfg.domain_rand.joint_angle_noise = 0.0
     env_cfg.noise.curriculum = False
     env_cfg.noise.noise_level = 0.5
@@ -90,15 +86,12 @@ def play(args: argparse.Namespace) -> None:
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print("Exported policy as jit script to: ", path)
 
-    if env_cfg.env.input_schema is None or env_cfg.env.output_schema is None:
-        raise ValueError("Input or output schema is None")
-
-    # Create the full model schema
-    model_schema = P.ModelSchema(input_schema=env_cfg.env.input_schema, output_schema=env_cfg.env.output_schema)
-
+    # export policy as a onnx module (used to run it on web)
     if args.export_onnx:
-        actor_cfg = ActorCfg(
-            embodiment=ppo_runner.cfg["experiment_name"].lower(),
+        path = ppo_runner.load_path
+        embodiment = ppo_runner.cfg['experiment_name'].lower()
+        policy_cfg = ActorCfg(
+            embodiment=embodiment,
             cycle_time=env_cfg.rewards.cycle_time,
             sim_dt=env_cfg.sim.dt,
             sim_decimation=env_cfg.control.decimation,
@@ -112,14 +105,22 @@ def play(args: argparse.Namespace) -> None:
             frame_stack=env_cfg.env.frame_stack,
             clip_observations=env_cfg.normalization.clip_observations,
             clip_actions=env_cfg.normalization.clip_actions,
+            use_projected_gravity=env_cfg.sim.use_projected_gravity,
         )
-        jit_policy, metadata, _ = get_actor_policy(ppo_runner.load_path, actor_cfg)
-        kinfer_policy = export_model(
-            model=jit_policy,
-            schema=model_schema,
-            metadata=metadata,
+
+        actor_model, sim2sim_info, input_tensors = get_actor_policy(path, policy_cfg)
+
+        # Merge policy_cfg and sim2sim_info into a single config object
+        export_config = {**vars(policy_cfg), **sim2sim_info}
+
+        export_to_onnx(
+            actor_model,
+            input_tensors=input_tensors,
+            config=export_config,
+            save_path="kinfer_policy.onnx"
         )
-        onnx.save(kinfer_policy, "policy.kinfer")
+        print("Exported policy as kinfer-compatible onnx to: ", path)
+
     # Prepare for logging
     env_logger = Logger(env.dt)
     robot_index = 0
@@ -128,12 +129,10 @@ def play(args: argparse.Namespace) -> None:
 
     now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     if args.log_h5:
-        from sim.h5_logger import HDF5Logger
-
         # Create directory for HDF5 files
         h5_dir = run_dir() / "h5_out" / args.task / now
         h5_dir.mkdir(parents=True, exist_ok=True)
-
+        
         # Get observation dimensions
         num_actions = env.num_dof
         obs_buffer = env.obs_buf.shape[1]
@@ -143,16 +142,14 @@ def play(args: argparse.Namespace) -> None:
         for env_idx in range(env_cfg.env.num_envs):
             h5_dir = run_dir() / "h5_out" / args.task / now / f"env_{env_idx}"
             h5_dir.mkdir(parents=True, exist_ok=True)
-
-            h5_loggers.append(
-                HDF5Logger(
-                    data_name=f"{args.task}_env_{env_idx}",
-                    num_actions=num_actions,
-                    max_timesteps=env_steps_to_run,
-                    num_observations=obs_buffer,
-                    h5_out_dir=str(h5_dir),
-                )
-            )
+            
+            h5_loggers.append(HDF5Logger(
+                data_name=f"{args.task}_env_{env_idx}",
+                num_actions=num_actions,
+                max_timesteps=env_steps_to_run,
+                num_observations=obs_buffer,
+                h5_out_dir=str(h5_dir)
+            ))
 
     if args.render:
         camera_properties = gymapi.CameraProperties()
@@ -187,7 +184,7 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
 
         if args.fix_command:
-            env.commands[:, 0] = 0.5
+            env.commands[:, 0] = 0.2
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
@@ -237,29 +234,27 @@ def play(args: argparse.Namespace) -> None:
         if args.log_h5:
             # Extract the current observation
             for env_idx in range(env_cfg.env.num_envs):
-                h5_loggers[env_idx].log_data(
-                    {
-                        "t": np.array([t * env.dt], dtype=np.float32),
-                        "2D_command": np.array(
-                            [
-                                np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
-                                np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
-                            ],
-                            dtype=np.float32,
-                        ),
-                        "3D_command": np.array(env.commands[env_idx, :3].cpu().numpy(), dtype=np.float32),
-                        "joint_pos": np.array(env.dof_pos[env_idx].cpu().numpy(), dtype=np.float32),
-                        "joint_vel": np.array(env.dof_vel[env_idx].cpu().numpy(), dtype=np.float32),
-                        "prev_actions": prev_actions[env_idx].astype(np.float32),
-                        "curr_actions": actions[env_idx].astype(np.float32),
-                        "ang_vel": env.base_ang_vel[env_idx].cpu().numpy().astype(np.float32),
-                        "euler_rotation": env.base_euler_xyz[env_idx].cpu().numpy().astype(np.float32),
-                        "buffer": env.obs_buf[env_idx].cpu().numpy().astype(np.float32),
-                    }
-                )
+                h5_loggers[env_idx].log_data({
+                    "t": np.array([t * env.dt], dtype=np.float32),
+                    "2D_command": np.array(
+                        [
+                            np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
+                            np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
+                        ],
+                        dtype=np.float32,
+                    ),
+                    "3D_command": np.array(env.commands[env_idx, :3].cpu().numpy(), dtype=np.float32),
+                    "joint_pos": np.array(env.dof_pos[env_idx].cpu().numpy(), dtype=np.float32), 
+                    "joint_vel": np.array(env.dof_vel[env_idx].cpu().numpy(), dtype=np.float32),
+                    "prev_actions": prev_actions[env_idx].astype(np.float32),
+                    "curr_actions": actions[env_idx].astype(np.float32),
+                    "ang_vel": env.base_ang_vel[env_idx].cpu().numpy().astype(np.float32),
+                    "euler_rotation": env.base_euler_xyz[env_idx].cpu().numpy().astype(np.float32),
+                    "buffer": env.obs_buf[env_idx].cpu().numpy().astype(np.float32)
+                })
 
             prev_actions = actions
-
+    
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
             if num_episodes > 0:
