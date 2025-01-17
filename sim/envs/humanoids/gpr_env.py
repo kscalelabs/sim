@@ -180,11 +180,8 @@ class GprFreeEnv(LeggedRobot):
         noise_vec[(num_actions + 5) : (2 * num_actions + 5)] = noise_scales.dof_vel * self.obs_scales.dof_vel
         noise_vec[(2 * num_actions + 5) : (3 * num_actions + 5)] = 0.0  # previous actions
         noise_vec[(3 * num_actions + 5) : (3 * num_actions + 5) + 3] = (
-            noise_scales.ang_vel * self.obs_scales.ang_vel
-        )  # ang vel
-        noise_vec[(3 * num_actions + 5) + 3 : (3 * num_actions + 5)] = (
             noise_scales.quat * self.obs_scales.quat
-        )  # euler x,y
+        )  # projected_gravity
         return noise_vec
 
     def compute_observations(self):
@@ -228,8 +225,7 @@ class GprFreeEnv(LeggedRobot):
                 q,  # 12D
                 dq,  # 12D
                 self.actions,  # 12D
-                self.base_ang_vel * self.obs_scales.ang_vel,  # 3
-                self.base_euler_xyz * self.obs_scales.quat,  # 3
+                self.projected_gravity,  # 3
             ),
             dim=-1,
         )

@@ -19,8 +19,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
-        # num_single_obs = 11 + NUM_JOINTS * 3
-        num_single_obs = 8 + NUM_JOINTS * 3 # pfb30
+        num_single_obs = 8 + NUM_JOINTS * 3
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)

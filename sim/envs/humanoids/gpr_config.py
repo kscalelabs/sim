@@ -19,7 +19,7 @@ class GprCfg(LeggedRobotCfg):
         # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
-        num_single_obs = 11 + NUM_JOINTS * 3
+        num_single_obs = 8 + NUM_JOINTS * 3
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -140,8 +140,8 @@ class GprCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -167,10 +167,6 @@ class GprCfg(LeggedRobotCfg):
             lin_vel = 0.05
             quat = 0.03
             height_measurements = 0.1
-
-        # Currently unused
-        # class noise_ranges:
-        #     default_pos = 0.03  # +- 0.05 rad
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, Robot.height]
@@ -223,6 +219,7 @@ class GprCfg(LeggedRobotCfg):
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
+        randomize_pd_gains = False
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -253,35 +250,34 @@ class GprCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
-            # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.2
+            joint_pos = 2.2
+            feet_clearance = 1.6
             feet_contact_number = 1.4
             # gait
-            feet_air_time = 1.2
-            foot_slip = -0.05
+            feet_air_time = 1.5
+            foot_slip = -0.1
             feet_distance = 0.2
             knee_distance = 0.2
-            # contact
-            feet_contact_forces = -0.01
+            # contact 
+            feet_contact_forces = -0.02
             # vel tracking
-            tracking_lin_vel = 1.2
+            tracking_lin_vel = 1.4
             tracking_ang_vel = 1.1
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 0.2
             track_vel_hard = 0.5
-
+            # stand_still = 5
             # base pos
-            default_joint_pos = 0.5
-            orientation = 1.0
+            default_joint_pos = 0.8
+            orientation = 1.
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.002
-            torques = -1e-5
-            dof_vel = -5e-4  # -1e-3
-            dof_acc = -1e-7  # -2.5e-7
-            collision = -1.0
+            action_smoothness = -0.003
+            torques = -1e-10
+            dof_vel = -1e-5
+            dof_acc = -5e-9
+            collision = -1.
 
     class normalization:
         class obs_scales:
