@@ -28,7 +28,7 @@ from sim.h5_logger import HDF5Logger
 import torch  # special case with isort: skip comment
 from sim.env import run_dir  # noqa: E402
 from sim.envs import task_registry  # noqa: E402
-from sim.model_export2 import ActorCfg, get_actor_policy  # noqa: E402
+from sim.model_export import ActorCfg, get_actor_policy  # noqa: E402
 from sim.utils.helpers import get_args  # noqa: E402
 from sim.utils.logger import Logger  # noqa: E402
 from kinfer.export.pytorch import export_to_onnx

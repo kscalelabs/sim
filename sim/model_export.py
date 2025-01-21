@@ -190,10 +190,6 @@ class Actor(nn.Module):
         q = dof_pos * self.dof_pos_scale
         dq = dof_vel * self.dof_vel_scale
 
-        # if self.use_projected_gravity:
-        #     imu_observation = imu_euler_xyz
-        # else:
-        #     imu_observation = imu_euler_xyz * self.quat_scale
         # Construct new observation
         new_x = torch.cat(
             (
@@ -202,8 +198,6 @@ class Actor(nn.Module):
                 dq,
                 prev_actions,
                 projected_gravity,
-                # imu_ang_vel * self.ang_vel_scale,
-                # imu_observation,
             ),
             dim=0,
         )
@@ -226,7 +220,7 @@ class Actor(nn.Module):
 
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
-    all_weights = torch.load(model_path, map_location="cpu")#, weights_only=True)
+    all_weights = torch.load(model_path, map_location="cpu")
     weights = all_weights["model_state_dict"]
     num_actor_obs = weights["actor.0.weight"].shape[1]
     num_critic_obs = weights["critic.0.weight"].shape[1]
@@ -249,8 +243,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     dof_pos = torch.randn(a_model.num_actions)
     dof_vel = torch.randn(a_model.num_actions)
     prev_actions = torch.randn(a_model.num_actions)
-    projected_gravity = torch.randn(3) # pfb30
-    # imu_euler_xyz = torch.randn(3)
+    projected_gravity = torch.randn(3)
     buffer = a_model.get_init_buffer()
     input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, buffer)
 
