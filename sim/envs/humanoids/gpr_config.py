@@ -140,8 +140,8 @@ class GprCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        mesh_type = "plane"
-        # mesh_type = "trimesh"
+        # mesh_type = "plane"
+        mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -228,9 +228,9 @@ class GprCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.3, 0.6]  # min max [m/s]
-            lin_vel_y = [-0.3, 0.3]  # min max [m/s]
-            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
+            lin_vel_x = [-0.5, 1.0]  # min max [m/s]
+            lin_vel_y = [-0.5, 0.5]  # min max [m/s]
+            ang_vel_yaw = [-1.5, 1.5]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
@@ -250,34 +250,35 @@ class GprCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
-            joint_pos = 2.2
-            feet_clearance = 1.6
+            # reference motion tracking
+            joint_pos = 1.6
+            feet_clearance = 1.2
             feet_contact_number = 1.4
             # gait
-            feet_air_time = 1.5
-            foot_slip = -0.1
+            feet_air_time = 1.2
+            foot_slip = -0.05
             feet_distance = 0.2
             knee_distance = 0.2
-            # contact 
-            feet_contact_forces = -0.02
+            # contact
+            feet_contact_forces = -0.01
             # vel tracking
-            tracking_lin_vel = 1.4
+            tracking_lin_vel = 1.2
             tracking_ang_vel = 1.1
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 0.2
             track_vel_hard = 0.5
-            # stand_still = 5
+
             # base pos
-            default_joint_pos = 0.8
-            orientation = 1.
+            default_joint_pos = 0.5
+            orientation = 1.0
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.003
-            torques = -1e-10
-            dof_vel = -1e-5
-            dof_acc = -5e-9
-            collision = -1.
+            action_smoothness = -0.002
+            torques = -1e-5
+            dof_vel = -5e-4  # -1e-3
+            dof_acc = -1e-7  # -2.5e-7
+            collision = -1.0
 
     class normalization:
         class obs_scales:

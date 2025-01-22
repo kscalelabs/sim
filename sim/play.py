@@ -48,7 +48,7 @@ def play(args: argparse.Namespace) -> None:
     logger.info("Configuring environment and training settings...")
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
 
-    num_parallel_envs = 2
+    num_parallel_envs = 5
     env_cfg.env.num_envs = num_parallel_envs
     env_cfg.sim.max_gpu_contact_pairs = 2**10 * num_parallel_envs
 
@@ -59,7 +59,7 @@ def play(args: argparse.Namespace) -> None:
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
-    env_cfg.terrain.max_init_terrain_level = 5
+    env_cfg.terrain.max_init_terrain_level = 10
     env_cfg.noise.add_noise = True
     env_cfg.domain_rand.push_robots = True
     env_cfg.domain_rand.joint_angle_noise = 0.0
@@ -184,7 +184,7 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
 
         if args.fix_command:
-            env.commands[:, 0] = 0.2
+            env.commands[:, 0] = 0.5
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0

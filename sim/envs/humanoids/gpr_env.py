@@ -124,6 +124,7 @@ class GprFreeEnv(LeggedRobot):
         scale_2 = 2 * scale_1
         # left foot stance phase set to default joint pos
         sin_pos_l[sin_pos_l > 0] = 0
+   
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += -sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += sin_pos_l * scale_2
         self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += sin_pos_l * scale_1
