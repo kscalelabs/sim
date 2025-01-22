@@ -126,6 +126,7 @@ def run_mujoco(
     render: bool = True,
     sim_duration: float = 60.0,
     h5_out_dir: str = "sim/resources",
+    terrain: bool = False,
 ) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
@@ -135,7 +136,10 @@ def run_mujoco(
         cfg: The configuration object containing simulation settings.
     """
     model_dir = os.environ.get("MODEL_DIR", "sim/resources")
-    mujoco_model_path = f"{model_dir}/{embodiment}/robot_fixed.xml"
+    if terrain:
+        mujoco_model_path = f"{model_dir}/{embodiment}/robot_fixed_terrain.xml"
+    else:
+        mujoco_model_path = f"{model_dir}/{embodiment}/robot_fixed.xml"
 
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = model_info["sim_dt"]
@@ -221,7 +225,7 @@ def run_mujoco(
 
         # eu_ang = np.array([0.0, 0.0, 0.0])
         # omega = np.array([0.0, 0.0, 0.0])
-
+        # gvec = np.array([0.0, 0.0, -1.0])
         # Calculate speed and accumulate for average speed calculation
         speed = np.linalg.norm(v[:2])  # Speed in the x-y plane
         total_speed += speed
@@ -295,7 +299,9 @@ if __name__ == "__main__":
     parser.add_argument("--log_h5", action="store_true", help="log_h5")
     parser.add_argument("--h5_out_dir", type=str, default="sim/resources", help="Directory to save HDF5 files")
     parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
-    parser.set_defaults(render=True)
+    parser.add_argument("--terrain", action="store_true", help="terrain")
+    parser.set_defaults(render=True, terrain=False)
+    
     args = parser.parse_args()
 
     if args.keyboard_use:
@@ -303,7 +309,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.15, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.5, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
@@ -326,4 +332,5 @@ if __name__ == "__main__":
         log_h5=args.log_h5,
         render=args.render,
         h5_out_dir=args.h5_out_dir,
+        terrain=args.terrain,
     )
