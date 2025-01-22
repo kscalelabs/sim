@@ -3,14 +3,22 @@
 import re
 from dataclasses import dataclass, fields
 from io import BytesIO
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
-import onnx
+import onnx 
 import onnxruntime as ort
 import torch
-from scripts.create_fixed_torso import load_embodiment
 from torch import Tensor, nn
 from torch.distributions import Normal
+import importlib
+
+
+def load_embodiment(embodiment: str):  # noqa: ANN401
+    # Dynamically import embodiment
+    module_name = f"sim.resources.{embodiment}.joints"
+    module = importlib.import_module(module_name)
+    robot = getattr(module, "Robot")
+    return robot
 
 
 @dataclass
@@ -29,6 +37,7 @@ class ActorCfg:
     sim_dt: float  # Simulation time step
     sim_decimation: int  # Simulation decimation
     tau_factor: float  # Torque limit factor
+    use_projected_gravity: bool  # Use projected gravity as IMU observation
 
 
 class ActorCritic(nn.Module):
@@ -50,25 +59,25 @@ class ActorCritic(nn.Module):
         # Policy function.
         actor_layers = []
         actor_layers.append(nn.Linear(mlp_input_dim_a, actor_hidden_dims[0]))
-        actor_layers.append(activation)  # type: ignore[arg-type]
+        actor_layers.append(activation)
         for dim_i in range(len(actor_hidden_dims)):
             if dim_i == len(actor_hidden_dims) - 1:
                 actor_layers.append(nn.Linear(actor_hidden_dims[dim_i], num_actions))
             else:
                 actor_layers.append(nn.Linear(actor_hidden_dims[dim_i], actor_hidden_dims[dim_i + 1]))
-                actor_layers.append(activation)  # type: ignore[arg-type]
+                actor_layers.append(activation)
         self.actor = nn.Sequential(*actor_layers)
 
         # Value function.
         critic_layers = []
         critic_layers.append(nn.Linear(mlp_input_dim_c, critic_hidden_dims[0]))
-        critic_layers.append(activation)  # type: ignore[arg-type]
+        critic_layers.append(activation)
         for dim_i in range(len(critic_hidden_dims)):
             if dim_i == len(critic_hidden_dims) - 1:
                 critic_layers.append(nn.Linear(critic_hidden_dims[dim_i], 1))
             else:
                 critic_layers.append(nn.Linear(critic_hidden_dims[dim_i], critic_hidden_dims[dim_i + 1]))
-                critic_layers.append(activation)  # type: ignore[arg-type]
+                critic_layers.append(activation)
         self.critic = nn.Sequential(*critic_layers)
 
         # Action noise.
@@ -76,7 +85,7 @@ class ActorCritic(nn.Module):
         self.distribution = None
 
         # Disable args validation for speedup.
-        Normal.set_default_validate_args = False  # type: ignore[unused-ignore,assignment,method-assign,attr-defined]
+        Normal.set_default_validate_args = False
 
 
 class Actor(nn.Module):
@@ -98,8 +107,9 @@ class Actor(nn.Module):
         self.frame_stack = cfg.frame_stack
 
         # 11 is the number of single observation features - 6 from IMU, 5 from command input
+        # 9 is the number of single observation features - 3 from IMU(quat), 5 from command input
         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        self.num_single_obs = 11 + self.num_actions * 3
+        self.num_single_obs = 8 + self.num_actions * 3 # pfb30
         self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.policy = policy
@@ -119,26 +129,31 @@ class Actor(nn.Module):
         self.clip_actions = cfg.clip_actions
 
         self.cycle_time = cfg.cycle_time
+        self.use_projected_gravity = cfg.use_projected_gravity
 
     def get_init_buffer(self) -> Tensor:
         return torch.zeros(self.num_observations)
 
     def forward(
         self,
-        vector_command: Tensor,  # (x_vel, y_vel, rot)
-        timestamp: Tensor,  # current policy time (sec)
+        x_vel: Tensor,  # x-coordinate of the target velocity
+        y_vel: Tensor,  # y-coordinate of the target velocity
+        rot: Tensor,  # target angular velocity
+        t: Tensor,  # current policy time (sec)
         dof_pos: Tensor,  # current angular position of the DoFs relative to default
         dof_vel: Tensor,  # current angular velocity of the DoFs
         prev_actions: Tensor,  # previous actions taken by the model
-        imu_ang_vel: Tensor,  # angular velocity of the IMU
-        imu_euler_xyz: Tensor,  # euler angles of the IMU
-        hist_obs: Tensor,  # buffer of previous observations
-    ) -> Dict[str, Tensor]:
+        projected_gravity: Tensor,  # quaternion of the IMU
+        # imu_euler_xyz: Tensor,  # euler angles of the IMU
+        buffer: Tensor,  # buffer of previous observations
+    ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
 
         Args:
-            vector_command: The target velocity vector, with shape (3). It consistes of x_vel, y_vel, and rot.
-            timestamp: The current policy time step, with shape (1).
+            x_vel: The x-coordinate of the target velocity, with shape (1).
+            y_vel: The y-coordinate of the target velocity, with shape (1).
+            rot: The target angular velocity, with shape (1).
+            t: The current policy time step, with shape (1).
             dof_pos: The current angular position of the DoFs relative to default, with shape (num_actions).
             dof_vel: The current angular velocity of the DoFs, with shape (num_actions).
             prev_actions: The previous actions taken by the model, with shape (num_actions).
@@ -147,19 +162,17 @@ class Actor(nn.Module):
             imu_euler_xyz: The euler angles of the IMU, with shape (3),
                 in radians. "XYZ" means (roll, pitch, yaw). If IMU is not used,
                 can be all zeros.
-            hist_obs: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
+            buffer: The buffer of previous actions, with shape (frame_stack * num_single_obs). This is
                 the return value of the previous forward pass. On the first
                 pass, it should be all zeros.
 
         Returns:
             actions_scaled: The actions to take, with shape (num_actions), scaled by the action_scale.
             actions: The actions to take, with shape (num_actions).
-            new_x: The new buffer of observations, with shape (frame_stack * num_single_obs).
+            x: The new buffer of observations, with shape (frame_stack * num_single_obs).
         """
-        sin_pos = torch.sin(2 * torch.pi * timestamp / self.cycle_time)
-        cos_pos = torch.cos(2 * torch.pi * timestamp / self.cycle_time)
-
-        x_vel, y_vel, rot = vector_command.split(1)
+        sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
+        cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
 
         # Construct command input
         command_input = torch.cat(
@@ -177,6 +190,10 @@ class Actor(nn.Module):
         q = dof_pos * self.dof_pos_scale
         dq = dof_vel * self.dof_vel_scale
 
+        # if self.use_projected_gravity:
+        #     imu_observation = imu_euler_xyz
+        # else:
+        #     imu_observation = imu_euler_xyz * self.quat_scale
         # Construct new observation
         new_x = torch.cat(
             (
@@ -184,8 +201,9 @@ class Actor(nn.Module):
                 q,
                 dq,
                 prev_actions,
-                imu_ang_vel.squeeze(0) * self.ang_vel_scale,
-                imu_euler_xyz.squeeze(0) * self.quat_scale,
+                projected_gravity,
+                # imu_ang_vel * self.ang_vel_scale,
+                # imu_observation,
             ),
             dim=0,
         )
@@ -194,7 +212,7 @@ class Actor(nn.Module):
         new_x = torch.clamp(new_x, -self.clip_observations, self.clip_observations)
 
         # Add the new frame to the buffer
-        x = torch.cat((hist_obs, new_x), dim=0)
+        x = torch.cat((buffer, new_x), dim=0)
         # Pop the oldest frame
         x = x[self.num_single_obs :]
 
@@ -204,11 +222,11 @@ class Actor(nn.Module):
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale
 
-        return {"actions": actions_scaled, "actions_raw": actions, "new_x": x}
+        return actions_scaled, actions, x
 
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
-    all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
+    all_weights = torch.load(model_path, map_location="cpu")#, weights_only=True)
     weights = all_weights["model_state_dict"]
     num_actor_obs = weights["actor.0.weight"].shape[1]
     num_critic_obs = weights["critic.0.weight"].shape[1]
@@ -231,49 +249,29 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     dof_pos = torch.randn(a_model.num_actions)
     dof_vel = torch.randn(a_model.num_actions)
     prev_actions = torch.randn(a_model.num_actions)
-    imu_ang_vel = torch.randn(3)
-    imu_euler_xyz = torch.randn(3)
+    projected_gravity = torch.randn(3) # pfb30
+    # imu_euler_xyz = torch.randn(3)
     buffer = a_model.get_init_buffer()
-    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, imu_ang_vel, imu_euler_xyz, buffer)
+    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, buffer)
+
+    jit_model = torch.jit.script(a_model)
 
     # Add sim2sim metadata
-    robot = a_model.robot
-    robot_effort = robot.effort_mapping()
-    robot_stiffness = robot.stiffness_mapping()
-    robot_damping = robot.damping_mapping()
+    robot_effort = list(a_model.robot.effort().values())
+    robot_stiffness = list(a_model.robot.stiffness().values())
+    robot_damping = list(a_model.robot.damping().values())
+    default_standing = list(a_model.robot.default_standing().values())
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
-    default_standing = robot.default_standing()
-
-    metadata = {
-        "num_actions": num_actions,
-        "num_observations": num_observations,
+    return a_model, {
         "robot_effort": robot_effort,
         "robot_stiffness": robot_stiffness,
         "robot_damping": robot_damping,
         "default_standing": default_standing,
-        "sim_dt": cfg.sim_dt,
-        "sim_decimation": cfg.sim_decimation,
-        "tau_factor": cfg.tau_factor,
-        "action_scale": cfg.action_scale,
-        "lin_vel_scale": cfg.lin_vel_scale,
-        "ang_vel_scale": cfg.ang_vel_scale,
-        "quat_scale": cfg.quat_scale,
-        "dof_pos_scale": cfg.dof_pos_scale,
-        "dof_vel_scale": cfg.dof_vel_scale,
-        "frame_stack": cfg.frame_stack,
-        "clip_observations": cfg.clip_observations,
-        "clip_actions": cfg.clip_actions,
-        "joint_names": robot.joint_names(),
-        "cycle_time": cfg.cycle_time,
-    }
-
-    return (
-        a_model,
-        metadata,
-        input_tensors,
-    )
+        "num_actions": num_actions,
+        "num_observations": num_observations,
+    }, input_tensors
 
 
 def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
@@ -287,7 +285,7 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
     Returns:
         An ONNX inference session.
     """
-    all_weights = torch.load(model_path, map_location="cpu", weights_only=True)
+    all_weights = torch.load(model_path, map_location="cpu")#, weights_only=True)
     weights = all_weights["model_state_dict"]
     num_actor_obs = weights["actor.0.weight"].shape[1]
     num_critic_obs = weights["critic.0.weight"].shape[1]
@@ -359,3 +357,7 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
     buffer2.seek(0)
 
     return ort.InferenceSession(buffer2.read())
+
+
+if __name__ == "__main__":
+    convert_model_to_onnx("model_3000.pt", ActorCfg(), "policy.onnx")
