@@ -151,10 +151,21 @@ def run_mujoco(
     assert isinstance(model_info["robot_stiffness"], list)
     assert isinstance(model_info["robot_damping"], list)
 
-    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"]
-    kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
-    kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
+    # tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"]
+    # kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
+    # kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
+    # HACKY FOR HEADLESS
+    efforts = model_info["robot_effort"]
+    stiffnesses = model_info["robot_stiffness"]
+    dampings = model_info["robot_damping"]
+    leg_lims = [efforts[0], efforts[1], efforts[1], efforts[0], efforts[2]]
+    tau_limit = np.array(leg_lims + leg_lims) * model_info["tau_factor"]
 
+    leg_kps = [stiffnesses[0], stiffnesses[1], stiffnesses[1], stiffnesses[0], stiffnesses[2]]
+    kps = np.array(leg_kps + leg_kps)
+
+    leg_kds = [dampings[0], dampings[1], dampings[1], dampings[0], dampings[2]]
+    kds = np.array(leg_kds + leg_kds)
     try:
         data.qpos = model.keyframe("default").qpos
         default = deepcopy(model.keyframe("default").qpos)[-model_info["num_actions"] :]
@@ -188,9 +199,9 @@ def run_mujoco(
         "dof_pos.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "dof_vel.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
-        # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         # "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
         "projected_gravity.1": np.zeros(3).astype(np.float32),
+        # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
 
