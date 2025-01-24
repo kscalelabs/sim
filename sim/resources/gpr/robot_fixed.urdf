@@ -33,7 +33,7 @@
       <origin xyz="-0.006984352029976769 0.05467015743419366 0.0004881578569769504" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="imu_link" type="fixed">
+  <joint name="imu_link" type="fixed" dont_collapse="true">
     <origin xyz="-0.047126255760769356 0.14188879185640826 0.0003937090896153101" rpy="1.5707963999999994 0.0 3.1415926071795863"/>
     <parent link="body1-part"/>
     <child link="imu"/>

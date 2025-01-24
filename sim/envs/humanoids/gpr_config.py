@@ -41,7 +41,7 @@ class GprCfg(LeggedRobotCfg):
 
         foot_name = ["foot1", "foot3"]
         knee_name = ["leg3_shell2", "leg3_shell22"]
-        imu_name = "imu_link"
+        imu_name = "imu"
 
         termination_height = 0.2
         default_feet_height = 0.0
