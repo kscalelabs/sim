@@ -184,7 +184,7 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
 
         if args.fix_command:
-            env.commands[:, 0] = 0.5
+            env.commands[:, 0] = -0.5
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0

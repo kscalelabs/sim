@@ -71,8 +71,11 @@ class Legs(Node):
 class Robot(Node):
     legs = Legs()
 
-    height = 1.05 # - 0.151 maybe?
-    standing_height = 1.05 + 0.025
+    # height = 1.05 #- 0.151 #maybe?
+    # standing_height = 1.05 + 0.025 #- 0.151
+
+    height = 0.77
+    standing_height = 0.77 + 0.025
 
     # 1.3 m and 1.149m
     rotation = [0, 0, 0, 1]
