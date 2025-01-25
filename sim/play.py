@@ -179,7 +179,6 @@ def play(args: argparse.Namespace) -> None:
         if not os.path.exists(experiment_dir):
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
-
     for t in tqdm(range(env_steps_to_run)):
         actions = policy(obs.detach())
 

@@ -6,10 +6,10 @@
       <inertia ixx="1e-06" ixy="0" ixz="0" iyy="1e-06" iyz="0" izz="1e-06"/>
     </inertial>
   </link>
-  <joint name="floating_base" type="fixed">
-    <origin rpy="1.57 0.00 0.00" xyz="0 0 0"/>
-    <parent link="base"/>
-    <child link="body1-part"/>
+<joint name="floating_base" type="fixed">
+    <origin rpy="-1.57 3.14 0" xyz="0 0 0" />
+    <parent link="base" />
+    <child link="body1-part" />
   </joint>
   <link name="body1-part">
     <visual name="body1-part_visual">

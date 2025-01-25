@@ -109,7 +109,7 @@ class Actor(nn.Module):
         # 11 is the number of single observation features - 6 from IMU, 5 from command input
         # 9 is the number of single observation features - 3 from IMU(quat), 5 from command input
         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        self.num_single_obs = 8 + self.num_actions * 3 # pfb30
+        self.num_single_obs = 11 + self.num_actions * 3 # pfb30
         self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.policy = policy
@@ -145,6 +145,7 @@ class Actor(nn.Module):
         prev_actions: Tensor,  # previous actions taken by the model
         projected_gravity: Tensor,  # quaternion of the IMU
         # imu_euler_xyz: Tensor,  # euler angles of the IMU
+        imu_ang_vel: Tensor,  # angular velocity of the IMU
         buffer: Tensor,  # buffer of previous observations
     ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
@@ -198,6 +199,7 @@ class Actor(nn.Module):
                 dq,
                 prev_actions,
                 projected_gravity,
+                imu_ang_vel,
             ),
             dim=0,
         )
@@ -244,8 +246,9 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     dof_vel = torch.randn(a_model.num_actions)
     prev_actions = torch.randn(a_model.num_actions)
     projected_gravity = torch.randn(3)
+    ang_vel = torch.randn(3)
     buffer = a_model.get_init_buffer()
-    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, buffer)
+    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, ang_vel, buffer)
 
     jit_model = torch.jit.script(a_model)
 
