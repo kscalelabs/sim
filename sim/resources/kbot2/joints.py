@@ -74,8 +74,8 @@ class Robot(Node):
     # height = 1.05 #- 0.151 #maybe?
     # standing_height = 1.05 + 0.025 #- 0.151
 
-    height = 1.13
-    standing_height = 1.13 + 0.025
+    height = 1.1
+    standing_height = 1.1 + 0.025
 
     # 1.3 m and 1.149m
     rotation = [0, 0, 0, 1]
@@ -157,9 +157,9 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "04": 60,
-            "03": 40,
-            "02": 40,
+            "04": 80,
+            "03": 60,
+            "02": 20,
         }
 
     @classmethod
