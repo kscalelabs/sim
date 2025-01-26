@@ -7,7 +7,7 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.gpr-headless.joints import Robot
+from sim.resources.gpr_headless.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())
 
@@ -35,7 +35,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         torque_limit = 1.0
 
     class asset(LeggedRobotCfg.asset):
-        name = "gpr-headless"
+        name = "gpr_headless"
 
         file = str(robot_urdf_path(name))
 
