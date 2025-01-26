@@ -39,9 +39,9 @@ class KBot2Cfg(LeggedRobotCfg):
 
         file = str(robot_urdf_path(name))
 
-        foot_name = ["foot1", "foot3"]
-        knee_name = ["leg3_shell2", "leg3_shell22"]
-        imu_name = "imu"
+        foot_name = ["L_LEG-FOOT", "R_FOOT_LEG"]
+        knee_name = ["R-TIBIA-INNER_", "L-TIBIA-INNER_"]
+        imu_name = "imu" # no imu in the urdf
 
         termination_height = 0.2
         default_feet_height = 0.0

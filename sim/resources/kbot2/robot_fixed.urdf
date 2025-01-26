@@ -92,7 +92,7 @@
       <origin xyz="-0.008192454378784339 -0.0017616406090224307 -0.032183643127408824" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_shoulder_pitch_03" type="revolute">
+  <joint name="right_shoulder_pitch_03" type="fixed">
     <origin xyz="0.12395483289078238 -0.002148124546924123 0.338707134112055" rpy="1.5707963071795872 -4.6410206566704915e-08 -1.5707963535897917"/>
     <parent link="TORSO_BOTTOM_1"/>
     <child link="R_SHLDR_YAW-A"/>
@@ -121,7 +121,7 @@
       <origin xyz="0.007270334877790527 0.00010250544009193658 -0.04298091275185955" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_shoulder_pitch_03" type="revolute">
+  <joint name="left_shoulder_pitch_03" type="fixed">
     <origin xyz="-0.12394516500822303 -0.0021481216530753566 0.3387071333530755" rpy="-1.5707963 4.6410206566704915e-08 -1.5707963535897922"/>
     <parent link="TORSO_BOTTOM_1"/>
     <child link="L_SHLDR_YAW-A_"/>
@@ -208,7 +208,7 @@
       <origin xyz="-0.00010253388914313968 0.0548350699932074 -0.027269266133648693" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_shoulder_roll_03" type="revolute">
+  <joint name="right_shoulder_roll_03" type="fixed">
     <origin xyz="-0.02425 0.0 -0.0800000000267949" rpy="0 -1.5707963 0"/>
     <parent link="R_SHLDR_YAW-A"/>
     <child link="RS03"/>
@@ -237,7 +237,7 @@
       <origin xyz="-0.0052177909488822765 -0.042723028642503706 -0.0299485598560192" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_shoulder_roll_03" type="revolute">
+  <joint name="left_shoulder_roll_03" type="fixed">
     <origin xyz="-0.02425 -2.6794896579307448e-11 -0.0800000000267949" rpy="-1.5707963 0 1.5707963"/>
     <parent link="L_SHLDR_YAW-A_"/>
     <child link="RS03_2"/>
@@ -295,7 +295,7 @@
       <origin xyz="-0.0008479213381278404 0.011563430463445904 -0.1645473478551726" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_shoulder_yaw_02" type="revolute">
+  <joint name="right_shoulder_yaw_02" type="fixed">
     <origin xyz="-0.013027815851142209 -0.14250000289956488 -0.030245284794312124" rpy="1.5707963996335306 -0.008726650000000058 3.141592595346938"/>
     <parent link="RS03"/>
     <child link="R_BICEP_LOWER-DRIVE"/>
@@ -324,7 +324,7 @@
       <origin xyz="-0.0002516982430851186 0.0027596156182569755 -0.0983836419020131" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_shoulder_yaw_02" type="revolute">
+  <joint name="left_shoulder_yaw_02" type="fixed">
     <origin xyz="0.14250000111248584 0.012713926047757364 -0.03020093770906647" rpy="-1.5707962267948243 -2.6794896301751692e-08 1.5707963267948966"/>
     <parent link="RS03_2"/>
     <child link="L_BICEP_LOWER_DRIVE"/>
@@ -382,7 +382,7 @@
       <origin xyz="-0.00018240469371031163 0.011335105648022809 -0.16248139381226717" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_elbow_02" type="revolute">
+  <joint name="left_elbow_02" type="fixed">
     <origin xyz="-0.019000000085993334 -0.00999752800444823 -0.13702813751982898" rpy="1.570796400123929 -0.09599312679489658 1.570796324214841"/>
     <parent link="L_BICEP_LOWER_DRIVE"/>
     <child link="L_FOREARM_UPPER_STRUCTURAL"/>
@@ -469,7 +469,7 @@
       <origin xyz="-0.022770140893696382 0.10287936723890725 0.018824476368744097" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_elbow_02" type="revolute">
+  <joint name="right_elbow_02" type="fixed">
     <origin xyz="-0.01900000056016338 0.010007317759360172 -0.13702727562463635" rpy="-1.5707963646886025 -2.6794893859261038e-08 -1.5707962535897928"/>
     <parent link="R_BICEP_LOWER-DRIVE"/>
     <child link="R_FOREARM_UPPER_STRUCTURAL"/>
@@ -527,7 +527,7 @@
       <origin xyz="-0.013264731378632117 -0.028577932561279933 0.011944367356908027" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_wrist_02" type="revolute">
+  <joint name="left_wrist_02" type="fixed">
     <origin xyz="0.017350000572946937 -0.10300000033493621 0.017999999565063794" rpy="-1.5707963071795865 -1.5707963 0.0"/>
     <parent link="L_FOREARM_UPPER_STRUCTURAL"/>
     <child link="L_EndEff_Mount_1"/>
@@ -585,7 +585,7 @@
       <origin xyz="-0.013264732279278421 0.02857794219894329 -0.01605560559482646" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_wrist_02" type="revolute">
+  <joint name="right_wrist_02" type="fixed">
     <origin xyz="0.017349999519873475 0.10300000033493621 0.017999999565063797" rpy="1.5707963999999996 1.5707963000000005 0.0"/>
     <parent link="R_FOREARM_UPPER_STRUCTURAL"/>
     <child link="L_EndEff_Mount_2"/>
