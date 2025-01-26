@@ -20,8 +20,8 @@ from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
 from sim.envs.humanoids.xbot_env import XBotLFreeEnv
 from sim.envs.humanoids.zbot2_config import ZBot2Cfg, ZBot2CfgPPO, ZBot2StandingCfg
 from sim.envs.humanoids.zbot2_env import ZBot2Env
-from sim.envs.humanoids.gpr-headless_config import GprHeadlessCfg, GprHeadlessCfgPPO
-from sim.envs.humanoids.gpr-headless_env import GprHeadlessEnv
+from sim.envs.humanoids.gpr_headless_config import GprHeadlessCfg, GprHeadlessCfgPPO
+from sim.envs.humanoids.gpr_headless_env import GprHeadlessEnv
 from sim.utils.task_registry import TaskRegistry  # noqa: E402
 
 task_registry = TaskRegistry()
