@@ -16,6 +16,8 @@ from sim.envs.humanoids.gpr_config import GprCfg, GprCfgPPO, GprStandingCfg
 from sim.envs.humanoids.gpr_env import GprFreeEnv
 from sim.envs.humanoids.h1_config import H1Cfg, H1CfgPPO
 from sim.envs.humanoids.h1_env import H1FreeEnv
+from sim.envs.humanoids.kbot2_config import KBot2Cfg, KBot2CfgPPO, KBot2StandingCfg
+from sim.envs.humanoids.kbot2_env import KBot2Env
 from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
 from sim.envs.humanoids.xbot_env import XBotLFreeEnv
 from sim.envs.humanoids.zbot2_config import ZBot2Cfg, ZBot2CfgPPO, ZBot2StandingCfg
@@ -31,3 +33,5 @@ task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
 task_registry.register("XBotL_free", XBotLFreeEnv, XBotCfg(), XBotCfgPPO())
 task_registry.register("zbot2", ZBot2Env, ZBot2Cfg(), ZBot2CfgPPO())
 task_registry.register("zbot2_standing", ZBot2Env, ZBot2StandingCfg(), ZBot2CfgPPO())
+task_registry.register("kbot2", KBot2Env, KBot2Cfg(), KBot2CfgPPO())
+task_registry.register("kbot2_standing", KBot2Env, KBot2StandingCfg(), KBot2CfgPPO())
