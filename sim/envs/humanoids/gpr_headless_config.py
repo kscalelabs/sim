@@ -273,7 +273,7 @@ class GprHeadlessCfgPPO(LeggedRobotCfgPPO):
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "gpr-headless"
+        experiment_name = "gpr_headless"
         run_name = ""
         # load and resume
         resume = False
