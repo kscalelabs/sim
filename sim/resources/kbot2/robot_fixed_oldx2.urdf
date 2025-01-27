@@ -8,7 +8,7 @@
     </inertial>
   </link>
   <joint name="floating_base" type="fixed">
-    <origin rpy="0.00 0.00 0.00" xyz="0 0 0"/>
+    <origin rpy="0.00 0.00 0.00" xyz="0.0 0.0009999996829318347 -7.963267107333194e-07"/>
     <parent link="base"/>
     <child link="TORSO_BOTTOM_1"/>
   </joint>
@@ -29,13 +29,13 @@
       </geometry>
     </collision>
     <inertial name="TORSO_BOTTOM_1_inertial">
-      <mass value="12.978877711"/>
-      <inertia ixx="0.3560986703361081" iyy="0.3913419084280843" izz="0.06393143863468188" ixy="6.683571274366279e-05" ixz="-3.612026580063636e-05" iyz="0.0005799106348977131"/>
-      <origin xyz="0.0006560670951245929 -0.0019285109384503934 0.1304726591973753" rpy="0 0 0"/>
+      <mass value="13.061691293"/>
+      <inertia ixx="0.3591473987651503" iyy="0.3953487792126659" izz="0.06505518478105819" ixy="6.629025741877432e-05" ixz="-3.5519382641948125e-05" iyz="0.0003660094618944637"/>
+      <origin xyz="0.0006523810858182181 -0.0019805513154017122 0.13169976657485213" rpy="0 0 0"/>
     </inertial>
   </link>
   <joint name="left_hip_pitch_04" type="revolute">
-    <origin xyz="-0.054995157299999986 1.547895499903862e-05 -0.07179286924500096" rpy="-1.5707963 0.0 -1.5707963"/>
+    <origin xyz="-0.056495156388220724 1.548108519327779e-05 -0.07179286928519331" rpy="-1.5707963 4.6410206566704915e-08 -1.5707963535897922"/>
     <parent link="TORSO_BOTTOM_1"/>
     <child link="L_Hip_Yoke_Drive"/>
     <limit effort="120" velocity="6.283" lower="-1.5707963" upper="1.9198622"/>
@@ -58,13 +58,13 @@
       </geometry>
     </collision>
     <inertial name="L_Hip_Yoke_Drive_inertial">
-      <mass value="0.8572125079999999"/>
-      <inertia ixx="0.0014121257660934506" iyy="0.0017831439302213438" izz="0.0019632580797031445" ixy="9.37030661410975e-05" ixz="-0.00012018180009341965" iyz="0.00025867842302921293"/>
-      <origin xyz="-0.008131954236117098 0.0025025026036906294 -0.0338738806943653" rpy="0 0 0"/>
+      <mass value="0.850879618"/>
+      <inertia ixx="0.0014184140251395465" iyy="0.0017691788017342189" izz="0.0019825403974594504" ixy="9.111829983020253e-05" ixz="-0.00012070936874722659" iyz="0.00026552966769775844"/>
+      <origin xyz="-0.008180615777367948 0.0017840253123379952 -0.03211871678440863" rpy="0 0 0"/>
     </inertial>
   </link>
   <joint name="right_hip_pitch_04" type="revolute">
-    <origin xyz="0.055004842699999994 1.5480000000005212e-05 -0.07179286924500096" rpy="1.5707963 -2.6794896523796297e-08 -1.5707963267948961"/>
+    <origin xyz="0.0565048409105324 1.547891480672564e-05 -0.07179286928519331" rpy="1.5707963 -4.641020634466031e-08 -1.5707963535897922"/>
     <parent link="TORSO_BOTTOM_1"/>
     <child link="R_Hip_Yoke_Drive"/>
     <limit effort="120" velocity="6.283" lower="-1.9198622" upper="1.5707963"/>
@@ -87,15 +87,16 @@
       </geometry>
     </collision>
     <inertial name="R_Hip_Yoke_Drive_inertial">
-      <mass value="0.8572137980000001"/>
-      <inertia ixx="0.001417157514309729" iyy="0.00178314777543158" izz="0.0019682930127679667" ixy="-8.881116059860948e-05" ixz="-0.00012017967129925466" iyz="-0.00026187314383706176"/>
-      <origin xyz="-0.00813193591840892 -0.0026076379116605824 -0.03387392275442471" rpy="0 0 0"/>
+      <mass value="0.8508816880000001"/>
+      <inertia ixx="0.0014209208005698268" iyy="0.0017717385892818019" izz="0.001980283631065328" ixy="-9.246727819993663e-05" ixz="-0.00011802066495809474" iyz="-0.00026657104283751333"/>
+      <origin xyz="-0.008192454378784339 -0.0017616406090224307 -0.032183643127408824" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_shoulder_pitch_03" type="fixed">
-    <origin xyz="0.12295483289078238 -0.002148124520129227 0.3387071341316703" rpy="1.570796392820413 2.220446049250313e-16 1.5707963000000003"/>
+  <joint name="right_shoulder_pitch_03" type="fixed">
+    <origin xyz="0.12395483289078238 -0.002148124546924123 0.338707134112055" rpy="1.5707963071795872 -4.6410206566704915e-08 -1.5707963535897917"/>
     <parent link="TORSO_BOTTOM_1"/>
     <child link="R_SHLDR_YAW-A"/>
+    <limit effort="60" velocity="6.283" lower="-3.4906585" upper="1.9198622"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="R_SHLDR_YAW-A">
@@ -116,14 +117,15 @@
     </collision>
     <inertial name="R_SHLDR_YAW-A_inertial">
       <mass value="0.38816839110000007"/>
-      <inertia ixx="0.0006642980360020297" iyy="0.0008736859035238626" izz="0.0007498466016313168" ixy="-3.6138701328812517e-06" ixz="1.306067640719083e-05" iyz="-1.4186119956351242e-06"/>
-      <origin xyz="-0.007270334256917293 0.00010250544009193658 0.04298091297841596" rpy="0 0 0"/>
+      <inertia ixx="0.0006642980330859071" iyy="0.0008736859213093423" izz="0.000749846622332919" ixy="3.6138702019625217e-06" ixz="1.3060682064639775e-05" iyz="1.418612073712983e-06"/>
+      <origin xyz="0.007270334877790527 0.00010250544009193658 -0.04298091275185955" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="right_shoulder_pitch_03" type="fixed">
-    <origin xyz="-0.12294516500822303 -0.002148121679870253 0.3387071333798704" rpy="-1.5707963 4.6410206566704915e-08 -1.5707963535897922"/>
+  <joint name="left_shoulder_pitch_03" type="fixed">
+    <origin xyz="-0.12394516500822303 -0.0021481216530753566 0.3387071333530755" rpy="-1.5707963 4.6410206566704915e-08 -1.5707963535897922"/>
     <parent link="TORSO_BOTTOM_1"/>
     <child link="L_SHLDR_YAW-A_"/>
+    <limit effort="60" velocity="6.283" lower="-3.4906585" upper="1.9198622"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_SHLDR_YAW-A_">
@@ -143,13 +145,13 @@
       </geometry>
     </collision>
     <inertial name="L_SHLDR_YAW-A__inertial">
-      <mass value="0.3930797391"/>
-      <inertia ixx="0.0006744828258263383" iyy="0.0008841271984884561" izz="0.0007516975029349002" ixy="-3.6109546943351697e-06" ixz="1.4634822773617765e-05" iyz="-1.4405223092671548e-06"/>
-      <origin xyz="0.0071782291732983335 -0.00010109684279684824 -0.04443114506542755" rpy="0 0 0"/>
+      <mass value="0.3881656491"/>
+      <inertia ixx="0.0006642956133699661" iyy="0.0008736839151392586" izz="0.0007498435353391363" ixy="-3.6146147099033966e-06" ixz="1.3062314419526681e-05" iyz="-1.4186715126309422e-06"/>
+      <origin xyz="0.007270341214786868 -0.00010237647746921621 -0.042980971148385214" rpy="0 0 0"/>
     </inertial>
   </link>
   <joint name="left_hip_roll_03" type="revolute">
-    <origin xyz="-0.02525 0.0305 -0.068" rpy="0 -1.5707963 0"/>
+    <origin xyz="-0.02425 0.03 -0.0660000000267949" rpy="0 -1.5707963 0"/>
     <parent link="L_Hip_Yoke_Drive"/>
     <child link="L_Hip_Yaw_RS03"/>
     <limit effort="60" velocity="6.283" lower="-0.20943951" upper="2.6179939"/>
@@ -178,7 +180,7 @@
     </inertial>
   </link>
   <joint name="right_hip_roll_03" type="revolute">
-    <origin xyz="-0.02525 -0.0305 -0.068" rpy="3.1415927 1.5707963 0"/>
+    <origin xyz="-0.024250000000000004 -0.030000000046410204 -0.0659999999732051" rpy="3.1415927 1.5707963 0"/>
     <parent link="R_Hip_Yoke_Drive"/>
     <child link="L_Hip_Yaw_RS03_2"/>
     <limit effort="60" velocity="6.283" lower="-2.6179939" upper="0.20943951"/>
@@ -207,9 +209,10 @@
     </inertial>
   </link>
   <joint name="right_shoulder_roll_03" type="fixed">
-    <origin xyz="0.02525 0 0.08" rpy="0 1.5707963 0"/>
+    <origin xyz="-0.02425 0.0 -0.0800000000267949" rpy="0 -1.5707963 0"/>
     <parent link="R_SHLDR_YAW-A"/>
     <child link="RS03"/>
+    <limit effort="60" velocity="6.283" lower="-1.6580628" upper="0.48869219"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="RS03">
@@ -235,9 +238,10 @@
     </inertial>
   </link>
   <joint name="left_shoulder_roll_03" type="fixed">
-    <origin xyz="-0.02525 0 -0.082" rpy="-1.5707963 0 1.5707963"/>
+    <origin xyz="-0.02425 -2.6794896579307448e-11 -0.0800000000267949" rpy="-1.5707963 0 1.5707963"/>
     <parent link="L_SHLDR_YAW-A_"/>
     <child link="RS03_2"/>
+    <limit effort="60" velocity="6.283" lower="-0.48869219" upper="1.6580628"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="RS03_2">
@@ -263,7 +267,7 @@
     </inertial>
   </link>
   <joint name="right_hip_yaw_03" type="revolute">
-    <origin xyz="8.807269719079969e-09 0.14200000421300732 -0.025249999933012746" rpy="-1.5707963071795867 -4.6410206566704915e-08 3.141592560769381"/>
+    <origin xyz="8.900090130537314e-09 0.14300000421300732 -0.025249999952628055" rpy="-1.5707963071795867 -4.6410206566704915e-08 3.141592560769381"/>
     <parent link="L_Hip_Yaw_RS03_2"/>
     <child link="R_Femur_Lower_Drive"/>
     <limit effort="60" velocity="6.283" lower="-1.5707963" upper="1.9198622"/>
@@ -286,15 +290,16 @@
       </geometry>
     </collision>
     <inertial name="R_Femur_Lower_Drive_inertial">
-      <mass value="2.45867164"/>
-      <inertia ixx="0.0170968564892804" iyy="0.015513626047310571" izz="0.004226302775028244" ixy="0.0001496080415245086" ixz="-0.00087728253744911" iyz="0.0016116019634469297"/>
-      <origin xyz="0.00039172721505503517 0.011451477956148549 -0.162413967263142" rpy="0 0 0"/>
+      <mass value="2.5458089619999997"/>
+      <inertia ixx="0.017543258007624945" iyy="0.015965378132556877" izz="0.0043901051570052665" ixy="0.00017558320099919758" ixz="-0.001031698413189701" iyz="0.001613083098030859"/>
+      <origin xyz="-0.0008479213381278404 0.011563430463445904 -0.1645473478551726" rpy="0 0 0"/>
     </inertial>
   </link>
   <joint name="right_shoulder_yaw_02" type="fixed">
-    <origin xyz="-0.013027815793534982 -0.14150000289956488 -0.030245284867147983" rpy="1.5707963996335306 -0.008726650000000058 3.141592595346938"/>
+    <origin xyz="-0.013027815851142209 -0.14250000289956488 -0.030245284794312124" rpy="1.5707963996335306 -0.008726650000000058 3.141592595346938"/>
     <parent link="RS03"/>
     <child link="R_BICEP_LOWER-DRIVE"/>
+    <limit effort="17" velocity="12.566" lower="-1.7453293" upper="1.7453293"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="R_BICEP_LOWER-DRIVE">
@@ -320,9 +325,10 @@
     </inertial>
   </link>
   <joint name="left_shoulder_yaw_02" type="fixed">
-    <origin xyz="0.14150000111248584 0.012713926047757361 -0.0302009376090664" rpy="-1.5707962267948243 -2.6794896301751692e-08 1.5707963267948966"/>
+    <origin xyz="0.14250000111248584 0.012713926047757364 -0.03020093770906647" rpy="-1.5707962267948243 -2.6794896301751692e-08 1.5707963267948966"/>
     <parent link="RS03_2"/>
     <child link="L_BICEP_LOWER_DRIVE"/>
+    <limit effort="17" velocity="12.566" lower="-1.7453293" upper="1.7453293"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_BICEP_LOWER_DRIVE">
@@ -348,7 +354,7 @@
     </inertial>
   </link>
   <joint name="left_hip_yaw_03" type="revolute">
-    <origin xyz="8.691244106351359e-09 0.1420000033427469 -0.02525000331570179" rpy="-1.5707962071795865 0.0 3.1415926071795863"/>
+    <origin xyz="8.737654313262573e-09 0.1430000033427469 -0.025250003435317102" rpy="-1.5707962071795865 0.0 3.1415926071795863"/>
     <parent link="L_Hip_Yaw_RS03"/>
     <child link="L_Femur_Lower_Drive"/>
     <limit effort="60" velocity="6.283" lower="-1.5707963" upper="1.9198622"/>
@@ -371,15 +377,16 @@
       </geometry>
     </collision>
     <inertial name="L_Femur_Lower_Drive_inertial">
-      <mass value="2.46030659"/>
-      <inertia ixx="0.01712475925813052" iyy="0.015541886970567971" izz="0.004230455612483035" ixy="-0.0001493656705734685" ixz="0.0008699185475137966" iyz="0.0016121604959534025"/>
-      <origin xyz="-0.0003674106146914035 0.011449985750236792 -0.16233175014691012" rpy="0 0 0"/>
+      <mass value="2.4603065899999996"/>
+      <inertia ixx="0.017150400219543865" iyy="0.015566118116192048" izz="0.004223259197204856" ixy="-0.00015413661936377422" ixz="0.0008942999968457732" iyz="0.001604494673625525"/>
+      <origin xyz="-0.00018240469371031163 0.011335105648022809 -0.16248139381226717" rpy="0 0 0"/>
     </inertial>
   </link>
   <joint name="left_elbow_02" type="fixed">
-    <origin xyz="-0.018000000085993336 -0.009997528000000009 -0.13702813759282043" rpy="1.570796400123929 -0.09599312679489658 1.570796324214841"/>
+    <origin xyz="-0.019000000085993334 -0.00999752800444823 -0.13702813751982898" rpy="1.570796400123929 -0.09599312679489658 1.570796324214841"/>
     <parent link="L_BICEP_LOWER_DRIVE"/>
     <child link="L_FOREARM_UPPER_STRUCTURAL"/>
+    <limit effort="17" velocity="12.566" lower="-2.5307274" upper="0"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_FOREARM_UPPER_STRUCTURAL">
@@ -404,11 +411,40 @@
       <origin xyz="0.016156114069715417 -0.05753942796815662 0.015153293785799422" rpy="0 0 0"/>
     </inertial>
   </link>
+  <joint name="left_knee_04" type="revolute">
+    <origin xyz="-0.02099999837519743 0.020999999640192304 -0.21200000204019234" rpy="1.5707963 0.0 1.5707963"/>
+    <parent link="L_Femur_Lower_Drive"/>
+    <child link="L-TIBIA-INNER_"/>
+    <limit effort="120" velocity="6.283" lower="0" upper="2.6703538"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="L-TIBIA-INNER_">
+    <visual name="L-TIBIA-INNER__visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry name="L-TIBIA-INNER__geometry">
+        <mesh filename="meshes/L-TIBIA-INNER_.stl"/>
+      </geometry>
+      <material name="L-TIBIA-INNER__material">
+        <color rgba="0.97254902 0.52941176 0.0039215686 1"/>
+      </material>
+    </visual>
+    <collision name="L-TIBIA-INNER__collision">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry name="L-TIBIA-INNER__collision_geometry">
+        <mesh filename="meshes/L-TIBIA-INNER_.stl"/>
+      </geometry>
+    </collision>
+    <inertial name="L-TIBIA-INNER__inertial">
+      <mass value="1.850531369"/>
+      <inertia ixx="0.01704648524159625" iyy="0.0030029416535673347" izz="0.01721855594741047" ixy="-3.440814584191332e-05" ixz="0.0001027766039433787" iyz="0.00030559040389285775"/>
+      <origin xyz="-0.02191489092668439 -0.1024317711742123 0.018775336907083367" rpy="0 0 0"/>
+    </inertial>
+  </link>
   <joint name="right_knee_04" type="revolute">
-    <origin xyz="0.01960000043966463 0.02099999926046087 -0.21199999521668364" rpy="-1.5707963648333498 -0.08726647320510428 1.5707963033152696"/>
+    <origin xyz="0.021099998493035996 0.02034023431476345 -0.212648350120343" rpy="-1.5707962070772346 -0.08726646299999974 1.5707962976557508"/>
     <parent link="R_Femur_Lower_Drive"/>
     <child link="R-TIBIA-INNER_"/>
-    <limit effort="120" velocity="6.283" lower="-2.6703538" upper="0"/>
+    <limit effort="120" velocity="6.283" lower="-2.6005406" upper="0.078539816"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="R-TIBIA-INNER_">
@@ -428,15 +464,16 @@
       </geometry>
     </collision>
     <inertial name="R-TIBIA-INNER__inertial">
-      <mass value="1.8377962330000002"/>
-      <inertia ixx="0.016712798873531134" iyy="0.003090037744891356" izz="0.01697840235189485" ixy="0.0012779431278330438" ixz="0.00012661944096701365" iyz="-0.00034379634243273706"/>
-      <origin xyz="-0.03066269548610658 0.09984931132198185 0.018866757855306084" rpy="0 0 0"/>
+      <mass value="1.8505552620000003"/>
+      <inertia ixx="0.01699559491827396" iyy="0.002983977255465123" izz="0.017155484867086228" ixy="0.00023804519959614516" ixz="6.12635225506719e-05" iyz="-0.00033000215228796596"/>
+      <origin xyz="-0.022770140893696382 0.10287936723890725 0.018824476368744097" rpy="0 0 0"/>
     </inertial>
   </link>
   <joint name="right_elbow_02" type="fixed">
-    <origin xyz="-0.018000000560163383 0.010007317832565275 -0.13702727566253006" rpy="-1.5707963646886025 -2.6794893859261038e-08 -1.5707962535897928"/>
+    <origin xyz="-0.01900000056016338 0.010007317759360172 -0.13702727562463635" rpy="-1.5707963646886025 -2.6794893859261038e-08 -1.5707962535897928"/>
     <parent link="R_BICEP_LOWER-DRIVE"/>
     <child link="R_FOREARM_UPPER_STRUCTURAL"/>
+    <limit effort="17" velocity="12.566" lower="0" upper="2.5307274"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="R_FOREARM_UPPER_STRUCTURAL">
@@ -461,65 +498,8 @@
       <origin xyz="0.01615538627318021 0.05754082175552143 0.014849609597869016" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="left_knee_04" type="revolute">
-    <origin xyz="-0.01960000553314603 0.021000000739539275 -0.2119999974504628" rpy="1.5707963999999999 2.220446049250313e-16 1.5707963"/>
-    <parent link="L_Femur_Lower_Drive"/>
-    <child link="L-TIBIA-INNER_"/>
-    <limit effort="120" velocity="6.283" lower="0" upper="2.6703538"/>
-    <axis xyz="0 0 1"/>
-  </joint>
-  <link name="L-TIBIA-INNER_">
-    <visual name="L-TIBIA-INNER__visual">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry name="L-TIBIA-INNER__geometry">
-        <mesh filename="meshes/L-TIBIA-INNER_.stl"/>
-      </geometry>
-      <material name="L-TIBIA-INNER__material">
-        <color rgba="0.97254902 0.52941176 0.0039215686 1"/>
-      </material>
-    </visual>
-    <collision name="L-TIBIA-INNER__collision">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry name="L-TIBIA-INNER__collision_geometry">
-        <mesh filename="meshes/L-TIBIA-INNER_.stl"/>
-      </geometry>
-    </collision>
-    <inertial name="L-TIBIA-INNER__inertial">
-      <mass value="1.83777299"/>
-      <inertia ixx="0.016835989808113072" iyy="0.0030240850997571406" izz="0.017028515346863907" ixy="1.2865867379715503e-07" ixz="0.0001121525809009944" iyz="0.0003332627233157439"/>
-      <origin xyz="-0.021579089437132732 -0.10164829769989914 0.0188172719311646" rpy="0 0 0"/>
-    </inertial>
-  </link>
-  <joint name="left_wrist_02" type="fixed">
-    <origin xyz="0.017350000553331628 -0.10200000033493621 0.017999999565063794" rpy="-1.5707963071795865 -1.5707963 0.0"/>
-    <parent link="L_FOREARM_UPPER_STRUCTURAL"/>
-    <child link="L_EndEff_Mount_1"/>
-    <axis xyz="0 0 1"/>
-  </joint>
-  <link name="L_EndEff_Mount_1">
-    <visual name="L_EndEff_Mount_1_visual">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry name="L_EndEff_Mount_1_geometry">
-        <mesh filename="meshes/L_EndEff_Mount_1.stl"/>
-      </geometry>
-      <material name="L_EndEff_Mount_1_material">
-        <color rgba="0.61568627 0.81176471 0.92941176 1"/>
-      </material>
-    </visual>
-    <collision name="L_EndEff_Mount_1_collision">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry name="L_EndEff_Mount_1_collision_geometry">
-        <mesh filename="meshes/L_EndEff_Mount_1.stl"/>
-      </geometry>
-    </collision>
-    <inertial name="L_EndEff_Mount_1_inertial">
-      <mass value="0.17958563"/>
-      <inertia ixx="0.00010237335" iyy="0.00011019776" izz="8.8324157e-05" ixy="0" ixz="5.6389034e-06" iyz="0"/>
-      <origin xyz="-0.0058748036 0 -0.030963262" rpy="0 0 0"/>
-    </inertial>
-  </link>
   <joint name="left_ankle_02" type="revolute">
-    <origin xyz="-0.026 -0.2925 0.004" rpy="0 0 0"/>
+    <origin xyz="-0.026 -0.2925 0.003" rpy="0 0 0"/>
     <parent link="L-TIBIA-INNER_"/>
     <child link="L_LEG-FOOT"/>
     <limit effort="17" velocity="12.566" lower="-0.78539816" upper="0.29670597"/>
@@ -547,8 +527,37 @@
       <origin xyz="-0.013264731378632117 -0.028577932561279933 0.011944367356908027" rpy="0 0 0"/>
     </inertial>
   </link>
+  <joint name="left_wrist_02" type="fixed">
+    <origin xyz="0.017350000572946937 -0.10300000033493621 0.017999999565063794" rpy="-1.5707963071795865 -1.5707963 0.0"/>
+    <parent link="L_FOREARM_UPPER_STRUCTURAL"/>
+    <child link="L_EndEff_Mount_1"/>
+    <limit effort="17" velocity="12.566" lower="-1.5707963" upper="1.5707963"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <link name="L_EndEff_Mount_1">
+    <visual name="L_EndEff_Mount_1_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry name="L_EndEff_Mount_1_geometry">
+        <mesh filename="meshes/L_EndEff_Mount_1.stl"/>
+      </geometry>
+      <material name="L_EndEff_Mount_1_material">
+        <color rgba="0.61568627 0.81176471 0.92941176 1"/>
+      </material>
+    </visual>
+    <collision name="L_EndEff_Mount_1_collision">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry name="L_EndEff_Mount_1_collision_geometry">
+        <mesh filename="meshes/L_EndEff_Mount_1.stl"/>
+      </geometry>
+    </collision>
+    <inertial name="L_EndEff_Mount_1_inertial">
+      <mass value="0.17958563"/>
+      <inertia ixx="0.00010237335" iyy="0.00011019776" izz="8.8324157e-05" ixy="0" ixz="5.6389034e-06" iyz="0"/>
+      <origin xyz="-0.0058748036 0 -0.030963262" rpy="0 0 0"/>
+    </inertial>
+  </link>
   <joint name="right_ankle_02" type="revolute">
-    <origin xyz="-0.051394117 0.289120901 0.034" rpy="0.0 0.0 0.087266463"/>
+    <origin xyz="-0.025999999999999995 0.292499995396667 0.03300001483027525" rpy="9.282041333256967e-08 0.0 0.0"/>
     <parent link="R-TIBIA-INNER_"/>
     <child link="R_FOOT_LEG"/>
     <limit effort="17" velocity="12.566" lower="-0.29670597" upper="0.78539816"/>
@@ -577,9 +586,10 @@
     </inertial>
   </link>
   <joint name="right_wrist_02" type="fixed">
-    <origin xyz="0.017349999446668374 0.10200000033493621 0.017999999565063794" rpy="1.5707963999999996 1.5707963000000005 0.0"/>
+    <origin xyz="0.017349999519873475 0.10300000033493621 0.017999999565063797" rpy="1.5707963999999996 1.5707963000000005 0.0"/>
     <parent link="R_FOREARM_UPPER_STRUCTURAL"/>
     <child link="L_EndEff_Mount_2"/>
+    <limit effort="17" velocity="12.566" lower="-1.5707963" upper="1.5707963"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_EndEff_Mount_2">
