@@ -213,7 +213,8 @@ class ZBot2Cfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.00
+        start_pos_noise = 0.1
+        skip_joints = ["L_Hip_Roll", "R_Hip_Roll", "L_Hip_Yaw", "R_Hip_Yaw"]
         randomize_friction = True
         friction_range = [0.1, 1.5]
         randomize_base_mass = True
@@ -246,8 +247,8 @@ class ZBot2Cfg(LeggedRobotCfg):
 
         # put some settings here for LLM parameter tuning
         # pfb30
-        target_joint_pos_scale = 0.24  # rad
-        target_feet_height = 0.025  # m
+        target_joint_pos_scale = 0.28  # rad
+        target_feet_height = 0.027  # m
         cycle_time = 0.25
         # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)

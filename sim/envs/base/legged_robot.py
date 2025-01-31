@@ -162,6 +162,8 @@ class LeggedRobot(BaseTask):
             self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * 7
             self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * 0.3
 
+
+
         # reset robot states
         self._reset_dofs(env_ids)
 
@@ -201,6 +203,7 @@ class LeggedRobot(BaseTask):
 
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
         self.projected_gravity[env_ids] = quat_rotate_inverse(self.base_quat[env_ids], self.gravity_vec[env_ids])
+
 
     def compute_reward(self):
         """Compute rewards
@@ -380,12 +383,15 @@ class LeggedRobot(BaseTask):
         Args:
             env_ids (List[int]): Environemnt ids
         """
-        self.dof_pos[env_ids] = self.default_dof_pos + torch_rand_float(
+        # pfb30
+        applied_noise = torch_rand_float(
             -self.cfg.domain_rand.start_pos_noise,
             self.cfg.domain_rand.start_pos_noise,
             (len(env_ids), self.num_dof),
             device=self.device,
         )
+        applied_noise[:, self.skip_joints_ids] = 0.0
+        self.dof_pos[env_ids] = self.default_dof_pos + applied_noise
         self.dof_vel[env_ids] = 0.0
 
         env_ids_int32 = env_ids.to(dtype=torch.int32)
@@ -470,11 +476,12 @@ class LeggedRobot(BaseTask):
 
     def _resample_default_positions(self):
         self.default_dof_pos = torch.zeros(self.num_dof, dtype=torch.float, device=self.device, requires_grad=False)
+        
         for i in range(self.num_dofs):
             name = self.dof_names[i]
             self.default_dof_pos[i] = self.cfg.init_state.default_joint_angles[name]
 
-            if self.add_noise:
+            if self.add_noise > 0 and not name in self.cfg.domain_rand.skip_joints:
                 self.default_dof_pos[i] += torch.randn(1).item() * self.cfg.noise.noise_ranges.default_pos
 
     # ----------------------------------------
@@ -566,6 +573,10 @@ class LeggedRobot(BaseTask):
         if self.cfg.terrain.measure_heights:
             self.height_points = self._init_height_points()
         self.measured_heights = 0
+
+        # pfb30
+        self.skip_joints_ids = []
+
         # joint positions offsets and PD gains
         self.default_dof_pos = torch.zeros(self.num_dof, dtype=torch.float, device=self.device, requires_grad=False)
         for i in range(self.num_dofs):
@@ -573,6 +584,9 @@ class LeggedRobot(BaseTask):
             print(i, name)
             self.default_dof_pos[i] = self.cfg.init_state.default_joint_angles[name]
             found = False
+
+            if name in self.cfg.domain_rand.skip_joints:
+                self.skip_joints_ids.append(i)
 
             for dof_name in self.cfg.control.stiffness.keys():
                 if dof_name in name:
@@ -604,6 +618,8 @@ class LeggedRobot(BaseTask):
                     self.num_envs, self.cfg.env.single_num_privileged_obs, dtype=torch.float, device=self.device
                 )
             )
+
+
 
     def _prepare_reward_function(self):
         """Prepares a list of reward functions, which will be called to compute the total reward.
