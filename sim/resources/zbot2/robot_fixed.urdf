@@ -99,7 +99,7 @@ with default config example.
     <origin xyz="0.04280822375832449 0.007735076030833816 -0.08441842862429541" rpy="3.1415926071795863 -2.220446049250313e-15 3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="U-HIP-L" />
-    <limit effort="1.91" velocity="2" lower="-0.7" upper="0.7" />
+    <limit effort="1.91" velocity="2" lower="-0.0" upper="0.0" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="U-HIP-L">
@@ -128,7 +128,7 @@ with default config example.
     <origin xyz="-0.04286813624167551 0.007735076030833816 -0.08441842862429541" rpy="3.1415926071795863 -2.220446049250313e-15 3.1415926071795863" />
     <parent link="Z-BOT2_MASTER-BODY-SKELETON" />
     <child link="U-HIP-R" />
-    <limit effort="1.91" velocity="2" lower="-0.7" upper="0.7" />
+    <limit effort="1.91" velocity="2" lower="-0.0" upper="0.0" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="U-HIP-R">
@@ -215,7 +215,7 @@ with default config example.
     <origin xyz="0 0.018699662 0.0564" rpy="-1.5707963 0 0" />
     <parent link="U-HIP-L" />
     <child link="3215_BothFlange" />
-    <limit effort="1.91" velocity="2" lower="-1.54" upper="0.157" />
+    <limit effort="1.91" velocity="2" lower="0.0" upper="0.0" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="3215_BothFlange">
@@ -244,7 +244,7 @@ with default config example.
     <origin xyz="0 -0.018699662 0.0564" rpy="-1.5707963 0 0" />
     <parent link="U-HIP-R" />
     <child link="3215_BothFlange_2" />
-    <limit effort="1.91" velocity="2" lower="-1.54" upper="0.157" />
+    <limit effort="1.91" velocity="2" lower="0" upper="0" />
     <axis xyz="0 0 -1" />
   <dynamics damping="0.0" friction="0.0" /></joint>
   <link name="3215_BothFlange_2">

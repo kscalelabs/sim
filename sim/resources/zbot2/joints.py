@@ -99,7 +99,7 @@ class Legs(Node):
 class Robot(Node):
     legs = Legs()
 
-    height = 0.40
+    height = 0.38
     standing_height = 0.407
     rotation = [0, 0, 0, 1.0]
 
@@ -110,15 +110,15 @@ class Robot(Node):
             # Left Leg
             cls.legs.left.hip_roll: 0.0,
             cls.legs.left.hip_yaw: 0.0,
-            cls.legs.left.hip_pitch: -0.377,
-            cls.legs.left.knee_pitch: 0.796,
-            cls.legs.left.ankle_pitch: 0.377,
+            cls.legs.left.hip_pitch: -0.689,
+            cls.legs.left.knee_pitch: 1.44,
+            cls.legs.left.ankle_pitch: 0.747,
             # Right Leg
             cls.legs.right.hip_roll: 0.0,
             cls.legs.right.hip_yaw: 0.0,
-            cls.legs.right.hip_pitch: 0.377,
-            cls.legs.right.knee_pitch: -0.796,
-            cls.legs.right.ankle_pitch: -0.377,
+            cls.legs.right.hip_pitch: 0.689,
+            cls.legs.right.knee_pitch: -1.44,
+            cls.legs.right.ankle_pitch: -0.747,
         }
 
     @classmethod

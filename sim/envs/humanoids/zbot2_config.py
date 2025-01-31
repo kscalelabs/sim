@@ -213,7 +213,7 @@ class ZBot2Cfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.05
+        start_pos_noise = 0.00
         randomize_friction = True
         friction_range = [0.1, 1.5]
         randomize_base_mass = True
@@ -235,7 +235,7 @@ class ZBot2Cfg(LeggedRobotCfg):
 
         class ranges:
             lin_vel_x = [-0.3, 0.6]  # min max [m/s]
-            lin_vel_y = [-0.3, 0.3]  # min max [m/s]
+            lin_vel_y = [-0.3, 0.3]  # min max [m/swdwdwd]
             ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
@@ -248,7 +248,8 @@ class ZBot2Cfg(LeggedRobotCfg):
         # pfb30
         target_joint_pos_scale = 0.24  # rad
         target_feet_height = 0.025  # m
-        cycle_time = 0.4  # sec
+        cycle_time = 0.25
+        # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)

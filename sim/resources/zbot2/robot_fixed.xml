@@ -5,7 +5,6 @@
 
   <default>
     <joint limited="true" armature="0.01" frictionloss="0.01" />
-    <position kp="10" kv="1" forcerange="-10 10"/>
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
     <motor ctrllimited="true" />
     <equality solref="0.001 2" />
@@ -147,7 +146,7 @@
   </sensor>
 
   <keyframe>
-    <key name="default"  qpos="0 0 0.40  1. 0.0 0.0 0.0  0.0 0.0 -0.377 0.796 0.377 0.0 0.0 0.377 -0.796 -0.377"/>
+    <key name="default"  qpos="0 0 0.38  1. 0.0 0.0 0.0  0.0 0.0 -0.689 1.44 0.747 0.0 0.0 0.689 -1.44 -0.747"/>
     <key name="standing" qpos="0 0 0.407 1. 0.0 0.0 0.0  0.0 0.0 0.0 0 0  0 0.0 0.0    0.0 0.0"/>
   </keyframe>
 </mujoco>
