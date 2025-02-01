@@ -38,7 +38,7 @@
     <origin xyz="-0.054995157299999986 1.547895499903862e-05 -0.07179286924500096" rpy="-1.5707963 0.0 -1.5707963"/>
     <parent link="TORSO_BOTTOM_1"/>
     <child link="L_Hip_Yoke_Drive"/>
-    <limit effort="120" velocity="6.283" lower="-1.5707963" upper="1.9198622"/>
+    <limit effort="120" velocity="6.283" lower="-2.0071" upper="2.3562"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_Hip_Yoke_Drive">
@@ -67,7 +67,7 @@
     <origin xyz="0.055004842699999994 1.5480000000005212e-05 -0.07179286924500096" rpy="1.5707963 -2.6794896523796297e-08 -1.5707963267948961"/>
     <parent link="TORSO_BOTTOM_1"/>
     <child link="R_Hip_Yoke_Drive"/>
-    <limit effort="120" velocity="6.283" lower="-1.9198622" upper="1.5707963"/>
+    <limit effort="120" velocity="6.283" lower="-2.3562" upper="2.0071"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="R_Hip_Yoke_Drive">
@@ -152,7 +152,7 @@
     <origin xyz="-0.02525 0.0305 -0.068" rpy="0 -1.5707963 0"/>
     <parent link="L_Hip_Yoke_Drive"/>
     <child link="L_Hip_Yaw_RS03"/>
-    <limit effort="60" velocity="6.283" lower="-0.20943951" upper="2.6179939"/>
+    <limit effort="60" velocity="6.283" lower="-0.6457" upper="3.0543"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_Hip_Yaw_RS03">
@@ -181,7 +181,7 @@
     <origin xyz="-0.02525 -0.0305 -0.068" rpy="3.1415927 1.5707963 0"/>
     <parent link="R_Hip_Yoke_Drive"/>
     <child link="L_Hip_Yaw_RS03_2"/>
-    <limit effort="60" velocity="6.283" lower="-2.6179939" upper="0.20943951"/>
+    <limit effort="60" velocity="6.283" lower="-3.0543" upper="0.6457"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_Hip_Yaw_RS03_2">
@@ -266,7 +266,7 @@
     <origin xyz="8.807269719079969e-09 0.14200000421300732 -0.025249999933012746" rpy="-1.5707963071795867 -4.6410206566704915e-08 3.141592560769381"/>
     <parent link="L_Hip_Yaw_RS03_2"/>
     <child link="R_Femur_Lower_Drive"/>
-    <limit effort="60" velocity="6.283" lower="-1.5707963" upper="1.9198622"/>
+    <limit effort="60" velocity="6.283" lower="-2.0071" upper="2.3562"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="R_Femur_Lower_Drive">
@@ -351,7 +351,7 @@
     <origin xyz="8.691244106351359e-09 0.1420000033427469 -0.02525000331570179" rpy="-1.5707962071795865 0.0 3.1415926071795863"/>
     <parent link="L_Hip_Yaw_RS03"/>
     <child link="L_Femur_Lower_Drive"/>
-    <limit effort="60" velocity="6.283" lower="-1.5707963" upper="1.9198622"/>
+    <limit effort="60" velocity="6.283" lower="-2.0071" upper="2.3562"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_Femur_Lower_Drive">
@@ -408,7 +408,7 @@
     <origin xyz="0.01960000043966463 0.02099999926046087 -0.21199999521668364" rpy="-1.5707963648333498 -0.08726647320510428 1.5707963033152696"/>
     <parent link="R_Femur_Lower_Drive"/>
     <child link="R-TIBIA-INNER_"/>
-    <limit effort="120" velocity="6.283" lower="-2.6703538" upper="0"/>
+    <limit effort="120" velocity="6.283" lower="-0.4363" upper="3.1067"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="R-TIBIA-INNER_">
@@ -465,7 +465,7 @@
     <origin xyz="-0.01960000553314603 0.021000000739539275 -0.2119999974504628" rpy="1.5707963999999999 2.220446049250313e-16 1.5707963"/>
     <parent link="L_Femur_Lower_Drive"/>
     <child link="L-TIBIA-INNER_"/>
-    <limit effort="120" velocity="6.283" lower="0" upper="2.6703538"/>
+    <limit effort="120" velocity="6.283" lower="-0.4363" upper="3.1067"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L-TIBIA-INNER_">
@@ -522,7 +522,7 @@
     <origin xyz="-0.026 -0.2925 0.004" rpy="0 0 0"/>
     <parent link="L-TIBIA-INNER_"/>
     <child link="L_LEG-FOOT"/>
-    <limit effort="17" velocity="12.566" lower="-0.78539816" upper="0.29670597"/>
+    <limit effort="17" velocity="12.566" lower="-1.2217" upper="0.7330"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="L_LEG-FOOT">
@@ -551,7 +551,7 @@
     <origin xyz="-0.051394117 0.289120901 0.034" rpy="0.0 0.0 0.087266463"/>
     <parent link="R-TIBIA-INNER_"/>
     <child link="R_FOOT_LEG"/>
-    <limit effort="17" velocity="12.566" lower="-0.29670597" upper="0.78539816"/>
+    <limit effort="17" velocity="12.566" lower="-0.7330" upper="1.2217"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="R_FOOT_LEG">
