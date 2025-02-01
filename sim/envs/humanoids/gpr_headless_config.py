@@ -40,7 +40,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         file = str(robot_urdf_path(name))
 
         foot_name = ["foot1", "foot3"]
-        knee_name = ["leg3_shell2", "leg3_shell22"]
+        knee_name = ["leg3_shell1", "leg3_shell11"]
         imu_name = "imu"
 
         termination_height = 0.2

@@ -795,6 +795,7 @@ class LeggedRobot(BaseTask):
         self.imu_indices = self.gym.find_actor_rigid_body_handle(
             self.envs[0], self.actor_handles[0], self.cfg.asset.imu_name
         )
+
         if self.imu_indices == -1:
             self.imu_indices = None
             print(f"Warning: IMU {self.cfg.asset.imu_name} not found in the asset. Defaulting to base link.")
