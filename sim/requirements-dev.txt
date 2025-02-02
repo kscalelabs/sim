@@ -8,7 +8,7 @@ matplotlib==3.3.4
 mediapy==1.2.2
 mujoco==2.3.6
 mujoco_python_viewer==0.1.4
-onnx==1.15.0
+onnx
 onnxruntime
 pandas==1.4.4
 Pillow>6.2.0
