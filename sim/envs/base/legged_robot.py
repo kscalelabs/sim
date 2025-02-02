@@ -442,10 +442,10 @@ class LeggedRobot(BaseTask):
             return
         distance = torch.norm(self.root_states[env_ids, :2] - self.env_origins[env_ids, :2], dim=1)
         # robots that walked far enough progress to harder terains
-        move_up = distance > self.terrain.env_length / 2
+        move_up = distance > self.terrain.env_length / (2 * 2.5)
         # robots that walked less than half of their required distance go to simpler terrains
         move_down = (
-            distance < torch.norm(self.commands[env_ids, :2], dim=1) * self.max_episode_length_s * 0.5
+            distance < torch.norm(self.commands[env_ids, :2], dim=1) * self.max_episode_length_s * (0.5 / 2.5)
         ) * ~move_up
         self.terrain_levels[env_ids] += 1 * move_up - 1 * move_down
         # Robots that solve the last level are sent to a random one
@@ -455,6 +455,20 @@ class LeggedRobot(BaseTask):
             torch.clip(self.terrain_levels[env_ids], 0),
         )  # (the minumum level is zero)
         self.env_origins[env_ids] = self.terrain_origins[self.terrain_levels[env_ids], self.terrain_types[env_ids]]
+
+        # breakpoint()
+
+        if self.common_step_counter % 100 == 0:
+            # Print curriculum movement statistics
+            num_up = torch.sum(move_up).item()
+            num_down = torch.sum(move_down).item()
+            total_robots = len(env_ids)
+            print(f"\nTerrain Curriculum Update at step {self.common_step_counter}:")
+            print(f"Total robots being reset: {total_robots}")
+            print(f"Robots moving UP: {num_up} ({(num_up/total_robots)*100:.2f}%)")
+            print(f"Robots moving DOWN: {num_down} ({(num_down/total_robots)*100:.2f}%)")
+            print(f"Robots staying at SAME level: {total_robots - num_up - num_down} ({((total_robots - num_up - num_down)/total_robots)*100:.2f}%)")
+            print(f"Average terrain level: {torch.mean(self.terrain_levels[env_ids].float()):.2f}")
 
     def update_command_curriculum(self, env_ids):
         """Implements a curriculum of increasing commands
