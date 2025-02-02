@@ -211,7 +211,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class GprHeadlessCfg(GprHeadlessCfg):
+class GprHeadlessStandingCfg(GprHeadlessCfg):
     """Configuration class for the GPR humanoid robot."""
 
     class init_state(LeggedRobotCfg.init_state):
