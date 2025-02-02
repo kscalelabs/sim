@@ -227,14 +227,14 @@ class HumanoidTerrain(Terrain):
             vertical_scale=self.cfg.vertical_scale,
             horizontal_scale=self.cfg.horizontal_scale,
         )
-        discrete_obstacles_height = difficulty * 0.04
-        r_height = difficulty * 0.07
+        discrete_obstacles_height = difficulty * 0.06
+        r_height = difficulty * 0.10
         h_slope = difficulty * 0.15
         if choice < self.proportions[0]:
             pass
         elif choice < self.proportions[1]:
-            num_rectangles = 20
-            rectangle_min_size = 1.0
+            num_rectangles = 100
+            rectangle_min_size = 0.1
             rectangle_max_size = 2.0
             terrain_utils.discrete_obstacles_terrain(
                 terrain,

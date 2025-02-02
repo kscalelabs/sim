@@ -131,7 +131,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         foot_name = ["FOOT", "FOOT_2"]
         knee_name = ["3215_BothFlange_6", "3215_BothFlange_5"]
 
-        termination_height = 0.1
+        termination_height = 0.2
         default_feet_height = 0.01
 
         penalize_contacts_on = []
@@ -147,7 +147,7 @@ class ZBot2Cfg(LeggedRobotCfg):
     class terrain(LeggedRobotCfg.terrain):
         # mesh_type = "plane"
         mesh_type = "trimesh"
-        curriculum = False
+        curriculum = True
         # rough terrain only:
         measure_heights = False
         static_friction = 0.6
@@ -156,9 +156,9 @@ class ZBot2Cfg(LeggedRobotCfg):
         terrain_width = 8.0
         num_rows = 10  # number of terrain rows (levels)
         num_cols = 10  # number of terrain cols (types)
-        max_init_terrain_level = 10  # starting curriculum state
+        max_init_terrain_level = 9  # starting curriculum state
         # plane; obstacles; uniform; slope_up; slope_down, stair_up, stair_down
-        terrain_proportions = [0.3, 0.3, 0.4, 0.0, 0.0, 0, 0]
+        terrain_proportions = [0.3, 0.3, 0.4, 0.0, 0.0, 0.0, 0.0]
         restitution = 0.0
 
     class noise:
