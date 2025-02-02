@@ -4,7 +4,7 @@ import importlib
 import re
 from dataclasses import dataclass, fields
 from io import BytesIO
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
 import onnx
 import onnxruntime as ort
@@ -57,7 +57,7 @@ class ActorCritic(nn.Module):
         mlp_input_dim_c = num_critic_obs
 
         # Policy function.
-        actor_layers = []
+        actor_layers: List[Union[nn.Linear, nn.Module]] = []
         actor_layers.append(nn.Linear(mlp_input_dim_a, actor_hidden_dims[0]))
         actor_layers.append(activation)
         for dim_i in range(len(actor_hidden_dims)):
@@ -69,7 +69,7 @@ class ActorCritic(nn.Module):
         self.actor = nn.Sequential(*actor_layers)
 
         # Value function.
-        critic_layers = []
+        critic_layers: List[Union[nn.Linear, nn.Module]] = []
         critic_layers.append(nn.Linear(mlp_input_dim_c, critic_hidden_dims[0]))
         critic_layers.append(activation)
         for dim_i in range(len(critic_hidden_dims)):
@@ -85,7 +85,7 @@ class ActorCritic(nn.Module):
         self.distribution = None
 
         # Disable args validation for speedup.
-        Normal.set_default_validate_args = False
+        Normal.set_default_validate_args(False)
 
 
 class Actor(nn.Module):
