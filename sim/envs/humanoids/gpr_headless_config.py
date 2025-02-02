@@ -46,6 +46,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
         termination_height = 0.2
         default_feet_height = 0.0
 
+        terminate_after_contacts_on = ["arm1_top", "arm1_top_2"]
+
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
