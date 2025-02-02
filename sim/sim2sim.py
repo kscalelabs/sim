@@ -260,7 +260,7 @@ def run_mujoco(
             input_data["prev_actions.1"] = prev_actions.astype(np.float32)
 
             input_data["projected_gravity.1"] = gvec.astype(np.float32)
-            # input_data["imu_ang_vel.1"] = omega.astype(np.float32)
+            input_data["imu_ang_vel.1"] = omega.astype(np.float32)
             # input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
@@ -320,7 +320,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.5, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = -0.5, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
