@@ -213,8 +213,9 @@ class HumanoidTerrain(Terrain):
             # Env coordinates in the world
             (i, j) = np.unravel_index(k, (self.cfg.num_rows, self.cfg.num_cols))
 
+            # pfb30 - make this configurable
             choice = np.random.uniform(0, 1)
-            difficulty = np.random.uniform(0, 1)
+            difficulty = np.random.uniform(0, .5)
             terrain = self.make_terrain(choice, difficulty)
             self.add_terrain_to_map(terrain, i, j)
 

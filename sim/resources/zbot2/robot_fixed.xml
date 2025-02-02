@@ -4,7 +4,7 @@
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
   <default>
-    <joint limited="true" armature="0.01" frictionloss="0.01" />
+    <joint limited="true" armature="0.008" frictionloss="0.013" />
     <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
     <motor ctrllimited="true" />
     <equality solref="0.001 2" />
@@ -89,7 +89,7 @@
         <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="U-HIP-R"/>
         <body name="3215_BothFlange_2" pos="0 -0.0186997 0.0564" quat="0.707107 -0.707107 0 0">
           <inertial pos="-0.0123316 -0.00898328 0.0178111" quat="0.0705026 0.700607 0.114113 0.700826" mass="0.0682953" diaginertia="2.5341e-05 2.36252e-05 1.92157e-05"/>
-          <joint name="R_Hip_Yaw" pos="0 0 0" axis="0 0 -1" range="-1.54 0.157" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>
+         <joint name="R_Hip_Yaw" pos="0 0 0" axis="0 0 -1" range="-1.54 0.157" actuatorfrcrange="-1.91 1.91" frictionloss="0.1"/>git
           <geom type="mesh" rgba="1 0 0 1" mesh="3215_BothFlange_2"/>
           <body name="3215_BothFlange_4" pos="0.00739966 -0.032 0.0188997" quat="0.5 -0.5 0.5 -0.5">
             <inertial pos="0.0436622 0.00286343 -0.0185366" quat="0.484624 0.501567 0.512165 0.501256" mass="0.143337" diaginertia="0.000148208 0.000127573 4.86473e-05"/>
@@ -146,7 +146,7 @@
   </sensor>
 
   <keyframe>
-    <key name="default"  qpos="0 0 0.38  1. 0.0 0.0 0.0  0.0 0.0 -0.689 1.44 0.747 0.0 0.0 0.689 -1.44 -0.747"/>
+    <key name="default"  qpos="0 0 0.37  1. 0.0 0.0 0.0  0.0 0.0 -0.689 1.44 0.747 0.0 0.0 0.689 -1.44 -0.747"/>
     <key name="standing" qpos="0 0 0.407 1. 0.0 0.0 0.0  0.0 0.0 0.0 0 0  0 0.0 0.0    0.0 0.0"/>
   </keyframe>
 </mujoco>

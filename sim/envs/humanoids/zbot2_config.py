@@ -145,8 +145,8 @@ class ZBot2Cfg(LeggedRobotCfg):
         armature = 0.008
 
     class terrain(LeggedRobotCfg.terrain):
-        mesh_type = "plane"
-        # mesh_type = "trimesh"
+        # mesh_type = "plane"
+        mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -158,7 +158,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         num_cols = 10  # number of terrain cols (types)
         max_init_terrain_level = 10  # starting curriculum state
         # plane; obstacles; uniform; slope_up; slope_down, stair_up, stair_down
-        terrain_proportions = [0.8, 0.1, 0.1, 0.1, 0.1, 0, 0]
+        terrain_proportions = [0.3, 0.3, 0.4, 0.0, 0.0, 0, 0]
         restitution = 0.0
 
     class noise:
