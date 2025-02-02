@@ -17,9 +17,9 @@ class GprCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-        frame_stack = 15 # Actor
-        c_frame_stack = 3 # Critic
-        num_single_obs = 8 + NUM_JOINTS * 3 + 3 # Add ang vel
+        frame_stack = 15  # Actor
+        c_frame_stack = 3  # Critic
+        num_single_obs = 8 + NUM_JOINTS * 3 + 3  # Add ang vel
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)

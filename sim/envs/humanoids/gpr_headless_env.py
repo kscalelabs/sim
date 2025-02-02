@@ -124,7 +124,7 @@ class GprHeadlessEnv(LeggedRobot):
         scale_2 = 2 * scale_1
         # left foot stance phase set to default joint pos
         sin_pos_l[sin_pos_l > 0] = 0
-   
+
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += -sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += sin_pos_l * scale_2 * -1
         self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += sin_pos_l * scale_1
@@ -184,7 +184,9 @@ class GprHeadlessEnv(LeggedRobot):
         noise_vec[(3 * num_actions + 5) : (3 * num_actions + 5) + 3] = (
             noise_scales.quat * self.obs_scales.quat
         )  # projected_gravity
-        noise_vec[(3 * num_actions + 5) + 3 : (3 * num_actions + 5) + 6] = noise_scales.ang_vel * self.obs_scales.ang_vel # ang vel
+        noise_vec[(3 * num_actions + 5) + 3 : (3 * num_actions + 5) + 6] = (
+            noise_scales.ang_vel * self.obs_scales.ang_vel
+        )  # ang vel
         return noise_vec
 
     def compute_observations(self):

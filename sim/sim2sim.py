@@ -73,7 +73,7 @@ def get_gravity_orientation(quaternion):
     """
     Args:
         quaternion: np.ndarray[float, float, float, float]
-    
+
     Returns:
         gravity_orientation: np.ndarray[float, float, float]
     """
@@ -312,7 +312,7 @@ if __name__ == "__main__":
     parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
     parser.add_argument("--terrain", action="store_true", help="terrain")
     parser.set_defaults(render=True, terrain=False)
-    
+
     args = parser.parse_args()
 
     if args.keyboard_use:

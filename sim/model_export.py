@@ -1,19 +1,19 @@
 """Script to convert weights to Rust-compatible format."""
 
+import importlib
 import re
 from dataclasses import dataclass, fields
 from io import BytesIO
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
-import onnx 
+import onnx
 import onnxruntime as ort
 import torch
 from torch import Tensor, nn
 from torch.distributions import Normal
-import importlib
 
 
-def load_embodiment(embodiment: str):  # noqa: ANN401
+def load_embodiment(embodiment: str) -> Any:  # noqa: ANN401
     # Dynamically import embodiment
     module_name = f"sim.resources.{embodiment}.joints"
     module = importlib.import_module(module_name)
@@ -109,7 +109,7 @@ class Actor(nn.Module):
         # 11 is the number of single observation features - 6 from IMU, 5 from command input
         # 9 is the number of single observation features - 3 from IMU(quat), 5 from command input
         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        self.num_single_obs = 11 + self.num_actions * 3 # pfb30
+        self.num_single_obs = 11 + self.num_actions * 3  # pfb30
         self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.policy = policy
@@ -158,6 +158,7 @@ class Actor(nn.Module):
             dof_pos: The current angular position of the DoFs relative to default, with shape (num_actions).
             dof_vel: The current angular velocity of the DoFs, with shape (num_actions).
             prev_actions: The previous actions taken by the model, with shape (num_actions).
+            projected_gravity: The projected gravity vector, with shape (3), in meters per second squared.
             imu_ang_vel: The angular velocity of the IMU, with shape (3),
                 in radians per second. If IMU is not used, can be all zeros.
             imu_euler_xyz: The euler angles of the IMU, with shape (3),
@@ -250,7 +251,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     buffer = a_model.get_init_buffer()
     input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, ang_vel, buffer)
 
-    jit_model = torch.jit.script(a_model)
+    # jit_model = torch.jit.script(a_model)
 
     # Add sim2sim metadata
     robot_effort = list(a_model.robot.effort().values())
@@ -260,14 +261,18 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
-    return a_model, {
-        "robot_effort": robot_effort,
-        "robot_stiffness": robot_stiffness,
-        "robot_damping": robot_damping,
-        "default_standing": default_standing,
-        "num_actions": num_actions,
-        "num_observations": num_observations,
-    }, input_tensors
+    return (
+        a_model,
+        {
+            "robot_effort": robot_effort,
+            "robot_stiffness": robot_stiffness,
+            "robot_damping": robot_damping,
+            "default_standing": default_standing,
+            "num_actions": num_actions,
+            "num_observations": num_observations,
+        },
+        input_tensors,
+    )
 
 
 def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
@@ -281,7 +286,7 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
     Returns:
         An ONNX inference session.
     """
-    all_weights = torch.load(model_path, map_location="cpu")#, weights_only=True)
+    all_weights = torch.load(model_path, map_location="cpu")  # , weights_only=True)
     weights = all_weights["model_state_dict"]
     num_actor_obs = weights["actor.0.weight"].shape[1]
     num_critic_obs = weights["critic.0.weight"].shape[1]
@@ -356,4 +361,24 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
 
 
 if __name__ == "__main__":
-    convert_model_to_onnx("model_3000.pt", ActorCfg(), "policy.onnx")
+    convert_model_to_onnx(
+        "model_3000.pt",
+        ActorCfg(
+            embodiment="gpr_headless",
+            cycle_time=1.0,
+            action_scale=1.0,
+            lin_vel_scale=1.0,
+            ang_vel_scale=1.0,
+            quat_scale=1.0,
+            dof_pos_scale=1.0,
+            dof_vel_scale=1.0,
+            frame_stack=1,
+            clip_observations=1.0,
+            clip_actions=1.0,
+            sim_dt=0.001,
+            sim_decimation=1,
+            tau_factor=1.0,
+            use_projected_gravity=True,
+        ),
+        "policy.onnx",
+    )
