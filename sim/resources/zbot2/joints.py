@@ -191,22 +191,22 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "Hip_Pitch": 1.91,
-            "Hip_Yaw": 1.91,
-            "Hip_Roll": 1.91,
-            "Knee_Pitch": 1.91,
-            "Ankle_Pitch": 1.91,
+            "Hip_Pitch": 10.91,
+            "Hip_Yaw": 10.91,
+            "Hip_Roll": 10.91,
+            "Knee_Pitch": 10.91,
+            "Ankle_Pitch": 10.91,
         }
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "Hip_Pitch": 2,
-            "Hip_Yaw": 2,
-            "Hip_Roll": 2,
-            "Knee_Pitch": 2,
-            "Ankle_Pitch": 2,
+            "Hip_Pitch": 20,
+            "Hip_Yaw": 20,
+            "Hip_Roll": 20,
+            "Knee_Pitch": 20,
+            "Ankle_Pitch": 20,
         }
 
     @classmethod
