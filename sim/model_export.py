@@ -32,6 +32,7 @@ class ActorCfg:
     dof_pos_scale: float  # Scale for joint positions
     dof_vel_scale: float  # Scale for joint velocities
     frame_stack: int  # Number of frames to stack for the policy input
+    num_single_obs: int  # Number of single observation features
     clip_observations: float  # Clip observations to this value
     clip_actions: float  # Clip actions to this value
     sim_dt: float  # Simulation time step
@@ -109,7 +110,7 @@ class Actor(nn.Module):
         # 11 is the number of single observation features - 6 from IMU, 5 from command input
         # 9 is the number of single observation features - 3 from IMU(quat), 5 from command input
         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        self.num_single_obs = 11 + self.num_actions * 3  # pfb30
+        self.num_single_obs = cfg.num_single_obs # 11 + self.num_actions * 3  # pfb30
         self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.policy = policy
@@ -175,7 +176,6 @@ class Actor(nn.Module):
         """
         sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
         cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
-        print(buffer.shape)
         # Construct command input
         command_input = torch.cat(
             (
@@ -214,7 +214,6 @@ class Actor(nn.Module):
         x = x[self.num_single_obs :]
 
         policy_input = x.unsqueeze(0)
-
         # Get actions from the policy
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale

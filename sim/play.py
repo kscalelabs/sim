@@ -101,6 +101,7 @@ def play(args: argparse.Namespace) -> None:
             dof_pos_scale=env_cfg.normalization.obs_scales.dof_pos,
             dof_vel_scale=env_cfg.normalization.obs_scales.dof_vel,
             frame_stack=env_cfg.env.frame_stack,
+            num_single_obs=env_cfg.env.num_single_obs,
             clip_observations=env_cfg.normalization.clip_observations,
             clip_actions=env_cfg.normalization.clip_actions,
             use_projected_gravity=env_cfg.sim.use_projected_gravity,
