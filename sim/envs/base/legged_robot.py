@@ -62,23 +62,22 @@ class LeggedRobot(BaseTask):
         # step physics and render each frame
         self.render()
 
-        pd_counter = 0
-        cached_torques = None
+        # Number of PD cycles within one policy step
+        num_pd_cycles = self.cfg.control.decimation // self.cfg.control.pd_decimation
         
-        for _ in range(self.cfg.control.decimation):
-            # Only compute torques at pd_decimation rate
-            if pd_counter % self.cfg.control.pd_decimation == 0:
-                self.torques = self._compute_torques(self.actions).view(self.torques.shape)
-                cached_torques = self.torques
-            else:
-                self.torques = cached_torques
+        # For each PD cycle
+        for _ in range(num_pd_cycles):
+            # Compute torques at start of PD cycle
+            self.torques = self._compute_torques(self.actions).view(self.torques.shape)
             
-            self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
-            self.gym.simulate(self.sim)
-            if self.device == "cpu":
-                self.gym.fetch_results(self.sim, True)
-            self.gym.refresh_dof_state_tensor(self.sim)
-            pd_counter += 1
+            # Run simulation steps until next PD update
+            for _ in range(self.cfg.control.pd_decimation):
+                self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
+                self.gym.simulate(self.sim)
+                if self.device == "cpu":
+                    self.gym.fetch_results(self.sim, True)
+                self.gym.refresh_dof_state_tensor(self.sim)
+
         self.post_physics_step()
 
         # return clipped obs, clipped states (None), rewards, dones and infos
