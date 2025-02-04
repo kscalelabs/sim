@@ -61,14 +61,24 @@ class LeggedRobot(BaseTask):
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
         self.render()
-        for _ in range(self.cfg.control.decimation):
-            self.torques = self._compute_torques(self.actions).view(self.torques.shape)
-            self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
 
+        pd_counter = 0
+        cached_torques = None
+        
+        for _ in range(self.cfg.control.decimation):
+            # Only compute torques at pd_decimation rate
+            if pd_counter % self.cfg.control.pd_decimation == 0:
+                self.torques = self._compute_torques(self.actions).view(self.torques.shape)
+                cached_torques = self.torques
+            else:
+                self.torques = cached_torques
+            
+            self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
             self.gym.simulate(self.sim)
             if self.device == "cpu":
                 self.gym.fetch_results(self.sim, True)
             self.gym.refresh_dof_state_tensor(self.sim)
+            pd_counter += 1
         self.post_physics_step()
 
         # return clipped obs, clipped states (None), rewards, dones and infos

@@ -100,10 +100,11 @@ class GprHeadlessCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 4  # 50hz
+        decimation = 20  # 50hz
+        pd_decimation = 10  # 100hz
 
     class sim(LeggedRobotCfg.sim):
-        dt = 0.005  # 200 Hz
+        dt = 0.001  # 1000 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
 
