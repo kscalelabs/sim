@@ -184,7 +184,7 @@ class GprHeadlessEnv(LeggedRobot):
         noise_vec[(3 * num_actions + 5) : (3 * num_actions + 5) + 3] = (
             noise_scales.quat * self.obs_scales.quat
         )  # projected_gravity
-        noise_vec[(3 * num_actions + 5) + 3 : (3 * num_actions + 5) + 6] = noise_scales.ang_vel * self.obs_scales.ang_vel # ang vel
+        # noise_vec[(3 * num_actions + 5) + 3 : (3 * num_actions + 5) + 6] = noise_scales.ang_vel * self.obs_scales.ang_vel # ang vel
         return noise_vec
 
     def compute_observations(self):
@@ -229,7 +229,7 @@ class GprHeadlessEnv(LeggedRobot):
                 dq,  # 12D
                 self.actions,  # 12D
                 self.projected_gravity,  # 3
-                self.base_ang_vel * self.obs_scales.ang_vel,  # 3
+                # self.base_ang_vel * self.obs_scales.ang_vel,  # 3
             ),
             dim=-1,
         )

@@ -17,9 +17,10 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-        frame_stack = 15 # actor
-        c_frame_stack = 3 # critic
-        num_single_obs = 8 + NUM_JOINTS * 3 + 3 # Add ang vel
+        frame_stack = 3 #15 # actor
+        c_frame_stack = 5 # critic
+        # num_single_obs = 8 + NUM_JOINTS * 3 + 3 # ang vel
+        num_single_obs = 8 + NUM_JOINTS * 3 # no ang vel
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -46,7 +47,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         termination_height = 0.2
         default_feet_height = 0.0
 
-        terminate_after_contacts_on = ["arm1_top", "arm1_top_2"]
+        terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -55,8 +56,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        mesh_type = "plane"
-        # mesh_type = "trimesh"
+        # mesh_type = "plane"
+        mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -73,14 +74,14 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.6  # scales other values
+        noise_level = 0.8 # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
             dof_vel = 0.5
-            ang_vel = 0.1
+            ang_vel = 0.4 # 0.1
             lin_vel = 0.05
-            quat = 0.03
+            quat = 0.08 # 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -99,10 +100,10 @@ class GprHeadlessCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 10  # 50hz
+        decimation = 4  # 50hz
 
     class sim(LeggedRobotCfg.sim):
-        dt = 0.002  # 500 Hz
+        dt = 0.005  # 200 Hz
         substeps = 1  # 2
         up_axis = 1  # 0 is y, 1 is z
 
@@ -159,7 +160,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
-        only_positive_rewards = True
+        only_positive_rewards = False
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
         max_contact_force = 400  # forces above this value are penalized
@@ -168,7 +169,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
             # reference motion tracking
             joint_pos = 1.6
             feet_clearance = 1.2
-            feet_contact_number = 1.4
+            feet_contact_number = 1.0 # 1.2
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
@@ -189,8 +190,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.002
-            torques = -1e-5
+            action_smoothness = -0.003 # -0.002
+            torques = -1.5e-5 # -1e-5
             dof_vel = -5e-4  # -1e-3
             dof_acc = -1e-7  # -2.5e-7
             collision = -1.0
@@ -271,7 +272,7 @@ class GprHeadlessCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 3001  # number of policy updates
+        max_iterations = 5001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations

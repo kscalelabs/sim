@@ -157,9 +157,9 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "04": 60,
+            "04": 80,
             "03": 40,
-            "02": 40,
+            "02": 20,
         }
 
     @classmethod
