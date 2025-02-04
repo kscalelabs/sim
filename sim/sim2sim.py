@@ -73,7 +73,7 @@ def get_gravity_orientation(quaternion):
     """
     Args:
         quaternion: np.ndarray[float, float, float, float]
-    
+
     Returns:
         gravity_orientation: np.ndarray[float, float, float]
     """
@@ -260,7 +260,7 @@ def run_mujoco(
             input_data["prev_actions.1"] = prev_actions.astype(np.float32)
 
             input_data["projected_gravity.1"] = gvec.astype(np.float32)
-            # input_data["imu_ang_vel.1"] = omega.astype(np.float32)
+            input_data["imu_ang_vel.1"] = omega.astype(np.float32)
             # input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
@@ -312,7 +312,7 @@ if __name__ == "__main__":
     parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
     parser.add_argument("--terrain", action="store_true", help="terrain")
     parser.set_defaults(render=True, terrain=False)
-    
+
     args = parser.parse_args()
 
     if args.keyboard_use:
@@ -320,7 +320,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.5, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = -0.5, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
