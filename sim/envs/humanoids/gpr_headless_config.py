@@ -17,7 +17,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-        frame_stack = 3 #15 # actor
+        frame_stack = 5 #15 # actor
         c_frame_stack = 5 # critic
         # num_single_obs = 8 + NUM_JOINTS * 3 + 3 # ang vel
         num_single_obs = 8 + NUM_JOINTS * 3 # no ang vel
@@ -74,7 +74,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.8 # 0.6  # scales other values
+        noise_level = 1.5 # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
@@ -100,8 +100,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 20  # 50hz
-        pd_decimation = 10  # 100hz
+        decimation = 20  # Policy at 50hz
+        pd_decimation = 10  # PD at 100hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -161,7 +161,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
-        only_positive_rewards = False
+        only_positive_rewards = True
         # tracking reward = exp(error*sigma)
         tracking_sigma = 5.0
         max_contact_force = 400  # forces above this value are penalized

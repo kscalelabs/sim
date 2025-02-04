@@ -85,7 +85,7 @@ class ActorCritic(nn.Module):
         self.distribution = None
 
         # Disable args validation for speedup.
-        Normal.set_default_validate_args(False)
+        Normal.set_default_validate_args = False
 
 
 class Actor(nn.Module):
@@ -175,7 +175,7 @@ class Actor(nn.Module):
         """
         sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
         cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
-
+        print(buffer.shape)
         # Construct command input
         command_input = torch.cat(
             (
