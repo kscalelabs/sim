@@ -16,6 +16,8 @@ from sim.envs.humanoids.gpr_config import GprCfg, GprCfgPPO, GprStandingCfg
 from sim.envs.humanoids.gpr_env import GprFreeEnv
 from sim.envs.humanoids.gpr_headless_config import GprHeadlessCfg, GprHeadlessCfgPPO
 from sim.envs.humanoids.gpr_headless_env import GprHeadlessEnv
+from sim.envs.humanoids.gpr_latency_config import GprLatencyCfg, GprLatencyCfgPPO, GprLatencyStandingCfg
+from sim.envs.humanoids.gpr_latency_env import GprLatencyEnv
 from sim.envs.humanoids.h1_config import H1Cfg, H1CfgPPO
 from sim.envs.humanoids.h1_env import H1FreeEnv
 from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
@@ -34,3 +36,5 @@ task_registry.register("XBotL_free", XBotLFreeEnv, XBotCfg(), XBotCfgPPO())
 task_registry.register("zbot2", ZBot2Env, ZBot2Cfg(), ZBot2CfgPPO())
 task_registry.register("zbot2_standing", ZBot2Env, ZBot2StandingCfg(), ZBot2CfgPPO())
 task_registry.register("gpr_headless", GprHeadlessEnv, GprHeadlessCfg(), GprHeadlessCfgPPO())
+task_registry.register("gpr_latency", GprLatencyEnv, GprLatencyCfg(), GprLatencyCfgPPO())
+task_registry.register("gpr_latency_standing", GprLatencyEnv, GprLatencyStandingCfg(), GprLatencyCfgPPO())
