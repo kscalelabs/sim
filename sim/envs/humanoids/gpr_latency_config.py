@@ -138,6 +138,17 @@ class GprLatencyCfg(LeggedRobotCfg):
         action_delay = 0.5
         randomize_pd_gains = False
 
+        # Latency randomization
+        add_cmd_action_latency = True  # Enable action latency
+        randomize_cmd_action_latency = True  # Randomize the latency amount
+        range_cmd_action_latency = [0, 2]  # Range of latency in simulation steps
+        
+        add_obs_latency = True  # Enable observation latency
+        randomize_obs_motor_latency = True  # Randomize motor sensor latency
+        range_obs_motor_latency = [0, 10]  # Range of motor latency in simulation steps
+        randomize_obs_imu_latency = True  # Randomize IMU sensor latency  
+        range_obs_imu_latency = [0, 10]  # Range of IMU latency in simulation steps
+
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
         num_commands = 4

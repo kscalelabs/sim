@@ -59,6 +59,7 @@ class LeggedRobot(BaseTask):
 
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
+        
         # step physics and render each frame
         self.render()
 
@@ -68,7 +69,8 @@ class LeggedRobot(BaseTask):
         # For each PD cycle
         for _ in range(num_pd_cycles):
             # Compute torques at start of PD cycle
-            self.torques = self._compute_torques(self.actions).view(self.torques.shape)
+            action_delayed = self.update_cmd_action_latency_buffer()
+            self.torques = self._compute_torques(action_delayed).view(self.torques.shape)
             
             # Run simulation steps until next PD update
             for _ in range(self.cfg.control.pd_decimation):
@@ -77,6 +79,7 @@ class LeggedRobot(BaseTask):
                 if self.device == "cpu":
                     self.gym.fetch_results(self.sim, True)
                 self.gym.refresh_dof_state_tensor(self.sim)
+                self.update_obs_latency_buffer()
 
         self.post_physics_step()
 
@@ -210,6 +213,8 @@ class LeggedRobot(BaseTask):
 
         self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
         self.projected_gravity[env_ids] = quat_rotate_inverse(self.base_quat[env_ids], self.gravity_vec[env_ids])
+
+        self._reset_latency_buffer(env_ids)
 
     def compute_reward(self):
         """Compute rewards
@@ -614,6 +619,14 @@ class LeggedRobot(BaseTask):
                 )
             )
 
+        # Latency buffers
+        self.cmd_action_latency_buffer = torch.zeros(self.num_envs, self.num_actions, self.cfg.domain_rand.range_cmd_action_latency[1]+1, device=self.device)
+        self.obs_motor_latency_buffer = torch.zeros(self.num_envs, self.num_actions * 2, self.cfg.domain_rand.range_obs_motor_latency[1]+1, device=self.device)
+        self.obs_imu_latency_buffer = torch.zeros(self.num_envs, 6, self.cfg.domain_rand.range_obs_imu_latency[1]+1, device=self.device)
+        self.cmd_action_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        self.obs_motor_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        self.obs_imu_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+
     def _prepare_reward_function(self):
         """Prepares a list of reward functions, which will be called to compute the total reward.
         Looks for self._reward_<REWARD_NAME>, where <REWARD_NAME> are names of all non zero reward scales in the cfg.
@@ -956,3 +969,59 @@ class LeggedRobot(BaseTask):
         heights = torch.min(heights, heightXBotL)
 
         return heights.view(self.num_envs, -1) * self.terrain.cfg.vertical_scale
+
+    def update_cmd_action_latency_buffer(self):
+        """Updates command action latency buffer and returns delayed actions"""
+        if self.cfg.domain_rand.add_cmd_action_latency:
+            self.cmd_action_latency_buffer[:,:,1:] = self.cmd_action_latency_buffer[:,:,:self.cfg.domain_rand.range_cmd_action_latency[1]].clone()
+            self.cmd_action_latency_buffer[:,:,0] = self.actions.clone()
+            action_delayed = self.cmd_action_latency_buffer[torch.arange(self.num_envs),:,self.cmd_action_latency_simstep.long()]
+        else:
+            action_delayed = self.actions
+        return action_delayed
+
+    def update_obs_latency_buffer(self):
+        """Updates observation latency buffers for motor and IMU data"""
+        if self.cfg.domain_rand.randomize_obs_motor_latency:
+            q = (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos
+            dq = self.dof_vel * self.obs_scales.dof_vel
+            self.obs_motor_latency_buffer[:,:,1:] = self.obs_motor_latency_buffer[:,:,:self.cfg.domain_rand.range_obs_motor_latency[1]].clone()
+            self.obs_motor_latency_buffer[:,:,0] = torch.cat((q, dq), 1).clone()
+
+        if self.cfg.domain_rand.randomize_obs_imu_latency:
+            self.base_quat[:] = self.root_states[:, 3:7]
+            self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
+            self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
+            self.obs_imu_latency_buffer[:,:,1:] = self.obs_imu_latency_buffer[:,:,:self.cfg.domain_rand.range_obs_imu_latency[1]].clone()
+            self.obs_imu_latency_buffer[:,:,0] = torch.cat((self.base_ang_vel * self.obs_scales.ang_vel, self.base_euler_xyz * self.obs_scales.quat), 1).clone()
+
+    def _reset_latency_buffer(self, env_ids):
+        """Resets latency buffers for specified environments"""
+        if self.cfg.domain_rand.add_cmd_action_latency:
+            self.cmd_action_latency_buffer[env_ids, :, :] = 0.0
+            if self.cfg.domain_rand.randomize_cmd_action_latency:
+                self.cmd_action_latency_simstep[env_ids] = torch.randint(
+                    self.cfg.domain_rand.range_cmd_action_latency[0],
+                    self.cfg.domain_rand.range_cmd_action_latency[1]+1,
+                    (len(env_ids),), device=self.device)
+            else:
+                self.cmd_action_latency_simstep[env_ids] = self.cfg.domain_rand.range_cmd_action_latency[1]
+
+        if self.cfg.domain_rand.add_obs_latency:
+            self.obs_motor_latency_buffer[env_ids, :, :] = 0.0
+            self.obs_imu_latency_buffer[env_ids, :, :] = 0.0
+            if self.cfg.domain_rand.randomize_obs_motor_latency:
+                self.obs_motor_latency_simstep[env_ids] = torch.randint(
+                    self.cfg.domain_rand.range_obs_motor_latency[0],
+                    self.cfg.domain_rand.range_obs_motor_latency[1]+1,
+                    (len(env_ids),), device=self.device)
+            else:
+                self.obs_motor_latency_simstep[env_ids] = self.cfg.domain_rand.range_obs_motor_latency[1]
+
+            if self.cfg.domain_rand.randomize_obs_imu_latency:
+                self.obs_imu_latency_simstep[env_ids] = torch.randint(
+                    self.cfg.domain_rand.range_obs_imu_latency[0],
+                    self.cfg.domain_rand.range_obs_imu_latency[1]+1,
+                    (len(env_ids),), device=self.device)
+            else:
+                self.obs_imu_latency_simstep[env_ids] = self.cfg.domain_rand.range_obs_imu_latency[1]
