@@ -129,14 +129,38 @@ class GprLatencyCfg(LeggedRobotCfg):
 
         randomize_base_mass = True
         added_mass_range = [-2.0, 2.0]
+
+        randomize_link_mass = True
+        link_mass_multiplier_range = [0.8, 1.2]
+
         push_robots = True
         push_interval_s = 4
         max_push_vel_xy = 0.2
         max_push_ang_vel = 0.4
+
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
         randomize_pd_gains = False
+
+        randomize_motor_zero_offset = True
+        motor_zero_offset_range = [-0.035, 0.035] # Offset to add to the motor angles
+
+        randomize_joint_friction = True
+        joint_friction_range = [0.01, 1.15]
+
+        randomize_joint_damping = True
+        joint_damping_range = [0.3, 1.5]
+
+        randomize_joint_armature = True
+        joint_armature_range = [0.008, 0.06]  
+
+        randomize_pd_gains = True
+        stiffness_multiplier_range = [0.8, 1.2]  
+        damping_multiplier_range = [0.8, 1.2]    
+
+        randomize_calculated_torque = True
+        torque_multiplier_range = [0.8, 1.2]
 
         # Latency randomization
         add_cmd_action_latency = True  # Enable action latency
