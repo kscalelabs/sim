@@ -93,6 +93,7 @@ def play(args: argparse.Namespace) -> None:
             cycle_time=env_cfg.rewards.cycle_time,
             sim_dt=env_cfg.sim.dt,
             sim_decimation=env_cfg.control.decimation,
+            pd_decimation=env_cfg.control.pd_decimation,
             tau_factor=env_cfg.safety.torque_limit,
             action_scale=env_cfg.control.action_scale,
             lin_vel_scale=env_cfg.normalization.obs_scales.lin_vel,

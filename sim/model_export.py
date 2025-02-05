@@ -37,6 +37,7 @@ class ActorCfg:
     clip_actions: float  # Clip actions to this value
     sim_dt: float  # Simulation time step
     sim_decimation: int  # Simulation decimation
+    pd_decimation: int  # PD decimation
     tau_factor: float  # Torque limit factor
     use_projected_gravity: bool  # Use projected gravity as IMU observation
 
@@ -248,7 +249,8 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     projected_gravity = torch.randn(3)
     ang_vel = torch.randn(3)
     buffer = a_model.get_init_buffer()
-    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, buffer) #ang_vel, buffer)
+    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, ang_vel, buffer)
+    # input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, buffer) #ang_vel, buffer)
 
     # jit_model = torch.jit.script(a_model)
 
