@@ -672,6 +672,15 @@ class LeggedRobot(BaseTask):
         self.obs_motor_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
         self.obs_imu_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
 
+        self.p_gains_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
+        self.d_gains_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
+        self.torque_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
+        self.motor_zero_offsets = torch.zeros((self.num_envs, self.num_actions), device=self.device)
+        self.joint_friction_coeffs = torch.ones((self.num_envs, 1), device=self.device)
+        self.joint_damping_coeffs = torch.ones((self.num_envs, 1), device=self.device)
+        self.joint_armatures = torch.zeros((self.num_envs, 1), device=self.device)
+        self.env_frictions = torch.ones((self.num_envs, 1), device=self.device)
+
     def _prepare_reward_function(self):
         """Prepares a list of reward functions, which will be called to compute the total reward.
         Looks for self._reward_<REWARD_NAME>, where <REWARD_NAME> are names of all non zero reward scales in the cfg.
@@ -831,7 +840,7 @@ class LeggedRobot(BaseTask):
                                           requires_grad=False)
         self.motor_zero_offsets = torch.zeros(self.num_envs, self.num_actions, dtype=torch.float, device=self.device,
                                          requires_grad=False)
-        self.d_gains_multiplier = torch.ones(self.num_envs,self.num_actions, dtype=torch.float, device=self.device, requires_grad=False)
+        self.p_gains_multiplier = torch.ones(self.num_envs,self.num_actions, dtype=torch.float, device=self.device, requires_grad=False)
         self.d_gains_multiplier = torch.ones(self.num_envs,self.num_actions, dtype=torch.float, device=self.device, requires_grad=False)
 
         for i in range(self.num_envs):
