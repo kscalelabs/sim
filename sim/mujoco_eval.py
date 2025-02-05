@@ -69,7 +69,8 @@ def quaternion_to_euler_array(quat: np.ndarray) -> np.ndarray:
 
 
 def get_gravity_orientation(quaternion: np.ndarray) -> np.ndarray:
-    """
+    """Get the gravity orientation from the quaternion.
+
     Args:
         quaternion: np.ndarray[float, float, float, float]
 
@@ -330,10 +331,19 @@ def run_mujoco(
         # eu_ang = np.array([0.0, 0.0, 0.0])
         # omega = np.array([0.0, 0.0, 0.0])
         # gvec = np.array([0.0, 0.0, -1.0])
+
+        is_upright = gvec[2] < -0.8
+        if is_upright:
+            upright_steps += 1
+
         # Calculate speed and accumulate for average speed calculation
         speed = np.linalg.norm(v[:2])  # Speed in the x-y plane
-        total_speed += speed
+        total_speed += speed.item()
         step_count += 1
+
+        # If robot falls, print statistics and break
+        if not is_upright and upright_steps > 0:
+            break
 
         # 1000hz -> 50hz
         if count_lowlevel % model_info["sim_decimation"] == 0:
@@ -394,8 +404,12 @@ def run_mujoco(
         average_speed = 0.0
 
     # Save or print the statistics at the end of the episode
-    print(f"Number of upright steps: {upright_steps}")
+    print("=" * 100)
+    print("PERFORMANCE STATISTICS")
+    print("-" * 100)
+    print(f"Number of upright steps: {upright_steps} ({upright_steps * model_info['sim_dt']:.2f} seconds)")
     print(f"Average speed: {average_speed:.4f} m/s")
+    print("=" * 100)
 
     if log_h5:
         logger.close()
@@ -470,7 +484,7 @@ if __name__ == "__main__":
 
     # Create real-world parameters
     real_world_params = RealWorldParams(
-        sensor_latency=5, motor_latency=1, sensor_noise_std=0.01, motor_noise_std=0.02, init_pos_noise_std=0.03
+        sensor_latency=5, motor_latency=1, sensor_noise_std=0.05, motor_noise_std=0.05, init_pos_noise_std=0.04
     )
 
     # real_world_params = RealWorldParams(
