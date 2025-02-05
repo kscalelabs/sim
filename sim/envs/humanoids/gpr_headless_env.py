@@ -198,6 +198,7 @@ class GprHeadlessEnv(LeggedRobot):
         contact_mask = self.contact_forces[:, self.feet_indices, 2] > 5.0
 
         self.command_input = torch.cat((sin_pos, cos_pos, self.commands[:, :3] * self.commands_scale), dim=1)
+        
         q = (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos
         dq = self.dof_vel * self.obs_scales.dof_vel
 

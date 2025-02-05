@@ -222,14 +222,26 @@ class GprHeadlessEnv(LeggedRobot):
             dim=-1,
         )
 
+        # Handle latency
+        if self.cfg.domain_rand.randomize_obs_motor_latency:
+            self.obs_motor = self.obs_motor_latency_buffer[torch.arange(self.num_envs), :, self.obs_motor_latency_simstep.long()]
+        else:
+            self.obs_motor = torch.cat((q, dq), 1)
+
+        if self.cfg.domain_rand.randomize_obs_imu_latency:
+            # self.obs_imu = self.obs_imu_latency_buffer[torch.arange(self.num_envs), :, self.obs_imu_latency_simstep.long()]
+            self.obs_imu = self.obs_imu_latency_buffer[torch.arange(self.num_envs), :3, self.obs_imu_latency_simstep.long()] # only projected_gravity
+
+        else:
+            # self.obs_imu = torch.cat((self.projected_gravity, self.base_ang_vel * self.obs_scales.ang_vel), 1)
+            self.obs_imu = self.projected_gravity
+
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
-                q,  # 12D
-                dq,  # 12D
+                self.obs_motor,  # Delayed motor observations
                 self.actions,  # 12D
-                self.projected_gravity,  # 3
-                # self.base_ang_vel * self.obs_scales.ang_vel,  # 3
+                self.obs_imu,  # Delayed IMU observations
             ),
             dim=-1,
         )

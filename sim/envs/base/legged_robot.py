@@ -989,39 +989,38 @@ class LeggedRobot(BaseTask):
             self.obs_motor_latency_buffer[:,:,0] = torch.cat((q, dq), 1).clone()
 
         if self.cfg.domain_rand.randomize_obs_imu_latency:
-            self.base_quat[:] = self.root_states[:, 3:7]
-            self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
-            self.base_euler_xyz = get_euler_xyz_tensor(self.base_quat)
+            if self.imu_indices:
+                self.base_quat[:] = self.rigid_state[:, self.imu_indices, 3:7]
+                self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.rigid_state[:, self.imu_indices, 10:13])
+            else:
+                self.base_quat[:] = self.root_states[:, 3:7]
+                self.base_ang_vel[:] = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
+            
+            self.projected_gravity[:] = quat_rotate_inverse(self.base_quat, self.gravity_vec)
             self.obs_imu_latency_buffer[:,:,1:] = self.obs_imu_latency_buffer[:,:,:self.cfg.domain_rand.range_obs_imu_latency[1]].clone()
-            self.obs_imu_latency_buffer[:,:,0] = torch.cat((self.base_ang_vel * self.obs_scales.ang_vel, self.base_euler_xyz * self.obs_scales.quat), 1).clone()
+            self.obs_imu_latency_buffer[:,:,0] = torch.cat((self.projected_gravity, self.base_ang_vel * self.obs_scales.ang_vel), 1).clone()
 
     def _reset_latency_buffer(self, env_ids):
         """Resets latency buffers for specified environments"""
+        if self.cfg.domain_rand.randomize_obs_motor_latency:
+            self.obs_motor_latency_buffer[env_ids] = 0
+            self.obs_motor_latency_simstep[env_ids] = torch.randint_like(
+                self.obs_motor_latency_simstep[env_ids], 
+                self.cfg.domain_rand.range_obs_motor_latency[0],
+                self.cfg.domain_rand.range_obs_motor_latency[1]
+            )
+
+        if self.cfg.domain_rand.randomize_obs_imu_latency:
+            self.obs_imu_latency_buffer[env_ids] = 0
+            self.obs_imu_latency_simstep[env_ids] = torch.randint_like(
+                self.obs_imu_latency_simstep[env_ids],
+                self.cfg.domain_rand.range_obs_imu_latency[0],
+                self.cfg.domain_rand.range_obs_imu_latency[1]
+            )
+
         if self.cfg.domain_rand.add_cmd_action_latency:
-            self.cmd_action_latency_buffer[env_ids, :, :] = 0.0
-            if self.cfg.domain_rand.randomize_cmd_action_latency:
-                self.cmd_action_latency_simstep[env_ids] = torch.randint(
-                    self.cfg.domain_rand.range_cmd_action_latency[0],
-                    self.cfg.domain_rand.range_cmd_action_latency[1]+1,
-                    (len(env_ids),), device=self.device)
-            else:
-                self.cmd_action_latency_simstep[env_ids] = self.cfg.domain_rand.range_cmd_action_latency[1]
-
-        if self.cfg.domain_rand.add_obs_latency:
-            self.obs_motor_latency_buffer[env_ids, :, :] = 0.0
-            self.obs_imu_latency_buffer[env_ids, :, :] = 0.0
-            if self.cfg.domain_rand.randomize_obs_motor_latency:
-                self.obs_motor_latency_simstep[env_ids] = torch.randint(
-                    self.cfg.domain_rand.range_obs_motor_latency[0],
-                    self.cfg.domain_rand.range_obs_motor_latency[1]+1,
-                    (len(env_ids),), device=self.device)
-            else:
-                self.obs_motor_latency_simstep[env_ids] = self.cfg.domain_rand.range_obs_motor_latency[1]
-
-            if self.cfg.domain_rand.randomize_obs_imu_latency:
-                self.obs_imu_latency_simstep[env_ids] = torch.randint(
-                    self.cfg.domain_rand.range_obs_imu_latency[0],
-                    self.cfg.domain_rand.range_obs_imu_latency[1]+1,
-                    (len(env_ids),), device=self.device)
-            else:
-                self.obs_imu_latency_simstep[env_ids] = self.cfg.domain_rand.range_obs_imu_latency[1]
+            self.cmd_action_latency_buffer[env_ids] = 0
+            self.cmd_action_latency_simstep[env_ids] = torch.randint(
+                self.cfg.domain_rand.range_cmd_action_latency[0],
+                self.cfg.domain_rand.range_cmd_action_latency[1]+1,
+                (len(env_ids),), device=self.device)
