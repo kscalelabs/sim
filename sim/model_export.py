@@ -146,7 +146,7 @@ class Actor(nn.Module):
         prev_actions: Tensor,  # previous actions taken by the model
         projected_gravity: Tensor,  # quaternion of the IMU
         # imu_euler_xyz: Tensor,  # euler angles of the IMU
-        # imu_ang_vel: Tensor,  # angular velocity of the IMU
+        imu_ang_vel: Tensor,  # angular velocity of the IMU
         buffer: Tensor,  # buffer of previous observations
     ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
@@ -200,7 +200,7 @@ class Actor(nn.Module):
                 dq,
                 prev_actions,
                 projected_gravity,
-                # imu_ang_vel,
+                imu_ang_vel,
             ),
             dim=0,
         )
@@ -246,7 +246,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     dof_vel = torch.randn(a_model.num_actions)
     prev_actions = torch.randn(a_model.num_actions)
     projected_gravity = torch.randn(3)
-    # ang_vel = torch.randn(3)
+    ang_vel = torch.randn(3)
     buffer = a_model.get_init_buffer()
     input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, buffer) #ang_vel, buffer)
 

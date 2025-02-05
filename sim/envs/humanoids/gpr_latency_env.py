@@ -229,12 +229,12 @@ class GprHeadlessEnv(LeggedRobot):
             self.obs_motor = torch.cat((q, dq), 1)
 
         if self.cfg.domain_rand.randomize_obs_imu_latency:
-            # self.obs_imu = self.obs_imu_latency_buffer[torch.arange(self.num_envs), :, self.obs_imu_latency_simstep.long()]
-            self.obs_imu = self.obs_imu_latency_buffer[torch.arange(self.num_envs), :3, self.obs_imu_latency_simstep.long()] # only projected_gravity
+            self.obs_imu = self.obs_imu_latency_buffer[torch.arange(self.num_envs), :, self.obs_imu_latency_simstep.long()]
+            # self.obs_imu = self.obs_imu_latency_buffer[torch.arange(self.num_envs), :3, self.obs_imu_latency_simstep.long()] # only projected_gravity
 
         else:
-            # self.obs_imu = torch.cat((self.projected_gravity, self.base_ang_vel * self.obs_scales.ang_vel), 1)
-            self.obs_imu = self.projected_gravity
+            self.obs_imu = torch.cat((self.projected_gravity, self.base_ang_vel * self.obs_scales.ang_vel), 1)
+            # self.obs_imu = self.projected_gravity
 
         obs_buf = torch.cat(
             (

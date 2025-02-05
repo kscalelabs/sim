@@ -17,10 +17,10 @@ class GprLatencyCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-        frame_stack = 5 #15 # actor
+        frame_stack = 15 #15 # actor
         c_frame_stack = 5 # critic
-        # num_single_obs = 8 + NUM_JOINTS * 3 + 3 # ang vel
-        num_single_obs = 8 + NUM_JOINTS * 3 # no ang vel
+        num_single_obs = 8 + NUM_JOINTS * 3 + 3 # ang vel
+        # num_single_obs = 8 + NUM_JOINTS * 3 # no ang vel
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
