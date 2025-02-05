@@ -12,8 +12,8 @@ from isaacgym import gymtorch  # isort:skip
 import torch  # isort:skip
 
 
-class GprHeadlessEnv(LeggedRobot):
-    """GprFreeEnv is a class that represents a custom environment for a legged robot.
+class GprLatencyEnv(LeggedRobot):
+    """GprLatencyEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg (LeggedRobotCfg): Configuration object for the legged robot.
