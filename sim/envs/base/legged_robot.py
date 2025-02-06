@@ -901,7 +901,7 @@ class LeggedRobot(BaseTask):
         self.motor_zero_offsets = torch.zeros(
             self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
         )
-        self.d_gains_multiplier = torch.ones(
+        self.p_gains_multiplier = torch.ones(
             self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.d_gains_multiplier = torch.ones(
