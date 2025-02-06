@@ -14,3 +14,4 @@ onnx
 mujoco==2.3.6
 kinfer==0.0.5
 opencv-python
+gpytorch>=1.13
