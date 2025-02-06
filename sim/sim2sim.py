@@ -201,7 +201,7 @@ def run_mujoco(
         "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         # "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
         "projected_gravity.1": np.zeros(3).astype(np.float32),
-        # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
+        "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
 
@@ -279,6 +279,7 @@ def run_mujoco(
         tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
 
         data.ctrl = tau
+        
         mujoco.mj_step(model, data)
 
         if render:
