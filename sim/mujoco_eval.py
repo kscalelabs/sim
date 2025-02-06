@@ -1,4 +1,6 @@
-"""Sim2sim deployment test.
+"""Sim2sim deployment evaluation.
+
+Completely self-contained.
 
 Run:
     python sim/mujoco_eval.py --load_model examples/gpr_walking.kinfer --embodiment gpr
@@ -6,12 +8,12 @@ Run:
 """
 
 import argparse
-import math
+import dataclasses
 import os
 import time
 from copy import deepcopy
-from dataclasses import asdict, dataclass, replace
-from typing import Callable, Dict, List, Tuple, TypedDict, Union
+from dataclasses import asdict, dataclass
+from typing import Callable, List, Optional, Tuple, TypedDict
 
 import gpytorch
 import mujoco
@@ -108,7 +110,7 @@ def get_gravity_orientation(quaternion: np.ndarray) -> np.ndarray:
 
 @dataclass
 class RealWorldParams:
-    """Parameters to simulate real-world conditions"""
+    """Parameters to simulate real-world conditions."""
 
     sensor_latency: int = 2  # frames of delay for sensor readings
     motor_latency: int = 1  # frames of delay for motor commands
@@ -118,7 +120,7 @@ class RealWorldParams:
 
 
 class SensorBuffer:
-    """Ring buffer to simulate sensor latency"""
+    """Ring buffer to simulate sensor latency."""
 
     def __init__(self, size: int, shape: tuple):
         self.buffer = np.zeros((size,) + shape)
@@ -203,13 +205,11 @@ def pd_control(
 def run_mujoco(
     embodiment: str,
     policy: ort.InferenceSession,
-    model_info: Dict[str, Union[float, List[float], str]],
+    model_info: ModelInfo,
     real_world_params: RealWorldParams,
     keyboard_use: bool = False,
-    log_h5: bool = False,
     render: bool = True,
     sim_duration: float = 60.0,
-    h5_out_dir: str = "sim/resources",
     terrain: bool = False,
     random_pushes: bool = False,
     push_magnitude: float = 100.0,  # Maximum force magnitude in Newtons
@@ -255,8 +255,8 @@ def run_mujoco(
         # Add noise to initial position
         default += np.random.normal(0, real_world_params.init_pos_noise_std, default.shape)
         print("Default position (with noise):", default)
-    except:
-        print("No default position found, using noisy zero initialization")
+    except Exception as e:
+        print(f"No default position found, using noisy zero initialization: {e}")
         default = np.random.normal(0, real_world_params.init_pos_noise_std, model_info["num_actions"])
 
     # Initialize sensor buffer for latency simulation
@@ -319,18 +319,6 @@ def run_mujoco(
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
 
-    if log_h5:
-        from sim.h5_logger import HDF5Logger
-
-        stop_state_log = int(sim_duration / model_info["sim_dt"]) / model_info["sim_decimation"]
-        logger = HDF5Logger(
-            data_name=embodiment,
-            num_actions=model_info["num_actions"],
-            max_timesteps=stop_state_log,
-            num_observations=model_info["num_observations"],
-            h5_out_dir=h5_out_dir,
-        )
-
     # Initialize variables for tracking upright steps and average speed
     upright_steps = 0
     total_speed = 0.0
@@ -360,16 +348,14 @@ def run_mujoco(
                 next_push_interval = np.random.uniform(min_push_interval, max_push_interval)
                 next_push_time = current_time + push_duration + next_push_interval
 
-                print(
-                    f"\nApplying push at t={current_time:.2f}s: magnitude={force_magnitude:.1f}N, "
-                    f"angle={angle:.1f}rad, next push in {next_push_interval:.1f}s"
-                )
+                # print(
+                #     f"\nApplying push at t={current_time:.2f}s: magnitude={force_magnitude:.1f}N, "
+                #     f"angle={angle:.1f}rad, next push in {next_push_interval:.1f}s"
+                # )
 
             # Apply force if within push duration
             if current_time < current_push_end:
-                data.xfrc_applied[1] = np.concatenate(
-                    [current_push_force, np.zeros(3)]
-                )  # Assuming body_id 1 is the torso
+                data.xfrc_applied[1] = np.concatenate([current_push_force, np.zeros(3)])
             else:
                 data.xfrc_applied[1] = np.zeros(6)
 
@@ -467,16 +453,13 @@ def run_mujoco(
     print(f"Average speed: {average_speed:.4f} m/s")
     print("=" * 100)
 
-    if log_h5:
-        logger.close()
-
     return upright_steps == int(sim_duration / model_info["sim_dt"])
 
 
 def test_robustness(
     embodiment: str,
     policy: ort.InferenceSession,
-    model_info: Dict[str, Union[float, List[float], str]],
+    model_info: ModelInfo,
     params: RealWorldParams,
     test_duration: float = 10.0,
     push: bool = False,
@@ -503,7 +486,9 @@ def test_robustness(
 
 
 class ExactGPModel(gpytorch.models.ExactGP):
-    def __init__(self, train_x: torch.Tensor, train_y: torch.Tensor, likelihood: gpytorch.likelihoods.GaussianLikelihood):
+    def __init__(
+        self, train_x: torch.Tensor, train_y: torch.Tensor, likelihood: gpytorch.likelihoods.GaussianLikelihood
+    ) -> None:
         super(ExactGPModel, self).__init__(train_x, train_y, likelihood)
         self.mean_module = gpytorch.means.ConstantMean()
         self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel(ard_num_dims=train_x.size(1)))
@@ -524,7 +509,7 @@ class BayesianOptimizer:
         self.train_y = torch.empty(0, device=self.device)
 
         self.likelihood = gpytorch.likelihoods.GaussianLikelihood().to(self.device)
-        self.model = None
+        self.model: Optional[ExactGPModel] = None
 
     def _normalize_params(self, params: torch.Tensor) -> torch.Tensor:
         """Normalize parameters to [0, 1] range."""
@@ -556,6 +541,8 @@ class BayesianOptimizer:
         n_candidates = 1000
         candidates = torch.rand(n_candidates, len(self.param_bounds), device=self.device)
 
+        assert self.model is not None
+
         # Get model predictions
         self.model.eval()
         self.likelihood.eval()
@@ -572,8 +559,8 @@ class BayesianOptimizer:
         return candidates[top_indices]
 
     def optimize(self, n_iterations: int = 50) -> Tuple[dict, float]:
-        """Run Bayesian optimization"""
-        best_params = None
+        """Run Bayesian optimization."""
+        best_params: Optional[dict] = None
         best_value = float("-inf")
 
         for i in range(n_iterations):
@@ -619,40 +606,71 @@ class BayesianOptimizer:
                 loss.backward()
                 optimizer.step()
 
+        if best_params is None:
+            raise ValueError("No best parameters found")
+
         return best_params, best_value
+
+
+@dataclass
+class OptimizationConfig:
+    """Configuration for the Bayesian optimization process."""
+
+    # Maximum parameter bounds
+    max_sensor_latency: int = 10
+    max_motor_latency: int = 10
+    max_sensor_noise: float = 0.2
+    max_motor_noise: float = 0.2
+    max_init_noise: float = 0.2
+
+    # Parameter weights for optimization reward
+    sensor_noise_weight: float = 2.0
+    motor_noise_weight: float = 1.0
+    init_noise_weight: float = 1.0
+    sensor_latency_weight: float = 1.5
+    motor_latency_weight: float = 1.0
+
+    # Optimization settings
+    n_iterations: int = 50
+    n_trials: int = 3  # Number of trials per parameter set
+    test_duration: float = 10.0
+
+    # Push test settings
+    push: bool = False
+    push_magnitude: float = 50.0
+    push_duration: float = 0.2
+    min_push_interval: float = 1.0
+    max_push_interval: float = 3.0
 
 
 def optimize_params(
     embodiment: str,
     policy: ort.InferenceSession,
     model_info: ModelInfo,
-    max_sensor_latency: int = 10,
-    max_motor_latency: int = 10,
-    max_sensor_noise: float = 0.2,
-    max_motor_noise: float = 0.2,
-    max_init_noise: float = 0.2,
-    n_iterations: int = 50,
-    test_duration: float = 10.0,
-    push: bool = False,
+    config: OptimizationConfig,
 ) -> RealWorldParams:
     """Use Bayesian optimization to find maximum tolerable parameters."""
     print("=" * 100)
     print("IDENTIFYING MAXIMUM RANDOMIZATION PARAMETERS")
     print("-" * 100)
+    print("Optimization config:")
+    for field, value in asdict(config).items():
+        print(f"{field}: {value}")
+    print("-" * 100)
 
     # Define parameter bounds
     param_bounds = {
-        "sensor_noise": (0.0, max_sensor_noise),
-        "motor_noise": (0.0, max_motor_noise),
-        "init_noise": (0.0, max_init_noise),
-        "sensor_latency": (1, max_sensor_latency),
-        "motor_latency": (1, max_motor_latency),
+        "sensor_noise": (0.0, config.max_sensor_noise),
+        "motor_noise": (0.0, config.max_motor_noise),
+        "init_noise": (0.0, config.max_init_noise),
+        "sensor_latency": (1, config.max_sensor_latency),
+        "motor_latency": (1, config.max_motor_latency),
     }
 
     # Define objective function
     def objective(params: dict) -> float:
         test_params = RealWorldParams(
-            sensor_latency=round(params["sensor_latency"]),  # Round for integer values
+            sensor_latency=round(params["sensor_latency"]),
             motor_latency=round(params["motor_latency"]),
             sensor_noise_std=params["sensor_noise"],
             motor_noise_std=params["motor_noise"],
@@ -663,32 +681,52 @@ def optimize_params(
         for name, value in asdict(test_params).items():
             print(f"{name}: {value}")
 
-        n_trials = 3
+        # Run multiple trials to ensure reliability
         successes = 0
-        for trial in range(n_trials):
-            print(f"\nTrial {trial + 1}/{n_trials}")
-            _, success = test_robustness(embodiment, policy, model_info, test_params, test_duration, push)
+        for trial in range(config.n_trials):
+            print(f"\nTrial {trial + 1}/{config.n_trials}")
+            success = run_mujoco(
+                embodiment=embodiment,
+                policy=policy,
+                model_info=model_info,
+                real_world_params=test_params,
+                render=False,
+                sim_duration=config.test_duration,
+                random_pushes=config.push,
+                push_magnitude=config.push_magnitude,
+                push_duration=config.push_duration,
+                min_push_interval=config.min_push_interval,
+                max_push_interval=config.max_push_interval,
+            )
             if success:
                 successes += 1
 
-        success_rate = successes / n_trials
+        success_rate = successes / config.n_trials
         print(f"\nSuccess rate: {success_rate * 100:.1f}%")
 
         if success_rate == 1.0:  # Only reward if all trials succeed
-            normalized_ish_params = (
-                1.5 * params["sensor_noise"] / max_sensor_noise
-                + params["motor_noise"] / max_motor_noise
-                + params["init_noise"] / max_init_noise
-                + 1.5 * params["sensor_latency"] / max_sensor_latency
-                + params["motor_latency"] / max_motor_latency
+            weighted_params = (
+                config.sensor_noise_weight * params["sensor_noise"] / config.max_sensor_noise
+                + config.motor_noise_weight * params["motor_noise"] / config.max_motor_noise
+                + config.init_noise_weight * params["init_noise"] / config.max_init_noise
+                + config.sensor_latency_weight * params["sensor_latency"] / config.max_sensor_latency
+                + config.motor_latency_weight * params["motor_latency"] / config.max_motor_latency
+            ) / sum(
+                [
+                    config.sensor_noise_weight,
+                    config.motor_noise_weight,
+                    config.init_noise_weight,
+                    config.sensor_latency_weight,
+                    config.motor_latency_weight,
+                ]
             )
-            return normalized_ish_params
+            return weighted_params
         else:
-            return -100.0  # big ahh penalty
+            return -50.0  # big ahh penalty
 
     # Run Bayesian optimization
     optimizer = BayesianOptimizer(param_bounds, objective)
-    best_params, _ = optimizer.optimize(n_iterations)
+    best_params, _ = optimizer.optimize(config.n_iterations)
 
     # Convert to RealWorldParams
     final_params = RealWorldParams(
@@ -709,33 +747,50 @@ def optimize_params(
     return final_params
 
 
+def add_optimization_args(parser: argparse.ArgumentParser) -> None:
+    """Add OptimizationConfig parameters to an argument parser."""
+    # Get all fields from OptimizationConfig
+    fields = dataclasses.fields(OptimizationConfig)
+
+    # Create an argument group for optimization parameters
+    opt_group = parser.add_argument_group("Optimization Parameters")
+
+    for field in fields:
+        # Convert field name from snake_case to kebab-case for args
+        arg_name = f"--{field.name.replace('_', '-')}"
+
+        # Get default value and type from field
+        default = field.default
+        field_type = field.type
+
+        # Handle boolean fields differently
+        if field_type is bool:
+            opt_group.add_argument(
+                arg_name,
+                action="store_true" if not default else "store_false",
+                help=f"{'Enable' if not default else 'Disable'} {field.name.replace('_', ' ')}",
+            )
+        else:
+            opt_group.add_argument(
+                arg_name,
+                type=field_type,
+                default=default,
+                help=f"Set {field.name.replace('_', ' ')} (default: {default})",
+            )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Deployment script.")
     parser.add_argument("--embodiment", type=str, required=True, help="Embodiment name.")
     parser.add_argument("--load_model", type=str, required=True, help="Path to run to load from.")
-    parser.add_argument("--keyboard_use", action="store_true", help="keyboard_use")
-    parser.add_argument("--log_h5", action="store_true", help="log_h5")
-    parser.add_argument("--h5_out_dir", type=str, default="sim/resources", help="Directory to save HDF5 files")
+    parser.add_argument("--keyboard_use", action="store_true", help="Enable keyboard control")
     parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
-    parser.add_argument("--terrain", action="store_true", help="terrain")
-    parser.add_argument("--randomize_conditions", action="store_true", help="randomize_conditions")
-
+    parser.add_argument("--terrain", action="store_true", help="Enable terrain")
     parser.add_argument("--identify", action="store_true", help="Identify maximum randomization parameters")
-    parser.add_argument(
-        "--test_duration", type=float, default=10.0, help="Duration of each test run during identification"
-    )
-    parser.add_argument("--max_sensor_latency", type=int, default=10, help="Maximum sensor latency to test")
-    parser.add_argument("--max_motor_latency", type=int, default=10, help="Maximum motor latency to test")
-    parser.add_argument("--max_sensor_noise", type=float, default=0.2, help="Maximum sensor noise to test")
-    parser.add_argument("--max_motor_noise", type=float, default=0.2, help="Maximum motor noise to test")
-    parser.add_argument("--max_init_noise", type=float, default=0.2, help="Maximum initial position noise to test")
+    parser.add_argument("--randomize_conditions", action="store_true", help="Randomize conditions")
 
-    parser.add_argument("--push", action="store_true", help="Enable random pushing forces")
-    parser.add_argument("--push_magnitude", type=float, default=50.0, help="Maximum push force magnitude (N)")
-    parser.add_argument("--push_duration", type=float, default=0.2, help="Duration of each push (s)")
-    parser.add_argument("--min_push_interval", type=float, default=1.0, help="Minimum time between pushes (s)")
-    parser.add_argument("--max_push_interval", type=float, default=3.0, help="Maximum time between pushes (s)")
-    parser.set_defaults(render=True, terrain=False)
+    # Add optimization arguments automatically
+    add_optimization_args(parser)
 
     args = parser.parse_args()
 
@@ -802,18 +857,19 @@ if __name__ == "__main__":
     # )
 
     if args.identify:
+        # Create optimization config from args
+        opt_config = OptimizationConfig(
+            **{
+                field.name: getattr(args, field.name.replace("-", "_"))
+                for field in dataclasses.fields(OptimizationConfig)
+            }
+        )
+
         best_params = optimize_params(
             embodiment=args.embodiment,
             policy=policy,
             model_info=model_info,
-            max_sensor_latency=args.max_sensor_latency,
-            max_motor_latency=args.max_motor_latency,
-            max_sensor_noise=args.max_sensor_noise,
-            max_motor_noise=args.max_motor_noise,
-            max_init_noise=args.max_init_noise,
-            n_iterations=50,
-            test_duration=args.test_duration,
-            push=args.push,
+            config=opt_config,
         )
         real_world_params = best_params
 
@@ -823,9 +879,7 @@ if __name__ == "__main__":
         model_info=model_info,
         real_world_params=real_world_params,
         keyboard_use=args.keyboard_use,
-        log_h5=args.log_h5,
         render=args.render,
-        h5_out_dir=args.h5_out_dir,
         terrain=args.terrain,
         random_pushes=args.push,
         push_magnitude=args.push_magnitude,
