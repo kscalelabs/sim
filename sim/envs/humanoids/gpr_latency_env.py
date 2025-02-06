@@ -224,12 +224,16 @@ class GprLatencyEnv(LeggedRobot):
 
         # Handle latency
         if self.cfg.domain_rand.randomize_obs_motor_latency:
-            self.obs_motor = self.obs_motor_latency_buffer[torch.arange(self.num_envs), :, self.obs_motor_latency_simstep.long()]
+            self.obs_motor = self.obs_motor_latency_buffer[
+                torch.arange(self.num_envs), :, self.obs_motor_latency_simstep.long()
+            ]
         else:
             self.obs_motor = torch.cat((q, dq), 1)
 
         if self.cfg.domain_rand.randomize_obs_imu_latency:
-            self.obs_imu = self.obs_imu_latency_buffer[torch.arange(self.num_envs), :, self.obs_imu_latency_simstep.long()]
+            self.obs_imu = self.obs_imu_latency_buffer[
+                torch.arange(self.num_envs), :, self.obs_imu_latency_simstep.long()
+            ]
             # self.obs_imu = self.obs_imu_latency_buffer[torch.arange(self.num_envs), :3, self.obs_imu_latency_simstep.long()] # only projected_gravity
 
         else:

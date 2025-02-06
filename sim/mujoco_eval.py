@@ -122,7 +122,7 @@ class RealWorldParams:
 class SensorBuffer:
     """Ring buffer to simulate sensor latency."""
 
-    def __init__(self, size: int, shape: tuple):
+    def __init__(self, size: int, shape: tuple) -> None:
         self.buffer = np.zeros((size,) + shape)
         self.size = size
         self.idx = 0
@@ -234,7 +234,8 @@ def run_mujoco(
     assert isinstance(model_info["robot_stiffness"], list)
     assert isinstance(model_info["robot_damping"], list)
 
-    # tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"]
+    # tau_limit = np.array(list(model_info["robot_effort"]) +
+    # list(model_info["robot_effort"])) * model_info["tau_factor"]
     # kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
     # kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
     # HACKY FOR HEADLESS

@@ -17,10 +17,10 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-        frame_stack = 5 #15 # actor
-        c_frame_stack = 5 # critic
+        frame_stack = 5  # 15 # actor
+        c_frame_stack = 5  # critic
         # num_single_obs = 8 + NUM_JOINTS * 3 + 3 # ang vel
-        num_single_obs = 8 + NUM_JOINTS * 3 # no ang vel
+        num_single_obs = 8 + NUM_JOINTS * 3  # no ang vel
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -74,14 +74,14 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.5 # 0.6  # scales other values
+        noise_level = 1.5  # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
             dof_vel = 0.5
-            ang_vel = 0.4 # 0.1
+            ang_vel = 0.4  # 0.1
             lin_vel = 0.05
-            quat = 0.08 # 0.03
+            quat = 0.08  # 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -170,7 +170,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
             # reference motion tracking
             joint_pos = 1.6
             feet_clearance = 1.2
-            feet_contact_number = 1.0 # 1.2
+            feet_contact_number = 1.0  # 1.2
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
@@ -191,8 +191,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.003 # -0.002
-            torques = -1.5e-5 # -1e-5
+            action_smoothness = -0.003  # -0.002
+            torques = -1.5e-5  # -1e-5
             dof_vel = -5e-4  # -1e-3
             dof_acc = -1e-7  # -2.5e-7
             collision = -1.0

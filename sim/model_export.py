@@ -111,7 +111,7 @@ class Actor(nn.Module):
         # 11 is the number of single observation features - 6 from IMU, 5 from command input
         # 9 is the number of single observation features - 3 from IMU(quat), 5 from command input
         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        self.num_single_obs = cfg.num_single_obs # 11 + self.num_actions * 3  # pfb30
+        self.num_single_obs = cfg.num_single_obs  # 11 + self.num_actions * 3  # pfb30
         self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.policy = policy
@@ -250,7 +250,16 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     ang_vel = torch.randn(3)
     buffer = a_model.get_init_buffer()
     input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, ang_vel, buffer)
-    # input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, buffer) #ang_vel, buffer)
+    # input_tensors = (x_vel,
+    #                  y_vel,
+    #                  rot,
+    #                  t,
+    #                  dof_pos,
+    #                  dof_vel,
+    #                  prev_actions,
+    #                  projected_gravity,
+    #                  buffer,
+    #                  )
 
     # jit_model = torch.jit.script(a_model)
 
@@ -362,24 +371,4 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
 
 
 if __name__ == "__main__":
-    convert_model_to_onnx(
-        "model_3000.pt",
-        ActorCfg(
-            embodiment="gpr_headless",
-            cycle_time=1.0,
-            action_scale=1.0,
-            lin_vel_scale=1.0,
-            ang_vel_scale=1.0,
-            quat_scale=1.0,
-            dof_pos_scale=1.0,
-            dof_vel_scale=1.0,
-            frame_stack=1,
-            clip_observations=1.0,
-            clip_actions=1.0,
-            sim_dt=0.001,
-            sim_decimation=1,
-            tau_factor=1.0,
-            use_projected_gravity=True,
-        ),
-        "policy.onnx",
-    )
+    print("hi there :)")
