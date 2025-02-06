@@ -78,7 +78,7 @@ class GprLatencyCfg(LeggedRobotCfg):
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 0.5
+            dof_vel = 2.5
             ang_vel = 0.4  # 0.1
             lin_vel = 0.05
             quat = 0.08  # 0.03
