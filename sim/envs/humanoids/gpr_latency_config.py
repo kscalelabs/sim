@@ -179,6 +179,9 @@ class GprLatencyCfg(LeggedRobotCfg):
         resampling_time = 8.0  # time before command are changed[s]
         heading_command = True  # if true: compute ang vel command from heading error
 
+        curriculum = True
+        max_curriculum = 1.7
+
         class ranges:
             lin_vel_x = [-0.5, 1.0]  # min max [m/s]
             lin_vel_y = [-0.5, 0.5]  # min max [m/s]
@@ -226,11 +229,17 @@ class GprLatencyCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.003  # -0.002
-            torques = -1.5e-5  # -1e-5
-            dof_vel = -5e-4  # -1e-3
-            dof_acc = -1e-7  # -2.5e-7
-            collision = -1.0
+            # action_smoothness = -0.003  # -0.002
+            # torques = -1.5e-5  # -1e-5
+            # dof_vel = -5e-4  # -1e-3
+            # dof_acc = -1e-7  # -2.5e-7
+            # collision = -1.0
+
+            action_smoothness = -0.003
+            torques = -1e-10
+            dof_vel = -1e-5
+            dof_acc = -5e-9
+            collision = -1.
 
     class normalization:
         class obs_scales:
