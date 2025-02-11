@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="k-bot_naked">
+<robot name="k-bot_sim">
   <link name="base">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -8,7 +8,7 @@
     </inertial>
   </link>
   <joint name="floating_base" type="fixed">
-    <origin rpy="-1.57 3.14 0" xyz="0 0 0"/>
+    <origin rpy="1.57 0.00 0.00" xyz="0.0 0.0009999996829318347 0"/>
     <parent link="base"/>
     <child link="body1-part"/>
   </joint>
@@ -25,7 +25,7 @@
     <collision name="body1-part_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="body1-part_collision_geometry">
-        <mesh filename="meshes/body1-part.stl"/>
+        <mesh filename="meshes/body1-part_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="body1-part_inertial">
@@ -34,7 +34,7 @@
       <origin xyz="-0.0007972140109553247 -0.2153665612094006 -9.374815759446822e-05" rpy="0 0 0"/>
     </inertial>
   </link>
-  <joint name="imu_link" type="fixed">
+  <joint name="imu_link" type="fixed" dont_collapse="true">
     <origin xyz="0.039989396 -0.12791044000000001 -2.6794896579307448e-11" rpy="-1.5707963 0 0"/>
     <parent link="body1-part"/>
     <child link="imu"/>
@@ -49,12 +49,6 @@
         <color rgba="0.61568627 0.81176471 0.92941176 1"/>
       </material>
     </visual>
-    <collision name="imu_collision">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry name="imu_collision_geometry">
-        <mesh filename="meshes/imu.stl"/>
-      </geometry>
-    </collision>
     <inertial name="imu_inertial">
       <mass value="0.01"/>
       <inertia ixx="1.1408333e-06" iyy="1.1408333e-06" izz="2.0416667e-06" ixy="0" ixz="0" iyz="0"/>
@@ -62,7 +56,7 @@
     </inertial>
   </link>
   <joint name="left_shoulder_pitch_03" type="fixed">
-    <origin xyz="-0.0071262490312895945 0.2868887861013424 -0.1871062947956447" rpy="-2.220446049250311e-16 0.0 1.9915984595047395e-16"/>
+    <origin xyz="-1.0603758999999933e-05 0.018089562004361112 0.18849980999999996" rpy="3.1415926071795868 -2.220446049250313e-15 3.1415926071795868"/>
     <parent link="body1-part"/>
     <child link="shoulder"/>
     <limit effort="60" velocity="6.283" lower="0" upper="3.1415927"/>
@@ -81,7 +75,7 @@
     <collision name="shoulder_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="shoulder_collision_geometry">
-        <mesh filename="meshes/shoulder.stl"/>
+        <mesh filename="meshes/shoulder.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="shoulder_inertial">
@@ -91,7 +85,7 @@
     </inertial>
   </link>
   <joint name="right_shoulder_pitch_03" type="fixed">
-    <origin xyz="-0.007126249031289128 0.28688879614942864 0.18789370520435525" rpy="3.1415925999999996 -2.4424906541753444e-15 -9.282041357749904e-08"/>
+    <origin xyz="-1.0603759e-05 0.018089564 -0.18850019" rpy="0.0 0.0 -3.1415926071795863"/>
     <parent link="body1-part"/>
     <child link="shoulder_2"/>
     <limit effort="60" velocity="6.283" lower="-3.1415927" upper="0"/>
@@ -110,7 +104,7 @@
     <collision name="shoulder_collision_2">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="shoulder_collision_geometry_2">
-        <mesh filename="meshes/shoulder_2.stl"/>
+        <mesh filename="meshes/shoulder_2.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="shoulder_inertial_2">
@@ -120,11 +114,11 @@
     </inertial>
   </link>
   <joint name="left_shoulder_roll_03" type="fixed">
-    <origin xyz="0.022511964 5.627838501275855e-05 -0.06749999993301277" rpy="1.5707963 0.0 1.5707963"/>
+    <origin xyz="0.023511964 5.6278358217861975e-05 -0.06749999990621787" rpy="1.5707963 0.0 1.5707963"/>
     <parent link="shoulder"/>
     <child link="arm1_top"/>
-    <limit effort="60" velocity="6.283" lower="-0.47996554" upper="3.6302848"/>
-    <axis xyz="0 0 1"/>
+    <limit effort="60" velocity="6.283" lower="-3.6302848" upper="0.47996554"/>
+    <axis xyz="0 0 -1"/>
   </joint>
   <link name="arm1_top">
     <visual name="arm1_top_visual">
@@ -139,7 +133,7 @@
     <collision name="arm1_top_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="arm1_top_collision_geometry">
-        <mesh filename="meshes/arm1_top.stl"/>
+        <mesh filename="meshes/arm1_top_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="arm1_top_inertial">
@@ -149,7 +143,7 @@
     </inertial>
   </link>
   <joint name="right_shoulder_roll_03" type="fixed">
-    <origin xyz="0.022511964 -5.627838501275855e-05 -0.06749999993301277" rpy="1.5707963999999996 -2.220446049250313e-16 -1.5707963000000003"/>
+    <origin xyz="0.023511963999999996 -5.627835821786203e-05 -0.06749999985980766" rpy="1.5707963999999996 -2.220446049250313e-16 -1.5707963000000003"/>
     <parent link="shoulder_2"/>
     <child link="arm1_top_2"/>
     <limit effort="60" velocity="6.283" lower="-0.47996554" upper="3.6302848"/>
@@ -168,7 +162,7 @@
     <collision name="arm1_top_2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="arm1_top_2_collision_geometry">
-        <mesh filename="meshes/arm1_top_2.stl"/>
+        <mesh filename="meshes/arm1_top_2_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="arm1_top_2_inertial">
@@ -181,7 +175,7 @@
     <origin xyz="-1.0608550148631657e-05 -0.43201043164593794 0.0887000068648673" rpy="-3.1415925071795874 4.641020678874952e-08 -3.1415926535897913"/>
     <parent link="body1-part"/>
     <child link="leg0_shell"/>
-    <limit effort="120" velocity="6.283" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="120" velocity="6.283" lower="-2.0943953" upper="2.0943953"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="leg0_shell">
@@ -197,7 +191,7 @@
     <collision name="leg0_shell_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="leg0_shell_collision_geometry">
-        <mesh filename="meshes/leg0_shell.stl"/>
+        <mesh filename="meshes/leg0_shell.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="leg0_shell_inertial">
@@ -210,7 +204,7 @@
     <origin xyz="-1.0600293772844438e-05 -0.4320104468591277 -0.08919999313513188" rpy="9.99999991702083e-08 4.641020678874952e-08 -3.1415926535897913"/>
     <parent link="body1-part"/>
     <child link="leg0_shell_2"/>
-    <limit effort="120" velocity="6.283" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="120" velocity="6.283" lower="-2.0943953" upper="2.0943953"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="leg0_shell_2">
@@ -226,7 +220,7 @@
     <collision name="leg0_shell_collision_2">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="leg0_shell_collision_geometry_2">
-        <mesh filename="meshes/leg0_shell_2.stl"/>
+        <mesh filename="meshes/leg0_shell_2.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="leg0_shell_inertial_2">
@@ -236,7 +230,7 @@
     </inertial>
   </link>
   <joint name="left_shoulder_yaw_02" type="fixed">
-    <origin xyz="-0.13949999999999996 -1.4619215099879723e-09 -0.02349999915596076" rpy="-4.641020604450649e-08 1.5707962732050293 0.0"/>
+    <origin xyz="-0.14049999999999996 -1.5083317163881439e-09 -0.023499999129165863" rpy="-1.5707963535897926 -2.6794894969484062e-08 -1.5707962803846895"/>
     <parent link="arm1_top"/>
     <child link="arm2_shell"/>
     <limit effort="17" velocity="12.566" lower="-1.5707963" upper="1.5707963"/>
@@ -255,7 +249,7 @@
     <collision name="arm2_shell_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="arm2_shell_collision_geometry">
-        <mesh filename="meshes/arm2_shell.stl"/>
+        <mesh filename="meshes/arm2_shell_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="arm2_shell_inertial">
@@ -265,7 +259,7 @@
     </inertial>
   </link>
   <joint name="right_shoulder_yaw_02" type="fixed">
-    <origin xyz="-0.13949999999999999 4.64102069112142e-11 0.02249999912916586" rpy="-3.1415926071795863 1.5707963 0.0"/>
+    <origin xyz="-0.14049999999999999 4.64102069112142e-11 0.02249999912916586" rpy="-3.1415926071795863 1.5707963 0.0"/>
     <parent link="arm1_top_2"/>
     <child link="arm2_shell_2"/>
     <limit effort="17" velocity="12.566" lower="-1.5707963" upper="1.5707963"/>
@@ -284,7 +278,7 @@
     <collision name="arm2_shell_collision_2">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="arm2_shell_collision_geometry_2">
-        <mesh filename="meshes/arm2_shell_2.stl"/>
+        <mesh filename="meshes/arm2_shell_2_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="arm2_shell_inertial_2">
@@ -297,7 +291,7 @@
     <origin xyz="0.027499999999999972 -1.543386042968109e-09 -0.06950000154338605" rpy="-1.5707963 0.0 1.5707963"/>
     <parent link="leg0_shell"/>
     <child link="leg1_shell"/>
-    <limit effort="60" velocity="6.283" lower="-3.1852259" upper="0.34906585"/>
+    <limit effort="60" velocity="6.283" lower="-3.7088249" upper="0.8726648"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="leg1_shell">
@@ -313,7 +307,7 @@
     <collision name="leg1_shell_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="leg1_shell_collision_geometry">
-        <mesh filename="meshes/leg1_shell.stl"/>
+        <mesh filename="meshes/leg1_shell_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="leg1_shell_inertial">
@@ -326,7 +320,7 @@
     <origin xyz="0.027499999999999972 -1.5433860431346424e-09 -0.06900000154338605" rpy="1.5707963 -4.641020634466031e-08 -1.5707963535897922"/>
     <parent link="leg0_shell_2"/>
     <child link="leg1_shell3"/>
-    <limit effort="60" velocity="6.283" lower="-0.34906585" upper="3.1852259"/>
+    <limit effort="60" velocity="6.283" lower="-0.8726648" upper="3.7088249"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="leg1_shell3">
@@ -342,7 +336,7 @@
     <collision name="leg1_shell3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="leg1_shell3_collision_geometry">
-        <mesh filename="meshes/leg1_shell3.stl"/>
+        <mesh filename="meshes/leg1_shell3_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="leg1_shell3_inertial">
@@ -352,7 +346,7 @@
     </inertial>
   </link>
   <joint name="left_elbow_02" type="fixed">
-    <origin xyz="-0.026000000000000002 0.0 -0.09799999977224338" rpy="-3.1415926071795863 -1.5707963 0.0"/>
+    <origin xyz="-0.027 -4.64102069112142e-11 -0.09799999974544849" rpy="-3.1415926071795863 -1.5707963 0.0"/>
     <parent link="arm2_shell"/>
     <child link="arm3_shell"/>
     <limit effort="17" velocity="12.566" lower="-2.5307274" upper="0"/>
@@ -371,7 +365,7 @@
     <collision name="arm3_shell_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="arm3_shell_collision_geometry">
-        <mesh filename="meshes/arm3_shell.stl"/>
+        <mesh filename="meshes/arm3_shell.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="arm3_shell_inertial">
@@ -381,7 +375,7 @@
     </inertial>
   </link>
   <joint name="right_elbow_02" type="fixed">
-    <origin xyz="0.026000000000000002 0.0 0.09750000022775662" rpy="-3.1415926071795863 1.5707963 0.0"/>
+    <origin xyz="2.0814131093671585e-10 -0.027000000000000003 0.0975" rpy="-1.5707963071795865 1.5707963 0.0"/>
     <parent link="arm2_shell_2"/>
     <child link="arm3_shell2"/>
     <limit effort="17" velocity="12.566" lower="0" upper="2.5307274"/>
@@ -400,7 +394,7 @@
     <collision name="arm3_shell2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="arm3_shell2_collision_geometry">
-        <mesh filename="meshes/arm3_shell2.stl"/>
+        <mesh filename="meshes/arm3_shell2.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="arm3_shell2_inertial">
@@ -413,7 +407,7 @@
     <origin xyz="-0.15749999999999997 0.00011981393 0.027499998456613956" rpy="-0.0 1.5707963 0.0"/>
     <parent link="leg1_shell"/>
     <child link="leg2_shell"/>
-    <limit effort="60" velocity="6.283" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="60" velocity="6.283" lower="-2.0943953" upper="2.0943953"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="leg2_shell">
@@ -429,7 +423,7 @@
     <collision name="leg2_shell_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="leg2_shell_collision_geometry">
-        <mesh filename="meshes/leg2_shell.stl"/>
+        <mesh filename="meshes/leg2_shell_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="leg2_shell_inertial">
@@ -442,7 +436,7 @@
     <origin xyz="-0.15749999999999997 -0.00011981393000000101 0.027499998536998718" rpy="-3.1415926535897922 -1.5707962732050302 0.0"/>
     <parent link="leg1_shell3"/>
     <child link="leg2_shell_2"/>
-    <limit effort="60" velocity="6.283" lower="-1.5707963" upper="1.5707963"/>
+    <limit effort="60" velocity="6.283" lower="-2.0943953" upper="2.0943953"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="leg2_shell_2">
@@ -458,7 +452,7 @@
     <collision name="leg2_shell_collision_2">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="leg2_shell_collision_geometry_2">
-        <mesh filename="meshes/leg2_shell_2.stl"/>
+        <mesh filename="meshes/leg2_shell_2_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="leg2_shell_inertial_2">
@@ -468,10 +462,10 @@
     </inertial>
   </link>
   <joint name="left_wrist_02" type="fixed">
-    <origin xyz="-0.18149999999999997 -1.4619215099879723e-09 0.02150000084403924" rpy="-4.641020604450649e-08 1.5707962732050293 0.0"/>
+    <origin xyz="-0.18249999999999997 -1.5083317163881439e-09 0.021500000870834136" rpy="-1.5707963535897926 -2.6794894969484062e-08 -1.5707962803846895"/>
     <parent link="arm3_shell"/>
     <child link="hand_shell"/>
-    <limit effort="17" velocity="12.566" lower="0" upper="6.2831853"/>
+    <limit effort="17" velocity="12.566" lower="-3.1415927" upper="3.1415927"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="hand_shell">
@@ -487,7 +481,7 @@
     <collision name="hand_shell_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="hand_shell_collision_geometry">
-        <mesh filename="meshes/hand_shell.stl"/>
+        <mesh filename="meshes/hand_shell.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="hand_shell_inertial">
@@ -497,10 +491,10 @@
     </inertial>
   </link>
   <joint name="right_wrist_02" type="fixed">
-    <origin xyz="-0.18149999999999997 -1.4619215099879723e-09 0.02150000084403924" rpy="-4.641020604450649e-08 1.5707962732050293 0.0"/>
+    <origin xyz="-0.18249999999999997 -1.5083317161660992e-09 0.021500000870834136" rpy="1.5707963535897933 -2.679489807810853e-08 1.5707963732051022"/>
     <parent link="arm3_shell2"/>
     <child link="hand_shell_2"/>
-    <limit effort="17" velocity="12.566" lower="0" upper="6.2831853"/>
+    <limit effort="17" velocity="12.566" lower="-3.1415927" upper="3.1415927"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="hand_shell_2">
@@ -516,7 +510,7 @@
     <collision name="hand_shell_collision_2">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="hand_shell_collision_geometry_2">
-        <mesh filename="meshes/hand_shell_2.stl"/>
+        <mesh filename="meshes/hand_shell_2.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="hand_shell_inertial_2">
@@ -529,7 +523,7 @@
     <origin xyz="0.0 -0.026999999999999993 -0.14250000111820607" rpy="1.5707963999999996 0.0 0.0"/>
     <parent link="leg2_shell"/>
     <child link="leg3_shell1"/>
-    <limit effort="120" velocity="6.283" lower="0" upper="2.0943951"/>
+    <limit effort="120" velocity="6.283" lower="-0.523599" upper="2.6179941"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="leg3_shell1">
@@ -545,7 +539,7 @@
     <collision name="leg3_shell1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="leg3_shell1_collision_geometry">
-        <mesh filename="meshes/leg3_shell1.stl"/>
+        <mesh filename="meshes/leg3_shell1_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="leg3_shell1_inertial">
@@ -558,7 +552,7 @@
     <origin xyz="0.0 -0.026999999999999993 -0.14250000111820607" rpy="1.5707963999999996 0.0 0.0"/>
     <parent link="leg2_shell_2"/>
     <child link="leg3_shell11"/>
-    <limit effort="120" velocity="6.283" lower="-2.0943951" upper="0"/>
+    <limit effort="120" velocity="6.283" lower="-2.6179941" upper="0.523599"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="leg3_shell11">
@@ -574,7 +568,7 @@
     <collision name="leg3_shell11_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="leg3_shell11_collision_geometry">
-        <mesh filename="meshes/leg3_shell11.stl"/>
+        <mesh filename="meshes/leg3_shell11_collision.stl"/>
       </geometry>
     </collision>
     <inertial name="leg3_shell11_inertial">
@@ -587,7 +581,7 @@
     <origin xyz="2.153907282807268e-18 -0.3000000000464102 -0.035500000000000004" rpy="3.1415927 0 3.1415927"/>
     <parent link="leg3_shell11"/>
     <child link="foot3"/>
-    <limit effort="17" velocity="12.566" lower="-0.6981317" upper="0.6981317"/>
+    <limit effort="17" velocity="12.566" lower="-1.2217307" upper="1.2217307"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="foot3">
@@ -603,7 +597,7 @@
     <collision name="foot3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="foot3_collision_geometry">
-        <mesh filename="meshes/foot3.stl"/>
+        <mesh filename="meshes/foot3.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="foot3_inertial">
@@ -616,7 +610,7 @@
     <origin xyz="0.0 -0.30000000013923045 0.009499991182060727" rpy="9.282041333256967e-08 0.0 0.0"/>
     <parent link="leg3_shell1"/>
     <child link="foot1"/>
-    <limit effort="17" velocity="12.566" lower="-0.6981317" upper="0.6981317"/>
+    <limit effort="17" velocity="12.566" lower="-1.2217307" upper="1.2217307"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="foot1">
@@ -632,7 +626,7 @@
     <collision name="foot1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry name="foot1_collision_geometry">
-        <mesh filename="meshes/foot1.stl"/>
+        <mesh filename="meshes/foot1.convex.stl"/>
       </geometry>
     </collision>
     <inertial name="foot1_inertial">

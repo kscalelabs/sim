@@ -171,8 +171,9 @@ class LeggedRobot(BaseTask):
 
         # # Add noise to the PD gains
         # if self.cfg.domain_rand.randomize_pd_gains:
-        #     self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * 7
-        #     self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * 0.3
+        #     self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * self.cfg.domain_rand.stiffness_multiplier_range[1]
+        #     self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * self.cfg.domain_rand.damping_multiplier_range[1]
+
 
         # reset robot states
         self._reset_dofs(env_ids)
@@ -847,6 +848,9 @@ class LeggedRobot(BaseTask):
         self.num_dof = self.gym.get_asset_dof_count(robot_asset)
         self.num_bodies = self.gym.get_asset_rigid_body_count(robot_asset)
         dof_props_asset = self.gym.get_asset_dof_properties(robot_asset)
+
+        self.dof_props_asset = dof_props_asset
+
         rigid_shape_props_asset = self.gym.get_asset_rigid_shape_properties(robot_asset)
 
         # save body names from the asset

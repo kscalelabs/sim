@@ -71,11 +71,11 @@ class Legs(Node):
 class Robot(Node):
     legs = Legs()
 
-    # height = 1.05 #- 0.151 #maybe?
-    # standing_height = 1.05 + 0.025 #- 0.151
+    height = 1.05 #- 0.151 #maybe?
+    standing_height = 1.05 + 0.025 #- 0.151
 
-    height = 1.04
-    standing_height = 1.04 + 0.025
+    # height = 1.04
+    # standing_height = 1.04 + 0.025
 
     # 1.3 m and 1.149m
     rotation = [0, 0, 0, 1]
@@ -109,7 +109,7 @@ class Robot(Node):
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
             Robot.legs.right.knee_pitch: -0.441,  # negated
-            Robot.legs.right.ankle_pitch: -0.195,  # negated
+            Robot.legs.right.ankle_pitch: 0.195,  # negated
         }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
@@ -122,8 +122,8 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 300,
-            "03": 120,
+            "04": 250,
+            "03": 150,
             "02": 40,
         }
 
@@ -139,8 +139,8 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "04": 5,
-            "03": 5,
+            "04": 30,
+            "03": 10,
             "02": 5,
         }
 
@@ -159,7 +159,7 @@ class Robot(Node):
         return {
             "04": 80,
             "03": 40,
-            "02": 20,
+            "02": 17,
         }
 
     @classmethod

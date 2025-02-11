@@ -1,4 +1,4 @@
-<mujoco model="kbot">
+<mujoco model="k-bot_sim">
   <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81" />
 
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
@@ -14,151 +14,148 @@
   </default>
 
   <asset>
-    <mesh name="body1-part" file="body1-part.stl" />
-    <mesh name="imu" file="imu.stl" />
-    <mesh name="leg0_shell" file="leg0_shell.stl" />
-    <mesh name="leg0_shell_2" file="leg0_shell_2.stl" />
-    <mesh name="shoulder" file="shoulder.stl" />
-    <mesh name="shoulder_2" file="shoulder_2.stl" />
-    <mesh name="leg1_shell" file="leg1_shell.stl" />
-    <mesh name="leg1_shell3" file="leg1_shell3.stl" />
-    <mesh name="arm1_top" file="arm1_top.stl" />
-    <mesh name="arm1_top_2" file="arm1_top_2.stl" />
-    <mesh name="leg2_shell" file="leg2_shell.stl" />
-    <mesh name="leg2_shell_2" file="leg2_shell_2.stl" />
-    <mesh name="arm2_shell" file="arm2_shell.stl" />
-    <mesh name="arm2_shell_2" file="arm2_shell_2.stl" />
-    <mesh name="leg3_shell2" file="leg3_shell2.stl" />
-    <mesh name="leg3_shell22" file="leg3_shell22.stl" />
-    <mesh name="arm3_shell" file="arm3_shell.stl" />
-    <mesh name="arm3_shell2" file="arm3_shell2.stl" />
-    <mesh name="foot3" file="foot3.stl" />
-    <mesh name="hand_shell" file="hand_shell.stl" />
-    <mesh name="hand_shell_2" file="hand_shell_2.stl" />
-    <mesh name="foot1" file="foot1.stl" />
+    <mesh name="body1-part_collision" file="body1-part_collision.stl" />
+    <mesh name="shoulder.convex" file="shoulder.convex.stl" />
+    <mesh name="shoulder_2.convex" file="shoulder_2.convex.stl" />
+    <mesh name="arm1_top_collision" file="arm1_top_collision.stl" />
+    <mesh name="arm1_top_2_collision" file="arm1_top_2_collision.stl" />
+    <mesh name="leg0_shell.convex" file="leg0_shell.convex.stl" />
+    <mesh name="leg0_shell_2.convex" file="leg0_shell_2.convex.stl" />
+    <mesh name="arm2_shell_collision" file="arm2_shell_collision.stl" />
+    <mesh name="arm2_shell_2_collision" file="arm2_shell_2_collision.stl" />
+    <mesh name="leg1_shell_collision" file="leg1_shell_collision.stl" />
+    <mesh name="leg1_shell3_collision" file="leg1_shell3_collision.stl" />
+    <mesh name="arm3_shell.convex" file="arm3_shell.convex.stl" />
+    <mesh name="arm3_shell2.convex" file="arm3_shell2.convex.stl" />
+    <mesh name="leg2_shell_collision" file="leg2_shell_collision.stl" />
+    <mesh name="leg2_shell_2_collision" file="leg2_shell_2_collision.stl" />
+    <mesh name="hand_shell.convex" file="hand_shell.convex.stl" />
+    <mesh name="hand_shell_2.convex" file="hand_shell_2.convex.stl" />
+    <mesh name="leg3_shell1_collision" file="leg3_shell1_collision.stl" />
+    <mesh name="leg3_shell11_collision" file="leg3_shell11_collision.stl" />
+    <mesh name="foot3.convex" file="foot3.convex.stl" />
+    <mesh name="foot1.convex" file="foot1.convex.stl" />
     <texture name="texplane" type="2d" builtin="checker" rgb1=".0 .0 .0" rgb2=".8 .8 .8" width="100" height="100" />
     <material name="matplane" reflectance="0." texture="texplane" texrepeat="1 1" texuniform="true" />
-        <material name='visualgeom'  rgba='0.5 0.9 0.2 1'/>
+    <material name="visualgeom" rgba="0.5 0.9 0.2 1" />
   </asset>
 
   <worldbody>
     <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
     <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
-       <geom name="ground" type="plane" size="0 0 1" pos="0.001 0 0" quat="1 0 0 0" material="matplane" condim="1" conaffinity='15'/>
-    <camera name="fixed" pos="0 -3.0 1.3996921861577372" xyaxes="1 0 0 0 0 1" />
-    <camera name="track" mode="trackcom" pos="0 -3.0 1.3996921861577372" xyaxes="1 0 0 0 0 1" />
-    <body name="root" pos="0 0 0.8996921861577372" quat="1 0 0 0">
+    <geom name="ground" type="plane" pos="0 0 0" size="100 100 0.001" quat="1 0 0 0" material="matplane" condim="3" conaffinity="15" />
+    <camera name="fixed" pos="0 -3.0 1.6662098533463137" xyaxes="1 0 0 0 0 1" />
+    <camera name="track" mode="trackcom" pos="0 -3.0 1.6662098533463137" xyaxes="1 0 0 0 0 1" />
+    <body name="root" pos="0 0 1.1662098533463137" quat="1 0 0 0">
       <freejoint name="root" />
       <site name="imu" size="0.01" pos="0 0 0" />
-      <geom name="body1-part_collision" quat="0.707388 0.706825 0 0" type="mesh" rgba="1 1 1 1" mesh="body1-part" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-      <geom type="mesh" rgba="1 1 1 1" mesh="body1-part" quat="0.707388 0.706825 0 0" />
-      <geom name="imu_collision" pos="-0.0471263 -0.000280719 0.141889" quat="9.23858e-12 2.32051e-08 0.0003982 1" type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="imu" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-      <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="imu" pos="-0.0471263 -0.000280719 0.141889" quat="9.23858e-12 2.32051e-08 0.0003982 1" />
-      <body name="leg0_shell" pos="-0.00712626 0.0871763 -0.163281" quat="0.707388 0.706825 0 0">
+      <geom name="body1-part_collision" pos="0 0.001 -7.96327e-07" quat="0.707388 0.706825 0 0" type="mesh" rgba="1 1 1 1" mesh="body1-part_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+      <geom type="mesh" rgba="1 1 1 1" mesh="body1-part_collision" pos="0 0.001 -7.96327e-07" quat="0.707388 0.706825 0 0" />
+      <body name="shoulder" pos="-1.06038e-05 -0.187485 0.0182389" quat="-1.6402e-08 1.6415e-08 0.707388 0.706825">
+        <inertial pos="-0.00214395 5.49827e-05 -0.0664833" quat="0.999995 6.04035e-05 0.00311182 1.82004e-05" mass="1.10736" diaginertia="0.00148053 0.00103924 0.00098591" />
+        <geom name="shoulder_collision" type="mesh" rgba="1 1 1 1" mesh="shoulder.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="1 1 1 1" mesh="shoulder.convex" />
+        <body name="arm1_top" pos="0.023512 5.62784e-05 -0.0675" quat="0.5 0.5 0.5 0.5">
+          <inertial pos="-0.099486 -1.16302e-06 -0.0190825" quat="-3.9537e-05 0.595255 -5.81411e-05 0.803537" mass="0.572732" diaginertia="0.00109446 0.00107552 0.000393301" />
+          <geom name="arm1_top_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm1_top_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm1_top_collision" />
+          <body name="arm2_shell" pos="-0.1405 -1.50833e-09 -0.0235" quat="0.5 -0.5 0.5 -0.5">
+            <inertial pos="-0.00633923 0 -0.0904821" quat="0.999976 0 0.00697634 0" mass="0.510678" diaginertia="0.000675434 0.000532486 0.000254739" />
+            <geom name="arm2_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell_collision" />
+            <body name="arm3_shell" pos="-0.027 -4.64102e-11 -0.098" quat="1.64085e-08 -0.707107 -1.64085e-08 -0.707107">
+              <inertial pos="-0.140169 -3.71744e-10 0.0194329" quat="0 0.759592 0 0.6504" mass="0.578536" diaginertia="0.00135428 0.001354 0.000405631" />
+              <geom name="arm3_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell.convex" />
+              <body name="hand_shell" pos="-0.1825 -1.50833e-09 0.0215" quat="0.5 -0.5 0.5 -0.5">
+                <inertial pos="0.000708975 0.000129757 -0.0746574" quat="0.706769 0.0116683 0.0100891 0.707276" mass="0.793063" diaginertia="0.00286942 0.00203431 0.00127887" />
+                <geom name="hand_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell.convex" />
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="shoulder_2" pos="-1.06038e-05 0.189515 0.0179387" quat="1.6415e-08 1.6402e-08 0.706825 -0.707388">
+        <inertial pos="-0.00214395 -5.49871e-05 -0.0664833" quat="0.999995 -6.01965e-05 0.00311183 -1.81385e-05" mass="1.10735" diaginertia="0.00148052 0.00103924 0.000985909" />
+        <geom name="shoulder_collision_2" type="mesh" rgba="1 1 1 1" mesh="shoulder_2.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="1 1 1 1" mesh="shoulder_2.convex" />
+        <body name="arm1_top_2" pos="0.023512 -5.62784e-05 -0.0675" quat="0.5 0.5 -0.5 -0.5">
+          <inertial pos="-0.0994861 -1.08549e-06 0.0180825" quat="5.42664e-05 0.803537 3.68912e-05 0.595255" mass="0.572732" diaginertia="0.00109446 0.00107552 0.0003933" />
+          <geom name="arm1_top_2_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm1_top_2_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm1_top_2_collision" />
+          <body name="arm2_shell_2" pos="-0.1405 4.64102e-11 0.0225" quat="1.64085e-08 -0.707107 1.64085e-08 0.707107">
+            <inertial pos="-2.43146e-10 -0.00633923 0.0899821" quat="0.70709 0.00493302 -0.00493302 0.70709" mass="0.510678" diaginertia="0.000675434 0.000532486 0.000254739" />
+            <geom name="arm2_shell_collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell_2_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell_2_collision" />
+            <body name="arm3_shell2" pos="2.08141e-10 -0.027 0.0975" quat="0.5 -0.5 0.5 0.5">
+              <inertial pos="-0.140169 -3.71744e-10 0.0194329" quat="0 0.759592 0 0.6504" mass="0.578536" diaginertia="0.00135428 0.001354 0.000405631" />
+              <geom name="arm3_shell2_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell2.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell2.convex" />
+              <body name="hand_shell_2" pos="-0.1825 -1.50833e-09 0.0215" quat="0.5 0.5 0.5 0.5">
+                <inertial pos="0.000708975 0.000129757 -0.0746574" quat="0.706769 0.0116683 0.0100891 0.707276" mass="0.793063" diaginertia="0.00286942 0.00203431 0.00127887" />
+                <geom name="hand_shell_collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell_2.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell_2.convex" />
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="leg0_shell" pos="-1.06086e-05 -0.088044 -0.43194" quat="1.6415e-08 1.6402e-08 0.707388 0.706825">
         <inertial pos="-0.00374632 -5.30704e-10 -0.0681251" quat="0.999982 0 -0.00597565 0" mass="1.32345" diaginertia="0.0018859 0.00142483 0.00129962" />
         <joint name="left_hip_pitch_04" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-120 120" />
-        <geom name="leg0_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell" />
-        <body name="leg1_shell" pos="0.0265 -1.51659e-09 -0.0695" quat="0.5 -0.5 -0.5 0.5">
-          <inertial pos="-0.116471 0.00323117 0.025411" quat="0.162954 0.777613 0.0974626 0.599387" mass="1.36077" diaginertia="0.00293018 0.00283394 0.00156523" />
+        <geom name="leg0_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell.convex" />
+        <body name="leg1_shell" pos="0.0275 -1.54339e-09 -0.0695" quat="0.5 -0.5 -0.5 0.5">
+          <inertial pos="-0.112524 0.000528881 0.0252586" quat="-0.145364 0.777648 -0.180161 0.584529" mass="1.26435" diaginertia="0.0024993 0.00248263 0.00139772" />
           <joint name="left_hip_roll_03" pos="0 0 0" axis="0 0 1" range="-3.18523 0.349066" actuatorfrcrange="-60 60" />
-          <geom name="leg1_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell" />
-          <body name="leg2_shell" pos="-0.1565 0.000119814 0.0275" quat="0.707107 0 0.707107 0">
+          <geom name="leg1_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell_collision" />
+          <body name="leg2_shell" pos="-0.1575 0.000119814 0.0275" quat="0.707107 0 0.707107 0">
             <inertial pos="4.08555e-07 0.000531684 -0.137308" quat="0.707084 -0.00547271 0.00548785 0.707088" mass="1.82092" diaginertia="0.00422586 0.00311812 0.00206385" />
             <joint name="left_hip_yaw_03" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-60 60" />
-            <geom name="leg2_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell" />
-            <body name="leg3_shell2" pos="0 0.0342 -0.1425" quat="0.707107 0.707107 0 0">
-              <inertial pos="0.00103299 -0.12548 0.0366711" quat="0.691727 0.665165 0.198925 -0.19874" mass="1.17968" diaginertia="0.00753953 0.00750258 0.00111461" />
-              <joint name="left_knee_04" pos="0 0 0" axis="0 0 1" range="-2.0944 0" actuatorfrcrange="-120 120" />
-              <geom name="leg3_shell2_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell2" />
-              <body name="foot1" pos="0 -0.3 0.0702" quat="1 4.64102e-08 0 0">
+            <geom name="leg2_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell_collision" />
+            <body name="leg3_shell1" pos="0 -0.027 -0.1425" quat="0.707107 0.707107 0 0">
+              <inertial pos="0.00109787 -0.131322 -0.0231623" quat="0.291798 0.298031 -0.640329 0.644988" mass="1.10996" diaginertia="0.0067601 0.00672601 0.00101204" />
+              <joint name="left_knee_04" pos="0 0 0" axis="0 0 -1" range="0 2.0944" actuatorfrcrange="-120 120" />
+              <geom name="leg3_shell1_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell1_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell1_collision" />
+              <body name="foot1" pos="0 -0.3 0.00949999" quat="1 4.64102e-08 0 0">
                 <inertial pos="0.0213499 -0.019419 -0.0192762" quat="0.505229 0.504986 0.485131 0.504362" mass="0.582091" diaginertia="0.00218912 0.00202432 0.000282398" />
-                <joint name="left_ankle_02" pos="0 0 0" axis="0 0 1" range="-0.698132 0.698132" actuatorfrcrange="-17 17" />
-                <geom name="foot1_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot1" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot1" />
+                <joint name="left_ankle_02" pos="0 0 0" axis="0 0 -1" range="-0.698132 0.698132" actuatorfrcrange="-17 17" />
+                <geom name="foot1_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot1.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot1.convex" />
               </body>
             </body>
           </body>
         </body>
       </body>
-      <body name="leg0_shell_2" pos="-0.00712626 -0.0887237 -0.163141" quat="0.706825 -0.707388 0 0">
+      <body name="leg0_shell_2" pos="-1.06003e-05 0.0898559 -0.432082" quat="-1.6402e-08 1.6415e-08 0.706825 -0.707388">
         <inertial pos="-0.00374632 -5.30704e-10 -0.0676251" quat="0.999982 0 -0.00597565 0" mass="1.32345" diaginertia="0.0018859 0.00142483 0.00129962" />
         <joint name="right_hip_pitch_04" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-120 120" />
-        <geom name="leg0_shell_collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell_2" />
-        <body name="leg1_shell3" pos="0.0265 -1.51659e-09 -0.069" quat="0.5 0.5 -0.5 -0.5">
-          <inertial pos="-0.116295 -0.00323118 0.025411" quat="-0.155155 0.779695 -0.0910895 0.599754" mass="1.36077" diaginertia="0.00290553 0.00280871 0.00156592" />
+        <geom name="leg0_shell_collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell_2.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+        <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell_2.convex" />
+        <body name="leg1_shell3" pos="0.0275 -1.54339e-09 -0.069" quat="0.5 0.5 -0.5 -0.5">
+          <inertial pos="-0.112524 -0.000528888 0.0252586" quat="0.145366 0.777648 0.180163 0.584529" mass="1.26435" diaginertia="0.0024993 0.00248263 0.00139772" />
           <joint name="right_hip_roll_03" pos="0 0 0" axis="0 0 1" range="-0.349066 3.18523" actuatorfrcrange="-60 60" />
-          <geom name="leg1_shell3_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell3" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell3" />
-          <body name="leg2_shell_2" pos="-0.1565 -0.000119814 0.0275" quat="0 -0.707107 0 -0.707107">
+          <geom name="leg1_shell3_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell3_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg1_shell3_collision" />
+          <body name="leg2_shell_2" pos="-0.1575 -0.000119814 0.0275" quat="0 -0.707107 0 -0.707107">
             <inertial pos="4.08555e-07 0.000531684 -0.137308" quat="0.707084 -0.00547271 0.00548785 0.707088" mass="1.82092" diaginertia="0.00422586 0.00311812 0.00206385" />
             <joint name="right_hip_yaw_03" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-60 60" />
-            <geom name="leg2_shell_collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell_2" />
-            <body name="leg3_shell22" pos="0 0.0342 -0.1425" quat="0.707107 0.707107 0 0">
-              <inertial pos="-0.00103303 -0.12548 0.0366712" quat="0.691727 0.665164 -0.198928 0.198742" mass="1.17968" diaginertia="0.00753955 0.0075026 0.00111462" />
-              <joint name="right_knee_04" pos="0 0 0" axis="0 0 1" range="0 2.0944" actuatorfrcrange="-120 120" />
-              <geom name="leg3_shell22_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell22" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell22" />
-              <body name="foot3" pos="1.07672e-08 -0.3 0.0272" quat="0 -2.32051e-08 1 -2.32051e-08">
+            <geom name="leg2_shell_collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell_2_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg2_shell_2_collision" />
+            <body name="leg3_shell11" pos="0 -0.027 -0.1425" quat="0.707107 0.707107 0 0">
+              <inertial pos="-0.00109792 -0.131322 -0.0231622" quat="0.644988 0.640329 -0.298032 0.291798" mass="1.10996" diaginertia="0.00676011 0.00672603 0.00101204" />
+              <joint name="right_knee_04" pos="0 0 0" axis="0 0 -1" range="-2.0944 0" actuatorfrcrange="-120 120" />
+              <geom name="leg3_shell11_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell11_collision" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell11_collision" />
+              <body name="foot3" pos="0 -0.3 -0.0355" quat="0 -2.32051e-08 1 -2.32051e-08">
                 <inertial pos="0.0213499 -0.019419 -0.0237238" quat="0.504986 0.505229 0.504361 0.485132" mass="0.582091" diaginertia="0.00218912 0.00202432 0.000282398" />
-                <joint name="right_ankle_02" pos="0 0 0" axis="0 0 1" range="-0.698132 0.698132" actuatorfrcrange="-17 17" />
-                <geom name="foot3_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot3" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot3" />
-              </body>
-            </body>
-          </body>
-        </body>
-      </body>
-      <body name="shoulder" pos="-0.00712625 0.187335 0.28674" quat="0.707388 0.706825 0 0">
-        <inertial pos="-0.00214329 5.4983e-05 -0.0664624" quat="0.999995 5.9818e-05 0.00315233 1.81742e-05" mass="1.10769" diaginertia="0.00148214 0.00104085 0.000985989" />
-        <geom name="shoulder_collision" type="mesh" rgba="1 1 1 1" mesh="shoulder" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="1 1 1 1" mesh="shoulder" />
-        <body name="arm1_top" pos="0.022512 5.62784e-05 -0.0675" quat="0.5 0.5 0.5 0.5">
-          <inertial pos="-0.104917 -2.22448e-06 -0.0227023" quat="-0.000173104 0.567488 -0.000118086 0.823381" mass="0.64852" diaginertia="0.00132407 0.00129493 0.000441655" />
-          <geom name="arm1_top_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm1_top" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm1_top" />
-          <body name="arm2_shell" pos="-0.1395 -1.46192e-09 -0.0235" quat="0.707107 -1.64085e-08 0.707107 1.64085e-08">
-            <inertial pos="-0.00633503 0 -0.0904211" quat="0.999974 0 0.00716284 0" mass="0.511016" diaginertia="0.000678337 0.000535398 0.000254797" />
-            <geom name="arm2_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell" />
-            <body name="arm3_shell" pos="-0.026 0 -0.098" quat="1.64085e-08 -0.707107 -1.64085e-08 -0.707107">
-              <inertial pos="-0.140087 -3.71527e-10 0.0194225" quat="0 0.759525 0 0.650479" mass="0.578875" diaginertia="0.00136107 0.00136078 0.000405662" />
-              <geom name="arm3_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell" />
-              <body name="hand_shell" pos="-0.1815 -1.46192e-09 0.0215" quat="0.707107 -1.64085e-08 0.707107 1.64085e-08">
-                <inertial pos="0.000708717 0.00012971 -0.0746297" quat="0.70677 0.0116364 0.0100591 0.707276" mass="0.793352" diaginertia="0.00287111 0.002036 0.00127892" />
-                <geom name="hand_shell_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell" />
-              </body>
-            </body>
-          </body>
-        </body>
-      </body>
-      <body name="shoulder_2" pos="-0.00712625 -0.187665 0.287038" quat="-0.706825 0.707388 -3.283e-08 -3.28039e-08">
-        <inertial pos="-0.00214329 -5.49874e-05 -0.0664625" quat="0.999995 -5.96166e-05 0.00315233 -1.81134e-05" mass="1.10769" diaginertia="0.00148214 0.00104085 0.000985989" />
-        <geom name="shoulder_collision_2" type="mesh" rgba="1 1 1 1" mesh="shoulder_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-        <geom type="mesh" rgba="1 1 1 1" mesh="shoulder_2" />
-        <body name="arm1_top_2" pos="0.022512 -5.62784e-05 -0.0675" quat="0.5 0.5 -0.5 -0.5">
-          <inertial pos="-0.104917 -2.15785e-06 0.0217023" quat="0.000114638 0.823382 0.000170604 0.567488" mass="0.648519" diaginertia="0.00132407 0.00129493 0.000441654" />
-          <geom name="arm1_top_2_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm1_top_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-          <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm1_top_2" />
-          <body name="arm2_shell_2" pos="-0.1395 0 0.0225" quat="1.64085e-08 -0.707107 1.64085e-08 0.707107">
-            <inertial pos="0.00633503 0 0.0899211" quat="0.999974 0 0.00716283 0" mass="0.511016" diaginertia="0.000678337 0.000535398 0.000254797" />
-            <geom name="arm2_shell_collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-            <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell_2" />
-            <body name="arm3_shell2" pos="0.026 0 0.0975" quat="1.64085e-08 -0.707107 1.64085e-08 0.707107">
-              <inertial pos="-0.140087 -3.71527e-10 0.0194225" quat="0 0.759525 0 0.650479" mass="0.578875" diaginertia="0.00136107 0.00136078 0.000405662" />
-              <geom name="arm3_shell2_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-              <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm3_shell2" />
-              <body name="hand_shell_2" pos="-0.1815 -1.46192e-09 0.0215" quat="0.707107 -1.64085e-08 0.707107 1.64085e-08">
-                <inertial pos="0.000708717 0.00012971 -0.0746297" quat="0.70677 0.0116364 0.0100591 0.707276" mass="0.793352" diaginertia="0.00287111 0.002036 0.00127892" />
-                <geom name="hand_shell_collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell_2" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
-                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell_2" />
+                <joint name="right_ankle_02" pos="0 0 0" axis="0 0 -1" range="-0.698132 0.698132" actuatorfrcrange="-17 17" />
+                <geom name="foot3_collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot3.convex" contype="1" conaffinity="0" density="0" group="1" class="visualgeom" />
+                <geom type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot3.convex" />
               </body>
             </body>
           </body>
@@ -215,7 +212,7 @@
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
   </sensor>
   <keyframe>
-    <key name="default" qpos="0 0 0.8 1. 0.0 0.0 0.0 0.23 0.0 0.0 -0.441 0.195 -0.23 0.0 0.0 0.441 0.195"/>
-    <key name="standing" qpos="0 0 0.825 1. 0.0 0.0 0.0 0 0.0 0.0 0 0 0 0.0 0.0 0 0"/>
+    <key name="default" qpos="0 0 1.04 1. 0.0 0.0 0.0 0.23 0.0 0.0 0.441 -0.195 -0.23 0.0 0.0 -0.441 -0.195"/>
+    <key name="standing" qpos="0 0 1.065 1. 0.0 0.0 0.0 0 0.0 0.0 0 0 0 0.0 0.0 0 0"/>
   </keyframe>
 </mujoco>

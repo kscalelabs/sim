@@ -229,17 +229,17 @@ class GprLatencyCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            # action_smoothness = -0.003  # -0.002
-            # torques = -1.5e-5  # -1e-5
-            # dof_vel = -5e-4  # -1e-3
-            # dof_acc = -1e-7  # -2.5e-7
-            # collision = -1.0
+            action_smoothness = -0.003  # -0.002
+            torques = -1.5e-5  # -1e-5
+            dof_vel = -5e-4  # -1e-3
+            dof_acc = -1e-7  # -2.5e-7
+            collision = -1.0
 
-            action_smoothness = -0.003
-            torques = -1e-10
-            dof_vel = -1e-5
-            dof_acc = -5e-9
-            collision = -1.
+            # action_smoothness = -0.004
+            # torques = -1e-10
+            # dof_vel = -1e-5
+            # dof_acc = -5e-9
+            # collision = -1.
 
     class normalization:
         class obs_scales:
@@ -307,7 +307,7 @@ class GprLatencyCfgPPO(LeggedRobotCfgPPO):
 
     class algorithm(LeggedRobotCfgPPO.algorithm):
         entropy_coef = 0.001
-        learning_rate = 1e-5
+        learning_rate = 2e-5
         num_learning_epochs = 2
         gamma = 0.994
         lam = 0.9
@@ -317,7 +317,7 @@ class GprLatencyCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 5001  # number of policy updates
+        max_iterations = 10001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations
