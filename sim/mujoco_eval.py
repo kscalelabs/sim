@@ -316,7 +316,7 @@ def run_mujoco(
         "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         # "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
         "projected_gravity.1": np.zeros(3).astype(np.float32),
-        # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
+        "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
 
@@ -805,8 +805,8 @@ if __name__ == "__main__":
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
 
-    # HACKY: (NOT YET ADDED TO METADATA)
-    metadata["pd_decimation"] = 10
+    # # HACKY: (NOT YET ADDED TO METADATA)
+    metadata["pd_decimation"] = 1
 
     # randomize conditions
 
@@ -849,13 +849,13 @@ if __name__ == "__main__":
     }
 
     # Create real-world parameters
-    real_world_params = RealWorldParams(
-        sensor_latency=4, motor_latency=1, sensor_noise_std=0.04, motor_noise_std=0.04, init_pos_noise_std=0.04
-    )
-
     # real_world_params = RealWorldParams(
-    #     sensor_latency=1, motor_latency=1, sensor_noise_std=0.0, motor_noise_std=0.0, init_pos_noise_std=0.0
+    #     sensor_latency=3, motor_latency=1, sensor_noise_std=0.04, motor_noise_std=0.04, init_pos_noise_std=0.04
     # )
+
+    real_world_params = RealWorldParams(
+        sensor_latency=1, motor_latency=1, sensor_noise_std=0.0, motor_noise_std=0.0, init_pos_noise_std=0.0
+    )
 
     if args.identify:
         # Create optimization config from args
