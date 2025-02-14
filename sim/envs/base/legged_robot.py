@@ -521,13 +521,13 @@ class LeggedRobot(BaseTask):
         )
         self.forward_vec = to_torch([1.0, 0.0, 0.0], device=self.device).repeat((self.num_envs, 1))
         self.torques = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.p_gains = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.d_gains = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.actions = torch.zeros(
             self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
