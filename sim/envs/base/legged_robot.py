@@ -303,7 +303,7 @@ class LeggedRobot(BaseTask):
             self.torque_multiplier[env_id, :] = torch_rand_float(
                 self.cfg.domain_rand.torque_multiplier_range[0],
                 self.cfg.domain_rand.torque_multiplier_range[1],
-                (1, self.num_actions),
+                (1, self.num_joints),
                 device=self.device,
             )
 
@@ -312,7 +312,7 @@ class LeggedRobot(BaseTask):
             self.motor_zero_offsets[env_id, :] = torch_rand_float(
                 self.cfg.domain_rand.motor_zero_offset_range[0],
                 self.cfg.domain_rand.motor_zero_offset_range[1],
-                (1, self.num_actions),
+                (1, self.num_joints),
                 device=self.device,
             )
 
@@ -321,13 +321,13 @@ class LeggedRobot(BaseTask):
             self.p_gains_multiplier[env_id, :] = torch_rand_float(
                 self.cfg.domain_rand.stiffness_multiplier_range[0],
                 self.cfg.domain_rand.stiffness_multiplier_range[1],
-                (1, self.num_actions),
+                (1, self.num_joints),
                 device=self.device,
             )
             self.d_gains_multiplier[env_id, :] = torch_rand_float(
                 self.cfg.domain_rand.damping_multiplier_range[0],
                 self.cfg.domain_rand.damping_multiplier_range[1],
-                (1, self.num_actions),
+                (1, self.num_joints),
                 device=self.device,
             )
 
@@ -616,26 +616,26 @@ class LeggedRobot(BaseTask):
         )
         self.forward_vec = to_torch([1.0, 0.0, 0.0], device=self.device).repeat((self.num_envs, 1))
         self.torques = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.p_gains = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.d_gains = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
 
         self.torque_multiplier = torch.ones(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.motor_zero_offsets = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.p_gains_multiplier = torch.ones(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.d_gains_multiplier = torch.ones(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
 
         self.actions = torch.zeros(
@@ -719,7 +719,7 @@ class LeggedRobot(BaseTask):
             self.num_envs, self.num_actions, self.cfg.domain_rand.range_cmd_action_latency[1] + 1, device=self.device
         )
         self.obs_motor_latency_buffer = torch.zeros(
-            self.num_envs, self.num_actions * 2, self.cfg.domain_rand.range_obs_motor_latency[1] + 1, device=self.device
+            self.num_envs, self.num_joints * 2, self.cfg.domain_rand.range_obs_motor_latency[1] + 1, device=self.device
         )
         self.obs_imu_latency_buffer = torch.zeros(
             self.num_envs, 6, self.cfg.domain_rand.range_obs_imu_latency[1] + 1, device=self.device
@@ -728,10 +728,10 @@ class LeggedRobot(BaseTask):
         self.obs_motor_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
         self.obs_imu_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
 
-        self.p_gains_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
-        self.d_gains_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
-        self.torque_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
-        self.motor_zero_offsets = torch.zeros((self.num_envs, self.num_actions), device=self.device)
+        self.p_gains_multiplier = torch.ones((self.num_envs, self.num_joints), device=self.device)
+        self.d_gains_multiplier = torch.ones((self.num_envs, self.num_joints), device=self.device)
+        self.torque_multiplier = torch.ones((self.num_envs, self.num_joints), device=self.device)
+        self.motor_zero_offsets = torch.zeros((self.num_envs, self.num_joints), device=self.device)
         self.joint_friction_coeffs = torch.ones((self.num_envs, 1), device=self.device)
         self.joint_damping_coeffs = torch.ones((self.num_envs, 1), device=self.device)
         self.joint_armatures = torch.zeros((self.num_envs, 1), device=self.device)
@@ -900,16 +900,16 @@ class LeggedRobot(BaseTask):
         self.joint_armatures = torch.zeros(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False)
 
         self.torque_multiplier = torch.ones(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.motor_zero_offsets = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.p_gains_multiplier = torch.ones(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.d_gains_multiplier = torch.ones(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
 
         for i in range(self.num_envs):

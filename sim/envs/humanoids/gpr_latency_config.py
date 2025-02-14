@@ -19,12 +19,13 @@ class GprLatencyCfg(LeggedRobotCfg):
         # change the observation dim
         frame_stack = 15  # 15 # actor
         c_frame_stack = 5  # critic
-        num_single_obs = 8 + NUM_JOINTS * 3 + 3  # ang vel
-        # num_single_obs = 8 + NUM_JOINTS * 3 # no ang vel
+        num_single_obs = 8 + NUM_JOINTS * 4 + 3  # ang vel
+        # num_single_obs = 8 + NUM_JOINTS * 4 # no ang vel
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 25 + NUM_JOINTS * 4
+        single_num_privileged_obs = 25 + NUM_JOINTS * 5
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
-        num_actions = NUM_JOINTS
+        num_joints = NUM_JOINTS
+        num_actions = NUM_JOINTS * 2
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
@@ -85,7 +86,7 @@ class GprLatencyCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height]
+        pos = [0.0, 0.0, Robot.height + 0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
@@ -263,7 +264,7 @@ class GprLatencyStandingCfg(GprLatencyCfg):
     """Configuration class for the GPR humanoid robot."""
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.standing_height]
+        pos = [0.0, 0.0, Robot.standing_height + 0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
