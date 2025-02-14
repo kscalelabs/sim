@@ -34,6 +34,9 @@ class ActorCfg:
     frame_stack: int  # Number of frames to stack for the policy input
     clip_observations: float  # Clip observations to this value
     clip_actions: float  # Clip actions to this value
+    num_single_obs: int  # Number of single observations
+    num_actions: int  # Number of actions
+    num_joints: int  # Number of joints
     sim_dt: float  # Simulation time step
     sim_decimation: int  # Simulation decimation
     tau_factor: float  # Torque limit factor
@@ -103,13 +106,15 @@ class Actor(nn.Module):
 
         # Policy config
         default_dof_pos_dict = self.robot.default_standing()
-        self.num_actions = len(self.robot.all_joints())
         self.frame_stack = cfg.frame_stack
+
+        self.num_actions = cfg.num_actions
+        self.num_joints = cfg.num_joints
 
         # 11 is the number of single observation features - 6 from IMU, 5 from command input
         # 9 is the number of single observation features - 3 from IMU(quat), 5 from command input
         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        self.num_single_obs = 8 + self.num_actions * 3 # pfb30
+        self.num_single_obs = cfg.num_single_obs #8 + self.num_actions * 3 # pfb30
         self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.policy = policy
@@ -240,8 +245,8 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     y_vel = torch.randn(1)
     rot = torch.randn(1)
     t = torch.randn(1)
-    dof_pos = torch.randn(a_model.num_actions)
-    dof_vel = torch.randn(a_model.num_actions)
+    dof_pos = torch.randn(a_model.num_joints)
+    dof_vel = torch.randn(a_model.num_joints)
     prev_actions = torch.randn(a_model.num_actions)
     projected_gravity = torch.randn(3)
     buffer = a_model.get_init_buffer()
