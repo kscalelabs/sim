@@ -269,6 +269,7 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
         "default_standing": default_standing,
         "num_actions": num_actions,
         "num_observations": num_observations,
+        "num_joints": a_model.num_joints,
     }, input_tensors
 
 
