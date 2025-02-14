@@ -214,7 +214,7 @@ class GprVelStandingCfg(GprVelCfg):
     """Configuration class for the GPR humanoid robot."""
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.standing_height]
+        pos = [0.0, 0.0, Robot.standing_height+0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
