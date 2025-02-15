@@ -100,13 +100,13 @@ def get_obs(data: mujoco.MjData) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np
     gvec = r.apply(np.array([0.0, 0.0, -1.0]), inverse=True).astype(np.double)
     v = r.apply(data.qvel[:3], inverse=True).astype(np.double)  # In the base frame
     omega = data.sensor("angular-velocity").data.astype(np.double)
-
     # gvec = get_gravity_orientation(data.sensor("orientation").data)
     return (q, dq, quat, v, omega, gvec)
 
 
 def pd_control(
     target_q: np.ndarray,
+    target_dq: np.ndarray,
     q: np.ndarray,
     kp: np.ndarray,
     dq: np.ndarray,
@@ -114,7 +114,7 @@ def pd_control(
     default: np.ndarray,
 ) -> np.ndarray:
     """Calculates torques from position commands"""
-    return kp * (target_q + default - q) - kd * dq
+    return kp * (target_q + default - q) + kd * (target_dq - dq)
 
 
 def run_mujoco(
@@ -150,18 +150,27 @@ def run_mujoco(
     assert isinstance(model_info["robot_effort"], list)
     assert isinstance(model_info["robot_stiffness"], list)
     assert isinstance(model_info["robot_damping"], list)
+    assert isinstance(model_info["num_joints"], int)
 
-    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"]
-    kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
-    kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
+    efforts = model_info["robot_effort"]
+    stiffnesses = model_info["robot_stiffness"]
+    dampings = model_info["robot_damping"]
+    leg_lims = [efforts[0], efforts[1], efforts[1], efforts[0], efforts[2]]
+    tau_limit = np.array(leg_lims + leg_lims) * model_info["tau_factor"]
+
+    leg_kps = [stiffnesses[0], stiffnesses[1], stiffnesses[1], stiffnesses[0], stiffnesses[2]]
+    kps = np.array(leg_kps + leg_kps)
+
+    leg_kds = [dampings[0], dampings[1], dampings[1], dampings[0], dampings[2]]
+    kds = np.array(leg_kds + leg_kds)
 
     try:
         data.qpos = model.keyframe("default").qpos
-        default = deepcopy(model.keyframe("default").qpos)[-model_info["num_actions"] :]
+        default = deepcopy(model.keyframe("default").qpos)[-model_info["num_joints"] :]
         print("Default position:", default)
     except:
         print("No default position found, using zero initialization")
-        default = np.zeros(model_info["num_actions"])  # 3 for pos, 4 for quat, cfg.num_actions for joints
+        default = np.zeros(model_info["num_joints"])  # 3 for pos, 4 for quat, cfg.num_actions for joints
     # default += np.random.uniform(-0.03, 0.03, size=default.shape)
     print("Default position:", default)
     mujoco.mj_step(model, data)
@@ -185,8 +194,8 @@ def run_mujoco(
         "y_vel.1": np.zeros(1).astype(np.float32),
         "rot.1": np.zeros(1).astype(np.float32),
         "t.1": np.zeros(1).astype(np.float32),
-        "dof_pos.1": np.zeros(model_info["num_actions"]).astype(np.float32),
-        "dof_vel.1": np.zeros(model_info["num_actions"]).astype(np.float32),
+        "dof_pos.1": np.zeros(model_info["num_joints"]).astype(np.float32),
+        "dof_vel.1": np.zeros(model_info["num_joints"]).astype(np.float32),
         "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         # "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
@@ -217,8 +226,8 @@ def run_mujoco(
 
         # Obtain an observation
         q, dq, quat, v, omega, gvec = get_obs(data)
-        q = q[-model_info["num_actions"] :]
-        dq = dq[-model_info["num_actions"] :]
+        q = q[-model_info["num_joints"] :]
+        dq = dq[-model_info["num_joints"] :]
 
         # eu_ang = quaternion_to_euler_array(quat)
         # eu_ang[eu_ang > math.pi] -= 2 * math.pi
@@ -259,12 +268,13 @@ def run_mujoco(
             curr_actions = policy_output["actions"]
             hist_obs = policy_output["x.3"]
 
-            target_q = positions
+            target_q = positions[:model_info["num_joints"]]
+            target_dq = positions[model_info["num_joints"]:]
 
             prev_actions = curr_actions
 
         # Generate PD control
-        tau = pd_control(target_q, q, kps, dq, kds, default)  # Calc torques
+        tau = pd_control(target_q, target_dq, q, kps, dq, kds, default)  # Calc torques
         tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
 
         data.ctrl = tau
@@ -322,6 +332,7 @@ if __name__ == "__main__":
         "sim_dt": metadata["sim_dt"],
         "sim_decimation": metadata["sim_decimation"],
         "tau_factor": metadata["tau_factor"],
+        "num_joints": metadata["num_joints"],
     }
 
     run_mujoco(
