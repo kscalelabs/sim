@@ -42,6 +42,8 @@ class GprVelCfg(LeggedRobotCfg):
         knee_name = ["leg3_shell1", "leg3_shell11"]
         imu_name = "imu"
 
+        terminate_after_contacts_on = ["arm1_top_2", "arm1_top", "shoulder", "shoulder_2"]
+
         termination_height = 0.2
         default_feet_height = 0.0
 
@@ -164,8 +166,8 @@ class GprVelCfg(LeggedRobotCfg):
         class scales:
             # reference motion tracking
             joint_pos = 1.2
-            feet_clearance = 1.2
-            feet_contact_number = 1.4
+            feet_clearance = 0.8 # 1.2
+            feet_contact_number = 1.0 # 1.4
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
