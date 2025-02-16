@@ -12,8 +12,8 @@ from isaacgym import gymtorch  # isort:skip
 import torch  # isort:skip
 
 
-class GprVelEnv(LeggedRobot):
-    """GprVelEnv is a class that represents a custom environment for a legged robot.
+class GprManVelEnv(LeggedRobot):
+    """GprManVelEnv is a class that represents a custom environment for a legged robot.
 
     Args:
         cfg (LeggedRobotCfg): Configuration object for the legged robot.

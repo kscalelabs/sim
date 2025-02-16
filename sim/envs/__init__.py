@@ -22,6 +22,8 @@ from sim.envs.humanoids.zbot2_config import ZBot2Cfg, ZBot2CfgPPO, ZBot2Standing
 from sim.envs.humanoids.zbot2_env import ZBot2Env
 from sim.envs.humanoids.gpr_vel_config import GprVelCfg, GprVelCfgPPO
 from sim.envs.humanoids.gpr_vel_env import GprVelEnv
+from sim.envs.humanoids.gpr_man_vel_config import GprManVelCfg, GprManVelCfgPPO
+from sim.envs.humanoids.gpr_man_vel_env import GprManVelEnv
 from sim.utils.task_registry import TaskRegistry  # noqa: E402
 
 task_registry = TaskRegistry()

@@ -10,7 +10,7 @@ from sim.resources.gpr_vel.joints import Robot
 NUM_JOINTS = len(Robot.all_joints())
 
 
-class GprVelCfg(LeggedRobotCfg):
+class GprManVelCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
@@ -22,7 +22,7 @@ class GprVelCfg(LeggedRobotCfg):
         single_num_privileged_obs = 25 + NUM_JOINTS * 5 # 2 for past actions, 1 for dof pos, 1 for dof vel, 1 for diff
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_joints = NUM_JOINTS
-        num_actions = NUM_JOINTS*2
+        num_actions = NUM_JOINTS
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
@@ -210,7 +210,7 @@ class GprVelCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class GprVelStandingCfg(GprVelCfg):
+class GprManVelStandingCfg(GprManVelCfg):
     """Configuration class for the GPR humanoid robot."""
 
     class init_state(LeggedRobotCfg.init_state):
@@ -247,7 +247,7 @@ class GprVelStandingCfg(GprVelCfg):
             collision = -1.0
 
 
-class GprVelCfgPPO(LeggedRobotCfgPPO):
+class GprManVelCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
