@@ -52,8 +52,8 @@ class GprVelCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        mesh_type = "plane"
-        # mesh_type = "trimesh"
+        # mesh_type = "plane"
+        mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -126,7 +126,7 @@ class GprVelCfg(LeggedRobotCfg):
         added_mass_range = [-2.0, 2.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.2
+        max_push_vel_xy = 0.4
         max_push_ang_vel = 0.4
         # dynamic randomization
         action_noise = 0.02
@@ -163,7 +163,7 @@ class GprVelCfg(LeggedRobotCfg):
 
         class scales:
             # reference motion tracking
-            joint_pos = 1.6
+            joint_pos = 1.2
             feet_clearance = 1.2
             feet_contact_number = 1.4
             # gait

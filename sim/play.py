@@ -19,6 +19,8 @@ import h5py
 import numpy as np
 from isaacgym import gymapi
 from tqdm import tqdm
+import pandas as pd
+from pathlib import Path
 
 # Local imports third
 from sim.env import run_dir
@@ -183,6 +185,13 @@ def play(args: argparse.Namespace) -> None:
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
+    csv_data = {
+        'timestamp': [],
+    }
+    # Add columns for each joint
+    for i in range(env.num_dof):
+        csv_data[f'dof_pos_target_{i}'] = []
+
     for t in tqdm(range(env_steps_to_run)):
         actions = policy(obs.detach())
 
@@ -203,8 +212,13 @@ def play(args: argparse.Namespace) -> None:
 
             video.write(img[..., :3])
 
+        # Log states for all joints
+        csv_data['timestamp'].append(t * env.dt)
+        dof_pos_targets = actions[robot_index] * env.cfg.control.action_scale
+        for i in range(env.num_dof):
+            csv_data[f'dof_pos_target_{i}'].append(dof_pos_targets[i].item())
+
         # Log states
-        dof_pos_target = actions[robot_index, joint_index].item() * env.cfg.control.action_scale
         dof_pos = env.dof_pos[robot_index, joint_index].item()
         dof_vel = env.dof_vel[robot_index, joint_index].item()
         dof_torque = env.torques[robot_index, joint_index].item()
@@ -219,7 +233,7 @@ def play(args: argparse.Namespace) -> None:
 
         env_logger.log_states(
             {
-                "dof_pos_target": dof_pos_target,
+                "dof_pos_target": dof_pos_targets[joint_index].item(),
                 "dof_pos": dof_pos,
                 "dof_vel": dof_vel,
                 "dof_torque": dof_torque,
@@ -257,7 +271,7 @@ def play(args: argparse.Namespace) -> None:
                 })
 
             prev_actions = actions
-    
+        
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
             if num_episodes > 0:
@@ -273,6 +287,14 @@ def play(args: argparse.Namespace) -> None:
         for h5_logger in h5_loggers:
             h5_logger.close()
         print(f"HDF5 file(s) saved!")
+
+    # Save to CSV
+    csv_dir = run_dir() / "csv_out" / args.task / now
+    csv_dir.mkdir(parents=True, exist_ok=True)
+    df = pd.DataFrame(csv_data)
+    csv_path = csv_dir / "dof_pos_target.csv"
+    df.to_csv(csv_path, index=False)
+    print(f"CSV file saved to: {csv_path}")
 
 
 if __name__ == "__main__":
