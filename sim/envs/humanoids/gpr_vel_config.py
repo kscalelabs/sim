@@ -126,8 +126,8 @@ class GprVelCfg(LeggedRobotCfg):
         added_mass_range = [-2.0, 2.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.4
-        max_push_ang_vel = 0.4
+        max_push_vel_xy = 1.0 # 0.4
+        max_push_ang_vel = 1.0 # 0.4
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5

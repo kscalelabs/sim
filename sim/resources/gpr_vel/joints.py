@@ -122,7 +122,7 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 60,
+            "04": 85,
             "03": 40,
             "02": 30,
         }
@@ -157,8 +157,8 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "04": 80,
-            "03": 40,
+            "04": 100,
+            "03": 50,
             "02": 17,
         }
 
