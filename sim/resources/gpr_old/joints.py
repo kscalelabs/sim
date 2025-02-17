@@ -48,19 +48,19 @@ class Node(ABC):
 
 
 class LeftLeg(Node):
-    hip_pitch = "left_hip_pitch_04"
-    hip_yaw = "left_hip_roll_03"
-    hip_roll = "left_hip_yaw_03"
-    knee_pitch = "left_knee_04"
-    ankle_pitch = "left_ankle_02"
+    hip_pitch = "L_hip_y"
+    hip_yaw = "L_hip_x"
+    hip_roll = "L_hip_z"
+    knee_pitch = "L_knee"
+    ankle_pitch = "L_ankle"
 
 
 class RightLeg(Node):
-    hip_pitch = "right_hip_pitch_04"
-    hip_yaw = "right_hip_roll_03"
-    hip_roll = "right_hip_yaw_03"
-    knee_pitch = "right_knee_04"
-    ankle_pitch = "right_ankle_02"
+    hip_pitch = "R_hip_y"
+    hip_yaw = "R_hip_x"
+    hip_roll = "R_hip_z"
+    knee_pitch = "R_knee"
+    ankle_pitch = "R_ankle"
 
 
 class Legs(Node):
@@ -83,10 +83,10 @@ class Robot(Node):
             Robot.legs.left.hip_roll: 1,
             Robot.legs.left.knee_pitch: 1,
             Robot.legs.left.ankle_pitch: 1,
-            Robot.legs.right.hip_pitch: 1,
-            Robot.legs.right.hip_yaw: 1,
+            Robot.legs.right.hip_pitch: -1,
+            Robot.legs.right.hip_yaw: -1,
             Robot.legs.right.hip_roll: 1,
-            Robot.legs.right.knee_pitch: 1,
+            Robot.legs.right.knee_pitch: -1,
             Robot.legs.right.ankle_pitch: 1,
         }
 
@@ -128,13 +128,13 @@ class Robot(Node):
             Robot.legs.left.hip_pitch: 0.23,
             Robot.legs.left.hip_yaw: 0.0,
             Robot.legs.left.hip_roll: 0.0,
-            Robot.legs.left.knee_pitch: 0.441,
+            Robot.legs.left.knee_pitch: -0.441,
             Robot.legs.left.ankle_pitch: -0.195,
             Robot.legs.right.hip_pitch: -0.23,
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
             Robot.legs.right.knee_pitch: -0.441,
-            Robot.legs.right.ankle_pitch: 0.195,
+            Robot.legs.right.ankle_pitch: -0.195,
         }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
@@ -146,17 +146,19 @@ class Robot(Node):
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
         return {
-            # Robot.legs.left.knee_pitch: {"lower": -1.57, "upper": 0},
-            # Robot.legs.right.knee_pitch: {"lower": -1.57, "upper": 0},
+            Robot.legs.left.knee_pitch: {"lower": -1.57, "upper": 0},
+            Robot.legs.right.knee_pitch: {"lower": -1.57, "upper": 0},
         }
 
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 300,
-            "03": 120,
-            "02": 40,
+            "hip_y": 300,
+            "hip_x": 120,
+            "hip_z": 120,
+            "knee": 300,
+            "ankle": 40,
         }
 
     @classmethod
@@ -172,9 +174,11 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "04": 5,
-            "03": 5,
-            "02": 5,
+            "hip_y": 5,
+            "hip_x": 5,
+            "hip_z": 5,
+            "knee": 5,
+            "ankle": 5,
         }
 
     @classmethod
@@ -190,35 +194,33 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "04": 60,
-            "03": 40,
-            "02": 17,
+            "hip_y": 60,
+            "hip_x": 40,
+            "hip_z": 40,
+            "knee": 60,
+            "ankle": 17,
         }
 
-    # @classmethod
-    # def effort_mapping(cls) -> Dict[str, float]:
-    #     mapping = {}
-    #     effort = cls.effort()
-    #     for side in ["L", "R"]:
-    #         for joint, value in effort.items():
-    #             mapping[f"{side}_{joint}"] = value
-    #     return mapping
+    @classmethod
+    def effort_mapping(cls) -> Dict[str, float]:
+        mapping = {}
+        effort = cls.effort()
+        for side in ["L", "R"]:
+            for joint, value in effort.items():
+                mapping[f"{side}_{joint}"] = value
+        return mapping
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
-        return {
-            "04": 6.283,
-            "03": 6.283,
-            "02": 12.566,
-        }
+        return {"hip": 10, "knee": 10, "ankle": 10}
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
-            "04": 0,
-            "03": 0,
-            "02": 0.1,
+            "hip": 0,
+            "knee": 0,
+            "ankle": 0.1,
         }
 
 

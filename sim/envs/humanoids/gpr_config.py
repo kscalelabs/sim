@@ -127,7 +127,7 @@ class GprCfg(LeggedRobotCfg):
         file = str(robot_urdf_path(name))
 
         foot_name = ["foot1", "foot3"]
-        knee_name = ["leg3_shell2", "leg3_shell22"]
+        knee_name = ["leg3_shell1", "leg3_shell11"]
         imu_name = "imu_link"
 
         termination_height = 0.2
@@ -140,8 +140,8 @@ class GprCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
