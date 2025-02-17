@@ -49,16 +49,16 @@ class Node(ABC):
 
 class LeftLeg(Node):
     hip_pitch = "left_hip_pitch_04"
-    hip_yaw = "left_hip_roll_03"
-    hip_roll = "left_hip_yaw_03"
+    hip_yaw = "left_hip_yaw_03"
+    hip_roll = "left_hip_roll_03"
     knee_pitch = "left_knee_04"
     ankle_pitch = "left_ankle_02"
 
 
 class RightLeg(Node):
     hip_pitch = "right_hip_pitch_04"
-    hip_yaw = "right_hip_roll_03"
-    hip_roll = "right_hip_yaw_03"
+    hip_yaw = "right_hip_yaw_03"
+    hip_roll = "right_hip_roll_03"
     knee_pitch = "right_knee_04"
     ankle_pitch = "right_ankle_02"
 
