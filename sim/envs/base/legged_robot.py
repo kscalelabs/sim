@@ -157,10 +157,11 @@ class LeggedRobot(BaseTask):
         if self.cfg.commands.curriculum and (self.common_step_counter % self.max_episode_length == 0):
             self.update_command_curriculum(env_ids)
 
-        # Add noise to the PD gains
-        if self.cfg.domain_rand.randomize_pd_gains:
-            self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * 7
-            self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * 0.3
+        # pfb30
+        # # Add noise to the PD gains
+        # if self.cfg.domain_rand.randomize_pd_gains:
+        #     self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * 7
+        #     self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * 0.3
 
         # reset robot states
         self._reset_dofs(env_ids)

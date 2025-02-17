@@ -195,7 +195,7 @@
   </worldbody>
 
   <actuator>
-    <position name="left_shoulder_pitch_03_pos" joint="left_shoulder_pitch_03" class="motor_03" />
+    <!-- <position name="left_shoulder_pitch_03_pos" joint="left_shoulder_pitch_03" class="motor_03" />
     <position name="left_shoulder_roll_03_pos" joint="left_shoulder_roll_03" class="motor_03" />
     <position name="left_shoulder_yaw_02_pos" joint="left_shoulder_yaw_02" class="motor_02" />
     <position name="left_elbow_02_pos" joint="left_elbow_02" class="motor_02" />
@@ -204,7 +204,7 @@
     <position name="right_shoulder_roll_03_pos" joint="right_shoulder_roll_03" class="motor_03" />
     <position name="right_shoulder_yaw_02_pos" joint="right_shoulder_yaw_02" class="motor_02" />
     <position name="right_elbow_02_pos" joint="right_elbow_02" class="motor_02" />
-    <position name="right_wrist_02_pos" joint="right_wrist_02" class="motor_02" />
+    <position name="right_wrist_02_pos" joint="right_wrist_02" class="motor_02" /> -->
     <position name="left_hip_pitch_04_pos" joint="left_hip_pitch_04" class="motor_04" />
     <position name="left_hip_roll_03_pos" joint="left_hip_roll_03" class="motor_03" />
     <position name="left_hip_yaw_03_pos" joint="left_hip_yaw_03" class="motor_03" />
@@ -228,16 +228,18 @@
 
   <sensor>
     <accelerometer name="imu_acc" site="imu" noise="0.01" />
-    <gyro name="imu_gyro" site="imu" noise="0.01" />
+    <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
     <magnetometer name="imu_mag" site="imu" noise="0.05" />
     <framepos name="base_link_pos" objtype="site" objname="imu" />
-    <framequat name="base_link_quat" objtype="site" objname="imu" />
+    <framequat name="orientation" objtype="site" objname="imu" />
     <framelinvel name="base_link_vel" objtype="site" objname="imu" />
     <frameangvel name="base_link_ang_vel" objtype="site" objname="imu" />
   </sensor>
 
 
-  <default>
-    <geom solref="0.02 1.0" solimp="0.8 0.99 0.003" />
-  </default>
+
+    <keyframe>
+    <key name="default" qpos="0 0 1.05 1. 0.0 0.0 0.0 0.23 0.0 0.0 -0.441 -0.195 -0.23 0.0 0.0 -0.441 -0.195"/>
+    <key name="standing" qpos="0 0 1.075 1. 0.0 0.0 0.0 0 0.0 0.0 0 0 0 0.0 0.0 0 0"/>
+  </keyframe>
 </mujoco>
