@@ -129,7 +129,8 @@ class GprVelCfg(LeggedRobotCfg):
         randomize_base_mass = True
         added_mass_range = [-2.0, 2.0]
         push_robots = True
-        push_interval_s = 4
+        push_random_interval_min = 1.0
+        push_random_interval_max = 4.0
         max_push_vel_xy = 1.0 # 0.4
         max_push_ang_vel = 1.0 # 0.4
         # dynamic randomization
@@ -166,6 +167,7 @@ class GprVelCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
+            termination = -10.0
             # reference motion tracking
             joint_pos = 1.2
             feet_clearance = 0.8 # 1.2
@@ -193,7 +195,7 @@ class GprVelCfg(LeggedRobotCfg):
             action_smoothness = -0.002
             torques = -1e-5
             dof_vel = -5e-4  # -1e-3
-            dof_acc = -1e-7  # -2.5e-7
+            dof_acc = -2.5e-7  # -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:

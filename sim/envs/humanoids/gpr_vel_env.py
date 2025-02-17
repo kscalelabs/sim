@@ -6,10 +6,13 @@ from isaacgym.torch_utils import *  # isort:skip
 from sim.envs.base.legged_robot import LeggedRobot
 from sim.resources.gpr_vel.joints import Robot
 from sim.utils.terrain import HumanoidTerrain
+from sim.utils.math import wrap_to_pi
+
 
 from isaacgym import gymtorch  # isort:skip
 
 import torch  # isort:skip
+import random  # isort:skip
 
 
 class GprVelEnv(LeggedRobot):
@@ -65,6 +68,7 @@ class GprVelEnv(LeggedRobot):
             self.legs_joints["right_" + name] = joint_handle
 
         self.compute_observations()
+        self._initialize_push_intervals()
 
     def step(self, actions):
         """Apply actions, simulate, call self.post_physics_step()
@@ -123,19 +127,27 @@ class GprVelEnv(LeggedRobot):
         res = torch.clip(torques, -self.torque_limits, self.torque_limits)
         return res
 
-    def _push_robots(self):
-        """Random pushes the robots. Emulates an impulse by setting a randomized base velocity."""
+    def _push_robots(self, env_ids=None):
+        """Randomly pushes the robots for specific environments.
+        
+        If env_ids is None, push all environments; otherwise, push only for the provided indices.
+        """
         max_vel = self.cfg.domain_rand.max_push_vel_xy
         max_push_angular = self.cfg.domain_rand.max_push_ang_vel
-        self.rand_push_force[:, :2] = torch_rand_float(
-            -max_vel, max_vel, (self.num_envs, 2), device=self.device
-        )  # lin vel x/y
-        self.root_states[:, 7:9] = self.rand_push_force[:, :2]
-
-        self.rand_push_torque = torch_rand_float(
-            -max_push_angular, max_push_angular, (self.num_envs, 3), device=self.device
+        
+        if env_ids is None:
+            env_ids = torch.arange(self.num_envs, device=self.device)
+        
+        # For the selected environments, sample random push forces and torques
+        self.rand_push_force[env_ids, :2] = torch_rand_float(
+            -max_vel, max_vel, (len(env_ids), 2), device=self.device
         )
-        self.root_states[:, 10:13] = self.rand_push_torque
+        self.root_states[env_ids, 7:9] = self.rand_push_force[env_ids, :2]
+        
+        self.rand_push_torque[env_ids] = torch_rand_float(
+            -max_push_angular, max_push_angular, (len(env_ids), 3), device=self.device
+        )
+        self.root_states[env_ids, 10:13] = self.rand_push_torque[env_ids]
 
         self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
 
@@ -567,3 +579,51 @@ class GprVelEnv(LeggedRobot):
         )
         term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
         return term_1 + term_2 + term_3
+    
+    def _reward_termination(self):
+        """Returns a penalty for each environment that is terminated."""
+        penalty = 1.0
+        # Apply the penalty element-wise: only environments that need reset get the penalty
+        return penalty * self.reset_buf.float()
+
+    def _initialize_push_intervals(self):
+        # Create a tensor of size (num_envs,) for the next push step.
+        # We'll assume self.num_envs is available and self.dt is the simulation time step.
+        self.next_push_steps = torch.empty(self.num_envs, dtype=torch.int64, device=self.device)
+        for i in range(self.num_envs):
+            random_interval_sec = random.uniform(
+                self.cfg.domain_rand.push_random_interval_min,
+                self.cfg.domain_rand.push_random_interval_max
+            )
+            self.next_push_steps[i] = self.common_step_counter + int(random_interval_sec / self.dt)
+
+    def _post_physics_step_callback(self):
+        """Callback called before computing terminations, rewards, and observations."""
+        env_ids = (
+            (self.episode_length_buf % int(self.cfg.commands.resampling_time / self.dt) == 0)
+            .nonzero(as_tuple=False)
+            .flatten()
+        )
+        self._resample_commands(env_ids)
+        if self.cfg.commands.heading_command:
+            forward = quat_apply(self.base_quat, self.forward_vec)
+            heading = torch.atan2(forward[:, 1], forward[:, 0])
+            self.commands[:, 2] = torch.clip(0.5 * wrap_to_pi(self.commands[:, 3] - heading), -1.0, 1.0)
+        if self.cfg.terrain.measure_heights:
+            self.measured_heights = self._get_heights()
+        if self.cfg.domain_rand.push_robots:
+            # Initialize per-env push intervals if not done yet.
+            if not hasattr(self, 'next_push_steps'):
+                self._initialize_push_intervals()
+            # Determine which environments are due for a push
+            envs_to_push = (self.common_step_counter >= self.next_push_steps).nonzero(as_tuple=False).flatten()
+            if len(envs_to_push) > 0:
+                # Apply push only to the environments that are due
+                self._push_robots(envs_to_push)
+                # For each pushed environment, set a new random push time
+                for env_id in envs_to_push:
+                    random_interval_sec = random.uniform(
+                        self.cfg.domain_rand.push_random_interval_min,
+                        self.cfg.domain_rand.push_random_interval_max
+                    )
+                    self.next_push_steps[env_id] = self.common_step_counter + int(random_interval_sec / self.dt)
