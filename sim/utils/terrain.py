@@ -227,21 +227,22 @@ class HumanoidTerrain(Terrain):
             horizontal_scale=self.cfg.horizontal_scale,
         )
         discrete_obstacles_height = difficulty * 0.04
-        r_height = difficulty * 0.07
-        h_slope = difficulty * 0.15
+        r_height = difficulty * self.cfg.r_height_diff
+        h_slope = difficulty * self.cfg.h_slope_diff
+        max_box_height = discrete_obstacles_height * self.cfg.max_box_height_scale
         if choice < self.proportions[0]:
             pass
         elif choice < self.proportions[1]:
-            num_rectangles = 20
-            rectangle_min_size = 1.0
+            num_rectangles = 100
+            rectangle_min_size = 0.1
             rectangle_max_size = 2.0
             terrain_utils.discrete_obstacles_terrain(
                 terrain,
-                discrete_obstacles_height,
+                max_box_height,
                 rectangle_min_size,
                 rectangle_max_size,
                 num_rectangles,
-                platform_size=3.0,
+                platform_size=1.0,
             )
         elif choice < self.proportions[2]:
             terrain_utils.random_uniform_terrain(

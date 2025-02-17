@@ -5,7 +5,7 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.gpr_vel.joints import Robot
+from sim.resources.gpr_man_vel.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())
 
@@ -17,12 +17,12 @@ class GprManVelCfg(LeggedRobotCfg):
         # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
-        num_single_obs = 8 + NUM_JOINTS * 4 # 2 for past actions, 1 for dof pos, 1 for dof vel
+        num_single_obs = 8 + NUM_JOINTS * 3  # 5 commands, NUM_JOINTS for dof pos, NUM_JOINTS for dof vel, NUM_JOINTS for actions (only positions), 3 for projected gravity
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 25 + NUM_JOINTS * 5 # 2 for past actions, 1 for dof pos, 1 for dof vel, 1 for diff
+        single_num_privileged_obs = 25 + NUM_JOINTS * 4  # 5 commands, NUM_JOINTS for dof pos, NUM_JOINTS for dof vel, NUM_JOINTS for actions (only positions), NUM_JOINTS for diff, rest for other observations
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_joints = NUM_JOINTS
-        num_actions = NUM_JOINTS
+        num_actions = NUM_JOINTS  # only predicting positions now
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
@@ -34,13 +34,36 @@ class GprManVelCfg(LeggedRobotCfg):
         torque_limit = 1.0
 
     class asset(LeggedRobotCfg.asset):
-        name = "gpr_vel"
+        name = "gpr_man_vel"
 
         file = str(robot_urdf_path(name))
 
         foot_name = ["foot1", "foot3"]
         knee_name = ["leg3_shell1", "leg3_shell11"]
         imu_name = "imu"
+
+        terminate_after_contacts_on = [
+            "body1-part",
+            "imu",               # Typically we do terminate if the torso/IMU hits the ground
+            "shoulder",
+            "shoulder_2",
+            "arm1_top",
+            "arm1_top_2",
+            "arm2_shell",
+            "arm2_shell_2",
+            "arm3_shell",
+            "arm3_shell2",
+            "hand_shell",
+            "hand_shell_2",
+            "leg0_shell",
+            "leg0_shell_2",
+            "leg1_shell",
+            "leg1_shell3",
+            "leg2_shell",
+            "leg2_shell_2",
+            # EXCLUDED: "leg3_shell1", "leg3_shell11" (knee)
+            # EXCLUDED: "foot1", "foot3" (feet)
+        ]
 
         termination_height = 0.2
         default_feet_height = 0.0
@@ -52,10 +75,13 @@ class GprManVelCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        mesh_type = "plane"
-        # mesh_type = "trimesh"
-        curriculum = False
+        # mesh_type = "plane"
+        mesh_type = "trimesh"
+        curriculum = True
         # rough terrain only:
+        r_height_diff = 0.25
+        h_slope_diff = 0.15
+        max_box_height_scale = 5.0
         measure_heights = False
         static_friction = 0.6
         dynamic_friction = 0.6
@@ -63,7 +89,7 @@ class GprManVelCfg(LeggedRobotCfg):
         terrain_width = 8.0
         num_rows = 10  # number of terrain rows (levels)
         num_cols = 10  # number of terrain cols (types)
-        max_init_terrain_level = 10  # starting curriculum state
+        max_init_terrain_level = 9  # starting curriculum state
         # plane; obstacles; uniform; slope_up; slope_down, stair_up, stair_down
         terrain_proportions = [0.2, 0.2, 0.4, 0.1, 0.1, 0, 0]
         restitution = 0.0
@@ -126,8 +152,11 @@ class GprManVelCfg(LeggedRobotCfg):
         added_mass_range = [-2.0, 2.0]
         push_robots = True
         push_interval_s = 4
-        max_push_vel_xy = 0.2
-        max_push_ang_vel = 0.4
+        max_push_vel_xy = 1.0
+        max_push_ang_vel = 1.0
+        # New random interval parameters (in seconds)
+        push_random_interval_min = 1
+        push_random_interval_max = 15
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
@@ -162,10 +191,12 @@ class GprManVelCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
+            # termination
+            termination = -20.0
             # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.2
-            feet_contact_number = 1.4
+            joint_pos = 1.6 * 0.0
+            feet_clearance = 1.2 * 0.0
+            feet_contact_number = 1.4 * 0.0
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
@@ -174,8 +205,8 @@ class GprManVelCfg(LeggedRobotCfg):
             # contact
             feet_contact_forces = -0.01
             # vel tracking
-            tracking_lin_vel = 1.2
-            tracking_ang_vel = 1.1
+            tracking_lin_vel = 1.2 * 2
+            tracking_ang_vel = 1.1 / 2
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
             low_speed = 0.2
             track_vel_hard = 0.5
@@ -257,7 +288,7 @@ class GprManVelCfgPPO(LeggedRobotCfgPPO):
         critic_hidden_dims = [768, 256, 128]
 
     class algorithm(LeggedRobotCfgPPO.algorithm):
-        entropy_coef = 0.001
+        entropy_coef = 0.008
         learning_rate = 1e-5
         num_learning_epochs = 2
         gamma = 0.994
@@ -271,8 +302,8 @@ class GprManVelCfgPPO(LeggedRobotCfgPPO):
         max_iterations = 3001  # number of policy updates
 
         # logging
-        save_interval = 100  # check for potential saves every this many iterations
-        experiment_name = "gpr_vel"
+        save_interval = 50  # check for potential saves every this many iterations
+        experiment_name = "gpr_man_vel"
         run_name = ""
         # load and resume
         resume = False
