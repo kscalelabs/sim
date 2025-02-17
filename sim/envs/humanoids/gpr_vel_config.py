@@ -131,8 +131,8 @@ class GprVelCfg(LeggedRobotCfg):
         push_robots = True
         push_random_interval_min = 1.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 1.0 # 0.4
-        max_push_ang_vel = 1.0 # 0.4
+        max_push_vel_xy = 1.2 # 0.4
+        max_push_ang_vel = 1.2 # 0.4
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
@@ -145,7 +145,7 @@ class GprVelCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.5, 1.0]  # min max [m/s]
+            lin_vel_x = [-0.0, 1.0]  # min max [m/s]
             lin_vel_y = [-0.5, 0.5]  # min max [m/s]
             ang_vel_yaw = [-1.5, 1.5]  # min max [rad/s]
             heading = [-3.14, 3.14]
