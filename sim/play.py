@@ -161,8 +161,12 @@ def play(args: argparse.Namespace) -> None:
         camera_properties.width = 1920
         camera_properties.height = 1080
         h1 = env.gym.create_camera_sensor(env.envs[0], camera_properties)
-        camera_offset = gymapi.Vec3(3, -3, 1)
-        camera_rotation = gymapi.Quat.from_axis_angle(gymapi.Vec3(-0.3, 0.2, 1), np.deg2rad(135))
+        # camera_offset = gymapi.Vec3(3, -3, 1)
+        camera_offset = gymapi.Vec3(1, -2, 0.5)
+        # camera_rotation = gymapi.Quat.from_axis_angle(gymapi.Vec3(-0.3, 0.2, 1), np.deg2rad(135))
+        # camera_rotation = gymapi.Quat.from_axis_angle(gymapi.Vec3(0.1, 0.1, 1), np.deg2rad(135))
+        camera_rotation = gymapi.Quat.from_euler_zyx(np.deg2rad(0), np.deg2rad(30), np.deg2rad(115))
+        # breakpoint()
         actor_handle = env.gym.get_actor_handle(env.envs[0], 0)
         body_handle = env.gym.get_actor_rigid_body_handle(env.envs[0], actor_handle, 0)
         logger.info("body_handle: %s", body_handle)
@@ -185,7 +189,8 @@ def play(args: argparse.Namespace) -> None:
             os.mkdir(experiment_dir)
         video = cv2.VideoWriter(dir, fourcc, 50.0, (1920, 1080))
 
-    csv_data = {
+    # Input data logging
+    input_data = {
         'timestamp': [],
         # 2D command
         'sin_command': [],
@@ -194,12 +199,6 @@ def play(args: argparse.Namespace) -> None:
         'command_x': [],
         'command_y': [],
         'command_yaw': [],
-        # Joint states
-        'joint_pos': [[] for _ in range(env.num_dof)],
-        'joint_vel': [[] for _ in range(env.num_dof)],
-        # Actions
-        'prev_actions': [[] for _ in range(env.num_dof * 2)],  # *2 for pos and vel
-        'curr_actions': [[] for _ in range(env.num_dof * 2)],
         # Base state
         'ang_vel_x': [],
         'ang_vel_y': [],
@@ -208,6 +207,19 @@ def play(args: argparse.Namespace) -> None:
         'pitch': [],
         'yaw': [],
     }
+    
+    # Add joint state columns
+    for i in range(env.num_dof):
+        input_data[f'joint_pos_{i}'] = []
+        input_data[f'joint_vel_{i}'] = []
+
+    # Target data logging (original)
+    target_data = {
+        'timestamp': [],
+    }
+    for i in range(env.num_dof):
+        target_data[f'dof_pos_target_{i}'] = []
+        target_data[f'dof_vel_target_{i}'] = []
 
     prev_actions = np.zeros((num_parallel_envs, env.num_dof * 2), dtype=np.double)
 
@@ -215,7 +227,7 @@ def play(args: argparse.Namespace) -> None:
         actions = policy(obs.detach())
 
         if args.fix_command:
-            env.commands[:, 0] = -0.5
+            env.commands[:, 0] = 0.5
             env.commands[:, 1] = 0.0
             env.commands[:, 2] = 0.0
             env.commands[:, 3] = 0.0
@@ -231,31 +243,40 @@ def play(args: argparse.Namespace) -> None:
 
             video.write(img[..., :3])
 
-        # Log data
-        csv_data['timestamp'].append(t * env.dt)
+        # Log input data
+        input_data['timestamp'].append(t * env.dt)
         # 2D command
-        csv_data['sin_command'].append(np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time))
-        csv_data['cos_command'].append(np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time))
+        input_data['sin_command'].append(np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time))
+        input_data['cos_command'].append(np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time))
         # 3D command
-        csv_data['command_x'].append(env.commands[robot_index, 0].item())
-        csv_data['command_y'].append(env.commands[robot_index, 1].item())
-        csv_data['command_yaw'].append(env.commands[robot_index, 2].item())
+        input_data['command_x'].append(env.commands[robot_index, 0].item())
+        input_data['command_y'].append(env.commands[robot_index, 1].item())
+        input_data['command_yaw'].append(env.commands[robot_index, 2].item())
+        
         # Joint states
         for i in range(env.num_dof):
-            csv_data['joint_pos'][i].append(env.dof_pos[robot_index, i].item())
-            csv_data['joint_vel'][i].append(env.dof_vel[robot_index, i].item())
-        # Actions
-        actions_np = actions.detach().cpu().numpy()
-        for i in range(env.num_dof * 2):
-            csv_data['prev_actions'][i].append(prev_actions[robot_index, i])
-            csv_data['curr_actions'][i].append(actions_np[robot_index, i])
+            input_data[f'joint_pos_{i}'].append(env.dof_pos[robot_index, i].item())
+            input_data[f'joint_vel_{i}'].append(env.dof_vel[robot_index, i].item())
+            
         # Base state
-        csv_data['ang_vel_x'].append(env.base_ang_vel[robot_index, 0].item())
-        csv_data['ang_vel_y'].append(env.base_ang_vel[robot_index, 1].item())
-        csv_data['ang_vel_z'].append(env.base_ang_vel[robot_index, 2].item())
-        csv_data['roll'].append(env.base_euler_xyz[robot_index, 0].item())
-        csv_data['pitch'].append(env.base_euler_xyz[robot_index, 1].item())
-        csv_data['yaw'].append(env.base_euler_xyz[robot_index, 2].item())
+        input_data['ang_vel_x'].append(env.base_ang_vel[robot_index, 0].item())
+        input_data['ang_vel_y'].append(env.base_ang_vel[robot_index, 1].item())
+        input_data['ang_vel_z'].append(env.base_ang_vel[robot_index, 2].item())
+        input_data['roll'].append(env.base_euler_xyz[robot_index, 0].item())
+        input_data['pitch'].append(env.base_euler_xyz[robot_index, 1].item())
+        input_data['yaw'].append(env.base_euler_xyz[robot_index, 2].item())
+
+        # Log target data
+        target_data['timestamp'].append(t * env.dt)
+        actions_np = actions.detach().cpu().numpy()
+
+        # Clip actions to match environment limits
+        actions_np = np.clip(actions_np, -env.cfg.normalization.clip_actions, env.cfg.normalization.clip_actions)
+        actions_np = actions_np * env.cfg.control.action_scale
+
+        for i in range(env.num_dof):
+            target_data[f'dof_pos_target_{i}'].append(actions_np[robot_index, i])
+            target_data[f'dof_vel_target_{i}'].append(actions_np[robot_index, i + env.num_dof])
 
         prev_actions = actions_np
         
@@ -278,10 +299,18 @@ def play(args: argparse.Namespace) -> None:
     # Save to CSV
     csv_dir = run_dir() / "csv_out" / args.task / now
     csv_dir.mkdir(parents=True, exist_ok=True)
-    df = pd.DataFrame(csv_data)
-    csv_path = csv_dir / "dof_pos_target.csv"
-    df.to_csv(csv_path, index=False)
-    print(f"CSV file saved to: {csv_path}")
+    
+    # Save inputs
+    df_inputs = pd.DataFrame(input_data)
+    input_path = csv_dir / "inputs.csv"
+    df_inputs.to_csv(input_path, index=False)
+    print(f"Input CSV file saved to: {input_path}")
+
+    # Save targets
+    df_targets = pd.DataFrame(target_data)
+    target_path = csv_dir / "targets.csv"
+    df_targets.to_csv(target_path, index=False)
+    print(f"Target CSV file saved to: {target_path}")
 
 
 if __name__ == "__main__":
