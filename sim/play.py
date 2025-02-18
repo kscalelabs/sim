@@ -187,10 +187,29 @@ def play(args: argparse.Namespace) -> None:
 
     csv_data = {
         'timestamp': [],
+        # 2D command
+        'sin_command': [],
+        'cos_command': [],
+        # 3D command
+        'command_x': [],
+        'command_y': [],
+        'command_yaw': [],
+        # Joint states
+        'joint_pos': [[] for _ in range(env.num_dof)],
+        'joint_vel': [[] for _ in range(env.num_dof)],
+        # Actions
+        'prev_actions': [[] for _ in range(env.num_dof * 2)],  # *2 for pos and vel
+        'curr_actions': [[] for _ in range(env.num_dof * 2)],
+        # Base state
+        'ang_vel_x': [],
+        'ang_vel_y': [],
+        'ang_vel_z': [],
+        'roll': [],
+        'pitch': [],
+        'yaw': [],
     }
-    # Add columns for each joint
-    for i in range(env.num_dof):
-        csv_data[f'dof_pos_target_{i}'] = []
+
+    prev_actions = np.zeros((num_parallel_envs, env.num_dof * 2), dtype=np.double)
 
     for t in tqdm(range(env_steps_to_run)):
         actions = policy(obs.detach())
@@ -212,65 +231,33 @@ def play(args: argparse.Namespace) -> None:
 
             video.write(img[..., :3])
 
-        # Log states for all joints
+        # Log data
         csv_data['timestamp'].append(t * env.dt)
-        dof_pos_targets = actions[robot_index] * env.cfg.control.action_scale
+        # 2D command
+        csv_data['sin_command'].append(np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time))
+        csv_data['cos_command'].append(np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time))
+        # 3D command
+        csv_data['command_x'].append(env.commands[robot_index, 0].item())
+        csv_data['command_y'].append(env.commands[robot_index, 1].item())
+        csv_data['command_yaw'].append(env.commands[robot_index, 2].item())
+        # Joint states
         for i in range(env.num_dof):
-            csv_data[f'dof_pos_target_{i}'].append(dof_pos_targets[i].item())
+            csv_data['joint_pos'][i].append(env.dof_pos[robot_index, i].item())
+            csv_data['joint_vel'][i].append(env.dof_vel[robot_index, i].item())
+        # Actions
+        actions_np = actions.detach().cpu().numpy()
+        for i in range(env.num_dof * 2):
+            csv_data['prev_actions'][i].append(prev_actions[robot_index, i])
+            csv_data['curr_actions'][i].append(actions_np[robot_index, i])
+        # Base state
+        csv_data['ang_vel_x'].append(env.base_ang_vel[robot_index, 0].item())
+        csv_data['ang_vel_y'].append(env.base_ang_vel[robot_index, 1].item())
+        csv_data['ang_vel_z'].append(env.base_ang_vel[robot_index, 2].item())
+        csv_data['roll'].append(env.base_euler_xyz[robot_index, 0].item())
+        csv_data['pitch'].append(env.base_euler_xyz[robot_index, 1].item())
+        csv_data['yaw'].append(env.base_euler_xyz[robot_index, 2].item())
 
-        # Log states
-        dof_pos = env.dof_pos[robot_index, joint_index].item()
-        dof_vel = env.dof_vel[robot_index, joint_index].item()
-        dof_torque = env.torques[robot_index, joint_index].item()
-        command_x = env.commands[robot_index, 0].item()
-        command_y = env.commands[robot_index, 1].item()
-        command_yaw = env.commands[robot_index, 2].item()
-        base_vel_x = env.base_lin_vel[robot_index, 0].item()
-        base_vel_y = env.base_lin_vel[robot_index, 1].item()
-        base_vel_z = env.base_lin_vel[robot_index, 2].item()
-        base_vel_yaw = env.base_ang_vel[robot_index, 2].item()
-        contact_forces_z = env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
-
-        env_logger.log_states(
-            {
-                "dof_pos_target": dof_pos_targets[joint_index].item(),
-                "dof_pos": dof_pos,
-                "dof_vel": dof_vel,
-                "dof_torque": dof_torque,
-                "command_x": command_x,
-                "command_y": command_y,
-                "command_yaw": command_yaw,
-                "base_vel_x": base_vel_x,
-                "base_vel_y": base_vel_y,
-                "base_vel_z": base_vel_z,
-                "base_vel_yaw": base_vel_yaw,
-                "contact_forces_z": contact_forces_z,
-            }
-        )
-        actions = actions.detach().cpu().numpy()
-        if args.log_h5:
-            # Extract the current observation
-            for env_idx in range(env_cfg.env.num_envs):
-                h5_loggers[env_idx].log_data({
-                    "t": np.array([t * env.dt], dtype=np.float32),
-                    "2D_command": np.array(
-                        [
-                            np.sin(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
-                            np.cos(2 * math.pi * t * env.dt / env.cfg.rewards.cycle_time),
-                        ],
-                        dtype=np.float32,
-                    ),
-                    "3D_command": np.array(env.commands[env_idx, :3].cpu().numpy(), dtype=np.float32),
-                    "joint_pos": np.array(env.dof_pos[env_idx].cpu().numpy(), dtype=np.float32), 
-                    "joint_vel": np.array(env.dof_vel[env_idx].cpu().numpy(), dtype=np.float32),
-                    "prev_actions": prev_actions[env_idx].astype(np.float32),
-                    "curr_actions": actions[env_idx].astype(np.float32),
-                    "ang_vel": env.base_ang_vel[env_idx].cpu().numpy().astype(np.float32),
-                    "euler_rotation": env.base_euler_xyz[env_idx].cpu().numpy().astype(np.float32),
-                    "buffer": env.obs_buf[env_idx].cpu().numpy().astype(np.float32)
-                })
-
-            prev_actions = actions
+        prev_actions = actions_np
         
         if infos["episode"]:
             num_episodes = env.reset_buf.sum().item()
