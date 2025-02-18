@@ -273,9 +273,11 @@ def run_mujoco(
             hist_obs = policy_output["x.3"]
 
             target_q = positions[:model_info["num_joints"]]
-            target_dq = positions[model_info["num_joints"]:]
+            target_dq = positions[model_info["num_joints"]:] # * 10
 
-            target_q = (target_q + default) * 60
+            target_q = (target_q + default)
+
+            # target_dq = np.zeros_like(target_dq)
 
             prev_actions = curr_actions
 
