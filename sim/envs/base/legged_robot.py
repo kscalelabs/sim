@@ -744,11 +744,12 @@ class LeggedRobot(BaseTask):
 
         # remove zero scales + multiply non-zero ones by dt
         for key in list(self.reward_scales.keys()):
-            scale = self.reward_scales[key]
-            if scale == 0:
-                self.reward_scales.pop(key)
-            else:
-                self.reward_scales[key] *= self.dt
+            if key != "termination":
+                scale = self.reward_scales[key]
+                if scale == 0:
+                    self.reward_scales.pop(key)
+                else:
+                    self.reward_scales[key] *= self.dt
         # prepare list of functions
         self.reward_functions = []
         self.reward_names = []

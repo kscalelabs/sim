@@ -41,14 +41,18 @@ class GprLatencyCfg(LeggedRobotCfg):
 
         file = str(robot_urdf_path(name))
 
+        # foot_name = ["foot1", "foot3"]
+        # knee_name = ["leg3_shell1", "leg3_shell11"]
+        # imu_name = "imu"
+
         foot_name = ["foot1", "foot3"]
-        knee_name = ["leg3_shell1", "leg3_shell11"]
-        imu_name = "imu"
+        knee_name = ["leg3_shell2", "leg3_shell22"]
+        imu_name = "imu_link"
 
         termination_height = 0.2
         default_feet_height = 0.0
 
-        terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
+        # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -57,8 +61,8 @@ class GprLatencyCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -75,7 +79,7 @@ class GprLatencyCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.5  # 0.6  # scales other values
+        noise_level = 0.6 # 1.5  # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
@@ -102,7 +106,7 @@ class GprLatencyCfg(LeggedRobotCfg):
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 20  # Policy at 50hz
-        pd_decimation = 10  # PD at 100hz
+        pd_decimation = 1  # PD at 1000hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -135,9 +139,10 @@ class GprLatencyCfg(LeggedRobotCfg):
         link_mass_multiplier_range = [0.8, 1.2]
 
         push_robots = True
-        push_interval_s = 4
-        max_push_vel_xy = 0.2
-        max_push_ang_vel = 0.4
+        push_random_interval_min = 1.0
+        push_random_interval_max = 4.0
+        max_push_vel_xy = 0.8 # 0.2
+        max_push_ang_vel = 0.8 # 0.4
 
         # dynamic randomization
         action_noise = 0.02
@@ -184,7 +189,7 @@ class GprLatencyCfg(LeggedRobotCfg):
         max_curriculum = 1.7
 
         class ranges:
-            lin_vel_x = [-0.5, 1.0]  # min max [m/s]
+            lin_vel_x = [-0.0, 1.0]  # min max [m/s]
             lin_vel_y = [-0.5, 0.5]  # min max [m/s]
             ang_vel_yaw = [-1.5, 1.5]  # min max [rad/s]
             heading = [-3.14, 3.14]
@@ -206,6 +211,7 @@ class GprLatencyCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
+            termination = -10.0
             # reference motion tracking
             joint_pos = 1.6
             feet_clearance = 1.2
