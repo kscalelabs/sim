@@ -95,14 +95,14 @@ def get_obs(data: mujoco.MjData) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np
     """Extracts an observation from the mujoco data structure"""
     q = data.qpos.astype(np.double)
     dq = data.qvel.astype(np.double)
-    # quat = data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double)
-    quat = data.sensor("base_link_quat").data[[1, 2, 3, 0]].astype(np.double)
+    quat = data.sensor("orientation").data[[1, 2, 3, 0]].astype(np.double)
+    # quat = data.sensor("base_link_quat").data[[1, 2, 3, 0]].astype(np.double)
 
     r = R.from_quat(quat)
     gvec = r.apply(np.array([0.0, 0.0, -1.0]), inverse=True).astype(np.double)
     v = r.apply(data.qvel[:3], inverse=True).astype(np.double)  # In the base frame
-    # omega = data.sensor("angular-velocity").data.astype(np.double)
-    omega = data.sensor("base_link_ang_vel").data.astype(np.double)
+    omega = data.sensor("angular-velocity").data.astype(np.double)
+    # omega = data.sensor("base_link_ang_vel").data.astype(np.double)
 
     # gvec = get_gravity_orientation(data.sensor("orientation").data)
     return (q, dq, quat, v, omega, gvec)
@@ -275,19 +275,19 @@ def run_mujoco(
             target_q = positions[:model_info["num_joints"]]
             target_dq = positions[model_info["num_joints"]:] # * 10
 
-            target_q = (target_q + default)
+            # target_q = (target_q + default)
 
             # target_dq = np.zeros_like(target_dq)
 
             prev_actions = curr_actions
 
-        data.ctrl = np.concatenate([target_q, target_dq])
-        print(data.ctrl)
+        # data.ctrl = np.concatenate([target_q, target_dq])
+        # print(data.ctrl)
         # Generate PD control
-        # tau = pd_control(target_q, target_dq, q, kps, dq, kds, default)  # Calc torques
-        # tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
+        tau = pd_control(target_q, target_dq, q, kps, dq, kds, default)  # Calc torques
+        tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
 
-        # data.ctrl = tau
+        data.ctrl = tau
         mujoco.mj_step(model, data)
 
         if render:
