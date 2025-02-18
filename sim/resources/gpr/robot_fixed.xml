@@ -1,245 +1,75 @@
 <mujoco model="k-bot_sim">
-  <default>
-    <default class="robot">
-      <position inheritrange="1" />
-      <default class="motor_00">
-        <joint armature="0.0005" frictionloss="0.1" actuatorfrcrange="-14.0 14.0" />
-        <position kp="20.0" dampratio="1.0" forcelimited="true" forcerange="-14.0 14.0" />
-      </default>
-      <default class="motor_02">
-        <joint armature="0.002" frictionloss="0.1" actuatorfrcrange="-17.0 17.0" />
-        <position kp="20.0" dampratio="1.0" forcelimited="true" forcerange="-17.0 17.0" />
-      </default>
-      <default class="motor_03">
-        <joint armature="0.005" frictionloss="0.3" actuatorfrcrange="-60.0 60.0" />
-        <position kp="50.0" dampratio="1.0" forcelimited="true" forcerange="-60.0 60.0" />
-      </default>
-      <default class="motor_04">
-        <joint armature="0.007" frictionloss="0.1" actuatorfrcrange="-120.0 120.0" />
-        <position kp="100.0" dampratio="1.0" forcelimited="true" forcerange="-120.0 120.0" />
-      </default>
-      <default class="visual">
-        <geom material="visualgeom" contype="0" conaffinity="0" group="2" />
-      </default>
-      <default class="collision">
-        <geom condim="6" friction="0.8 0.02 0.01" group="3" />
-      </default>
-    </default>
-  </default>
-
-  <compiler angle="radian" />
+  <compiler angle="radian"/>
 
   <asset>
-    <material name="body1-part_material" rgba="1 1 1 1" />
-    <material name="imu_material" rgba="0.615686 0.811765 0.929412 1" />
-    <material name="arm1_top_material" rgba="0.898039 0.917647 0.929412 1" />
-    <material name="default_material" rgba="0.7 0.7 0.7 1" />
-    <mesh name="body1-part.collision.stl" file="meshes/body1-part.collision.stl" />
-    <mesh name="body1-part.stl" file="meshes/body1-part.stl" />
-    <mesh name="imu.stl" file="meshes/imu.stl" />
-    <mesh name="shoulder.collision.stl" file="meshes/shoulder.collision.stl" />
-    <mesh name="shoulder.stl" file="meshes/shoulder.stl" />
-    <mesh name="arm1_top.stl" file="meshes/arm1_top.stl" />
-    <mesh name="arm2_shell.collision.stl" file="meshes/arm2_shell.collision.stl" />
-    <mesh name="arm2_shell.stl" file="meshes/arm2_shell.stl" />
-    <mesh name="arm3_shell.stl" file="meshes/arm3_shell.stl" />
-    <mesh name="hand_shell.collision.stl" file="meshes/hand_shell.collision.stl" />
-    <mesh name="hand_shell.stl" file="meshes/hand_shell.stl" />
-    <mesh name="shoulder_2.collision.stl" file="meshes/shoulder_2.collision.stl" />
-    <mesh name="shoulder_2.stl" file="meshes/shoulder_2.stl" />
-    <mesh name="arm1_top_2.stl" file="meshes/arm1_top_2.stl" />
-    <mesh name="arm2_shell_2.collision.stl" file="meshes/arm2_shell_2.collision.stl" />
-    <mesh name="arm2_shell_2.stl" file="meshes/arm2_shell_2.stl" />
-    <mesh name="arm3_shell2.stl" file="meshes/arm3_shell2.stl" />
-    <mesh name="hand_shell_2.collision.stl" file="meshes/hand_shell_2.collision.stl" />
-    <mesh name="hand_shell_2.stl" file="meshes/hand_shell_2.stl" />
-    <mesh name="leg0_shell.collision.stl" file="meshes/leg0_shell.collision.stl" />
-    <mesh name="leg0_shell.stl" file="meshes/leg0_shell.stl" />
-    <mesh name="leg1_shell.stl" file="meshes/leg1_shell.stl" />
-    <mesh name="leg2_shell.stl" file="meshes/leg2_shell.stl" />
-    <mesh name="leg3_shell1.collision.stl" file="meshes/leg3_shell1.collision.stl" />
-    <mesh name="leg3_shell1.stl" file="meshes/leg3_shell1.stl" />
-    <mesh name="foot1.collision.stl" file="meshes/foot1.collision.stl" />
-    <mesh name="foot1.stl" file="meshes/foot1.stl" />
-    <mesh name="leg0_shell_2.collision.stl" file="meshes/leg0_shell_2.collision.stl" />
-    <mesh name="leg0_shell_2.stl" file="meshes/leg0_shell_2.stl" />
-    <mesh name="leg1_shell3.stl" file="meshes/leg1_shell3.stl" />
-    <mesh name="leg2_shell_2.stl" file="meshes/leg2_shell_2.stl" />
-    <mesh name="leg3_shell11.collision.stl" file="meshes/leg3_shell11.collision.stl" />
-    <mesh name="leg3_shell11.stl" file="meshes/leg3_shell11.stl" />
-    <mesh name="foot3.collision.stl" file="meshes/foot3.collision.stl" />
-    <mesh name="foot3.stl" file="meshes/foot3.stl" />
+    <mesh name="body1-part.collision" file="body1-part.collision.stl"/>
+    <mesh name="shoulder.collision" file="shoulder.collision.stl"/>
+    <mesh name="shoulder_2.collision" file="shoulder_2.collision.stl"/>
+    <mesh name="leg0_shell.collision" file="leg0_shell.collision.stl"/>
+    <mesh name="leg0_shell_2.collision" file="leg0_shell_2.collision.stl"/>
+    <mesh name="arm2_shell.collision" file="arm2_shell.collision.stl"/>
+    <mesh name="arm2_shell_2.collision" file="arm2_shell_2.collision.stl"/>
+    <mesh name="hand_shell.collision" file="hand_shell.collision.stl"/>
+    <mesh name="hand_shell_2.collision" file="hand_shell_2.collision.stl"/>
+    <mesh name="leg3_shell1.collision" file="leg3_shell1.collision.stl"/>
+    <mesh name="leg3_shell11.collision" file="leg3_shell11.collision.stl"/>
+    <mesh name="foot3.collision" file="foot3.collision.stl"/>
+    <mesh name="foot1.collision" file="foot1.collision.stl"/>
   </asset>
 
   <worldbody>
-    <body name="body1-part" pos="0.00000000 0.00000000 1.08006263" childclass="robot">
-      <freejoint name="floating_base" />
-      <geom name="body1-part_collision" quat="0.7073882691671998 0.706825181105366 0.0 0.0" type="mesh" mesh="body1-part.collision.stl" class="collision" />
-      <geom name="body1-part_visual" quat="0.7073882691671998 0.706825181105366 0.0 0.0" material="body1-part_material" type="mesh" mesh="body1-part.stl" class="visual" />
-      <body name="shoulder" pos="0.000002 -0.191000 0.019999" quat="0.0005633121735972125 0.0005628637715330792 -0.7068249569936026 -0.707388044876899">
-        <joint name="left_shoulder_pitch_03" type="hinge" class="motor_03" range="0 3.141593" axis="0 0 1" />
-        <inertial pos="-0.002144 0.000055 -0.066483" mass="1.107356" diaginertia="0.001481 0.001039 0.000986" />
-        <geom name="shoulder_collision" type="mesh" mesh="shoulder.collision.stl" class="collision" />
-        <geom name="shoulder_visual" material="body1-part_material" type="mesh" mesh="shoulder.stl" class="visual" />
-        <body name="arm1_top" pos="0.023512 0.000056 -0.067500" quat="0.5000001633974483 0.4999999999999733 0.49999983660255165 0.4999999999999733">
-          <joint name="left_shoulder_roll_03" type="hinge" class="motor_03" range="-3.630285 0.479966" axis="0 0 -1" />
-          <inertial pos="-0.099486 -0.000001 -0.019082" mass="0.572732" diaginertia="0.000453 0.001076 0.001035" />
-          <geom name="arm1_top_visual" material="arm1_top_material" type="mesh" mesh="arm1_top.stl" class="visual" />
-          <body name="arm2_shell" pos="-0.140500 0 -0.023500" quat="0.5000001633974483 -0.4999999999999733 0.49999983660255165 -0.4999999999999733">
-            <joint name="left_shoulder_yaw_02" type="hinge" class="motor_02" range="-1.570796 1.570796" axis="0 0 1" />
-            <inertial pos="-0.006339 0 -0.090482" mass="0.510678" diaginertia="0.000675 0.000532 0.000255" />
-            <geom name="arm2_shell_collision" type="mesh" mesh="arm2_shell.collision.stl" class="collision" />
-            <geom name="arm2_shell_visual" material="arm1_top_material" type="mesh" mesh="arm2_shell.stl" class="visual" />
-            <body name="arm3_shell" pos="-0.027000 0 -0.098000" quat="-1.2247452309842457e-07 -0.7071068967259713 1.22474483074382e-07 -0.7071066656470838">
-              <joint name="left_elbow_02" type="hinge" class="motor_02" range="-2.530727 0" axis="0 0 1" />
-              <inertial pos="-0.140169 0 0.019433" mass="0.578536" diaginertia="0.000428 0.001354 0.001332" />
-              <geom name="arm3_shell_visual" material="arm1_top_material" type="mesh" mesh="arm3_shell.stl" class="visual" />
-              <body name="hand_shell" pos="-0.182500 0 0.021500" quat="0.5000001633974483 -0.4999999999999733 0.49999983660255165 -0.4999999999999733">
-                <joint name="left_wrist_02" type="hinge" class="motor_02" range="-3.141593 3.141593" axis="0 0 1" />
-                <inertial pos="0.000709 0.000130 -0.074657" mass="0.793063" diaginertia="0.002034 0.002869 0.00128" />
-                <geom name="hand_shell_collision" type="mesh" mesh="hand_shell.collision.stl" class="collision" />
-                <geom name="hand_shell_visual" material="arm1_top_material" type="mesh" mesh="hand_shell.stl" class="visual" />
-              </body>
+    <geom name="body1-part.collision" pos="0 0 0" quat="0.000563312 0.000562864 0.706825 0.707388" type="mesh" rgba="1 1 1 1" mesh="body1-part.collision"/>
+    <geom name="shoulder.collision" pos="0.000302197 0.191 0.019999" quat="0.707388 0.706825 0 0" type="mesh" rgba="1 1 1 1" mesh="shoulder.collision"/>
+    <geom name="arm2_shell.collision" pos="0.000314151 0.258388 -0.120499" quat="0.707107 -0.000281197 0.00028166 0.707107" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell.collision"/>
+    <geom name="hand_shell.collision" pos="0.000313973 0.252665 -0.400994" quat="-3.36798e-07 -4.90058e-07 -0.000398327 -1" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell.collision"/>
+    <geom name="shoulder.collision_2" pos="-0.000302197 -0.191 0.019999" quat="0.707388 -0.706825 0 0" type="mesh" rgba="1 1 1 1" mesh="shoulder_2.collision"/>
+    <geom name="arm2_shell.collision_2" pos="0.000709757 -0.258388 -0.120499" quat="0.00039799 -1 1.63397e-07 6.50873e-11" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell_2.collision"/>
+    <geom name="hand_shell.collision_2" pos="0.000709707 -0.252665 -0.400494" quat="1.30008e-10 -3.26795e-07 0.000398154 -1" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell_2.collision"/>
+    <body name="leg0_shell" pos="0.000146931 0.0909999 -0.430001" quat="-0.707387 -0.706824 0.00112573 0.00112662">
+      <inertial pos="-0.003746 0 -0.068125" quat="0.999982 0 -0.00597152 0" mass="1.32345" diaginertia="0.00188608 0.001425 0.00129992"/>
+      <joint name="left_hip_pitch_04" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-60 60"/>
+      <geom name="leg0_shell.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell.collision"/>
+      <body name="leg1_shell" pos="0.0275 0 -0.0695" quat="0.5 -0.5 -0.5 0.5">
+        <inertial pos="-0.112524 0.000529 0.025259" quat="-0.149163 0.776513 -0.185318 0.583469" mass="1.26435" diaginertia="0.00249944 0.00248268 0.00139787"/>
+        <joint name="left_hip_roll_03" pos="0 0 0" axis="0 0 1" range="-3.18523 0.349066" actuatorfrcrange="-40 40"/>
+        <body name="leg2_shell" pos="-0.1575 0.00012 0.0275" quat="0.707107 0 0.707107 0">
+          <inertial pos="0 0.000532 -0.137308" quat="0.707085 -0.00556072 0.00556072 0.707085" mass="1.82092" diaginertia="0.00422553 0.003118 0.00206347"/>
+          <joint name="left_hip_yaw_03" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-40 40"/>
+          <body name="leg3_shell1" pos="0 -0.027 -0.1425" quat="0.707107 0.707107 0 0">
+            <inertial pos="0.001098 -0.131322 -0.023162" quat="0.29298 0.299254 -0.639764 0.644447" mass="1.10996" diaginertia="0.00676042 0.00672628 0.0010123"/>
+            <joint name="left_knee_04" pos="0 0 0" axis="0 0 -1" range="0 2.0944" actuatorfrcrange="-60 60"/>
+            <geom name="leg3_shell1.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell1.collision"/>
+            <body name="foot1" pos="0 -0.3 0.0095">
+              <inertial pos="0.02135 -0.019419 -0.019276" quat="0.504954 0.505314 0.484937 0.504496" mass="0.582091" diaginertia="0.00218891 0.00202456 0.000282532"/>
+              <joint name="left_ankle_02" pos="0 0 0" axis="0 0 -1" range="-0.698132 0.698132" actuatorfrcrange="-17 17" frictionloss="0.1"/>
+              <geom name="foot1.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot1.collision"/>
             </body>
           </body>
         </body>
       </body>
-      <body name="shoulder_2" pos="-0.000002 0.191000 0.019999" quat="0.0005633121735972125 -0.0005628637715330792 0.7068249569936026 -0.707388044876899">
-        <joint name="right_shoulder_pitch_03" type="hinge" class="motor_03" range="-3.141593 0" axis="0 0 1" />
-        <inertial pos="-0.002144 -0.000055 -0.066483" mass="1.107354" diaginertia="0.001481 0.001039 0.000986" />
-        <geom name="shoulder_2_collision" type="mesh" mesh="shoulder_2.collision.stl" class="collision" />
-        <geom name="shoulder_2_visual" material="body1-part_material" type="mesh" mesh="shoulder_2.stl" class="visual" />
-        <body name="arm1_top_2" pos="0.023512 -0.000056 -0.067500" quat="0.5000001633974483 0.4999999999999733 -0.49999983660255165 -0.4999999999999733">
-          <joint name="right_shoulder_roll_03" type="hinge" class="motor_03" range="-0.479966 3.630285" axis="0 0 1" />
-          <inertial pos="-0.099486 -0.000001 0.018082" mass="0.572732" diaginertia="0.000453 0.001076 0.001035" />
-          <geom name="arm1_top_2_visual" material="arm1_top_material" type="mesh" mesh="arm1_top_2.stl" class="visual" />
-          <body name="arm2_shell_2" pos="-0.140500 0 0.022500" quat="-1.2247452309842457e-07 -0.7071068967259713 -1.22474483074382e-07 0.7071066656470838">
-            <joint name="right_shoulder_yaw_02" type="hinge" class="motor_02" range="-1.570796 1.570796" axis="0 0 -1" />
-            <inertial pos="0 -0.006339 0.089982" mass="0.510678" diaginertia="0.000532 0.000675 0.000255" />
-            <geom name="arm2_shell_2_collision" type="mesh" mesh="arm2_shell_2.collision.stl" class="collision" />
-            <geom name="arm2_shell_2_visual" material="arm1_top_material" type="mesh" mesh="arm2_shell_2.stl" class="visual" />
-            <body name="arm3_shell2" pos="0 -0.027000 0.097500" quat="0.5000001633974483 -0.4999999999999733 0.4999999999999733 0.49999983660255165">
-              <joint name="right_elbow_02" type="hinge" class="motor_02" range="0 2.530727" axis="0 0 1" />
-              <inertial pos="-0.140169 0 0.019433" mass="0.578536" diaginertia="0.000428 0.001354 0.001332" />
-              <geom name="arm3_shell2_visual" material="arm1_top_material" type="mesh" mesh="arm3_shell2.stl" class="visual" />
-              <body name="hand_shell_2" pos="-0.182500 0 0.021500" quat="0.5000001633974483 0.4999999999999733 0.49999983660255165 0.4999999999999733">
-                <joint name="right_wrist_02" type="hinge" class="motor_02" range="-3.141593 3.141593" axis="0 0 1" />
-                <inertial pos="0.000709 0.000130 -0.074657" mass="0.793063" diaginertia="0.002034 0.002869 0.00128" />
-                <geom name="hand_shell_2_collision" type="mesh" mesh="hand_shell_2.collision.stl" class="collision" />
-                <geom name="hand_shell_2_visual" material="arm1_top_material" type="mesh" mesh="hand_shell_2.stl" class="visual" />
-              </body>
+    </body>
+    <body name="leg0_shell_2" pos="-0.000146931 -0.0909999 -0.430001" quat="-0.707387 0.706824 -0.00112573 0.00112662">
+      <inertial pos="-0.003746 0 -0.067625" quat="0.999982 0 -0.00597152 0" mass="1.32345" diaginertia="0.00188608 0.001425 0.00129992"/>
+      <joint name="right_hip_pitch_04" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-60 60"/>
+      <geom name="leg0_shell.collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell_2.collision"/>
+      <body name="leg1_shell3" pos="0.0275 0 -0.069" quat="0.5 0.5 -0.5 -0.5">
+        <inertial pos="-0.112524 -0.000529 0.025259" quat="0.149163 0.776513 0.185318 0.583469" mass="1.26435" diaginertia="0.00249944 0.00248268 0.00139787"/>
+        <joint name="right_hip_roll_03" pos="0 0 0" axis="0 0 1" range="-0.349066 3.18523" actuatorfrcrange="-40 40"/>
+        <body name="leg2_shell_2" pos="-0.1575 -0.00012 0.0275" quat="-1.22475e-07 -0.707107 1.22474e-07 -0.707107">
+          <inertial pos="0 0.000532 -0.137308" quat="0.707085 -0.00556072 0.00556072 0.707085" mass="1.82092" diaginertia="0.00422553 0.003118 0.00206347"/>
+          <joint name="right_hip_yaw_03" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-40 40"/>
+          <body name="leg3_shell11" pos="0 -0.027 -0.1425" quat="0.707107 0.707107 0 0">
+            <inertial pos="-0.001098 -0.131322 -0.023162" quat="0.644447 0.639764 -0.299254 0.29298" mass="1.10996" diaginertia="0.00676042 0.00672628 0.0010123"/>
+            <joint name="right_knee_04" pos="0 0 0" axis="0 0 -1" range="-2.0944 0" actuatorfrcrange="-60 60"/>
+            <geom name="leg3_shell11.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell11.collision"/>
+            <body name="foot3" pos="0 -0.3 -0.0355" quat="0 -1.73205e-07 1 -1.73205e-07">
+              <inertial pos="0.02135 -0.019419 -0.023724" quat="0.505314 0.504954 0.504496 0.484937" mass="0.582091" diaginertia="0.00218891 0.00202456 0.000282532"/>
+              <joint name="right_ankle_02" pos="0 0 0" axis="0 0 1" range="-0.698132 0.698132" actuatorfrcrange="-17 17" frictionloss="0.1"/>
+              <geom name="foot3.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot3.collision"/>
             </body>
           </body>
         </body>
       </body>
-      <body name="leg0_shell" pos="-0.000002 -0.091000 -0.430001" quat="0.0005633121735972125 0.0005628637715330792 0.7068249569936026 0.707388044876899">
-        <joint name="left_hip_pitch_04" type="hinge" class="motor_04" range="-1.570796 1.570796" axis="0 0 1" />
-        <inertial pos="-0.003746 0 -0.068125" mass="1.323448" diaginertia="0.001886 0.001425 0.0013" />
-        <geom name="leg0_shell_collision" type="mesh" mesh="leg0_shell.collision.stl" class="collision" />
-        <geom name="leg0_shell_visual" material="arm1_top_material" type="mesh" mesh="leg0_shell.stl" class="visual" />
-        <body name="leg1_shell" pos="0.027500 0 -0.069500" quat="0.5000001633974483 -0.4999999999999733 -0.49999983660255165 0.4999999999999733">
-          <joint name="left_hip_roll_03" type="hinge" class="motor_03" range="-3.185226 0.349066" axis="0 0 1" />
-          <inertial pos="-0.112524 0.000529 0.025259" mass="1.264352" diaginertia="0.001481 0.002486 0.002413" />
-          <geom name="leg1_shell_visual" material="arm1_top_material" type="mesh" mesh="leg1_shell.stl" class="visual" />
-          <body name="leg2_shell" pos="-0.157500 0.000120 0.027500" quat="0.7071068967259818 0.0 0.7071066656470943 0.0">
-            <joint name="left_hip_yaw_03" type="hinge" class="motor_03" range="-1.570796 1.570796" axis="0 0 1" />
-            <inertial pos="0 0.000532 -0.137308" mass="1.820923" diaginertia="0.003118 0.004225 0.002064" />
-            <geom name="leg2_shell_visual" material="arm1_top_material" type="mesh" mesh="leg2_shell.stl" class="visual" />
-            <body name="leg3_shell1" pos="0 -0.027000 -0.142500" quat="0.7071068967259818 0.7071066656470943 0.0 0.0">
-              <joint name="left_knee_04" type="hinge" class="motor_04" range="0 2.094395" axis="0 0 -1" />
-              <inertial pos="0.001098 -0.131322 -0.023162" mass="1.109955" diaginertia="0.00674 0.001013 0.006746" />
-              <geom name="leg3_shell1_collision" type="mesh" mesh="leg3_shell1.collision.stl" class="collision" />
-              <geom name="leg3_shell1_visual" material="arm1_top_material" type="mesh" mesh="leg3_shell1.stl" class="visual" />
-              <body name="foot1" pos="0 -0.300000 0.009500">
-                <joint name="left_ankle_02" type="hinge" class="motor_02" range="-0.698132 0.698132" axis="0 0 -1" />
-                <inertial pos="0.021350 -0.019419 -0.019276" mass="0.582091" diaginertia="0.000284 0.002188 0.002024" />
-                <geom name="foot1_collision" type="mesh" mesh="foot1.collision.stl" class="collision" />
-                <geom name="foot1_visual" material="arm1_top_material" type="mesh" mesh="foot1.stl" class="visual" />
-              </body>
-            </body>
-          </body>
-        </body>
-      </body>
-      <body name="leg0_shell_2" pos="0.000002 0.091000 -0.430001" quat="0.0005633121735972125 -0.0005628637715330792 -0.7068249569936026 0.707388044876899">
-        <joint name="right_hip_pitch_04" type="hinge" class="motor_04" range="-1.570796 1.570796" axis="0 0 1" />
-        <inertial pos="-0.003746 0 -0.067625" mass="1.323448" diaginertia="0.001886 0.001425 0.0013" />
-        <geom name="leg0_shell_2_collision" type="mesh" mesh="leg0_shell_2.collision.stl" class="collision" />
-        <geom name="leg0_shell_2_visual" material="arm1_top_material" type="mesh" mesh="leg0_shell_2.stl" class="visual" />
-        <body name="leg1_shell3" pos="0.027500 0 -0.069000" quat="0.5000001633974483 0.4999999999999733 -0.49999983660255165 -0.4999999999999733">
-          <joint name="right_hip_roll_03" type="hinge" class="motor_03" range="-0.349066 3.185226" axis="0 0 1" />
-          <inertial pos="-0.112524 -0.000529 0.025259" mass="1.264352" diaginertia="0.001481 0.002486 0.002413" />
-          <geom name="leg1_shell3_visual" material="arm1_top_material" type="mesh" mesh="leg1_shell3.stl" class="visual" />
-          <body name="leg2_shell_2" pos="-0.157500 -0.000120 0.027500" quat="-1.2247452309842457e-07 -0.7071068967259713 1.22474483074382e-07 -0.7071066656470838">
-            <joint name="right_hip_yaw_03" type="hinge" class="motor_03" range="-1.570796 1.570796" axis="0 0 1" />
-            <inertial pos="0 0.000532 -0.137308" mass="1.820923" diaginertia="0.003118 0.004225 0.002064" />
-            <geom name="leg2_shell_2_visual" material="arm1_top_material" type="mesh" mesh="leg2_shell_2.stl" class="visual" />
-            <body name="leg3_shell11" pos="0 -0.027000 -0.142500" quat="0.7071068967259818 0.7071066656470943 0.0 0.0">
-              <joint name="right_knee_04" type="hinge" class="motor_04" range="-2.094395 0" axis="0 0 -1" />
-              <inertial pos="-0.001098 -0.131322 -0.023162" mass="1.109962" diaginertia="0.00674 0.001013 0.006746" />
-              <geom name="leg3_shell11_collision" type="mesh" mesh="leg3_shell11.collision.stl" class="collision" />
-              <geom name="leg3_shell11_visual" material="arm1_top_material" type="mesh" mesh="leg3_shell11.stl" class="visual" />
-              <body name="foot3" pos="0 -0.300000 -0.035500" quat="3.000000781252362e-14 -1.7320510330969674e-07 0.99999999999997 -1.7320510330969674e-07">
-                <joint name="right_ankle_02" type="hinge" class="motor_02" range="-0.698132 0.698132" axis="0 0 1.0" />
-                <inertial pos="0.021350 -0.019419 -0.023724" mass="0.582091" diaginertia="0.000284 0.002188 0.002024" />
-                <geom name="foot3_collision" type="mesh" mesh="foot3.collision.stl" class="collision" />
-                <geom name="foot3_visual" material="arm1_top_material" type="mesh" mesh="foot3.stl" class="visual" />
-              </body>
-            </body>
-          </body>
-        </body>
-      </body>
-      <site name="body1-part_site" />
-      <site name="imu" pos="0.040000 0 -0.131000" />
-      <camera name="tracking_camera" mode="track" pos="0.0 -2.0 1.0" quat="0.7071 0.3827 0.0 0.0" fovy="90.0" />
     </body>
   </worldbody>
-
-  <actuator>
-    <!-- <position name="left_shoulder_pitch_03_pos" joint="left_shoulder_pitch_03" class="motor_03" />
-    <position name="left_shoulder_roll_03_pos" joint="left_shoulder_roll_03" class="motor_03" />
-    <position name="left_shoulder_yaw_02_pos" joint="left_shoulder_yaw_02" class="motor_02" />
-    <position name="left_elbow_02_pos" joint="left_elbow_02" class="motor_02" />
-    <position name="left_wrist_02_pos" joint="left_wrist_02" class="motor_02" />
-    <position name="right_shoulder_pitch_03_pos" joint="right_shoulder_pitch_03" class="motor_03" />
-    <position name="right_shoulder_roll_03_pos" joint="right_shoulder_roll_03" class="motor_03" />
-    <position name="right_shoulder_yaw_02_pos" joint="right_shoulder_yaw_02" class="motor_02" />
-    <position name="right_elbow_02_pos" joint="right_elbow_02" class="motor_02" />
-    <position name="right_wrist_02_pos" joint="right_wrist_02" class="motor_02" /> -->
-    <position name="left_hip_pitch_04_pos" joint="left_hip_pitch_04" class="motor_04" />
-    <position name="left_hip_roll_03_pos" joint="left_hip_roll_03" class="motor_03" />
-    <position name="left_hip_yaw_03_pos" joint="left_hip_yaw_03" class="motor_03" />
-    <position name="left_knee_04_pos" joint="left_knee_04" class="motor_04" />
-    <position name="left_ankle_02_pos" joint="left_ankle_02" class="motor_02" />
-    <position name="right_hip_pitch_04_pos" joint="right_hip_pitch_04" class="motor_04" />
-    <position name="right_hip_roll_03_pos" joint="right_hip_roll_03" class="motor_03" />
-    <position name="right_hip_yaw_03_pos" joint="right_hip_yaw_03" class="motor_03" />
-    <position name="right_knee_04_pos" joint="right_knee_04" class="motor_04" />
-    <position name="right_ankle_02_pos" joint="right_ankle_02" class="motor_02" />
-  </actuator>
-
-  <contact>
-    <exclude body1="body1-part" body2="shoulder" />
-    <exclude body1="body1-part" body2="shoulder_2" />
-    <exclude body1="body1-part" body2="leg0_shell" />
-    <exclude body1="body1-part" body2="leg0_shell_2" />
-    <exclude body1="leg3_shell11" body2="foot3" />
-    <exclude body1="leg3_shell1" body2="foot1" />
-  </contact>
-
-  <sensor>
-    <accelerometer name="imu_acc" site="imu" noise="0.01" />
-    <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
-    <magnetometer name="imu_mag" site="imu" noise="0.05" />
-    <framepos name="base_link_pos" objtype="site" objname="imu" />
-    <framequat name="orientation" objtype="site" objname="imu" />
-    <framelinvel name="base_link_vel" objtype="site" objname="imu" />
-    <frameangvel name="base_link_ang_vel" objtype="site" objname="imu" />
-  </sensor>
-
-
-
-    <keyframe>
-    <key name="default" qpos="0 0 1.05 1. 0.0 0.0 0.0 0.23 0.0 0.0 -0.441 -0.195 -0.23 0.0 0.0 -0.441 -0.195"/>
-    <key name="standing" qpos="0 0 1.075 1. 0.0 0.0 0.0 0 0.0 0.0 0 0 0 0.0 0.0 0 0"/>
-  </keyframe>
 </mujoco>
