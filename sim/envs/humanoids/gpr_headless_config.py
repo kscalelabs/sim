@@ -39,8 +39,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
         file = str(robot_urdf_path(name))
 
         foot_name = ["foot1", "foot3"]
-        knee_name = ["leg3_shell2", "leg3_shell22"]
-        imu_name = "imu_link"
+        knee_name = ["leg3_shell1", "leg3_shell11"]
+        imu_name = "imu"
 
         # foot_name = ["foot1", "foot3"]
         # knee_name = ["leg3_shell1", "leg3_shell11"]
@@ -60,8 +60,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -82,7 +82,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 0.5
+            dof_vel = 2.5
             ang_vel = 0.1
             lin_vel = 0.05
             quat = 0.03
