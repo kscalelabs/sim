@@ -83,10 +83,10 @@ class Robot(Node):
             Robot.legs.left.hip_roll: 1,
             Robot.legs.left.knee_pitch: 1,
             Robot.legs.left.ankle_pitch: 1,
-            Robot.legs.right.hip_pitch: -1,
-            Robot.legs.right.hip_yaw: -1,
+            Robot.legs.right.hip_pitch: 1,
+            Robot.legs.right.hip_yaw: 1,
             Robot.legs.right.hip_roll: 1,
-            Robot.legs.right.knee_pitch: -1,
+            Robot.legs.right.knee_pitch: 1,
             Robot.legs.right.ankle_pitch: 1,
         }
 
@@ -201,13 +201,22 @@ class Robot(Node):
         for joint in cls.joint_names():
             mapping[joint] = effort[joint[-2:]]
         return mapping
+    
+    @classmethod
+    def velocity(cls) -> Dict[str, float]:
+        return {
+            "04": 18.0,
+            "03": 18.0,
+            "02": 18.0,
+        }
+            
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
-            "hip": 0,
-            "knee": 0,
-            "ankle": 0.1,
+            "04": 0,
+            "03": 0,
+            "02": 0.1,
         }
 
 
