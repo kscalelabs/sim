@@ -4,7 +4,7 @@
 import random
 from isaacgym.torch_utils import *  # isort:skip
 
-from sim.envs.base.legged_robot import LeggedRobot
+from sim.envs.base.legged_robot_latency import LeggedRobotLatency
 from sim.resources.gpr_headless_latency.joints import Robot
 from sim.utils.math import wrap_to_pi
 from sim.utils.terrain import HumanoidTerrain
@@ -14,7 +14,7 @@ from isaacgym import gymtorch  # isort:skip
 import torch  # isort:skip
 
 
-class GprHeadlessLatencyEnv(LeggedRobot):
+class GprHeadlessLatencyEnv(LeggedRobotLatency):
     """GprHeadlessLatencyEnv is a class that represents a custom environment for a legged robot.
 
     Args:
