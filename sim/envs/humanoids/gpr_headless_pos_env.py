@@ -88,11 +88,10 @@ class GprHeadlessPosEnv(LeggedRobot):
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
-        target_positions = self.actions[:,:self.cfg.env.num_actions//2]
-        target_velocities = self.actions[:,self.cfg.env.num_actions//2:]
+        target_positions = self.actions[:,:self.cfg.env.num_actions]
         self.render()
         for _ in range(self.cfg.control.decimation):
-            self.torques = self._compute_torques(target_positions, target_velocities).view(self.torques.shape)
+            self.torques = self._compute_torques(target_positions, 0).view(self.torques.shape)
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
 
             self.gym.simulate(self.sim)
