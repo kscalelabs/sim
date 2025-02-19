@@ -5,7 +5,7 @@ import random
 from isaacgym.torch_utils import *  # isort:skip
 
 from sim.envs.base.legged_robot import LeggedRobot
-from sim.resources.gpr_headless.joints import Robot
+from sim.resources.gpr_latency.joints import Robot
 from sim.utils.math import wrap_to_pi
 from sim.utils.terrain import HumanoidTerrain
 
