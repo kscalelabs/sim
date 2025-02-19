@@ -155,6 +155,10 @@ def run_mujoco(
     kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
     kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
 
+    # pfb30
+    tau_limit = np.array([60, 40, 40, 60, 17, 60, 40, 40, 60, 17])
+    kps = np.array([300, 120, 120, 300, 40, 300, 120, 120, 300, 40])
+    kds = np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5])
     try:
         data.qpos = model.keyframe("default").qpos
         default = deepcopy(model.keyframe("default").qpos)[-model_info["num_actions"] :]
@@ -188,8 +192,6 @@ def run_mujoco(
         "dof_pos.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "dof_vel.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
-        # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
-        # "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
         "projected_gravity.1": np.zeros(3).astype(np.float32),
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
@@ -220,12 +222,6 @@ def run_mujoco(
         q = q[-model_info["num_actions"] :]
         dq = dq[-model_info["num_actions"] :]
 
-        # eu_ang = quaternion_to_euler_array(quat)
-        # eu_ang[eu_ang > math.pi] -= 2 * math.pi
-
-        # eu_ang = np.array([0.0, 0.0, 0.0])
-        # omega = np.array([0.0, 0.0, 0.0])
-        # gvec = np.array([0.0, 0.0, -1.0])
         # Calculate speed and accumulate for average speed calculation
         speed = np.linalg.norm(v[:2])  # Speed in the x-y plane
         total_speed += speed
@@ -249,9 +245,6 @@ def run_mujoco(
             input_data["prev_actions.1"] = prev_actions.astype(np.float32)
 
             input_data["projected_gravity.1"] = gvec.astype(np.float32)
-            # input_data["imu_ang_vel.1"] = omega.astype(np.float32)
-            # input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
-
             input_data["buffer.1"] = hist_obs.astype(np.float32)
 
             policy_output = policy(input_data)
@@ -309,7 +302,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.5, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.3, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
