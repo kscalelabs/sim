@@ -6,7 +6,6 @@
     <child link="body1-part" />
     <origin xyz="0 0 0" rpy="1.57 0 3.14" />
   </joint>
-  
   <joint name="left_shoulder_pitch_03" type="fixed">
     <origin xyz="-0.000011 0.018090 0.188500" rpy="3.141593 0 3.141593" />
     <parent link="body1-part" />

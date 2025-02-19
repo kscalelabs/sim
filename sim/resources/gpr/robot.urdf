@@ -6,13 +6,12 @@
     <child link="body1-part"/>
     <origin xyz="0 0 0" rpy="1.57 0 3.14"/>
   </joint>
-  <!-- IMU bring back to the robot
+<!-- IMU bring back to the robot
   <joint name="imu_link" type="fixed">
     <origin xyz="0.039989 -0.127910 0" rpy="-1.570796 0 0"/>
     <parent link="body1-part"/>
     <child link="imu"/>
   </joint>
-
     <link name="imu">
     <visual name="imu_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -29,7 +28,7 @@
       <origin xyz="-0.007500 0 0.006000" rpy="0 0 0"/>
     </inertial>
   </link>
-  -->
+-->
   <joint name="left_shoulder_pitch_03" type="revolute">
     <origin xyz="-0.000011 0.018090 0.188500" rpy="3.141593 0 3.141593"/>
     <parent link="body1-part"/>
