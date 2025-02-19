@@ -52,6 +52,8 @@ class GprLatencyCfg(LeggedRobotCfg):
         termination_height = 0.2
         default_feet_height = 0.0
 
+        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2"]
+
         # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
 
         penalize_contacts_on = []
@@ -141,8 +143,8 @@ class GprLatencyCfg(LeggedRobotCfg):
         push_robots = True
         push_random_interval_min = 1.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 0.8 # 0.2
-        max_push_ang_vel = 0.8 # 0.4
+        max_push_vel_xy = 1.2 # 0.2
+        max_push_ang_vel = 1.2 # 0.4
 
         # dynamic randomization
         action_noise = 0.02
@@ -213,9 +215,9 @@ class GprLatencyCfg(LeggedRobotCfg):
         class scales:
             termination = -10.0
             # reference motion tracking
-            joint_pos = 1.6
+            joint_pos = 1.2 # 1.6
             feet_clearance = 1.2
-            feet_contact_number = 1.0  # 1.2
+            feet_contact_number = 0.8 # 1.0  # 1.2
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
