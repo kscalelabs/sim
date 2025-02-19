@@ -1,6 +1,3 @@
 [submodule "third_party/isaacgym"]
 	path = third_party/isaacgym
 	url = ../../kscalelabs/isaacgym.git
-[submodule "third_party/kinfer"]
-	path = third_party/kinfer
-	url = https://github.com/kscalelabs/kinfer.git
