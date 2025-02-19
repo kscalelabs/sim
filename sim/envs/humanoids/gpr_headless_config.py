@@ -1,7 +1,5 @@
 """Defines the environment configuration for the Getting up task"""
 
-# from kinfer import proto as P
-
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
@@ -17,14 +15,14 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-        frame_stack = 5  # 15 # actor
-        c_frame_stack = 5  # critic
-        # num_single_obs = 8 + NUM_JOINTS * 3 + 3 # ang vel
-        num_single_obs = 8 + NUM_JOINTS * 3  # no ang vel
+        frame_stack = 15
+        c_frame_stack = 3
+        num_single_obs = 8 + NUM_JOINTS * 4 # 2 for past actions, 1 for dof pos, 1 for dof vel
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 25 + NUM_JOINTS * 4
+        single_num_privileged_obs = 25 + NUM_JOINTS * 5 # 2 for past actions, 1 for dof pos, 1 for dof vel, 1 for diff
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
-        num_actions = NUM_JOINTS
+        num_joints = NUM_JOINTS
+        num_actions = NUM_JOINTS*2
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
@@ -41,13 +39,19 @@ class GprHeadlessCfg(LeggedRobotCfg):
         file = str(robot_urdf_path(name))
 
         foot_name = ["foot1", "foot3"]
-        knee_name = ["leg3_shell1", "leg3_shell11"]
-        imu_name = "imu"
+        knee_name = ["leg3_shell2", "leg3_shell22"]
+        imu_name = "imu_link"
+
+        # foot_name = ["foot1", "foot3"]
+        # knee_name = ["leg3_shell1", "leg3_shell11"]
+        # imu_name = "imu"
+
+        # terminate_after_contacts_on = ["arm1_top_2", "arm1_top", "shoulder", "shoulder_2",
+        #                                "arm2_shell_2", "arm2_shell", "arm3_shell2", "arm3_shell",
+        #                                "hand_shell", "hand_shell_2"]
 
         termination_height = 0.2
         default_feet_height = 0.0
-
-        terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -74,18 +78,18 @@ class GprHeadlessCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.5  # 0.6  # scales other values
+        noise_level = 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
             dof_vel = 0.5
-            ang_vel = 0.4  # 0.1
+            ang_vel = 0.1
             lin_vel = 0.05
-            quat = 0.08  # 0.03
+            quat = 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height]
+        pos = [0.0, 0.0, Robot.height+0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
@@ -100,8 +104,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 20  # Policy at 50hz
-        pd_decimation = 10  # PD at 100hz
+        decimation = 20  # 50hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -130,9 +133,10 @@ class GprHeadlessCfg(LeggedRobotCfg):
         randomize_base_mass = True
         added_mass_range = [-2.0, 2.0]
         push_robots = True
-        push_interval_s = 4
-        max_push_vel_xy = 0.2
-        max_push_ang_vel = 0.4
+        push_random_interval_min = 1.0
+        push_random_interval_max = 4.0
+        max_push_vel_xy = 1.2 # 0.4
+        max_push_ang_vel = 1.2 # 0.4
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
@@ -145,7 +149,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.5, 1.0]  # min max [m/s]
+            lin_vel_x = [-0.0, 1.0]  # min max [m/s]
             lin_vel_y = [-0.5, 0.5]  # min max [m/s]
             ang_vel_yaw = [-1.5, 1.5]  # min max [rad/s]
             heading = [-3.14, 3.14]
@@ -159,7 +163,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         target_joint_pos_scale = 0.24  # rad
         target_feet_height = 0.06  # m
 
-        cycle_time = 0.4  # sec
+        cycle_time = 0.4 # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -167,14 +171,14 @@ class GprHeadlessCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
+            termination = -10.0
             # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.2
-            feet_contact_number = 1.0  # 1.2
+            joint_pos = 1.2 # 1.6
+            feet_clearance = 0.8 # 1.2
+            feet_contact_number = 0.8 # 0.8 # 1.4
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
-            feet_distance = 0.2
             knee_distance = 0.2
             # contact
             feet_contact_forces = -0.01
@@ -191,10 +195,10 @@ class GprHeadlessCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.003  # -0.002
-            torques = -1.5e-5  # -1e-5
+            action_smoothness = -0.002
+            torques = -1e-5
             dof_vel = -5e-4  # -1e-3
-            dof_acc = -1e-7  # -2.5e-7
+            dof_acc = -2.5e-7  # -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:
@@ -219,7 +223,7 @@ class GprHeadlessStandingCfg(GprHeadlessCfg):
     """Configuration class for the GPR humanoid robot."""
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.standing_height]
+        pos = [0.0, 0.0, Robot.standing_height+0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
@@ -273,7 +277,7 @@ class GprHeadlessCfgPPO(LeggedRobotCfgPPO):
         policy_class_name = "ActorCritic"
         algorithm_class_name = "PPO"
         num_steps_per_env = 60  # per iteration
-        max_iterations = 5001  # number of policy updates
+        max_iterations = 3001  # number of policy updates
 
         # logging
         save_interval = 100  # check for potential saves every this many iterations

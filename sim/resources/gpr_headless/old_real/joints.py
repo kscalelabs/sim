@@ -71,39 +71,14 @@ class Legs(Node):
 class Robot(Node):
     legs = Legs()
 
-    height = 1.05
-    standing_height = 1.05 + 0.025
+    # height = 1.05 #- 0.151 #maybe?
+    # standing_height = 1.05 + 0.025 #- 0.151
+
+    height = 1.04
+    standing_height = 1.04 + 0.025
+
+    # 1.3 m and 1.149m
     rotation = [0, 0, 0, 1]
-
-    @classmethod
-    def isaac_to_real_signs(cls) -> Dict[str, int]:
-        return {
-            Robot.legs.left.hip_pitch: 1,
-            Robot.legs.left.hip_yaw: 1,
-            Robot.legs.left.hip_roll: 1,
-            Robot.legs.left.knee_pitch: 1,
-            Robot.legs.left.ankle_pitch: 1,
-            Robot.legs.right.hip_pitch: -1,
-            Robot.legs.right.hip_yaw: -1,
-            Robot.legs.right.hip_roll: 1,
-            Robot.legs.right.knee_pitch: -1,
-            Robot.legs.right.ankle_pitch: 1,
-        }
-
-    @classmethod
-    def isaac_to_mujoco_signs(cls) -> Dict[str, int]:
-        return {
-            Robot.legs.left.hip_pitch: 1,
-            Robot.legs.left.hip_yaw: 1,
-            Robot.legs.left.hip_roll: 1,
-            Robot.legs.left.knee_pitch: 1,
-            Robot.legs.left.ankle_pitch: 1,
-            Robot.legs.right.hip_pitch: 1,
-            Robot.legs.right.hip_yaw: 1,
-            Robot.legs.right.hip_roll: 1,
-            Robot.legs.right.knee_pitch: 1,
-            Robot.legs.right.ankle_pitch: 1,
-        }
 
     @classmethod
     def default_positions(cls) -> Dict[str, float]:
@@ -128,13 +103,13 @@ class Robot(Node):
             Robot.legs.left.hip_pitch: 0.23,
             Robot.legs.left.hip_yaw: 0.0,
             Robot.legs.left.hip_roll: 0.0,
-            Robot.legs.left.knee_pitch: 0.441, # negated
-            Robot.legs.left.ankle_pitch: -0.195,
+            Robot.legs.left.knee_pitch: 0.441,  # negated
+            Robot.legs.left.ankle_pitch: -0.195,  # negated
             Robot.legs.right.hip_pitch: -0.23,
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
-            Robot.legs.right.knee_pitch: -0.441,
-            Robot.legs.right.ankle_pitch: 0.195, # negated
+            Robot.legs.right.knee_pitch: -0.441,  # negated
+            Robot.legs.right.ankle_pitch: -0.195,  # negated
         }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
@@ -143,19 +118,12 @@ class Robot(Node):
     def joint_names(cls) -> List[str]:
         return list(cls.default_standing().keys())
 
-    @classmethod
-    def default_limits(cls) -> Dict[str, Dict[str, float]]:
-        return {
-            Robot.legs.left.knee_pitch: {"lower": -1.57, "upper": 0},
-            Robot.legs.right.knee_pitch: {"lower": -1.57, "upper": 0},
-        }
-
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 120,
-            "03": 60,
+            "04": 300,
+            "03": 120,
             "02": 40,
         }
 
@@ -171,9 +139,9 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "04": 15,
-            "03": 10,
-            "02": 1,
+            "04": 5,
+            "03": 5,
+            "02": 5,
         }
 
     @classmethod
@@ -191,7 +159,7 @@ class Robot(Node):
         return {
             "04": 80,
             "03": 40,
-            "02": 17,
+            "02": 20,
         }
 
     @classmethod
@@ -201,14 +169,6 @@ class Robot(Node):
         for joint in cls.joint_names():
             mapping[joint] = effort[joint[-2:]]
         return mapping
-
-    @classmethod
-    def friction(cls) -> Dict[str, float]:
-        return {
-            "hip": 0,
-            "knee": 0,
-            "ankle": 0.1,
-        }
 
 
 def print_joints() -> None:
