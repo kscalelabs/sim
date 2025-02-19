@@ -49,7 +49,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         knee_name = ["leg3_shell1", "leg3_shell11"]
         imu_name = "imu"
 
-        termination_height = 0.33
+        termination_height = 0.43 # 0.33
         default_feet_height = 0.0
 
         # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
