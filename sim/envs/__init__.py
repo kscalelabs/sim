@@ -36,6 +36,8 @@ from sim.envs.humanoids.xbot_env import XBotLFreeEnv
 from sim.envs.humanoids.zbot2_config import ZBot2Cfg, ZBot2CfgPPO, ZBot2StandingCfg
 from sim.envs.humanoids.zbot2_env import ZBot2Env
 from sim.utils.task_registry import TaskRegistry  # noqa: E402
+from sim.envs.humanoids.gpr_headless_pos_config import GprHeadlessPosCfg, GprHeadlessPosCfgPPO, GprHeadlessPosStandingCfg
+from sim.envs.humanoids.gpr_headless_pos_env import GprHeadlessPosEnv
 
 task_registry = TaskRegistry()
 task_registry.register("gpr", GprFreeEnv, GprCfg(), GprCfgPPO())
@@ -51,3 +53,6 @@ task_registry.register("gpr_latency", GprLatencyEnv, GprLatencyCfg(), GprLatency
 task_registry.register("gpr_latency_standing", GprLatencyEnv, GprLatencyStandingCfg(), GprLatencyCfgPPO())
 task_registry.register("gpr_headless_latency", GprHeadlessLatencyEnv, GprHeadlessLatencyCfg(), GprHeadlessLatencyCfgPPO())
 task_registry.register("gpr_vel", GprVelEnv, GprVelCfg(), GprVelCfgPPO())
+task_registry.register("gpr_headless_pos", GprHeadlessPosEnv, GprHeadlessPosCfg(), GprHeadlessPosCfgPPO())
+task_registry.register("gpr_headless_pos_standing", GprHeadlessPosEnv, GprHeadlessPosStandingCfg(), GprHeadlessPosCfgPPO())
+
