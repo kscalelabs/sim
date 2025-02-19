@@ -49,7 +49,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         knee_name = ["leg3_shell1", "leg3_shell11"]
         imu_name = "imu"
 
-        termination_height = 0.43 # 0.33
+        termination_height = 0.83 # 0.43 # 0.33
         default_feet_height = 0.0
 
         # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
@@ -86,7 +86,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.6 # 1.5  # 0.6  # scales other values
+        noise_level = 0.3 # 1.5  # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
@@ -140,10 +140,10 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-2.0, 2.0]
+        added_mass_range = [-1.0, 1.0]# [-2.0, 2.0]
 
         randomize_link_mass = True
-        link_mass_multiplier_range = [0.8, 1.2]
+        link_mass_multiplier_range = [0.9, 1.1]# [0.8, 1.2]
 
         push_robots = True
         push_random_interval_min = 1.0
@@ -157,7 +157,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         randomize_pd_gains = False
 
         randomize_motor_zero_offset = True
-        motor_zero_offset_range = [-0.035, 0.035]  # Offset to add to the motor angles
+        motor_zero_offset_range = [-0.015, 0.015] # [-0.035, 0.035]  # Offset to add to the motor angles
 
         randomize_joint_friction = True
         joint_friction_range = [0.01, 1.15]
