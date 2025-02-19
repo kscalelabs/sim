@@ -149,7 +149,7 @@
     <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
   </sensor>
     <keyframe>
-    <key name="default" qpos="0 0 1.05 1. 0.0 0.0 0.0 -0.23 0.0 0.0 -0.441 -0.195 0.23 0.0 0.0 0.441 0.195"/>
-    <key name="standing" qpos="0 0 1.075 1. 0.0 0.0 0.0 0 0.0 0.0 0 0 0 0.0 0.0 0 0"/>
+    <key name="default" qpos="0 0 1.05 0. 0.0 0.0 1.0 0.23 0.0 0.0 0.441 -0.195 -0.23 0.0 0.0 -0.441 0.195"/>
+    <key name="standing" qpos="0 0 1.075 0. 0.0 0.0 1.0 0 0.0 0.0 0 0 0 0.0 0.0 0 0"/>
   </keyframe>
 </mujoco>
