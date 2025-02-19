@@ -49,7 +49,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         # terminate_after_contacts_on = ["arm1_top_2", "arm1_top", "shoulder", "shoulder_2",
         #                                "arm2_shell_2", "arm2_shell", "arm3_shell2", "arm3_shell",
         #                                "hand_shell", "hand_shell_2"]
-
+        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2"]
         termination_height = 0.2
         default_feet_height = 0.0
 
@@ -105,6 +105,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 20  # 50hz
+        pd_decimation = 1
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -135,8 +136,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
         push_robots = True
         push_random_interval_min = 1.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 0.7 # 1.2 # 0.4
-        max_push_ang_vel = 0.7 # 1.2 # 0.4
+        max_push_vel_xy = 1.0 # 1.2 # 0.4
+        max_push_ang_vel = 1.0 # 1.2 # 0.4
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5

@@ -53,6 +53,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         default_feet_height = 0.0
 
         # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
+        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2"]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -141,8 +142,8 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         push_robots = True
         push_random_interval_min = 1.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 0.8 # 0.2
-        max_push_ang_vel = 0.8 # 0.4
+        max_push_vel_xy = 0.2 # 0.2
+        max_push_ang_vel = 0.4 # 0.4
 
         # dynamic randomization
         action_noise = 0.02
@@ -162,8 +163,8 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         joint_armature_range = [0.008, 0.06]
 
         randomize_pd_gains = True
-        stiffness_multiplier_range = [0.8, 1.2]
-        damping_multiplier_range = [0.8, 1.2]
+        stiffness_multiplier_range = [0.9, 1.1]
+        damping_multiplier_range = [0.9, 1.1]
 
         randomize_calculated_torque = True
         torque_multiplier_range = [0.8, 1.2]
@@ -175,9 +176,9 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
 
         add_obs_latency = True  # Enable observation latency
         randomize_obs_motor_latency = True  # Randomize motor sensor latency
-        range_obs_motor_latency = [0, 10]  # Range of motor latency in simulation steps
+        range_obs_motor_latency = [0, 5] #[0, 10]  # Range of motor latency in simulation steps
         randomize_obs_imu_latency = True  # Randomize IMU sensor latency
-        range_obs_imu_latency = [0, 10]  # Range of IMU latency in simulation steps
+        range_obs_imu_latency = [0, 5] #[0, 10]  # Range of IMU latency in simulation steps
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -215,7 +216,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
             # reference motion tracking
             joint_pos = 1.6
             feet_clearance = 1.2
-            feet_contact_number = 1.0  # 1.2
+            feet_contact_number = 1.2  # 1.2
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
