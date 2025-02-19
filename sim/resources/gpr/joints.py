@@ -159,13 +159,22 @@ class Robot(Node):
             "02": 40,
         }
 
+    # pfb30
+    # @classmethod
+    # def stiffness_mapping(cls) -> Dict[str, float]:
+    #     mapping = {}
+    #     stiffness = cls.stiffness()
+    #     for side in ["L", "R"]:
+    #         for joint, value in stiffness.items():
+    #             mapping[f"{side}_{joint}"] = value
+    #     return mapping
+
     @classmethod
     def stiffness_mapping(cls) -> Dict[str, float]:
         mapping = {}
         stiffness = cls.stiffness()
-        for side in ["L", "R"]:
-            for joint, value in stiffness.items():
-                mapping[f"{side}_{joint}"] = value
+        for joint in cls.joint_names():
+            mapping[joint] = stiffness[joint[-2:]]
         return mapping
 
     # d_gains
@@ -177,13 +186,22 @@ class Robot(Node):
             "02": 5,
         }
 
+    # @classmethod
+    # def damping_mapping(cls) -> Dict[str, float]:
+    #     mapping = {}
+    #     damping = cls.damping()
+    #     for side in ["L", "R"]:
+    #         for joint, value in damping.items():
+    #             mapping[f"{side}_{joint}"] = value
+    #     return mapping
+
     @classmethod
     def damping_mapping(cls) -> Dict[str, float]:
         mapping = {}
         damping = cls.damping()
-        for side in ["L", "R"]:
-            for joint, value in damping.items():
-                mapping[f"{side}_{joint}"] = value
+        for joint in cls.joint_names():
+            mapping[joint] = damping[joint[-2:]]
+        print(mapping)
         return mapping
 
     # effort_limits

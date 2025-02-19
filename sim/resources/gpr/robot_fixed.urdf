@@ -1,32 +1,21 @@
 <robot name="k-bot_sim">
-  <link name="base">
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0" />
-      <mass value="0.001" />
-      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
-    </inertial>
+  <link name="floating_base_link">
   </link>
-  <joint name="floating_base" type="fixed">
-    <origin rpy="0 0 3.14" xyz="0 0 0" />
-    <parent link="base" />
+  <joint name="floating_base_joint" type="fixed">
+    <parent link="floating_base_link" />
     <child link="body1-part" />
+    <origin xyz="0 0 0" rpy="1.57 0 3.14" />
   </joint>
-  <!-- IMU 
-  <joint name="imu_link" type="fixed">
-    <origin xyz="0.040000 0 -0.131000" rpy="0 0 0" />
-    <parent link="body1-part" />
-    <child link="imu" />
-  </joint>
-  -->
+  
   <joint name="left_shoulder_pitch_03" type="fixed">
-    <origin xyz="0.000002 -0.191000 0.019999" rpy="1.570000 0 -3.140000" />
+    <origin xyz="-0.000011 0.018090 0.188500" rpy="3.141593 0 3.141593" />
     <parent link="body1-part" />
     <child link="shoulder" />
     <limit effort="60" velocity="6.283" lower="0" upper="3.141593" />
     <axis xyz="0 0 1" />
   </joint>
   <joint name="right_shoulder_pitch_03" type="fixed">
-    <origin xyz="-0.000002 0.191000 0.019999" rpy="-1.570000 0 -3.140000" />
+    <origin xyz="-0.000011 0.018090 -0.188500" rpy="0 0 -3.141593" />
     <parent link="body1-part" />
     <child link="shoulder_2" />
     <limit effort="60" velocity="6.283" lower="-3.141593" upper="0" />
@@ -47,14 +36,14 @@
     <axis xyz="0 0 1" />
   </joint>
   <joint name="left_hip_pitch_04" type="revolute">
-    <origin xyz="-0.000002 -0.091000 -0.430001" rpy="1.570000 0 3.140000" />
+    <origin xyz="-0.000011 -0.432010 0.088700" rpy="-3.141593 0 -3.141593" />
     <parent link="body1-part" />
     <child link="leg0_shell" />
     <limit effort="60" velocity="6.283" lower="-1.570796" upper="1.570796" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="right_hip_pitch_04" type="revolute">
-    <origin xyz="0.000002 0.091000 -0.430001" rpy="-1.570000 0 3.140000" />
+    <origin xyz="-0.000011 -0.432010 -0.089200" rpy="0 0 -3.141593" />
     <parent link="body1-part" />
     <child link="leg0_shell_2" />
     <limit effort="60" velocity="6.283" lower="-1.570796" upper="1.570796" />
@@ -160,7 +149,7 @@
   <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="body1-part">
     <visual name="body1-part_visual">
-      <origin xyz="0 0 0" rpy="1.570000 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry name="body1-part_geometry">
         <mesh filename="meshes/body1-part.stl" />
       </geometry>
@@ -169,7 +158,7 @@
       </material>
     </visual>
     <collision name="body1-part.collision">
-      <origin xyz="0 0 0" rpy="1.570000 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry name="body1-part_collision_geometry">
         <mesh filename="meshes/body1-part.collision.stl" />
       </geometry>
@@ -177,27 +166,9 @@
     <inertial name="body1-part_inertial">
       <mass value="9.415838" />
       <inertia ixx="0.406102" iyy="0.096732" izz="0.321504" ixy="0.001018" ixz="0.000014" iyz="-0.000180" />
-      <origin xyz="-0.000153 -0.214129 -0.000094" rpy="1.570000 0 0" />
+      <origin xyz="-0.000153 -0.214129 -0.000094" rpy="0 0 0" />
     </inertial>
   </link>
-  <!-- IMU 
-  <link name="imu">
-    <visual name="imu_visual">
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <geometry name="imu_geometry">
-        <mesh filename="meshes/imu.stl" />
-      </geometry>
-      <material name="imu_material">
-        <color rgba="0.615686 0.811765 0.929412 1" />
-      </material>
-    </visual>
-    <inertial name="imu_inertial">
-      <mass value="0.010000" />
-      <inertia ixx="0.000001" iyy="0.000001" izz="0.000002" ixy="0" ixz="0" iyz="0" />
-      <origin xyz="-0.007500 0 0.006000" rpy="0 0 0" />
-    </inertial>
-  </link>
-  -->
   <link name="shoulder">
     <visual name="shoulder_visual">
       <origin xyz="0 0 0" rpy="0 0 0" />
