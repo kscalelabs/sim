@@ -135,8 +135,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
         push_robots = True
         push_random_interval_min = 1.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 1.2 # 0.4
-        max_push_ang_vel = 1.2 # 0.4
+        max_push_vel_xy = 0.7 # 1.2 # 0.4
+        max_push_ang_vel = 0.7 # 1.2 # 0.4
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
