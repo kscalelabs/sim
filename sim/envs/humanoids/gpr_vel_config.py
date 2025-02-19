@@ -105,6 +105,7 @@ class GprVelCfg(LeggedRobotCfg):
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 20  # 50hz
+        pd_decimation = 1 # 1000hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
