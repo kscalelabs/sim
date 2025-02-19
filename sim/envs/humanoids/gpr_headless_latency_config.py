@@ -53,7 +53,13 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         default_feet_height = 0.0
 
         # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
-        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2"]
+        # terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2"]
+        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2",
+                                       "arm2_shell", "arm2_shell_2", "arm3_shell", "arm3_shell2"
+                                       "hand_shell", "hand_shell_2", "leg0_shell", "leg0_shell_2",
+                                       "leg1_shell", "leg1_shell3", "leg2_shell",
+                                       "leg2_shell_2"]
+
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
