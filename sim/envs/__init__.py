@@ -25,6 +25,8 @@ from sim.envs.humanoids.gpr_headless_latency_config import (
     GprHeadlessLatencyCfg,
     GprHeadlessLatencyCfgPPO,
 )
+from sim.envs.humanoids.gpr_vel_config import GprVelCfg, GprVelCfgPPO
+from sim.envs.humanoids.gpr_vel_env import GprVelEnv
 from sim.envs.humanoids.gpr_headless_latency_env import GprHeadlessLatencyEnv
 from sim.envs.humanoids.gpr_latency_env import GprLatencyEnv
 from sim.envs.humanoids.h1_config import H1Cfg, H1CfgPPO
@@ -48,3 +50,4 @@ task_registry.register("gpr_headless", GprHeadlessEnv, GprHeadlessCfg(), GprHead
 task_registry.register("gpr_latency", GprLatencyEnv, GprLatencyCfg(), GprLatencyCfgPPO())
 task_registry.register("gpr_latency_standing", GprLatencyEnv, GprLatencyStandingCfg(), GprLatencyCfgPPO())
 task_registry.register("gpr_headless_latency", GprHeadlessLatencyEnv, GprHeadlessLatencyCfg(), GprHeadlessLatencyCfgPPO())
+task_registry.register("gpr_vel", GprVelEnv, GprVelCfg(), GprVelCfgPPO())
