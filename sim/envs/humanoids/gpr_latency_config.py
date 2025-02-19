@@ -7,7 +7,7 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.gpr_headless.joints import Robot
+from sim.resources.gpr_latency.joints import Robot
 
 NUM_JOINTS = len(Robot.all_joints())
 
@@ -18,9 +18,9 @@ class GprLatencyCfg(LeggedRobotCfg):
     class env(LeggedRobotCfg.env):
         # change the observation dim
         frame_stack = 15  # 15 # actor
-        c_frame_stack = 5  # critic
-        num_single_obs = 8 + NUM_JOINTS * 4 + 3  # ang vel
-        # num_single_obs = 8 + NUM_JOINTS * 4 # no ang vel
+        c_frame_stack = 3  # critic
+        # num_single_obs = 8 + NUM_JOINTS * 4 + 3  # ang vel
+        num_single_obs = 8 + NUM_JOINTS * 4 # no ang vel
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 5
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -37,7 +37,7 @@ class GprLatencyCfg(LeggedRobotCfg):
         torque_limit = 1.0
 
     class asset(LeggedRobotCfg.asset):
-        name = "gpr_headless"
+        name = "gpr_latency"
 
         file = str(robot_urdf_path(name))
 

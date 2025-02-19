@@ -6,6 +6,7 @@ from isaacgym.torch_utils import *  # isort:skip
 
 from sim.envs.base.legged_robot import LeggedRobot
 from sim.resources.gpr_headless.joints import Robot
+from sim.utils.math import wrap_to_pi
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
@@ -419,6 +420,7 @@ class GprLatencyEnv(LeggedRobot):
         max_df = self.cfg.rewards.max_dist / 2
         d_min = torch.clamp(foot_dist - fd, -0.5, 0.0)
         d_max = torch.clamp(foot_dist - max_df, 0, 0.5)
+
         return (torch.exp(-torch.abs(d_min) * 100) + torch.exp(-torch.abs(d_max) * 100)) / 2
 
     def _reward_foot_slip(self):

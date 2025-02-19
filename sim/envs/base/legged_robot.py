@@ -950,7 +950,6 @@ class LeggedRobot(BaseTask):
             self.knee_indices[i] = self.gym.find_actor_rigid_body_handle(
                 self.envs[0], self.actor_handles[0], knee_names[i]
             )
-
         self.imu_indices = self.gym.find_actor_rigid_body_handle(
             self.envs[0], self.actor_handles[0], self.cfg.asset.imu_name
         )
