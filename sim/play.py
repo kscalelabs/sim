@@ -105,7 +105,6 @@ def play(args: argparse.Namespace) -> None:
             num_actions=env_cfg.env.num_actions,
             num_joints=env_cfg.env.num_joints,
             frame_stack=env_cfg.env.frame_stack,
-            num_single_obs=env_cfg.env.num_single_obs,
             clip_observations=env_cfg.normalization.clip_observations,
             clip_actions=env_cfg.normalization.clip_actions,
             use_projected_gravity=env_cfg.sim.use_projected_gravity,
