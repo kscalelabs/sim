@@ -1,7 +1,3 @@
-<!--URDF generated from Onshape:
-https://cad.onshape.com/documents/f28ce19847c3eb365231071d/w/0aa440ddae524d8892fbb4b4/e/61213ecae58e63e861749fab
-with default config example.
--->
 <robot name="z-bot2_fe_urdf">
   <link name="base">
     <inertial>
@@ -11,7 +7,7 @@ with default config example.
     </inertial>
   </link>
   <joint name="floating_base" type="fixed">
-    <origin rpy="0 0 1.5707963" xyz="0 0 0" />
+    <origin rpy="0 0 0" xyz="0 0 0" />
     <parent link="base" />
     <child link="Z-BOT2_MASTER-BODY-SKELETON" />
   </joint>

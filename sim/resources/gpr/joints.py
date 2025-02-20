@@ -151,9 +151,9 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 80,
-            "03": 40,
-            "02": 30,
+            "04": 250,
+            "03": 120,
+            "02": 40,
         }
 
     @classmethod
@@ -169,8 +169,8 @@ class Robot(Node):
     def damping(cls) -> Dict[str, float]:
         return {
             "04": 5,
-            "03": 4,
-            "02": 1,
+            "03": 5,
+            "02": 5,
         }
 
     @classmethod
@@ -186,7 +186,7 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "04": 80,
+            "04": 60,
             "03": 40,
             "02": 17,
         }
@@ -195,9 +195,9 @@ class Robot(Node):
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "04": 6.283,
-            "03": 6.283,
-            "02": 12.566,
+            "04": 18,
+            "03": 18,
+            "02": 18,
         }
 
     @classmethod

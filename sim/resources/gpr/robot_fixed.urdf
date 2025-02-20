@@ -59,14 +59,14 @@
     <origin xyz="-0.000011 -0.432010 0.088700" rpy="-3.141593 0 -3.141593" />
     <parent link="body1-part" />
     <child link="leg0_shell" />
-    <limit effort="60" velocity="6.283" lower="-1.570796" upper="1.570796" />
+    <limit effort="60" velocity="18" lower="-1.570796" upper="1.570796" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="right_hip_pitch_04" type="revolute" dont_collapse="true">
     <origin xyz="-0.000011 -0.432010 -0.089200" rpy="0 0 -3.141593" />
     <parent link="body1-part" />
     <child link="leg0_shell_2" />
-    <limit effort="60" velocity="6.283" lower="-1.570796" upper="1.570796" />
+    <limit effort="60" velocity="18" lower="-1.570796" upper="1.570796" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="left_shoulder_yaw_02" type="fixed" dont_collapse="true">
@@ -87,14 +87,14 @@
     <origin xyz="0.027500 0 -0.069500" rpy="-1.570796 0 1.570796" />
     <parent link="leg0_shell" />
     <child link="leg1_shell" />
-    <limit effort="40" velocity="6.283" lower="-3.185226" upper="0.349066" />
+    <limit effort="40" velocity="18" lower="-3.185226" upper="0.349066" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="right_hip_roll_03" type="revolute" dont_collapse="true">
     <origin xyz="0.027500 0 -0.069000" rpy="1.570796 0 -1.570796" />
     <parent link="leg0_shell_2" />
     <child link="leg1_shell3" />
-    <limit effort="40" velocity="6.283" lower="-0.349066" upper="3.185226" />
+    <limit effort="40" velocity="18" lower="-0.349066" upper="3.185226" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="left_elbow_02" type="fixed" dont_collapse="true">
@@ -115,14 +115,14 @@
     <origin xyz="-0.157500 0.000120 0.027500" rpy="0 1.570796 0" />
     <parent link="leg1_shell" />
     <child link="leg2_shell" />
-    <limit effort="40" velocity="6.283" lower="-1.570796" upper="1.570796" />
+    <limit effort="40" velocity="18" lower="-1.570796" upper="1.570796" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="right_hip_yaw_03" type="revolute" dont_collapse="true">
     <origin xyz="-0.157500 -0.000120 0.027500" rpy="-3.141593 -1.570796 0" />
     <parent link="leg1_shell3" />
     <child link="leg2_shell_2" />
-    <limit effort="40" velocity="6.283" lower="-1.570796" upper="1.570796" />
+    <limit effort="40" velocity="18" lower="-1.570796" upper="1.570796" />
     <axis xyz="0 0 1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="left_wrist_02" type="fixed" dont_collapse="true">
@@ -143,28 +143,28 @@
     <origin xyz="0 -0.027000 -0.142500" rpy="1.570796 0 0" />
     <parent link="leg2_shell" />
     <child link="leg3_shell1" />
-    <limit effort="60" velocity="6.283" lower="0" upper="2.094395" />
+    <limit effort="60" velocity="18" lower="0" upper="2.094395" />
     <axis xyz="0 0 -1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="right_knee_04" type="revolute" dont_collapse="true">
     <origin xyz="0 -0.027000 -0.142500" rpy="1.570796 0 0" />
     <parent link="leg2_shell_2" />
     <child link="leg3_shell11" />
-    <limit effort="60" velocity="6.283" lower="-2.094395" upper="0" />
+    <limit effort="60" velocity="18" lower="-2.094395" upper="0" />
     <axis xyz="0 0 -1" />
   <dynamics damping="0.0" friction="0" /></joint>
   <joint name="right_ankle_02" type="revolute" dont_collapse="true">
     <origin xyz="0 -0.300000 -0.035500" rpy="3.141593 0 3.141593" />
     <parent link="leg3_shell11" />
     <child link="foot3" />
-    <limit effort="17" velocity="12.566" lower="-0.698132" upper="0.698132" />
+    <limit effort="17" velocity="18" lower="-0.698132" upper="0.698132" />
     <axis xyz="0 0 1.0" />
   <dynamics damping="0.0" friction="0.1" /></joint>
   <joint name="left_ankle_02" type="revolute" dont_collapse="true">
     <origin xyz="0 -0.300000 0.009500" rpy="0 0 0" />
     <parent link="leg3_shell1" />
     <child link="foot1" />
-    <limit effort="17" velocity="12.566" lower="-0.698132" upper="0.698132" />
+    <limit effort="17" velocity="18" lower="-0.698132" upper="0.698132" />
     <axis xyz="0 0 -1" />
   <dynamics damping="0.0" friction="0.1" /></joint>
   <link name="body1-part">
