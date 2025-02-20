@@ -86,14 +86,14 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.3 # 1.5  # 0.6  # scales other values
+        noise_level = 0.5 # 1.5  # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 2.5
-            ang_vel = 0.4  # 0.1
+            dof_vel = 1.5 # 2.5
+            ang_vel = 0.1 # 0.4  # 0.1
             lin_vel = 0.05
-            quat = 0.08  # 0.03
+            quat = 0.03 # 0.08  # 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -143,7 +143,7 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
         added_mass_range = [-1.0, 1.0]# [-2.0, 2.0]
 
         randomize_link_mass = True
-        link_mass_multiplier_range = [0.9, 1.1]# [0.8, 1.2]
+        link_mass_multiplier_range = [0.99, 1.01]# [0.8, 1.2]
 
         push_robots = True
         push_random_interval_min = 3.0 # 1.0
@@ -169,18 +169,18 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
         joint_armature_range = [0.008, 0.06]
 
         randomize_pd_gains = True
-        stiffness_multiplier_range = [0.95, 1.05]
-        damping_multiplier_range = [0.95, 1.05]
+        stiffness_multiplier_range = [0.99, 1.01]
+        damping_multiplier_range = [0.99, 1.01]
 
         randomize_calculated_torque = True
-        torque_multiplier_range = [0.95, 1.05] # [0.8, 1.2]
+        torque_multiplier_range = [0.99, 1.01] # [0.8, 1.2]
 
         # Latency randomization
-        add_cmd_action_latency = True  # Enable action latency
+        add_cmd_action_latency = False  # Enable action latency
         randomize_cmd_action_latency = True  # Randomize the latency amount
         range_cmd_action_latency = [0, 2]  # Range of latency in simulation steps
 
-        add_obs_latency = True  # Enable observation latency
+        add_obs_latency = False  # Enable observation latency
         randomize_obs_motor_latency = True  # Randomize motor sensor latency
         range_obs_motor_latency = [0, 2] #[0, 10]  # Range of motor latency in simulation steps
         randomize_obs_imu_latency = True  # Randomize IMU sensor latency
