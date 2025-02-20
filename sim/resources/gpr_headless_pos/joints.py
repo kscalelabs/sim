@@ -154,9 +154,9 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 80,
-            "03": 40,
-            "02": 30,
+            "04": 150,
+            "03": 80,
+            "02": 40,
         }
 
     @classmethod
@@ -171,9 +171,9 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "04": 5,
-            "03": 4,
-            "02": 1,
+            "04": 10,
+            "03": 8,
+            "02": 2,
         }
 
     @classmethod
