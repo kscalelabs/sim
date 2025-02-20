@@ -60,8 +60,8 @@ class GprVelCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        mesh_type = "plane"
-        # mesh_type = "trimesh"
+        # mesh_type = "plane"
+        mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -78,11 +78,11 @@ class GprVelCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.5 # 1.2 # 0.6  # scales other values
+        noise_level = 1.25 # 1.5 # 1.2 # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 2.5 #0.5
+            dof_vel = 2.0 # 2.5 #0.5
             ang_vel = 0.1
             lin_vel = 0.05
             quat = 0.06 # 0.03
@@ -132,14 +132,14 @@ class GprVelCfg(LeggedRobotCfg):
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-2.0, 2.0]
+        added_mass_range = [-3.0, 3.0] # [-2.0, 2.0]
         push_robots = True
-        push_random_interval_min = 1.0
+        push_random_interval_min = 2.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 1.8 # 1.5 # 0.4
-        max_push_ang_vel = 1.8 # 1.5 # 0.4
+        max_push_vel_xy = 1.5 # 1.8 # 1.5 # 0.4
+        max_push_ang_vel = 1.5 # 1.8 # 1.5 # 0.4
         # dynamic randomization
-        action_noise = 0.02
+        action_noise = 0.04 # 0.02
         action_delay = 0.5
         randomize_pd_gains = False
 
@@ -196,10 +196,10 @@ class GprVelCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.002
-            torques = -1e-5
+            action_smoothness = -0.003 # -0.002
+            torques = -2e-5
             dof_vel = -5e-4  # -1e-3
-            dof_acc = -5e-7# -2.5e-7  # -1e-7  # -2.5e-7
+            dof_acc = -1e-6 # -2.5e-7  # -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:
