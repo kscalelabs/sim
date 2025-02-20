@@ -82,10 +82,10 @@ class GprVelCfg(LeggedRobotCfg):
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 2.0 # 2.5 #0.5
+            dof_vel = 1.8 # 2.0 # 2.5 #0.5
             ang_vel = 0.1
             lin_vel = 0.05
-            quat = 0.06 # 0.03
+            quat = 0.05 # 0.06 # 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -127,7 +127,7 @@ class GprVelCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
+        start_pos_noise = 0.3 # 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -139,7 +139,7 @@ class GprVelCfg(LeggedRobotCfg):
         max_push_vel_xy = 1.5 # 1.8 # 1.5 # 0.4
         max_push_ang_vel = 1.5 # 1.8 # 1.5 # 0.4
         # dynamic randomization
-        action_noise = 0.04 # 0.02
+        action_noise = 0.05 # 0.02
         action_delay = 0.5
         randomize_pd_gains = False
 
@@ -196,10 +196,10 @@ class GprVelCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.003 # -0.002
-            torques = -2e-5
+            action_smoothness = -0.004 # -0.002
+            torques = -4e-5
             dof_vel = -5e-4  # -1e-3
-            dof_acc = -1e-6 # -2.5e-7  # -1e-7  # -2.5e-7
+            dof_acc = -2e-6 # -2.5e-7  # -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:
