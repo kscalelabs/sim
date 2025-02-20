@@ -146,7 +146,7 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
         link_mass_multiplier_range = [0.9, 1.1]# [0.8, 1.2]
 
         push_robots = True
-        push_random_interval_min = 1.0
+        push_random_interval_min = 3.0 # 1.0
         push_random_interval_max = 4.0
         max_push_vel_xy = 0.2 # 0.2
         max_push_ang_vel = 0.4 # 0.4
@@ -169,11 +169,11 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
         joint_armature_range = [0.008, 0.06]
 
         randomize_pd_gains = True
-        stiffness_multiplier_range = [0.9, 1.1]
-        damping_multiplier_range = [0.9, 1.1]
+        stiffness_multiplier_range = [0.95, 1.05]
+        damping_multiplier_range = [0.95, 1.05]
 
         randomize_calculated_torque = True
-        torque_multiplier_range = [0.8, 1.2]
+        torque_multiplier_range = [0.95, 1.05] # [0.8, 1.2]
 
         # Latency randomization
         add_cmd_action_latency = True  # Enable action latency
@@ -182,9 +182,9 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
 
         add_obs_latency = True  # Enable observation latency
         randomize_obs_motor_latency = True  # Randomize motor sensor latency
-        range_obs_motor_latency = [0, 5] #[0, 10]  # Range of motor latency in simulation steps
+        range_obs_motor_latency = [0, 2] #[0, 10]  # Range of motor latency in simulation steps
         randomize_obs_imu_latency = True  # Randomize IMU sensor latency
-        range_obs_imu_latency = [0, 5] #[0, 10]  # Range of IMU latency in simulation steps
+        range_obs_imu_latency = [0, 2] #[0, 10]  # Range of IMU latency in simulation steps
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
