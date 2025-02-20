@@ -185,10 +185,10 @@ class GprCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.002
+            action_smoothness = -0.009
             torques = -1e-5
-            dof_vel = -5e-4  # -1e-3
-            dof_acc = -1e-7  # -2.5e-7
+            dof_vel = -1e-3  # -1e-3
+            dof_acc = -1e-6  # -2.5e-7
             collision = -1.0
 
     class normalization:
@@ -239,10 +239,10 @@ class GprStandingCfg(GprCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.002
+            action_smoothness = -0.009
             torques = -1e-5
-            dof_vel = -1e-3
-            dof_acc = -2.5e-7
+            dof_vel = -1e-3  # -1e-3
+            dof_acc = -1e-6  # -2.5e-7
             collision = -1.0
 
 
