@@ -50,7 +50,7 @@ class GprVelCfg(LeggedRobotCfg):
         #                                "arm2_shell_2", "arm2_shell", "arm3_shell2", "arm3_shell",
         #                                "hand_shell", "hand_shell_2"]
 
-        termination_height = 0.2
+        termination_height = 0.5 # 0.2
         default_feet_height = 0.0
 
         penalize_contacts_on = []
@@ -60,8 +60,8 @@ class GprVelCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -78,14 +78,14 @@ class GprVelCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.2 # 0.6  # scales other values
+        noise_level = 1.5 # 1.2 # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 0.5
+            dof_vel = 2.5 #0.5
             ang_vel = 0.1
             lin_vel = 0.05
-            quat = 0.03
+            quat = 0.06 # 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
@@ -174,7 +174,7 @@ class GprVelCfg(LeggedRobotCfg):
         class scales:
             termination = -10.0
             # reference motion tracking
-            joint_pos = 1.2 # 1.6
+            joint_pos = 0.8 # 1.6
             feet_clearance = 0.8 # 1.2
             feet_contact_number = 0.8 # 0.8 # 1.4
             # gait
@@ -199,7 +199,7 @@ class GprVelCfg(LeggedRobotCfg):
             action_smoothness = -0.002
             torques = -1e-5
             dof_vel = -5e-4  # -1e-3
-            dof_acc = -2.5e-7  # -1e-7  # -2.5e-7
+            dof_acc = -5e-7# -2.5e-7  # -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:
