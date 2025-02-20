@@ -86,7 +86,7 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.8 # 1.5  # 0.6  # scales other values
+        noise_level = 0.4 # 1.5  # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
@@ -182,9 +182,9 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
 
         add_obs_latency = True  # Enable observation latency
         randomize_obs_motor_latency = True  # Randomize motor sensor latency
-        range_obs_motor_latency = [0, 10]  # Range of motor latency in simulation steps
+        range_obs_motor_latency = [0, 5] # [0, 10]  # Range of motor latency in simulation steps
         randomize_obs_imu_latency = True  # Randomize IMU sensor latency
-        range_obs_imu_latency = [0, 10]  # Range of IMU latency in simulation steps
+        range_obs_imu_latency = [0, 5] # [0, 10]  # Range of IMU latency in simulation steps
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
