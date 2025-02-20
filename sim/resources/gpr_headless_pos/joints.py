@@ -128,13 +128,13 @@ class Robot(Node):
             Robot.legs.left.hip_pitch: 0.23,
             Robot.legs.left.hip_yaw: 0.0,
             Robot.legs.left.hip_roll: 0.0,
-            Robot.legs.left.knee_pitch: 0.441, # negated
+            Robot.legs.left.knee_pitch: 0.441,
             Robot.legs.left.ankle_pitch: -0.195,
             Robot.legs.right.hip_pitch: -0.23,
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
             Robot.legs.right.knee_pitch: -0.441,
-            Robot.legs.right.ankle_pitch: 0.195, # negated
+            Robot.legs.right.ankle_pitch: 0.195,
         }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
@@ -145,17 +145,14 @@ class Robot(Node):
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
-        return {
-            Robot.legs.left.knee_pitch: {"lower": -1.57, "upper": 0},
-            Robot.legs.right.knee_pitch: {"lower": -1.57, "upper": 0},
-        }
+        return {}
 
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 150,
-            "03": 80,
+            "04": 250,
+            "03": 120,
             "02": 40,
         }
 
@@ -171,9 +168,9 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "04": 10,
-            "03": 8,
-            "02": 2,
+            "04": 5,
+            "03": 5,
+            "02": 5,
         }
 
     @classmethod
@@ -189,27 +186,19 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "04": 80,
+            "04": 60,
             "03": 40,
             "02": 17,
         }
 
-    @classmethod
-    def effort_mapping(cls) -> Dict[str, float]:
-        mapping = {}
-        effort = cls.effort()
-        for joint in cls.joint_names():
-            mapping[joint] = effort[joint[-2:]]
-        return mapping
-    
+    # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "04": 18.0,
-            "03": 18.0,
-            "02": 18.0,
+            "04": 18,
+            "03": 18,
+            "02": 18,
         }
-            
 
     @classmethod
     def friction(cls) -> Dict[str, float]:

@@ -41,10 +41,6 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
 
         file = str(robot_urdf_path(name))
 
-        # foot_name = ["foot1", "foot3"]
-        # knee_name = ["leg3_shell1", "leg3_shell11"]
-        # imu_name = "imu"
-
         foot_name = ["foot1", "foot3"]
         knee_name = ["leg3_shell1", "leg3_shell11"]
         imu_name = "imu"
@@ -52,13 +48,7 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
         termination_height = 0.83 # 0.43 # 0.33
         default_feet_height = 0.0
 
-        # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
-        # terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2"]
-        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2",
-                                       "arm2_shell", "arm2_shell_2", "arm3_shell", "arm3_shell2"
-                                       "hand_shell", "hand_shell_2", "leg0_shell", "leg0_shell_2",
-                                       "leg1_shell", "leg1_shell3", "leg2_shell",
-                                       "leg2_shell_2", "body1-part", "imu"]
+        terminate_after_contacts_on = []
 
 
         penalize_contacts_on = []
@@ -68,8 +58,8 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -135,7 +125,7 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.1
+        start_pos_noise = 0.01
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
@@ -156,34 +146,34 @@ class GprHeadlessLatencyPosCfg(LeggedRobotCfg):
         action_delay = 0.5
         randomize_pd_gains = False
 
-        randomize_motor_zero_offset = True
+        randomize_motor_zero_offset = False
         motor_zero_offset_range = [-0.02, 0.02] # [-0.035, 0.035]  # Offset to add to the motor angles
 
-        randomize_joint_friction = True
+        randomize_joint_friction = False
         joint_friction_range = [0.01, 1.15]
 
-        randomize_joint_damping = True
+        randomize_joint_damping = False
         joint_damping_range = [0.3, 1.5]
 
-        randomize_joint_armature = True
+        randomize_joint_armature = False
         joint_armature_range = [0.008, 0.06]
 
-        randomize_pd_gains = True
+        randomize_pd_gains = False
         stiffness_multiplier_range = [0.99, 1.01]
         damping_multiplier_range = [0.99, 1.01]
 
-        randomize_calculated_torque = True
+        randomize_calculated_torque = False
         torque_multiplier_range = [0.99, 1.01] # [0.8, 1.2]
 
         # Latency randomization
         add_cmd_action_latency = True  # Enable action latency
-        randomize_cmd_action_latency = True  # Randomize the latency amount
+        randomize_cmd_action_latency = False  # Randomize the latency amount
         range_cmd_action_latency = [0, 2]  # Range of latency in simulation steps
 
-        add_obs_latency = True  # Enable observation latency
-        randomize_obs_motor_latency = True  # Randomize motor sensor latency
+        add_obs_latency = False  # Enable observation latency
+        randomize_obs_motor_latency = False  # Randomize motor sensor latency
         range_obs_motor_latency = [0, 10]  # Range of motor latency in simulation steps
-        randomize_obs_imu_latency = True  # Randomize IMU sensor latency
+        randomize_obs_imu_latency = False  # Randomize IMU sensor latency
         range_obs_imu_latency = [0, 10]  # Range of IMU latency in simulation steps
 
     class commands(LeggedRobotCfg.commands):
@@ -305,8 +295,8 @@ class GprHeadlessLatencyPosStandingCfg(GprHeadlessLatencyPosCfg):
             # energy
             action_smoothness = -0.002
             torques = -1e-5
-            dof_vel = -1e-3
-            dof_acc = -2.5e-7
+            dof_vel = -5e-4
+            dof_acc = -1e-7
             collision = -1.0
 
 

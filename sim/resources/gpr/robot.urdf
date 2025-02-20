@@ -1,165 +1,166 @@
-<?xml version="1.0" ?>
 <robot name="k-bot_sim">
   <link name="floating_base_link">
-    <visual name="floating_base_link_visual">
-      <geometry name="floating_base_link_geometry">
-        <sphere radius="0.01"/>
-      </geometry>
-      <material name="floating_base_link_material">
-        <color rgba="1 0 0 1"/>
-      </material>
-      <origin xyz="0 0 0" rpy="1.57 0.00 0.00"/>
-    </visual>
-    <inertial name="floating_base_link_inertial">
-      <mass value="0.001"/>
-      <inertia ixx="0.000001" iyy="0.000001" izz="0.000002" ixy="0" ixz="0" iyz="0"/>
-      <origin xyz="0 0 0" rpy="1.57 0.00 0.00"/>
-    </inertial>
   </link>
-  <joint name="floating_base_joint" type="fixed">
+  <joint name="floating_base_joint" type="fixed" dont_collapse="true">
     <parent link="floating_base_link"/>
     <child link="body1-part"/>
-    <origin xyz="0 0 0" rpy="1.57 0.00 0.00"/>
+    <origin xyz="0 0 0" rpy="1.57 0 3.14"/>
   </joint>
   <joint name="imu_link" type="fixed" dont_collapse="true">
     <origin xyz="0.039989 -0.127910 0" rpy="-1.570796 0 0"/>
     <parent link="body1-part"/>
     <child link="imu"/>
   </joint>
-  <joint name="left_shoulder_pitch_03" type="fixed">
+    <link name="imu">
+    <visual name="imu_visual">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry name="imu_geometry">
+        <mesh filename="meshes/imu.stl"/>
+      </geometry>
+      <material name="imu_material">
+        <color rgba="0.615686 0.811765 0.929412 1"/>
+      </material>
+    </visual>
+    <inertial name="imu_inertial">
+      <mass value="0.010000"/>
+      <inertia ixx="0.000001" iyy="0.000001" izz="0.000002" ixy="0" ixz="0" iyz="0"/>
+      <origin xyz="-0.007500 0 0.006000" rpy="0 0 0"/>
+    </inertial>
+  </link>
+  <joint name="left_shoulder_pitch_03" type="revolute" dont_collapse="true">
     <origin xyz="-0.000011 0.018090 0.188500" rpy="3.141593 0 3.141593"/>
     <parent link="body1-part"/>
     <child link="shoulder"/>
     <limit effort="60" velocity="6.283" lower="0" upper="3.141593"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="right_shoulder_pitch_03" type="fixed">
+  <joint name="right_shoulder_pitch_03" type="revolute" dont_collapse="true">
     <origin xyz="-0.000011 0.018090 -0.188500" rpy="0 0 -3.141593"/>
     <parent link="body1-part"/>
     <child link="shoulder_2"/>
     <limit effort="60" velocity="6.283" lower="-3.141593" upper="0"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="left_shoulder_roll_03" type="fixed">
+  <joint name="left_shoulder_roll_03" type="revolute" dont_collapse="true">
     <origin xyz="0.023512 0.000056 -0.067500" rpy="1.570796 0 1.570796"/>
     <parent link="shoulder"/>
     <child link="arm1_top"/>
     <limit effort="60" velocity="6.283" lower="-3.630285" upper="0.479966"/>
     <axis xyz="0 0 -1"/>
   </joint>
-  <joint name="right_shoulder_roll_03" type="fixed">
+  <joint name="right_shoulder_roll_03" type="revolute" dont_collapse="true">
     <origin xyz="0.023512 -0.000056 -0.067500" rpy="1.570796 0 -1.570796"/>
     <parent link="shoulder_2"/>
     <child link="arm1_top_2"/>
     <limit effort="60" velocity="6.283" lower="-0.479966" upper="3.630285"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="left_hip_pitch_04" type="revolute">
+  <joint name="left_hip_pitch_04" type="revolute" dont_collapse="true">
     <origin xyz="-0.000011 -0.432010 0.088700" rpy="-3.141593 0 -3.141593"/>
     <parent link="body1-part"/>
     <child link="leg0_shell"/>
     <limit effort="120" velocity="6.283" lower="-1.570796" upper="1.570796"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="right_hip_pitch_04" type="revolute">
+  <joint name="right_hip_pitch_04" type="revolute" dont_collapse="true">
     <origin xyz="-0.000011 -0.432010 -0.089200" rpy="0 0 -3.141593"/>
     <parent link="body1-part"/>
     <child link="leg0_shell_2"/>
     <limit effort="120" velocity="6.283" lower="-1.570796" upper="1.570796"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="left_shoulder_yaw_02" type="fixed">
+  <joint name="left_shoulder_yaw_02" type="revolute" dont_collapse="true">
     <origin xyz="-0.140500 0 -0.023500" rpy="-1.570796 0 -1.570796"/>
     <parent link="arm1_top"/>
     <child link="arm2_shell"/>
     <limit effort="17" velocity="12.566" lower="-1.570796" upper="1.570796"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="right_shoulder_yaw_02" type="fixed">
+  <joint name="right_shoulder_yaw_02" type="revolute" dont_collapse="true"  >
     <origin xyz="-0.140500 0 0.022500" rpy="-3.141593 1.570796 0"/>
     <parent link="arm1_top_2"/>
     <child link="arm2_shell_2"/>
     <limit effort="17" velocity="12.566" lower="-1.570796" upper="1.570796"/>
     <axis xyz="0 0 -1"/>
   </joint>
-  <joint name="left_hip_roll_03" type="revolute">
+  <joint name="left_hip_roll_03" type="revolute" dont_collapse="true">
     <origin xyz="0.027500 0 -0.069500" rpy="-1.570796 0 1.570796"/>
     <parent link="leg0_shell"/>
     <child link="leg1_shell"/>
     <limit effort="60" velocity="6.283" lower="-3.185226" upper="0.349066"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="right_hip_roll_03" type="revolute">
+  <joint name="right_hip_roll_03" type="revolute" dont_collapse="true">
     <origin xyz="0.027500 0 -0.069000" rpy="1.570796 0 -1.570796"/>
     <parent link="leg0_shell_2"/>
     <child link="leg1_shell3"/>
     <limit effort="60" velocity="6.283" lower="-0.349066" upper="3.185226"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="left_elbow_02" type="fixed">
+  <joint name="left_elbow_02" type="revolute" dont_collapse="true">
     <origin xyz="-0.027000 0 -0.098000" rpy="-3.141593 -1.570796 0"/>
     <parent link="arm2_shell"/>
     <child link="arm3_shell"/>
     <limit effort="17" velocity="12.566" lower="-2.530727" upper="0"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="right_elbow_02" type="fixed">
+  <joint name="right_elbow_02" type="revolute" dont_collapse="true">
     <origin xyz="0 -0.027000 0.097500" rpy="-1.570796 1.570796 0"/>
     <parent link="arm2_shell_2"/>
     <child link="arm3_shell2"/>
     <limit effort="17" velocity="12.566" lower="0" upper="2.530727"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="left_hip_yaw_03" type="revolute">
+  <joint name="left_hip_yaw_03" type="revolute" dont_collapse="true">
     <origin xyz="-0.157500 0.000120 0.027500" rpy="0 1.570796 0"/>
     <parent link="leg1_shell"/>
     <child link="leg2_shell"/>
     <limit effort="60" velocity="6.283" lower="-1.570796" upper="1.570796"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="right_hip_yaw_03" type="revolute">
+  <joint name="right_hip_yaw_03" type="revolute" dont_collapse="true">
     <origin xyz="-0.157500 -0.000120 0.027500" rpy="-3.141593 -1.570796 0"/>
     <parent link="leg1_shell3"/>
     <child link="leg2_shell_2"/>
     <limit effort="60" velocity="6.283" lower="-1.570796" upper="1.570796"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="left_wrist_02" type="fixed">
+  <joint name="left_wrist_02" type="revolute" dont_collapse="true">
     <origin xyz="-0.182500 0 0.021500" rpy="-1.570796 0 -1.570796"/>
     <parent link="arm3_shell"/>
     <child link="hand_shell"/>
     <limit effort="17" velocity="12.566" lower="-3.141593" upper="3.141593"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="right_wrist_02" type="fixed">
+  <joint name="right_wrist_02" type="revolute" dont_collapse="true">
     <origin xyz="-0.182500 0 0.021500" rpy="1.570796 0 1.570796"/>
     <parent link="arm3_shell2"/>
     <child link="hand_shell_2"/>
     <limit effort="17" velocity="12.566" lower="-3.141593" upper="3.141593"/>
     <axis xyz="0 0 1"/>
   </joint>
-  <joint name="left_knee_04" type="revolute">
+  <joint name="left_knee_04" type="revolute" dont_collapse="true">
     <origin xyz="0 -0.027000 -0.142500" rpy="1.570796 0 0"/>
     <parent link="leg2_shell"/>
     <child link="leg3_shell1"/>
     <limit effort="120" velocity="6.283" lower="0" upper="2.094395"/>
     <axis xyz="0 0 -1"/>
   </joint>
-  <joint name="right_knee_04" type="revolute">
+  <joint name="right_knee_04" type="revolute" dont_collapse="true">
     <origin xyz="0 -0.027000 -0.142500" rpy="1.570796 0 0"/>
     <parent link="leg2_shell_2"/>
     <child link="leg3_shell11"/>
     <limit effort="120" velocity="6.283" lower="-2.094395" upper="0"/>
     <axis xyz="0 0 -1"/>
   </joint>
-  <joint name="right_ankle_02" type="revolute">
+  <joint name="right_ankle_02" type="revolute" dont_collapse="true">
     <origin xyz="0 -0.300000 -0.035500" rpy="3.141593 0 3.141593"/>
     <parent link="leg3_shell11"/>
     <child link="foot3"/>
     <limit effort="17" velocity="12.566" lower="-0.698132" upper="0.698132"/>
     <axis xyz="0 0 1.0"/>
   </joint>
-  <joint name="left_ankle_02" type="revolute">
+  <joint name="left_ankle_02" type="revolute" dont_collapse="true">
     <origin xyz="0 -0.300000 0.009500" rpy="0 0 0"/>
     <parent link="leg3_shell1"/>
     <child link="foot1"/>
@@ -186,22 +187,6 @@
       <mass value="9.415838"/>
       <inertia ixx="0.406102" iyy="0.096732" izz="0.321504" ixy="0.001018" ixz="0.000014" iyz="-0.000180"/>
       <origin xyz="-0.000153 -0.214129 -0.000094" rpy="0 0 0"/>
-    </inertial>
-  </link>
-  <link name="imu">
-    <visual name="imu_visual">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry name="imu_geometry">
-        <mesh filename="meshes/imu.stl"/>
-      </geometry>
-      <material name="imu_material">
-        <color rgba="0.615686 0.811765 0.929412 1"/>
-      </material>
-    </visual>
-    <inertial name="imu_inertial">
-      <mass value="0.010000"/>
-      <inertia ixx="0.000001" iyy="0.000001" izz="0.000002" ixy="0" ixz="0" iyz="0"/>
-      <origin xyz="-0.007500 0 0.006000" rpy="0 0 0"/>
     </inertial>
   </link>
   <link name="shoulder">
