@@ -145,29 +145,16 @@ class Robot(Node):
 
     @classmethod
     def default_limits(cls) -> Dict[str, Dict[str, float]]:
-        return {
-            # Robot.legs.left.knee_pitch: {"lower": -1.57, "upper": 0},
-            # Robot.legs.right.knee_pitch: {"lower": -1.57, "upper": 0},
-        }
+        return {}
 
     # p_gains
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 300,
-            "03": 120,
-            "02": 40,
+            "04": 80,
+            "03": 40,
+            "02": 30,
         }
-
-    # pfb30
-    # @classmethod
-    # def stiffness_mapping(cls) -> Dict[str, float]:
-    #     mapping = {}
-    #     stiffness = cls.stiffness()
-    #     for side in ["L", "R"]:
-    #         for joint, value in stiffness.items():
-    #             mapping[f"{side}_{joint}"] = value
-    #     return mapping
 
     @classmethod
     def stiffness_mapping(cls) -> Dict[str, float]:
@@ -182,18 +169,9 @@ class Robot(Node):
     def damping(cls) -> Dict[str, float]:
         return {
             "04": 5,
-            "03": 5,
-            "02": 5,
+            "03": 4,
+            "02": 1,
         }
-
-    # @classmethod
-    # def damping_mapping(cls) -> Dict[str, float]:
-    #     mapping = {}
-    #     damping = cls.damping()
-    #     for side in ["L", "R"]:
-    #         for joint, value in damping.items():
-    #             mapping[f"{side}_{joint}"] = value
-    #     return mapping
 
     @classmethod
     def damping_mapping(cls) -> Dict[str, float]:
@@ -208,19 +186,10 @@ class Robot(Node):
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "04": 60,
+            "04": 80,
             "03": 40,
             "02": 17,
         }
-
-    # @classmethod
-    # def effort_mapping(cls) -> Dict[str, float]:
-    #     mapping = {}
-    #     effort = cls.effort()
-    #     for side in ["L", "R"]:
-    #         for joint, value in effort.items():
-    #             mapping[f"{side}_{joint}"] = value
-    #     return mapping
 
     # vel_limits
     @classmethod
