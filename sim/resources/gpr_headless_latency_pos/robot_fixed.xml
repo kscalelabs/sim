@@ -1,0 +1,154 @@
+<mujoco model="k-bot_sim">
+  <option iterations="50" timestep="0.001" solver="PGS" gravity="0 0 -9.81" />
+  <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
+
+  <default>
+    <joint limited="true" damping="0.01" armature="0.01" frictionloss="0.01" />
+    <geom condim="4" contype="1" conaffinity="15" friction="0.9 0.2 0.2" solref="0.001 2" />
+    <motor ctrllimited="true" />
+    <equality solref="0.001 2" />
+    <default class="visualgeom">
+      <geom material="visualgeom" condim="1" contype="0" conaffinity="0" />
+    </default>
+  </default>
+
+  <asset>
+    <mesh name="body1-part.collision" file="body1-part.collision.stl"/>
+    <mesh name="shoulder.collision" file="shoulder.collision.stl"/>
+    <mesh name="shoulder_2.collision" file="shoulder_2.collision.stl"/>
+    <mesh name="leg0_shell.collision" file="leg0_shell.collision.stl"/>
+    <mesh name="leg0_shell_2.collision" file="leg0_shell_2.collision.stl"/>
+    <mesh name="arm2_shell.collision" file="arm2_shell.collision.stl"/>
+    <mesh name="arm2_shell_2.collision" file="arm2_shell_2.collision.stl"/>
+    <mesh name="hand_shell.collision" file="hand_shell.collision.stl"/>
+    <mesh name="hand_shell_2.collision" file="hand_shell_2.collision.stl"/>
+    <mesh name="leg3_shell1.collision" file="leg3_shell1.collision.stl"/>
+    <mesh name="leg3_shell11.collision" file="leg3_shell11.collision.stl"/>
+    <mesh name="foot3.collision" file="foot3.collision.stl"/>
+    <mesh name="foot1.collision" file="foot1.collision.stl"/>
+
+    <texture name="texplane" type="2d" builtin="checker" rgb1=".0 .0 .0" rgb2=".8 .8 .8" width="100" height="100" />
+    <material name="matplane" reflectance="0." texture="texplane" texrepeat="1 1" texuniform="true" />
+    <material name='visualgeom'  rgba='0.5 0.9 0.2 1'/>
+  </asset>
+
+  <worldbody>
+    <light directional="true" diffuse="0.4 0.4 0.4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false" />
+    <light directional="true" diffuse="0.6 0.6 0.6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1" />
+    <geom name="ground" type="plane" size="0 0 1" pos="0.001 0 0" quat="1 0 0 0" material="matplane" condim="1" conaffinity='15'/>
+    <camera name="fixed" pos="0 -3.0 1.3996921861577372" xyaxes="1 0 0 0 0 1" />
+    <camera name="track" mode="trackcom" pos="0 -3.0 1.3996921861577372" xyaxes="1 0 0 0 0 1" />
+    <body name="root" pos="0 0 0" quat="1 0 0 0">
+        <freejoint name="root" />
+        <site name="imu" size="0.01" pos="0 0 0" />
+        <body name="body1-part" quat="0.000563312 0.000562864 0.706825 0.707388">
+        <inertial pos="-0.000194676 -0.209193 -6.5933e-05" quat="0.707026 0.707186 0.000991344 0.000198047" mass="16.5406" diaginertia="1.14646 0.609236 0.557347"/>
+        <geom name="body1-part.collision" type="mesh" rgba="1 1 1 1" mesh="body1-part.collision"/>
+        <geom name="shoulder.collision" pos="-1.1e-05 0.01809 0.1885" quat="0 -1.73205e-07 1 -1.73205e-07" type="mesh" rgba="1 1 1 1" mesh="shoulder.collision"/>
+        <geom name="arm2_shell.collision" pos="-2.29054e-05 -0.122354 0.256" quat="-0.5 0.5 0.5 0.5" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell.collision"/>
+        <geom name="hand_shell.collision" pos="-2.26306e-05 -0.402854 0.2505" quat="0.707107 -0.707107 -7.07107e-07 2.31079e-07" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell.collision"/>
+        <geom name="shoulder.collision_2" pos="-1.1e-05 0.01809 -0.1885" quat="-1.73205e-07 0 0 -1" type="mesh" rgba="1 1 1 1" mesh="shoulder_2.collision"/>
+        <geom name="arm2_shell.collision_2" pos="-0.001023 -0.122354 -0.256" quat="-6.93502e-09 2.38014e-07 0.707107 -0.707107" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="arm2_shell_2.collision"/>
+        <geom name="hand_shell.collision_2" pos="-0.00102305 -0.402354 -0.2505" quat="-0.707107 0.707107 1.08605e-07 -1.08604e-07" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="hand_shell_2.collision"/>
+        <body name="leg0_shell" pos="-1.1e-05 -0.43201 0.0887" quat="0 1.73205e-07 1 1.73205e-07">
+            <inertial pos="-0.003746 0 -0.068125" quat="0.999982 0 -0.00597152 0" mass="1.32345" diaginertia="0.00188608 0.001425 0.00129992"/>
+            <joint name="left_hip_pitch_04" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-60 60"/>
+            <geom name="leg0_shell.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell.collision"/>
+            <body name="leg1_shell" pos="0.0275 0 -0.0695" quat="0.5 -0.5 -0.5 0.5">
+            <inertial pos="-0.112524 0.000529 0.025259" quat="-0.149163 0.776513 -0.185318 0.583469" mass="1.26435" diaginertia="0.00249944 0.00248268 0.00139787"/>
+            <joint name="left_hip_roll_03" pos="0 0 0" axis="0 0 1" range="-3.18523 0.349066" actuatorfrcrange="-40 40"/>
+            <body name="leg2_shell" pos="-0.1575 0.00012 0.0275" quat="0.707107 0 0.707107 0">
+                <inertial pos="0 0.000532 -0.137308" quat="0.707085 -0.00556072 0.00556072 0.707085" mass="1.82092" diaginertia="0.00422553 0.003118 0.00206347"/>
+                <joint name="left_hip_yaw_03" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-40 40"/>
+                <body name="leg3_shell1" pos="0 -0.027 -0.1425" quat="0.707107 0.707107 0 0">
+                <inertial pos="0.001098 -0.131322 -0.023162" quat="0.29298 0.299254 -0.639764 0.644447" mass="1.10996" diaginertia="0.00676042 0.00672628 0.0010123"/>
+                <joint name="left_knee_04" pos="0 0 0" axis="0 0 -1" range="0 2.0944" actuatorfrcrange="-60 60"/>
+                <geom name="leg3_shell1.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell1.collision"/>
+                <body name="foot1" pos="0 -0.3 0.0095">
+                    <inertial pos="0.02135 -0.019419 -0.019276" quat="0.504954 0.505314 0.484937 0.504496" mass="0.582091" diaginertia="0.00218891 0.00202456 0.000282532"/>
+                    <joint name="left_ankle_02" pos="0 0 0" axis="0 0 -1" range="-0.698132 0.698132" actuatorfrcrange="-17 17" frictionloss="0.1"/>
+                    <geom name="foot1.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot1.collision"/>
+                </body>
+                </body>
+            </body>
+            </body>
+        </body>
+        <body name="leg0_shell_2" pos="-1.1e-05 -0.43201 -0.0892" quat="-1.73205e-07 0 0 -1">
+            <inertial pos="-0.003746 0 -0.067625" quat="0.999982 0 -0.00597152 0" mass="1.32345" diaginertia="0.00188608 0.001425 0.00129992"/>
+            <joint name="right_hip_pitch_04" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-60 60"/>
+            <geom name="leg0_shell.collision_2" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg0_shell_2.collision"/>
+            <body name="leg1_shell3" pos="0.0275 0 -0.069" quat="0.5 0.5 -0.5 -0.5">
+            <inertial pos="-0.112524 -0.000529 0.025259" quat="0.149163 0.776513 0.185318 0.583469" mass="1.26435" diaginertia="0.00249944 0.00248268 0.00139787"/>
+            <joint name="right_hip_roll_03" pos="0 0 0" axis="0 0 1" range="-0.349066 3.18523" actuatorfrcrange="-40 40"/>
+            <body name="leg2_shell_2" pos="-0.1575 -0.00012 0.0275" quat="-1.22475e-07 -0.707107 1.22474e-07 -0.707107">
+                <inertial pos="0 0.000532 -0.137308" quat="0.707085 -0.00556072 0.00556072 0.707085" mass="1.82092" diaginertia="0.00422553 0.003118 0.00206347"/>
+                <joint name="right_hip_yaw_03" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708" actuatorfrcrange="-40 40"/>
+                <body name="leg3_shell11" pos="0 -0.027 -0.1425" quat="0.707107 0.707107 0 0">
+                <inertial pos="-0.001098 -0.131322 -0.023162" quat="0.644447 0.639764 -0.299254 0.29298" mass="1.10996" diaginertia="0.00676042 0.00672628 0.0010123"/>
+                <joint name="right_knee_04" pos="0 0 0" axis="0 0 -1" range="-2.0944 0" actuatorfrcrange="-60 60"/>
+                <geom name="leg3_shell11.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="leg3_shell11.collision"/>
+                <body name="foot3" pos="0 -0.3 -0.0355" quat="0 -1.73205e-07 1 -1.73205e-07">
+                    <inertial pos="0.02135 -0.019419 -0.023724" quat="0.505314 0.504954 0.504496 0.484937" mass="0.582091" diaginertia="0.00218891 0.00202456 0.000282532"/>
+                    <joint name="right_ankle_02" pos="0 0 0" axis="0 0 1" range="-0.698132 0.698132" actuatorfrcrange="-17 17" frictionloss="0.1"/>
+                    <geom name="foot3.collision" type="mesh" rgba="0.898039 0.917647 0.929412 1" mesh="foot3.collision"/>
+                </body>
+                </body>
+            </body>
+            </body>
+        </body>
+        </body>
+    </body>
+  </worldbody>
+
+    <actuator>
+    <motor name="left_hip_pitch_04" joint="left_hip_pitch_04" ctrllimited="true" ctrlrange="-60 60" gear="1" />
+    <motor name="left_hip_roll_03" joint="left_hip_roll_03" ctrllimited="true" ctrlrange="-40 40" gear="1" />
+    <motor name="left_hip_yaw_03" joint="left_hip_yaw_03" ctrllimited="true" ctrlrange="-40 40" gear="1" />
+    <motor name="left_knee_04" joint="left_knee_04" ctrllimited="true" ctrlrange="-60 60" gear="1" />
+    <motor name="left_ankle_02" joint="left_ankle_02" ctrllimited="true" ctrlrange="-17 17" gear="1" />
+    <motor name="right_hip_pitch_04" joint="right_hip_pitch_04" ctrllimited="true" ctrlrange="-60 60" gear="1" />
+    <motor name="right_hip_roll_03" joint="right_hip_roll_03" ctrllimited="true" ctrlrange="-40 40" gear="1" />
+    <motor name="right_hip_yaw_03" joint="right_hip_yaw_03" ctrllimited="true" ctrlrange="-40 40" gear="1" />
+    <motor name="right_knee_04" joint="right_knee_04" ctrllimited="true" ctrlrange="-60 60" gear="1" />
+    <motor name="right_ankle_02" joint="right_ankle_02" ctrllimited="true" ctrlrange="-17 17" gear="1" />
+  </actuator>
+
+  <sensor>
+    <actuatorpos name="left_hip_pitch_04_p" actuator="left_hip_pitch_04" />
+    <actuatorvel name="left_hip_pitch_04_v" actuator="left_hip_pitch_04" />
+    <actuatorfrc name="left_hip_pitch_04_f" actuator="left_hip_pitch_04" noise="0.001" />
+    <actuatorpos name="left_hip_roll_03_p" actuator="left_hip_roll_03" />
+    <actuatorvel name="left_hip_roll_03_v" actuator="left_hip_roll_03" />
+    <actuatorfrc name="left_hip_roll_03_f" actuator="left_hip_roll_03" noise="0.001" />
+    <actuatorpos name="left_hip_yaw_03_p" actuator="left_hip_yaw_03" />
+    <actuatorvel name="left_hip_yaw_03_v" actuator="left_hip_yaw_03" />
+    <actuatorfrc name="left_hip_yaw_03_f" actuator="left_hip_yaw_03" noise="0.001" />
+    <actuatorpos name="left_knee_04_p" actuator="left_knee_04" />
+    <actuatorvel name="left_knee_04_v" actuator="left_knee_04" />
+    <actuatorfrc name="left_knee_04_f" actuator="left_knee_04" noise="0.001" />
+    <actuatorpos name="left_ankle_02_p" actuator="left_ankle_02" />
+    <actuatorvel name="left_ankle_02_v" actuator="left_ankle_02" />
+    <actuatorfrc name="left_ankle_02_f" actuator="left_ankle_02" noise="0.001" />
+    <actuatorpos name="right_hip_pitch_04_p" actuator="right_hip_pitch_04" />
+    <actuatorvel name="right_hip_pitch_04_v" actuator="right_hip_pitch_04" />
+    <actuatorfrc name="right_hip_pitch_04_f" actuator="right_hip_pitch_04" noise="0.001" />
+    <actuatorpos name="right_hip_roll_03_p" actuator="right_hip_roll_03" />
+    <actuatorvel name="right_hip_roll_03_v" actuator="right_hip_roll_03" />
+    <actuatorfrc name="right_hip_roll_03_f" actuator="right_hip_roll_03" noise="0.001" />
+    <actuatorpos name="right_hip_yaw_03_p" actuator="right_hip_yaw_03" />
+    <actuatorvel name="right_hip_yaw_03_v" actuator="right_hip_yaw_03" />
+    <actuatorfrc name="right_hip_yaw_03_f" actuator="right_hip_yaw_03" noise="0.001" />
+    <actuatorpos name="right_knee_04_p" actuator="right_knee_04" />
+    <actuatorvel name="right_knee_04_v" actuator="right_knee_04" />
+    <actuatorfrc name="right_knee_04_f" actuator="right_knee_04" noise="0.001" />
+    <actuatorpos name="right_ankle_02_p" actuator="right_ankle_02" />
+    <actuatorvel name="right_ankle_02_v" actuator="right_ankle_02" />
+    <actuatorfrc name="right_ankle_02_f" actuator="right_ankle_02" noise="0.001" />
+    <framequat name="orientation" objtype="site" noise="0.001" objname="imu" />
+    <gyro name="angular-velocity" site="imu" noise="0.005" cutoff="34.9" />
+  </sensor>
+    <keyframe>
+    <key name="default" qpos="0 0 1.05 1. 0.0 0.0 0.0 0.23 0.0 0.0 0.441 -0.195 -0.23 0.0 0.0 -0.441 0.195"/>
+    <key name="standing" qpos="0 0 1.075 1. 0.0 0.0 0.0 0 0.0 0.0 0 0 0 0.0 0.0 0 0"/>
+  </keyframe>
+</mujoco>
