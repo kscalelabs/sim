@@ -72,7 +72,7 @@ class Robot(Node):
     legs = Legs()
 
     height = 1.05
-    standing_height = 1.05 + 0.025
+    standing_height = 1.05
     rotation = [0, 0, 0, 1]
 
     @classmethod
@@ -108,16 +108,16 @@ class Robot(Node):
     @classmethod
     def default_positions(cls) -> Dict[str, float]:
         return {
-            Robot.legs.left.hip_pitch: 0.0,
+            Robot.legs.left.hip_pitch: 0.23,
             Robot.legs.left.hip_yaw: 0.0,
             Robot.legs.left.hip_roll: 0.0,
-            Robot.legs.left.knee_pitch: 0.0,
-            Robot.legs.left.ankle_pitch: 0.0,
-            Robot.legs.right.hip_pitch: 0.0,
+            Robot.legs.left.knee_pitch: 0.441,
+            Robot.legs.left.ankle_pitch: -0.195,
+            Robot.legs.right.hip_pitch: -0.23,
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
-            Robot.legs.right.knee_pitch: 0.0,
-            Robot.legs.right.ankle_pitch: 0.0,
+            Robot.legs.right.knee_pitch: -0.441,
+            Robot.legs.right.ankle_pitch: 0.195,
         }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
@@ -151,8 +151,8 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 250,
-            "03": 120,
+            "04": 150,
+            "03": 80,
             "02": 40,
         }
 
@@ -168,9 +168,9 @@ class Robot(Node):
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "04": 5,
-            "03": 5,
-            "02": 5,
+            "04": 10,
+            "03": 8,
+            "02": 2,
         }
 
     @classmethod

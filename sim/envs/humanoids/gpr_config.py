@@ -155,11 +155,11 @@ class GprCfg(LeggedRobotCfg):
         torque_multiplier_range = [0.8, 1.2]
 
         # Latency randomization
-        add_cmd_action_latency = True  # Enable action latency
+        add_cmd_action_latency = False  # Enable action latency
         randomize_cmd_action_latency = True  # Randomize the latency amount
         range_cmd_action_latency = [0, 2]  # Range of latency in simulation steps
 
-        add_obs_latency = True  # Enable observation latency
+        add_obs_latency = False  # Enable observation latency
         randomize_obs_motor_latency = True  # Randomize motor sensor latency
         range_obs_motor_latency = [0, 5] #[0, 10]  # Range of motor latency in simulation steps
         randomize_obs_imu_latency = True  # Randomize IMU sensor latency
@@ -218,10 +218,10 @@ class GprCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.009
+            action_smoothness = -0.002
             torques = -1e-5
-            dof_vel = -1e-3  # -1e-3
-            dof_acc = -1e-6  # -2.5e-7
+            dof_vel = -5e-4  # -1e-3
+            dof_acc = -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:
@@ -272,10 +272,10 @@ class GprStandingCfg(GprCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.01
-            torques = -1e-5
-            dof_vel = -2-3  # -1e-3
-            dof_acc = -2e-6  # -2.5e-7
+            action_smoothness = -0.004
+            torques = -2e-5
+            dof_vel = -5e-4  # -1e-3
+            dof_acc = -2e-7  # -2.5e-7
             collision = -1.0
 
 
