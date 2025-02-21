@@ -284,6 +284,71 @@ class LeggedRobot(BaseTask):
                 self.dof_vel_limits[i] = props["velocity"][i].item() * self.cfg.safety.vel_limit
                 self.torque_limits[i] = props["effort"][i].item() * self.cfg.safety.torque_limit
 
+        # torque randomization
+        if self.cfg.domain_rand.randomize_calculated_torque:
+            self.torque_multiplier[env_id, :] = torch_rand_float(
+                self.cfg.domain_rand.torque_multiplier_range[0],
+                self.cfg.domain_rand.torque_multiplier_range[1],
+                (1, self.num_actions),
+                device=self.device,
+            )
+
+        # motor zero calibration randomization
+        if self.cfg.domain_rand.randomize_motor_zero_offset:
+            self.motor_zero_offsets[env_id, :] = torch_rand_float(
+                self.cfg.domain_rand.motor_zero_offset_range[0],
+                self.cfg.domain_rand.motor_zero_offset_range[1],
+                (1, self.num_actions),
+                device=self.device,
+            )
+
+        # motor pd gains randomization
+        if self.cfg.domain_rand.randomize_pd_gains:
+            self.p_gains_multiplier[env_id, :] = torch_rand_float(
+                self.cfg.domain_rand.stiffness_multiplier_range[0],
+                self.cfg.domain_rand.stiffness_multiplier_range[1],
+                (1, self.num_actions),
+                device=self.device,
+            )
+            self.d_gains_multiplier[env_id, :] = torch_rand_float(
+                self.cfg.domain_rand.damping_multiplier_range[0],
+                self.cfg.domain_rand.damping_multiplier_range[1],
+                (1, self.num_actions),
+                device=self.device,
+            )
+
+        # motor frictions randomization
+        if self.cfg.domain_rand.randomize_joint_friction:
+            self.joint_friction_coeffs[env_id, 0] = torch_rand_float(
+                self.cfg.domain_rand.joint_friction_range[0],
+                self.cfg.domain_rand.joint_friction_range[1],
+                (1, 1),
+                device=self.device,
+            )
+
+        # motor dampings randomization
+        if self.cfg.domain_rand.randomize_joint_damping:
+            self.joint_damping_coeffs[env_id, 0] = torch_rand_float(
+                self.cfg.domain_rand.joint_damping_range[0],
+                self.cfg.domain_rand.joint_damping_range[1],
+                (1, 1),
+                device=self.device,
+            )
+
+        # motor armature randomization
+        if self.cfg.domain_rand.randomize_joint_armature:
+            self.joint_armatures[env_id, 0] = torch_rand_float(
+                self.cfg.domain_rand.joint_armature_range[0],
+                self.cfg.domain_rand.joint_armature_range[1],
+                (1, 1),
+                device=self.device,
+            )
+
+        for i in range(len(props)):
+            props["friction"][i] *= self.joint_friction_coeffs[env_id, 0]
+            props["damping"][i] *= self.joint_damping_coeffs[env_id, 0]
+            props["armature"][i] = self.joint_armatures[env_id, 0]
+
         return props
 
     def _process_rigid_body_props(self, props, env_id):
@@ -291,6 +356,18 @@ class LeggedRobot(BaseTask):
         if self.cfg.domain_rand.randomize_base_mass:
             rng = self.cfg.domain_rand.added_mass_range
             props[0].mass += np.random.uniform(rng[0], rng[1])
+
+        # randomize link masses
+        if self.cfg.domain_rand.randomize_link_mass:
+            self.link_mass_multiplier = torch_rand_float(
+                self.cfg.domain_rand.link_mass_multiplier_range[0],
+                self.cfg.domain_rand.link_mass_multiplier_range[1],
+                (1, self.num_bodies - 1),
+                device=self.device,
+            )
+
+            for i in range(1, len(props)):
+                props[i].mass *= self.link_mass_multiplier[0, i - 1]
 
         for prop in props:
             self.body_mass[env_id] += prop.mass
@@ -539,6 +616,19 @@ class LeggedRobot(BaseTask):
         self.last_last_actions = torch.zeros(
             self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
         )
+        self.torque_multiplier = torch.ones(
+            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+        )
+        self.motor_zero_offsets = torch.zeros(
+            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+        )
+        self.p_gains_multiplier = torch.ones(
+            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+        )
+        self.d_gains_multiplier = torch.ones(
+            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+        )
+
         self.last_rigid_state = torch.zeros_like(self.rigid_state)
         self.last_dof_vel = torch.zeros_like(self.dof_vel)
         self.last_root_vel = torch.zeros_like(self.root_states[:, 7:13])
@@ -605,6 +695,29 @@ class LeggedRobot(BaseTask):
                     self.num_envs, self.cfg.env.single_num_privileged_obs, dtype=torch.float, device=self.device
                 )
             )
+
+        # Latency buffers
+        self.cmd_action_latency_buffer = torch.zeros(
+            self.num_envs, self.num_actions, self.cfg.domain_rand.range_cmd_action_latency[1] + 1, device=self.device
+        )
+        self.obs_motor_latency_buffer = torch.zeros(
+            self.num_envs, self.num_actions * 2, self.cfg.domain_rand.range_obs_motor_latency[1] + 1, device=self.device
+        )
+        self.obs_imu_latency_buffer = torch.zeros(
+            self.num_envs, 6, self.cfg.domain_rand.range_obs_imu_latency[1] + 1, device=self.device
+        )
+        self.cmd_action_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        self.obs_motor_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+        self.obs_imu_latency_simstep = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
+
+        self.p_gains_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
+        self.d_gains_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
+        self.torque_multiplier = torch.ones((self.num_envs, self.num_actions), device=self.device)
+        self.motor_zero_offsets = torch.zeros((self.num_envs, self.num_actions), device=self.device)
+        self.joint_friction_coeffs = torch.ones((self.num_envs, 1), device=self.device)
+        self.joint_damping_coeffs = torch.ones((self.num_envs, 1), device=self.device)
+        self.joint_armatures = torch.zeros((self.num_envs, 1), device=self.device)
+        self.env_frictions = torch.ones((self.num_envs, 1), device=self.device)
 
     def _prepare_reward_function(self):
         """Prepares a list of reward functions, which will be called to compute the total reward.
@@ -754,6 +867,29 @@ class LeggedRobot(BaseTask):
         self.env_frictions = torch.zeros(self.num_envs, 1, dtype=torch.float32, device=self.device)
 
         self.body_mass = torch.zeros(self.num_envs, 1, dtype=torch.float32, device=self.device, requires_grad=False)
+
+        self.joint_friction_coeffs = torch.ones(
+            self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False
+        )
+
+        self.joint_damping_coeffs = torch.ones(
+            self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False
+        )
+
+        self.joint_armatures = torch.zeros(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False)
+
+        self.torque_multiplier = torch.ones(
+            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+        )
+        self.motor_zero_offsets = torch.zeros(
+            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+        )
+        self.p_gains_multiplier = torch.ones(
+            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+        )
+        self.d_gains_multiplier = torch.ones(
+            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+        )
 
         for i in range(self.num_envs):
             # create env instance
