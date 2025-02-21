@@ -20,6 +20,8 @@ from sim.envs.humanoids.xbot_config import XBotCfg, XBotCfgPPO
 from sim.envs.humanoids.xbot_env import XBotLFreeEnv
 from sim.envs.humanoids.zbot2_config import ZBot2Cfg, ZBot2CfgPPO, ZBot2StandingCfg
 from sim.envs.humanoids.zbot2_env import ZBot2Env
+from sim.envs.humanoids.k2_config import K2Cfg, K2CfgPPO, K2StandingCfg
+from sim.envs.humanoids.k2_env import K2FreeEnv
 from sim.utils.task_registry import TaskRegistry  # noqa: E402
 
 task_registry = TaskRegistry()
@@ -31,3 +33,5 @@ task_registry.register("g1", G1FreeEnv, G1Cfg(), G1CfgPPO())
 task_registry.register("XBotL_free", XBotLFreeEnv, XBotCfg(), XBotCfgPPO())
 task_registry.register("zbot2", ZBot2Env, ZBot2Cfg(), ZBot2CfgPPO())
 task_registry.register("zbot2_standing", ZBot2Env, ZBot2StandingCfg(), ZBot2CfgPPO())
+task_registry.register("k2", K2FreeEnv, K2Cfg(), K2CfgPPO())
+task_registry.register("k2_standing", K2FreeEnv, K2StandingCfg(), K2CfgPPO())
