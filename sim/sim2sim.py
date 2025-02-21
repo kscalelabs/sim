@@ -127,6 +127,7 @@ def run_mujoco(
     sim_duration: float = 60.0,
     h5_out_dir: str = "sim/resources",
     terrain: bool = False,
+    default_pos: str = "default",
 ) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
@@ -160,8 +161,8 @@ def run_mujoco(
     kps = np.array([300, 120, 120, 300, 40, 300, 120, 120, 300, 40])
     kds = np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5])
     try:
-        data.qpos = model.keyframe("default").qpos
-        default = deepcopy(model.keyframe("default").qpos)[-model_info["num_actions"] :]
+        data.qpos = model.keyframe(default_pos).qpos
+        default = deepcopy(model.keyframe(default_pos).qpos)[-model_info["num_actions"] :]
         print("Default position:", default)
     except:
         print("No default position found, using zero initialization")
@@ -293,6 +294,7 @@ if __name__ == "__main__":
     parser.add_argument("--h5_out_dir", type=str, default="sim/resources", help="Directory to save HDF5 files")
     parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
     parser.add_argument("--terrain", action="store_true", help="terrain")
+    parser.add_argument("--default_pos", type=str, default="default", help="default_pos")
     parser.set_defaults(render=True, terrain=False)
     
     args = parser.parse_args()
@@ -326,4 +328,5 @@ if __name__ == "__main__":
         render=args.render,
         h5_out_dir=args.h5_out_dir,
         terrain=args.terrain,
+        default_pos=args.default_pos,
     )

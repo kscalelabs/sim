@@ -128,10 +128,9 @@ class GprCfg(LeggedRobotCfg):
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
-        randomize_pd_gains = False
 
         randomize_base_mass = True
-        added_mass_range = [-1.0, 1.0]# [-2.0, 2.0]
+        added_mass_range = [-2.0, 2.0]# [-2.0, 2.0]
 
         randomize_link_mass = True
         link_mass_multiplier_range = [0.9, 1.1]# [0.8, 1.2]
@@ -273,10 +272,10 @@ class GprStandingCfg(GprCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.009
+            action_smoothness = -0.01
             torques = -1e-5
-            dof_vel = -1e-3  # -1e-3
-            dof_acc = -1e-6  # -2.5e-7
+            dof_vel = -2-3  # -1e-3
+            dof_acc = -2e-6  # -2.5e-7
             collision = -1.0
 
 

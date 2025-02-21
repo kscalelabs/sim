@@ -4,7 +4,7 @@
   <joint name="floating_base_joint" type="fixed">
     <parent link="floating_base_link"/>
     <child link="KB_B_102B_TORSO_BOTTOM"/>
-    <origin xyz="0 0 0" rpy="0.00 0.00 0.00"/>
+    <origin xyz="0 0 0" rpy="0.00 0.00 -1.570796"/>
   </joint>
   <joint name="right_shoulder_pitch_03" type="revolute">
     <origin xyz="0.120950 -0.000737 0.337507" rpy="-1.570796 0 1.570796"/>
