@@ -250,6 +250,10 @@ class GprStandingCfg(GprCfg):
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
+        default_positions = Robot.default_standing()
+        for joint in default_positions:
+            default_joint_angles[joint] = default_positions[joint]
+
     class rewards:
         # quite important to keep it right
         base_height_target = Robot.standing_height
