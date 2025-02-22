@@ -62,13 +62,16 @@ class LeggedRobot(BaseTask):
         # step physics and render each frame
         self.render()
         for _ in range(self.cfg.control.decimation):
-            self.torques = self._compute_torques(self.actions).view(self.torques.shape)
+            action_delayed = self.update_cmd_action_latency_buffer()
+            self.torques = self._compute_torques(action_delayed).view(self.torques.shape)
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
 
             self.gym.simulate(self.sim)
             if self.device == "cpu":
                 self.gym.fetch_results(self.sim, True)
             self.gym.refresh_dof_state_tensor(self.sim)
+            self.update_obs_latency_buffer()
+
         self.post_physics_step()
 
         # return clipped obs, clipped states (None), rewards, dones and infos
@@ -179,6 +182,10 @@ class LeggedRobot(BaseTask):
         self.feet_air_time[env_ids] = 0.0
         self.episode_length_buf[env_ids] = 0
         self.reset_buf[env_ids] = 1
+
+        # reset latency buffers and randomization
+        self._reset_latency_buffer(env_ids)
+
         # fill extras
         self.extras["episode"] = {}
         for key in self.episode_sums.keys():
@@ -718,6 +725,8 @@ class LeggedRobot(BaseTask):
         self.joint_damping_coeffs = torch.ones((self.num_envs, 1), device=self.device)
         self.joint_armatures = torch.zeros((self.num_envs, 1), device=self.device)
         self.env_frictions = torch.ones((self.num_envs, 1), device=self.device)
+ 
+        self._reset_latency_buffer(torch.arange(self.num_envs, device=self.device))
 
     def _prepare_reward_function(self):
         """Prepares a list of reward functions, which will be called to compute the total reward.

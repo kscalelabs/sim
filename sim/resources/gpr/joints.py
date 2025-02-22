@@ -151,61 +151,111 @@ class Robot(Node):
     @classmethod
     def stiffness(cls) -> Dict[str, float]:
         return {
-            "04": 150,
-            "03": 80,
-            "02": 40,
+            "left_hip_pitch_04": 300,
+            "left_hip_roll_03": 300,
+            "left_hip_yaw_03": 100,
+            "left_knee_04": 200,
+            "left_ankle_02": 50,
+            "right_hip_pitch_04": 300,
+            "right_hip_roll_03": 300,
+            "right_hip_yaw_03": 100,
+            "right_knee_04": 200,
+            "right_ankle_02": 50,
         }
 
     @classmethod
     def stiffness_mapping(cls) -> Dict[str, float]:
-        mapping = {}
-        stiffness = cls.stiffness()
-        for joint in cls.joint_names():
-            mapping[joint] = stiffness[joint[-2:]]
+        mapping = {
+            "left_hip_pitch_04": 300,
+            "left_hip_roll_03": 300,
+            "left_hip_yaw_03": 100,
+            "left_knee_04": 200,
+            "left_ankle_02": 50,
+            "right_hip_pitch_04": 300,
+            "right_hip_roll_03": 300,
+            "right_hip_yaw_03": 100,
+            "right_knee_04": 200,
+            "right_ankle_02": 50,
+        }
         return mapping
 
     # d_gains
     @classmethod
     def damping(cls) -> Dict[str, float]:
         return {
-            "04": 10,
-            "03": 8,
-            "02": 2,
+            "left_hip_pitch_04": 5,
+            "left_hip_roll_03": 5,
+            "left_hip_yaw_03": 5,
+            "left_knee_04": 5,
+            "left_ankle_02": 1,
+            "right_hip_pitch_04": 5,
+            "right_hip_roll_03": 5,
+            "right_hip_yaw_03": 5,
+            "right_knee_04": 5,
+            "right_ankle_02": 1,
         }
 
     @classmethod
     def damping_mapping(cls) -> Dict[str, float]:
-        mapping = {}
-        damping = cls.damping()
-        for joint in cls.joint_names():
-            mapping[joint] = damping[joint[-2:]]
-        print(mapping)
+        mapping = {
+            "left_hip_pitch_04": 5,
+            "left_hip_roll_03": 5,
+            "left_hip_yaw_03": 5,
+            "left_knee_04": 5,
+            "left_ankle_02": 1,
+            "right_hip_pitch_04": 5,
+            "right_hip_roll_03": 5,
+            "right_hip_yaw_03": 5,
+            "right_knee_04": 5,
+            "right_ankle_02": 1,
+        }
         return mapping
 
     # effort_limits
     @classmethod
     def effort(cls) -> Dict[str, float]:
         return {
-            "04": 60,
-            "03": 40,
-            "02": 17,
+            "left_hip_pitch_04": 60,
+            "left_hip_roll_03": 40,
+            "left_hip_yaw_03": 17,
+            "left_knee_04": 60,
+            "left_ankle_02": 17,
+            "right_hip_pitch_04": 60,
+            "right_hip_roll_03": 40,
+            "right_hip_yaw_03": 17,
+            "right_knee_04": 60,
+            "right_ankle_02": 17,
         }
 
     # vel_limits
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
-            "04": 18,
-            "03": 18,
-            "02": 18,
+            "left_hip_pitch_04": 18,
+            "left_hip_roll_03": 18,
+            "left_hip_yaw_03": 18,
+            "left_knee_04": 18,
+            "left_ankle_02": 18,
+            "right_hip_pitch_04": 18,
+            "right_hip_roll_03": 18,
+            "right_hip_yaw_03": 18,
+            "right_knee_04": 18,
+            "right_ankle_02": 18,
         }
 
     @classmethod
     def friction(cls) -> Dict[str, float]:
         return {
-            "04": 0,
-            "03": 0,
-            "02": 0.1,
+            "left_hip_pitch_04": 0,
+            "left_hip_roll_03": 0,
+            "left_hip_yaw_03": 0,
+            "left_knee_04": 0,
+            "left_ankle_02": 0.1,
+            "right_hip_pitch_04": 0,
+            "right_hip_roll_03": 0,
+            "right_hip_yaw_03": 0,
+            "right_knee_04": 0,
+            "right_ankle_02": 0.1,
         }
 
 
