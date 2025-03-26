@@ -279,7 +279,7 @@ def run_mujoco(
         tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
 
         data.ctrl = tau
-        
+
         mujoco.mj_step(model, data)
 
         if render:

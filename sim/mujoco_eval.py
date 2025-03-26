@@ -565,7 +565,7 @@ class BayesianOptimizer:
         best_value = float("-inf")
 
         for i in range(n_iterations):
-            print(f"\nIteration {i+1}/{n_iterations}")
+            print(f"\nIteration {i + 1}/{n_iterations}")
 
             # Get next points to evaluate
             next_points = self._get_next_points(n_points=1)

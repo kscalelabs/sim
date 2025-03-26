@@ -33,3 +33,4 @@ isaacgym/
 
 # dev
 ref/
+*.csv

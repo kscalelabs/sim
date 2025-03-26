@@ -17,12 +17,12 @@ class GprHeadlessCfg(LeggedRobotCfg):
         # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
-        num_single_obs = 8 + NUM_JOINTS * 4 # 2 for past actions, 1 for dof pos, 1 for dof vel
+        num_single_obs = 8 + NUM_JOINTS * 4  # 2 for past actions, 1 for dof pos, 1 for dof vel
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 25 + NUM_JOINTS * 5 # 2 for past actions, 1 for dof pos, 1 for dof vel, 1 for diff
+        single_num_privileged_obs = 25 + NUM_JOINTS * 5  # 2 for past actions, 1 for dof pos, 1 for dof vel, 1 for diff
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_joints = NUM_JOINTS
-        num_actions = NUM_JOINTS*2
+        num_actions = NUM_JOINTS * 2
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
@@ -89,7 +89,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height+0.025]
+        pos = [0.0, 0.0, Robot.height + 0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
@@ -136,8 +136,8 @@ class GprHeadlessCfg(LeggedRobotCfg):
         push_robots = True
         push_random_interval_min = 1.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 1.0 # 1.2 # 0.4
-        max_push_ang_vel = 1.0 # 1.2 # 0.4
+        max_push_vel_xy = 1.0  # 1.2 # 0.4
+        max_push_ang_vel = 1.0  # 1.2 # 0.4
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
@@ -164,7 +164,7 @@ class GprHeadlessCfg(LeggedRobotCfg):
         target_joint_pos_scale = 0.24  # rad
         target_feet_height = 0.06  # m
 
-        cycle_time = 0.4 # sec
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -174,9 +174,9 @@ class GprHeadlessCfg(LeggedRobotCfg):
         class scales:
             termination = -10.0
             # reference motion tracking
-            joint_pos = 1.2 # 1.6
-            feet_clearance = 0.8 # 1.2
-            feet_contact_number = 0.8 # 0.8 # 1.4
+            joint_pos = 1.2  # 1.6
+            feet_clearance = 0.8  # 1.2
+            feet_contact_number = 0.8  # 0.8 # 1.4
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
@@ -224,7 +224,7 @@ class GprHeadlessStandingCfg(GprHeadlessCfg):
     """Configuration class for the GPR humanoid robot."""
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.standing_height+0.025]
+        pos = [0.0, 0.0, Robot.standing_height + 0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 

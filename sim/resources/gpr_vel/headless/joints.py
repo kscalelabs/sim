@@ -71,8 +71,8 @@ class Legs(Node):
 class Robot(Node):
     legs = Legs()
 
-    height = 1.05 #- 0.151 #maybe?
-    standing_height = 1.05 + 0.025 #- 0.151
+    height = 1.05  # - 0.151 #maybe?
+    standing_height = 1.05 + 0.025  # - 0.151
 
     # height = 1.04
     # standing_height = 1.04 + 0.025

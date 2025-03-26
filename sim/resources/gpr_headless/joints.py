@@ -128,13 +128,13 @@ class Robot(Node):
             Robot.legs.left.hip_pitch: 0.23,
             Robot.legs.left.hip_yaw: 0.0,
             Robot.legs.left.hip_roll: 0.0,
-            Robot.legs.left.knee_pitch: 0.441, # negated
+            Robot.legs.left.knee_pitch: 0.441,  # negated
             Robot.legs.left.ankle_pitch: -0.195,
             Robot.legs.right.hip_pitch: -0.23,
             Robot.legs.right.hip_yaw: 0.0,
             Robot.legs.right.hip_roll: 0.0,
             Robot.legs.right.knee_pitch: -0.441,
-            Robot.legs.right.ankle_pitch: 0.195, # negated
+            Robot.legs.right.ankle_pitch: 0.195,  # negated
         }
 
     # CONTRACT - this should be ordered according to how the policy is trained.
@@ -201,7 +201,7 @@ class Robot(Node):
         for joint in cls.joint_names():
             mapping[joint] = effort[joint[-2:]]
         return mapping
-    
+
     @classmethod
     def velocity(cls) -> Dict[str, float]:
         return {
@@ -209,7 +209,6 @@ class Robot(Node):
             "03": 18.0,
             "02": 18.0,
         }
-            
 
     @classmethod
     def friction(cls) -> Dict[str, float]:

@@ -20,7 +20,7 @@ class GprLatencyCfg(LeggedRobotCfg):
         frame_stack = 15  # 15 # actor
         c_frame_stack = 3  # critic
         # num_single_obs = 8 + NUM_JOINTS * 4 + 3  # ang vel
-        num_single_obs = 8 + NUM_JOINTS * 4 # no ang vel
+        num_single_obs = 8 + NUM_JOINTS * 4  # no ang vel
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 5
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -49,13 +49,23 @@ class GprLatencyCfg(LeggedRobotCfg):
         knee_name = ["leg3_shell2", "leg3_shell22"]
         imu_name = "imu_link"
 
-        termination_height = 0.8 # 0.4 # 0.3 
+        termination_height = 0.8  # 0.4 # 0.3
         default_feet_height = 0.0
 
-        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2", "arm2_shell", "arm2_shell_2",
-                                       "arm3_shell", "arm3_shell2", "hand_shell", "hand_shell_2",
-                                       "leg0_shell", "leg0_shell_2"
-                                       ]
+        terminate_after_contacts_on = [
+            "shoulder",
+            "shoulder_2",
+            "arm1_top",
+            "arm1_top_2",
+            "arm2_shell",
+            "arm2_shell_2",
+            "arm3_shell",
+            "arm3_shell2",
+            "hand_shell",
+            "hand_shell_2",
+            "leg0_shell",
+            "leg0_shell_2",
+        ]
 
         # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
 
@@ -84,7 +94,7 @@ class GprLatencyCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.6 # 1.5  # 0.6  # scales other values
+        noise_level = 0.6  # 1.5  # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
@@ -146,8 +156,8 @@ class GprLatencyCfg(LeggedRobotCfg):
         push_robots = True
         push_random_interval_min = 1.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 1.2 # 0.2
-        max_push_ang_vel = 1.2 # 0.4
+        max_push_vel_xy = 1.2  # 0.2
+        max_push_ang_vel = 1.2  # 0.4
 
         # dynamic randomization
         action_noise = 0.02
@@ -218,9 +228,9 @@ class GprLatencyCfg(LeggedRobotCfg):
         class scales:
             termination = -10.0
             # reference motion tracking
-            joint_pos = 1.2 # 1.6
+            joint_pos = 1.2  # 1.6
             feet_clearance = 1.2
-            feet_contact_number = 0.8 # 1.0  # 1.2
+            feet_contact_number = 0.8  # 1.0  # 1.2
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05

@@ -17,12 +17,12 @@ class GprVelCfg(LeggedRobotCfg):
         # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
-        num_single_obs = 8 + NUM_JOINTS * 4 # 2 for past actions, 1 for dof pos, 1 for dof vel
+        num_single_obs = 8 + NUM_JOINTS * 4  # 2 for past actions, 1 for dof pos, 1 for dof vel
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 25 + NUM_JOINTS * 5 # 2 for past actions, 1 for dof pos, 1 for dof vel, 1 for diff
+        single_num_privileged_obs = 25 + NUM_JOINTS * 5  # 2 for past actions, 1 for dof pos, 1 for dof vel, 1 for diff
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
         num_joints = NUM_JOINTS
-        num_actions = NUM_JOINTS*2
+        num_actions = NUM_JOINTS * 2
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
@@ -50,7 +50,7 @@ class GprVelCfg(LeggedRobotCfg):
         #                                "arm2_shell_2", "arm2_shell", "arm3_shell2", "arm3_shell",
         #                                "hand_shell", "hand_shell_2"]
 
-        termination_height = 0.5 # 0.2
+        termination_height = 0.5  # 0.2
         default_feet_height = 0.0
 
         penalize_contacts_on = []
@@ -78,18 +78,18 @@ class GprVelCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 1.25 # 1.5 # 1.2 # 0.6  # scales other values
+        noise_level = 1.25  # 1.5 # 1.2 # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 1.8 # 2.0 # 2.5 #0.5
+            dof_vel = 1.8  # 2.0 # 2.5 #0.5
             ang_vel = 0.1
             lin_vel = 0.05
-            quat = 0.05 # 0.06 # 0.03
+            quat = 0.05  # 0.06 # 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height+0.025]
+        pos = [0.0, 0.0, Robot.height + 0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
@@ -105,7 +105,7 @@ class GprVelCfg(LeggedRobotCfg):
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 20  # 50hz
-        pd_decimation = 1 # 1000hz
+        pd_decimation = 1  # 1000hz
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -127,19 +127,19 @@ class GprVelCfg(LeggedRobotCfg):
             contact_collection = 2
 
     class domain_rand(LeggedRobotCfg.domain_rand):
-        start_pos_noise = 0.3 # 0.1
+        start_pos_noise = 0.3  # 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-3.0, 3.0] # [-2.0, 2.0]
+        added_mass_range = [-3.0, 3.0]  # [-2.0, 2.0]
         push_robots = True
         push_random_interval_min = 2.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 1.5 # 1.8 # 1.5 # 0.4
-        max_push_ang_vel = 1.5 # 1.8 # 1.5 # 0.4
+        max_push_vel_xy = 1.5  # 1.8 # 1.5 # 0.4
+        max_push_ang_vel = 1.5  # 1.8 # 1.5 # 0.4
         # dynamic randomization
-        action_noise = 0.05 # 0.02
+        action_noise = 0.05  # 0.02
         action_delay = 0.5
         randomize_pd_gains = False
 
@@ -164,7 +164,7 @@ class GprVelCfg(LeggedRobotCfg):
         target_joint_pos_scale = 0.24  # rad
         target_feet_height = 0.06  # m
 
-        cycle_time = 0.4 # sec
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -174,9 +174,9 @@ class GprVelCfg(LeggedRobotCfg):
         class scales:
             termination = -10.0
             # reference motion tracking
-            joint_pos = 0.8 # 1.6
-            feet_clearance = 0.8 # 1.2
-            feet_contact_number = 0.8 # 0.8 # 1.4
+            joint_pos = 0.8  # 1.6
+            feet_clearance = 0.8  # 1.2
+            feet_contact_number = 0.8  # 0.8 # 1.4
             # gait
             feet_air_time = 1.2
             foot_slip = -0.05
@@ -196,10 +196,10 @@ class GprVelCfg(LeggedRobotCfg):
             base_height = 0.2
             base_acc = 0.2
             # energy
-            action_smoothness = -0.004 # -0.002
+            action_smoothness = -0.004  # -0.002
             torques = -4e-5
             dof_vel = -5e-4  # -1e-3
-            dof_acc = -2e-6 # -2.5e-7  # -1e-7  # -2.5e-7
+            dof_acc = -2e-6  # -2.5e-7  # -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:
@@ -224,7 +224,7 @@ class GprVelStandingCfg(GprVelCfg):
     """Configuration class for the GPR humanoid robot."""
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.standing_height+0.025]
+        pos = [0.0, 0.0, Robot.standing_height + 0.025]
         rot = Robot.rotation
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 

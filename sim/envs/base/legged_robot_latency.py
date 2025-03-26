@@ -173,7 +173,6 @@ class LeggedRobotLatency(BaseTask):
         #     self.p_gains[env_ids] = self.original_p_gains[env_ids] + torch.randn_like(self.p_gains[env_ids]) * self.cfg.domain_rand.stiffness_multiplier_range[1]
         #     self.d_gains[env_ids] = self.original_d_gains[env_ids] + torch.randn_like(self.d_gains[env_ids]) * self.cfg.domain_rand.damping_multiplier_range[1]
 
-
         # reset robot states
         self._reset_dofs(env_ids)
 

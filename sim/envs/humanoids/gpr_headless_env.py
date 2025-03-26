@@ -5,9 +5,8 @@ from isaacgym.torch_utils import *  # isort:skip
 
 from sim.envs.base.legged_robot import LeggedRobot
 from sim.resources.gpr_headless.joints import Robot
-from sim.utils.terrain import HumanoidTerrain
 from sim.utils.math import wrap_to_pi
-
+from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
 
@@ -88,8 +87,8 @@ class GprHeadlessEnv(LeggedRobot):
         clip_actions = self.cfg.normalization.clip_actions
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
-        target_positions = self.actions[:,:self.cfg.env.num_actions//2]
-        target_velocities = self.actions[:,self.cfg.env.num_actions//2:]
+        target_positions = self.actions[:, : self.cfg.env.num_actions // 2]
+        target_velocities = self.actions[:, self.cfg.env.num_actions // 2 :]
         self.render()
         for _ in range(self.cfg.control.decimation):
             self.torques = self._compute_torques(target_positions, target_velocities).view(self.torques.shape)
@@ -129,21 +128,19 @@ class GprHeadlessEnv(LeggedRobot):
 
     def _push_robots(self, env_ids=None):
         """Randomly pushes the robots for specific environments.
-        
+
         If env_ids is None, push all environments; otherwise, push only for the provided indices.
         """
         max_vel = self.cfg.domain_rand.max_push_vel_xy
         max_push_angular = self.cfg.domain_rand.max_push_ang_vel
-        
+
         if env_ids is None:
             env_ids = torch.arange(self.num_envs, device=self.device)
-        
+
         # For the selected environments, sample random push forces and torques
-        self.rand_push_force[env_ids, :2] = torch_rand_float(
-            -max_vel, max_vel, (len(env_ids), 2), device=self.device
-        )
+        self.rand_push_force[env_ids, :2] = torch_rand_float(-max_vel, max_vel, (len(env_ids), 2), device=self.device)
         self.root_states[env_ids, 7:9] = self.rand_push_force[env_ids, :2]
-        
+
         self.rand_push_torque[env_ids] = torch_rand_float(
             -max_push_angular, max_push_angular, (len(env_ids), 3), device=self.device
         )
@@ -193,7 +190,7 @@ class GprHeadlessEnv(LeggedRobot):
         scale_2 = 2 * scale_1
         # left foot stance phase set to default joint pos
         sin_pos_l[sin_pos_l > 0] = 0
-   
+
         self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += -sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += -sin_pos_l * scale_2
         self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += sin_pos_l * scale_1
@@ -247,10 +244,12 @@ class GprHeadlessEnv(LeggedRobot):
         self.add_noise = self.cfg.noise.add_noise
         noise_scales = self.cfg.noise.noise_scales
         noise_vec[0:5] = 0.0  # commands
-        noise_vec[5:(num_joints + 5)] = noise_scales.dof_pos * self.obs_scales.dof_pos
-        noise_vec[(num_joints + 5):(2 * num_joints + 5)] = noise_scales.dof_vel * self.obs_scales.dof_vel
-        noise_vec[(2 * num_joints + 5):(4 * num_joints + 5)] = 0.0  # previous actions (now includes both pos and vel)
-        noise_vec[(4 * num_joints + 5):(4 * num_joints + 8)] = noise_scales.quat * self.obs_scales.quat  # projected_gravity
+        noise_vec[5 : (num_joints + 5)] = noise_scales.dof_pos * self.obs_scales.dof_pos
+        noise_vec[(num_joints + 5) : (2 * num_joints + 5)] = noise_scales.dof_vel * self.obs_scales.dof_vel
+        noise_vec[(2 * num_joints + 5) : (4 * num_joints + 5)] = 0.0  # previous actions (now includes both pos and vel)
+        noise_vec[(4 * num_joints + 5) : (4 * num_joints + 8)] = (
+            noise_scales.quat * self.obs_scales.quat
+        )  # projected_gravity
         return noise_vec
 
     def compute_observations(self):
@@ -579,7 +578,7 @@ class GprHeadlessEnv(LeggedRobot):
         )
         term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
         return term_1 + term_2 + term_3
-    
+
     def _reward_termination(self):
         """Returns a penalty for each environment that is terminated."""
         penalty = 1.0
@@ -592,8 +591,7 @@ class GprHeadlessEnv(LeggedRobot):
         self.next_push_steps = torch.empty(self.num_envs, dtype=torch.int64, device=self.device)
         for i in range(self.num_envs):
             random_interval_sec = random.uniform(
-                self.cfg.domain_rand.push_random_interval_min,
-                self.cfg.domain_rand.push_random_interval_max
+                self.cfg.domain_rand.push_random_interval_min, self.cfg.domain_rand.push_random_interval_max
             )
             self.next_push_steps[i] = self.common_step_counter + int(random_interval_sec / self.dt)
 
@@ -613,7 +611,7 @@ class GprHeadlessEnv(LeggedRobot):
             self.measured_heights = self._get_heights()
         if self.cfg.domain_rand.push_robots:
             # Initialize per-env push intervals if not done yet.
-            if not hasattr(self, 'next_push_steps'):
+            if not hasattr(self, "next_push_steps"):
                 self._initialize_push_intervals()
             # Determine which environments are due for a push
             envs_to_push = (self.common_step_counter >= self.next_push_steps).nonzero(as_tuple=False).flatten()
@@ -623,7 +621,6 @@ class GprHeadlessEnv(LeggedRobot):
                 # For each pushed environment, set a new random push time
                 for env_id in envs_to_push:
                     random_interval_sec = random.uniform(
-                        self.cfg.domain_rand.push_random_interval_min,
-                        self.cfg.domain_rand.push_random_interval_max
+                        self.cfg.domain_rand.push_random_interval_min, self.cfg.domain_rand.push_random_interval_max
                     )
                     self.next_push_steps[env_id] = self.common_step_counter + int(random_interval_sec / self.dt)

@@ -35,7 +35,6 @@ class ActorCfg:
     num_single_obs: int  # Number of single observation features
     clip_observations: float  # Clip observations to this value
     clip_actions: float  # Clip actions to this value
-    num_single_obs: int  # Number of single observations
     num_actions: int  # Number of actions
     num_joints: int  # Number of joints
     sim_dt: float  # Simulation time step
@@ -251,19 +250,20 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     dof_vel = torch.randn(a_model.num_joints)
     prev_actions = torch.randn(a_model.num_actions)
     projected_gravity = torch.randn(3)
-    ang_vel = torch.randn(3)
+    # ang_vel = torch.randn(3)
     buffer = a_model.get_init_buffer()
     # input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, ang_vel, buffer)
-    input_tensors = (x_vel,
-                     y_vel,
-                     rot,
-                     t,
-                     dof_pos,
-                     dof_vel,
-                     prev_actions,
-                     projected_gravity,
-                     buffer,
-                     )
+    input_tensors = (
+        x_vel,
+        y_vel,
+        rot,
+        t,
+        dof_pos,
+        dof_vel,
+        prev_actions,
+        projected_gravity,
+        buffer,
+    )
 
     # jit_model = torch.jit.script(a_model)
 

@@ -20,7 +20,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         frame_stack = 15  # 15 # actor
         c_frame_stack = 3  # critic
         # num_single_obs = 8 + NUM_JOINTS * 4 + 3  # ang vel
-        num_single_obs = 8 + NUM_JOINTS * 4 # no ang vel
+        num_single_obs = 8 + NUM_JOINTS * 4  # no ang vel
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 5
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -49,17 +49,30 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         knee_name = ["leg3_shell1", "leg3_shell11"]
         imu_name = "imu"
 
-        termination_height = 0.83 # 0.43 # 0.33
+        termination_height = 0.83  # 0.43 # 0.33
         default_feet_height = 0.0
 
         # terminate_after_contacts_on = ["arm1_top", "shoulder", "arm1_top_2", "shoulder_2"]
         # terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2"]
-        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2",
-                                       "arm2_shell", "arm2_shell_2", "arm3_shell", "arm3_shell2"
-                                       "hand_shell", "hand_shell_2", "leg0_shell", "leg0_shell_2",
-                                       "leg1_shell", "leg1_shell3", "leg2_shell",
-                                       "leg2_shell_2", "body1-part", "imu"]
-
+        terminate_after_contacts_on = [
+            "shoulder",
+            "shoulder_2",
+            "arm1_top",
+            "arm1_top_2",
+            "arm2_shell",
+            "arm2_shell_2",
+            "arm3_shell",
+            "arm3_shell2" "hand_shell",
+            "hand_shell_2",
+            "leg0_shell",
+            "leg0_shell_2",
+            "leg1_shell",
+            "leg1_shell3",
+            "leg2_shell",
+            "leg2_shell_2",
+            "body1-part",
+            "imu",
+        ]
 
         penalize_contacts_on = []
         self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
@@ -86,7 +99,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
 
     class noise:
         add_noise = True
-        noise_level = 0.3 # 1.5  # 0.6  # scales other values
+        noise_level = 0.3  # 1.5  # 0.6  # scales other values
 
         class noise_scales:
             dof_pos = 0.05
@@ -140,16 +153,16 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         friction_range = [0.1, 2.0]
 
         randomize_base_mass = True
-        added_mass_range = [-1.0, 1.0]# [-2.0, 2.0]
+        added_mass_range = [-1.0, 1.0]  # [-2.0, 2.0]
 
         randomize_link_mass = True
-        link_mass_multiplier_range = [0.9, 1.1]# [0.8, 1.2]
+        link_mass_multiplier_range = [0.9, 1.1]  # [0.8, 1.2]
 
         push_robots = True
         push_random_interval_min = 1.0
         push_random_interval_max = 4.0
-        max_push_vel_xy = 0.2 # 0.2
-        max_push_ang_vel = 0.4 # 0.4
+        max_push_vel_xy = 0.2  # 0.2
+        max_push_ang_vel = 0.4  # 0.4
 
         # dynamic randomization
         action_noise = 0.02
@@ -157,7 +170,7 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
         randomize_pd_gains = False
 
         randomize_motor_zero_offset = True
-        motor_zero_offset_range = [-0.015, 0.015] # [-0.035, 0.035]  # Offset to add to the motor angles
+        motor_zero_offset_range = [-0.015, 0.015]  # [-0.035, 0.035]  # Offset to add to the motor angles
 
         randomize_joint_friction = True
         joint_friction_range = [0.01, 1.15]
@@ -182,9 +195,9 @@ class GprHeadlessLatencyCfg(LeggedRobotCfg):
 
         add_obs_latency = True  # Enable observation latency
         randomize_obs_motor_latency = True  # Randomize motor sensor latency
-        range_obs_motor_latency = [0, 5] #[0, 10]  # Range of motor latency in simulation steps
+        range_obs_motor_latency = [0, 5]  # [0, 10]  # Range of motor latency in simulation steps
         randomize_obs_imu_latency = True  # Randomize IMU sensor latency
-        range_obs_imu_latency = [0, 5] #[0, 10]  # Range of IMU latency in simulation steps
+        range_obs_imu_latency = [0, 5]  # [0, 10]  # Range of IMU latency in simulation steps
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
