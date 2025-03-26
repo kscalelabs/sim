@@ -1,19 +1,19 @@
 """Script to convert weights to Rust-compatible format."""
 
+import importlib
 import re
 from dataclasses import dataclass, fields
 from io import BytesIO
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
-import onnx 
+import onnx
 import onnxruntime as ort
 import torch
 from torch import Tensor, nn
 from torch.distributions import Normal
-import importlib
 
 
-def load_embodiment(embodiment: str):  # noqa: ANN401
+def load_embodiment(embodiment: str) -> Any:  # noqa: ANN401
     # Dynamically import embodiment
     module_name = f"sim.resources.{embodiment}.joints"
     module = importlib.import_module(module_name)
@@ -32,10 +32,14 @@ class ActorCfg:
     dof_pos_scale: float  # Scale for joint positions
     dof_vel_scale: float  # Scale for joint velocities
     frame_stack: int  # Number of frames to stack for the policy input
+    num_single_obs: int  # Number of single observation features
     clip_observations: float  # Clip observations to this value
     clip_actions: float  # Clip actions to this value
+    num_actions: int  # Number of actions
+    num_joints: int  # Number of joints
     sim_dt: float  # Simulation time step
     sim_decimation: int  # Simulation decimation
+    pd_decimation: int  # PD decimation
     tau_factor: float  # Torque limit factor
     use_projected_gravity: bool  # Use projected gravity as IMU observation
 
@@ -57,7 +61,7 @@ class ActorCritic(nn.Module):
         mlp_input_dim_c = num_critic_obs
 
         # Policy function.
-        actor_layers = []
+        actor_layers: List[Union[nn.Linear, nn.Module]] = []
         actor_layers.append(nn.Linear(mlp_input_dim_a, actor_hidden_dims[0]))
         actor_layers.append(activation)
         for dim_i in range(len(actor_hidden_dims)):
@@ -69,7 +73,7 @@ class ActorCritic(nn.Module):
         self.actor = nn.Sequential(*actor_layers)
 
         # Value function.
-        critic_layers = []
+        critic_layers: List[Union[nn.Linear, nn.Module]] = []
         critic_layers.append(nn.Linear(mlp_input_dim_c, critic_hidden_dims[0]))
         critic_layers.append(activation)
         for dim_i in range(len(critic_hidden_dims)):
@@ -84,8 +88,7 @@ class ActorCritic(nn.Module):
         self.std = nn.Parameter(init_noise_std * torch.ones(num_actions))
         self.distribution = None
 
-        # Disable args validation for speedup.
-        Normal.set_default_validate_args = False
+        Normal.set_default_validate_args = False  # type: ignore[unused-ignore, assignment, method-assign]
 
 
 class Actor(nn.Module):
@@ -103,13 +106,15 @@ class Actor(nn.Module):
 
         # Policy config
         default_dof_pos_dict = self.robot.default_standing()
-        self.num_actions = len(self.robot.all_joints())
         self.frame_stack = cfg.frame_stack
+
+        self.num_actions = cfg.num_actions
+        self.num_joints = cfg.num_joints
 
         # 11 is the number of single observation features - 6 from IMU, 5 from command input
         # 9 is the number of single observation features - 3 from IMU(quat), 5 from command input
         # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        self.num_single_obs = 8 + self.num_actions * 3 # pfb30
+        self.num_single_obs = cfg.num_single_obs  # 11 + self.num_actions * 3  # pfb30
         self.num_observations = int(self.frame_stack * self.num_single_obs)
 
         self.policy = policy
@@ -145,6 +150,7 @@ class Actor(nn.Module):
         prev_actions: Tensor,  # previous actions taken by the model
         projected_gravity: Tensor,  # quaternion of the IMU
         # imu_euler_xyz: Tensor,  # euler angles of the IMU
+        # imu_ang_vel: Tensor,  # angular velocity of the IMU
         buffer: Tensor,  # buffer of previous observations
     ) -> Tuple[Tensor, Tensor, Tensor]:
         """Runs the actor model forward pass.
@@ -157,6 +163,7 @@ class Actor(nn.Module):
             dof_pos: The current angular position of the DoFs relative to default, with shape (num_actions).
             dof_vel: The current angular velocity of the DoFs, with shape (num_actions).
             prev_actions: The previous actions taken by the model, with shape (num_actions).
+            projected_gravity: The projected gravity vector, with shape (3), in meters per second squared.
             imu_ang_vel: The angular velocity of the IMU, with shape (3),
                 in radians per second. If IMU is not used, can be all zeros.
             imu_euler_xyz: The euler angles of the IMU, with shape (3),
@@ -173,7 +180,6 @@ class Actor(nn.Module):
         """
         sin_pos = torch.sin(2 * torch.pi * t / self.cycle_time)
         cos_pos = torch.cos(2 * torch.pi * t / self.cycle_time)
-
         # Construct command input
         command_input = torch.cat(
             (
@@ -190,10 +196,6 @@ class Actor(nn.Module):
         q = dof_pos * self.dof_pos_scale
         dq = dof_vel * self.dof_vel_scale
 
-        # if self.use_projected_gravity:
-        #     imu_observation = imu_euler_xyz
-        # else:
-        #     imu_observation = imu_euler_xyz * self.quat_scale
         # Construct new observation
         new_x = torch.cat(
             (
@@ -202,8 +204,7 @@ class Actor(nn.Module):
                 dq,
                 prev_actions,
                 projected_gravity,
-                # imu_ang_vel * self.ang_vel_scale,
-                # imu_observation,
+                # imu_ang_vel,
             ),
             dim=0,
         )
@@ -217,7 +218,6 @@ class Actor(nn.Module):
         x = x[self.num_single_obs :]
 
         policy_input = x.unsqueeze(0)
-
         # Get actions from the policy
         actions = self.policy(policy_input).squeeze(0)
         actions_scaled = actions * self.action_scale
@@ -226,7 +226,7 @@ class Actor(nn.Module):
 
 
 def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, Tuple[Tensor, ...]]:
-    all_weights = torch.load(model_path, map_location="cpu")#, weights_only=True)
+    all_weights = torch.load(model_path, map_location="cpu")
     weights = all_weights["model_state_dict"]
     num_actor_obs = weights["actor.0.weight"].shape[1]
     num_critic_obs = weights["critic.0.weight"].shape[1]
@@ -246,15 +246,26 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     y_vel = torch.randn(1)
     rot = torch.randn(1)
     t = torch.randn(1)
-    dof_pos = torch.randn(a_model.num_actions)
-    dof_vel = torch.randn(a_model.num_actions)
+    dof_pos = torch.randn(a_model.num_joints)
+    dof_vel = torch.randn(a_model.num_joints)
     prev_actions = torch.randn(a_model.num_actions)
-    projected_gravity = torch.randn(3) # pfb30
-    # imu_euler_xyz = torch.randn(3)
+    projected_gravity = torch.randn(3)
+    # ang_vel = torch.randn(3)
     buffer = a_model.get_init_buffer()
-    input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, buffer)
+    # input_tensors = (x_vel, y_vel, rot, t, dof_pos, dof_vel, prev_actions, projected_gravity, ang_vel, buffer)
+    input_tensors = (
+        x_vel,
+        y_vel,
+        rot,
+        t,
+        dof_pos,
+        dof_vel,
+        prev_actions,
+        projected_gravity,
+        buffer,
+    )
 
-    jit_model = torch.jit.script(a_model)
+    # jit_model = torch.jit.script(a_model)
 
     # Add sim2sim metadata
     robot_effort = list(a_model.robot.effort().values())
@@ -264,14 +275,19 @@ def get_actor_policy(model_path: str, cfg: ActorCfg) -> Tuple[nn.Module, dict, T
     num_actions = a_model.num_actions
     num_observations = a_model.num_observations
 
-    return a_model, {
-        "robot_effort": robot_effort,
-        "robot_stiffness": robot_stiffness,
-        "robot_damping": robot_damping,
-        "default_standing": default_standing,
-        "num_actions": num_actions,
-        "num_observations": num_observations,
-    }, input_tensors
+    return (
+        a_model,
+        {
+            "robot_effort": robot_effort,
+            "robot_stiffness": robot_stiffness,
+            "robot_damping": robot_damping,
+            "default_standing": default_standing,
+            "num_actions": num_actions,
+            "num_observations": num_observations,
+            "num_joints": a_model.num_joints,
+        },
+        input_tensors,
+    )
 
 
 def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[str] = None) -> ort.InferenceSession:
@@ -285,7 +301,7 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
     Returns:
         An ONNX inference session.
     """
-    all_weights = torch.load(model_path, map_location="cpu")#, weights_only=True)
+    all_weights = torch.load(model_path, map_location="cpu")  # , weights_only=True)
     weights = all_weights["model_state_dict"]
     num_actor_obs = weights["actor.0.weight"].shape[1]
     num_critic_obs = weights["critic.0.weight"].shape[1]
@@ -360,4 +376,4 @@ def convert_model_to_onnx(model_path: str, cfg: ActorCfg, save_path: Optional[st
 
 
 if __name__ == "__main__":
-    convert_model_to_onnx("model_3000.pt", ActorCfg(), "policy.onnx")
+    print("hi there :)")

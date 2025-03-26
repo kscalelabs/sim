@@ -3,9 +3,11 @@
 Run:
     python sim/scripts/imu_data_comparison.py --embodiment zbot2
 """
+
 import argparse
 import os
 from copy import deepcopy
+from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import mediapy as media
@@ -14,6 +16,8 @@ import mujoco_viewer
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+
+from sim.scripts.push_standing_tests import ModelInfo
 
 
 def plot_comparison(sim_data: pd.DataFrame, real_data: pd.DataFrame) -> None:
@@ -25,52 +29,51 @@ def plot_comparison(sim_data: pd.DataFrame, real_data: pd.DataFrame) -> None:
     """
     plt.figure(figsize=(10, 15))
 
+    real_timestamps = (real_data["timestamp"] - real_data["timestamp"].iloc[0]).dt.total_seconds().to_numpy()
 
-    real_timestamps = (real_data['timestamp'] - real_data['timestamp'].iloc[0]).dt.total_seconds().to_numpy()
-    
     # Accelerometer plots
     plt.subplot(6, 1, 1)
-    plt.plot(real_timestamps, sim_data['accel_x'].to_numpy(), label='Simulated Accel X')
-    plt.plot(real_timestamps, real_data['accel_x'].to_numpy(), label='Real Accel X')
-    plt.title('Accelerometer X')
+    plt.plot(real_timestamps, sim_data["accel_x"].to_numpy(), label="Simulated Accel X")
+    plt.plot(real_timestamps, real_data["accel_x"].to_numpy(), label="Real Accel X")
+    plt.title("Accelerometer X")
     plt.legend()
 
     plt.subplot(6, 1, 2)
-    plt.plot(real_timestamps, sim_data['accel_y'].to_numpy(), label='Simulated Accel Y')
-    plt.plot(real_timestamps, real_data['accel_y'].to_numpy(), label='Real Accel Y')
-    plt.title('Accelerometer Y')
+    plt.plot(real_timestamps, sim_data["accel_y"].to_numpy(), label="Simulated Accel Y")
+    plt.plot(real_timestamps, real_data["accel_y"].to_numpy(), label="Real Accel Y")
+    plt.title("Accelerometer Y")
     plt.legend()
 
     plt.subplot(6, 1, 3)
-    plt.plot(real_timestamps, sim_data['accel_z'].to_numpy(), label='Simulated Accel Z')
-    plt.plot(real_timestamps, real_data['accel_z'].to_numpy(), label='Real Accel Z')
-    plt.title('Accelerometer Z')
+    plt.plot(real_timestamps, sim_data["accel_z"].to_numpy(), label="Simulated Accel Z")
+    plt.plot(real_timestamps, real_data["accel_z"].to_numpy(), label="Real Accel Z")
+    plt.title("Accelerometer Z")
     plt.legend()
 
     # Gyroscope plots
     plt.subplot(6, 1, 4)
-    plt.plot(real_timestamps, sim_data['gyro_x'].to_numpy(), label='Simulated Gyro X')
-    plt.plot(real_timestamps, real_data['gyro_x'].to_numpy(), label='Real Gyro X')
-    plt.title('Gyroscope X')
+    plt.plot(real_timestamps, sim_data["gyro_x"].to_numpy(), label="Simulated Gyro X")
+    plt.plot(real_timestamps, real_data["gyro_x"].to_numpy(), label="Real Gyro X")
+    plt.title("Gyroscope X")
     plt.legend()
 
     plt.subplot(6, 1, 5)
-    plt.plot(real_timestamps, sim_data['gyro_y'].to_numpy(), label='Simulated Gyro Y')
-    plt.plot(real_timestamps, real_data['gyro_y'].to_numpy(), label='Real Gyro Y')
-    plt.title('Gyroscope Y')
+    plt.plot(real_timestamps, sim_data["gyro_y"].to_numpy(), label="Simulated Gyro Y")
+    plt.plot(real_timestamps, real_data["gyro_y"].to_numpy(), label="Real Gyro Y")
+    plt.title("Gyroscope Y")
     plt.legend()
 
     plt.subplot(6, 1, 6)
-    plt.plot(real_timestamps, sim_data['gyro_z'].to_numpy(), label='Simulated Gyro Z')
-    plt.plot(real_timestamps, real_data['gyro_z'].to_numpy(), label='Real Gyro Z')
-    plt.title('Gyroscope Z')
+    plt.plot(real_timestamps, sim_data["gyro_z"].to_numpy(), label="Simulated Gyro Z")
+    plt.plot(real_timestamps, real_data["gyro_z"].to_numpy(), label="Real Gyro Z")
+    plt.title("Gyroscope Z")
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig('imu_data_comparison.png')
+    plt.savefig("imu_data_comparison.png")
 
 
-def read_real_data(data_file: str = "sim/resources/zbot2/imu_data.csv") -> None:
+def read_real_data(data_file: str = "sim/resources/zbot2/imu_data.csv") -> pd.DataFrame:
     """Plot the real IMU data.
 
     Args:
@@ -82,8 +85,8 @@ def read_real_data(data_file: str = "sim/resources/zbot2/imu_data.csv") -> None:
     # Reading the data from CSV file
     df = pd.read_csv(data_file)
 
-    df = df.apply(pd.to_numeric, errors='ignore')
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df = df.apply(pd.to_numeric, errors="ignore")
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
 
     return df
 
@@ -96,7 +99,7 @@ def pd_control(
     kd: np.ndarray,
     default: np.ndarray,
 ) -> np.ndarray:
-    """Calculates torques from position commands
+    """Calculates torques from position commands.
 
     Args:
         target_q: The target position.
@@ -118,9 +121,8 @@ def run_simulation(
     kd: float = 1.0,
     sim_duration: float = 15.0,
     effort: float = 5.0,
-) -> None:
-    """
-    Run the Mujoco simulation using the provided policy and configuration.
+) -> pd.DataFrame:
+    """Run the Mujoco simulation using the provided policy and configuration.
 
     Args:
         embodiment: The embodiment to use for the simulation.
@@ -129,7 +131,7 @@ def run_simulation(
         sim_duration: The duration of the simulation.
         effort: The effort to apply to the robot.
     """
-    model_info = {
+    model_info: ModelInfo = {
         "sim_dt": 0.001,
         "tau_factor": 2,
         "num_actions": 10,
@@ -156,14 +158,14 @@ def run_simulation(
     print("Default position:", default)
 
     target_q = np.zeros((model_info["num_actions"]), dtype=np.double)
-    viewer = mujoco_viewer.MujocoViewer(model, data,"offscreen")
+    viewer = mujoco_viewer.MujocoViewer(model, data, "offscreen")
 
     force_duration = 400  # Duration of force application in timesteps
     force_timer = 0
 
     applied_force = np.array([0.0, -3, 0.0])
 
-    sim_data = {
+    sim_data: Dict[str, List[float]] = {
         "timestamp": [],
         "gyro_x": [],
         "gyro_y": [],
@@ -216,7 +218,7 @@ def run_simulation(
                 data.xfrc_applied[1] = np.concatenate([applied_force, np.zeros(3)])
                 force_timer -= 1
             else:
-                data.xfrc_applied[1] = np.zeros(6)          
+                data.xfrc_applied[1] = np.zeros(6)
 
     media.write_video("push_tests.mp4", frames, fps=framerate)
 

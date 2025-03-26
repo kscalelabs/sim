@@ -181,11 +181,8 @@ class ZBot2Env(LeggedRobot):
         noise_vec[(num_actions + 5) : (2 * num_actions + 5)] = noise_scales.dof_vel * self.obs_scales.dof_vel
         noise_vec[(2 * num_actions + 5) : (3 * num_actions + 5)] = 0.0  # previous actions
         noise_vec[(3 * num_actions + 5) : (3 * num_actions + 5) + 3] = (
-            noise_scales.ang_vel * self.obs_scales.ang_vel
-        )  # ang vel
-        noise_vec[(3 * num_actions + 5) + 3 : (3 * num_actions + 5)] = (
             noise_scales.quat * self.obs_scales.quat
-        )  # euler x,y
+        )  # projected_gravity
         return noise_vec
 
     def compute_observations(self):
@@ -203,12 +200,6 @@ class ZBot2Env(LeggedRobot):
         dq = self.dof_vel * self.obs_scales.dof_vel
 
         diff = self.dof_pos - self.ref_dof_pos
-
-        # pfb30
-        # if self.cfg.sim.use_projected_gravity:
-        #     observation_imu = self.projected_gravity.clone()
-        # else:
-        #     observation_imu = self.base_euler_xyz.clone() * self.obs_scales.quat
 
         self.privileged_obs_buf = torch.cat(
             (
@@ -230,18 +221,13 @@ class ZBot2Env(LeggedRobot):
             dim=-1,
         )
 
-        
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
                 q,  # 20D
                 dq,  # 20D
                 self.actions,  # 20D
-                # pfb30
                 self.projected_gravity,
-                # self.base_quat, # 4
-                # self.base_ang_vel * self.obs_scales.ang_vel,  # 3
-                # observation_imu,  # 3
             ),
             dim=-1,
         )

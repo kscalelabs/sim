@@ -17,9 +17,9 @@ class GprCfg(LeggedRobotCfg):
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
-        frame_stack = 15
-        c_frame_stack = 3
-        num_single_obs = 11 + NUM_JOINTS * 3
+        frame_stack = 15  # Actor
+        c_frame_stack = 3  # Critic
+        num_single_obs = 8 + NUM_JOINTS * 3 + 3  # Add ang vel
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -27,93 +27,6 @@ class GprCfg(LeggedRobotCfg):
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
-
-        # input_schema = P.IOSchema(
-        #     values=[
-        #         P.ValueSchema(
-        #             value_name="vector_command",
-        #             vector_command=P.VectorCommandSchema(
-        #                 dimensions=3,  # x_vel, y_vel, rot
-        #             ),
-        #         ),
-        #         P.ValueSchema(
-        #             value_name="timestamp",
-        #             timestamp=P.TimestampSchema(
-        #                 start_seconds=0,
-        #             ),
-        #         ),
-        #         P.ValueSchema(
-        #             value_name="dof_pos",
-        #             joint_positions=P.JointPositionsSchema(
-        #                 joint_names=Robot.joint_names(),
-        #                 unit=P.JointPositionUnit.RADIANS,
-        #             ),
-        #         ),
-        #         P.ValueSchema(
-        #             value_name="dof_vel",
-        #             joint_velocities=P.JointVelocitiesSchema(
-        #                 joint_names=Robot.joint_names(),
-        #                 unit=P.JointVelocityUnit.RADIANS_PER_SECOND,
-        #             ),
-        #         ),
-        #         P.ValueSchema(
-        #             value_name="prev_actions",
-        #             joint_positions=P.JointPositionsSchema(
-        #                 joint_names=Robot.joint_names(), unit=P.JointPositionUnit.RADIANS
-        #             ),
-        #         ),
-        #         # Abusing the IMU schema to pass in euler and angular velocity instead of raw sensor data
-        #         P.ValueSchema(
-        #             value_name="imu_ang_vel",
-        #             imu=P.ImuSchema(
-        #                 use_accelerometer=False,
-        #                 use_gyroscope=True,
-        #                 use_magnetometer=False,
-        #             ),
-        #         ),
-        #         P.ValueSchema(
-        #             value_name="imu_euler_xyz",
-        #             imu=P.ImuSchema(
-        #                 use_accelerometer=True,
-        #                 use_gyroscope=False,
-        #                 use_magnetometer=False,
-        #             ),
-        #         ),
-        #         P.ValueSchema(
-        #             value_name="hist_obs",
-        #             state_tensor=P.StateTensorSchema(
-        #                 # 11 is the number of single observation features - 6 from IMU, 5 from command input
-        #                 # 3 comes from the number of times num_actions is repeated in the observation (dof_pos, dof_vel, prev_actions)
-        #                 shape=[frame_stack * (11 + NUM_JOINTS * 3)],
-        #                 dtype=P.DType.FP32,
-        #             ),
-        #         ),
-        #     ]
-        # )
-
-        # output_schema = P.IOSchema(
-        #     values=[
-        #         P.ValueSchema(
-        #             value_name="actions",
-        #             joint_positions=P.JointPositionsSchema(
-        #                 joint_names=Robot.joint_names(), unit=P.JointPositionUnit.RADIANS
-        #             ),
-        #         ),
-        #         P.ValueSchema(
-        #             value_name="actions_raw",
-        #             joint_positions=P.JointPositionsSchema(
-        #                 joint_names=Robot.joint_names(), unit=P.JointPositionUnit.RADIANS
-        #             ),
-        #         ),
-        #         P.ValueSchema(
-        #             value_name="new_x",
-        #             state_tensor=P.StateTensorSchema(
-        #                 shape=[frame_stack * (11 + NUM_JOINTS * 3)],
-        #                 dtype=P.DType.FP32,
-        #             ),
-        #         ),
-        #     ]
-        # )
 
     class safety(LeggedRobotCfg.safety):
         # safety factors
@@ -128,7 +41,7 @@ class GprCfg(LeggedRobotCfg):
 
         foot_name = ["foot1", "foot3"]
         knee_name = ["leg3_shell2", "leg3_shell22"]
-        imu_name = "imu_link"
+        imu_name = "imu"
 
         termination_height = 0.2
         default_feet_height = 0.0
@@ -140,8 +53,8 @@ class GprCfg(LeggedRobotCfg):
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
-        # mesh_type = "plane"
-        mesh_type = "trimesh"
+        mesh_type = "plane"
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -167,10 +80,6 @@ class GprCfg(LeggedRobotCfg):
             lin_vel = 0.05
             quat = 0.03
             height_measurements = 0.1
-
-        # Currently unused
-        # class noise_ranges:
-        #     default_pos = 0.03  # +- 0.05 rad
 
     class init_state(LeggedRobotCfg.init_state):
         pos = [0.0, 0.0, Robot.height]
@@ -223,6 +132,7 @@ class GprCfg(LeggedRobotCfg):
         # dynamic randomization
         action_noise = 0.02
         action_delay = 0.5
+        randomize_pd_gains = False
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -231,9 +141,9 @@ class GprCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.3, 0.6]  # min max [m/s]
-            lin_vel_y = [-0.3, 0.3]  # min max [m/s]
-            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
+            lin_vel_x = [-0.5, 1.0]  # min max [m/s]
+            lin_vel_y = [-0.5, 0.5]  # min max [m/s]
+            ang_vel_yaw = [-1.5, 1.5]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
@@ -242,8 +152,8 @@ class GprCfg(LeggedRobotCfg):
         min_dist = 0.2
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.05  # m
+        target_joint_pos_scale = 0.24  # rad
+        target_feet_height = 0.06  # m
 
         cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
@@ -316,8 +226,8 @@ class GprStandingCfg(GprCfg):
         max_dist = 0.5
         # put some settings here for LLM parameter tuning
         target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.05  # m
-        cycle_time = 0.5  # sec
+        target_feet_height = 0.06  # m
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = False
         # tracking reward = exp(error*sigma)

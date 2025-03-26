@@ -1,24 +1,26 @@
 # mypy: disable-error-code="valid-newtype"
 """Defines the environment for training the humanoid."""
 
+from isaacgym.torch_utils import *  # isort:skip
+
 from sim.envs.base.legged_robot import LeggedRobot
-from sim.resources.zeroth.joints import Robot
+from sim.resources.gpr_vel.joints import Robot
+from sim.utils.math import wrap_to_pi
 from sim.utils.terrain import HumanoidTerrain
 
 from isaacgym import gymtorch  # isort:skip
-from isaacgym.torch_utils import *  # isort: skip
-
 
 import torch  # isort:skip
+import random  # isort:skip
 
 
-class ZerothEnv(LeggedRobot):
-    """ZerothFreeEnv is a class that represents a custom environment for a legged robot.
+class GprVelEnv(LeggedRobot):
+    """GprVelEnv is a class that represents a custom environment for a legged robot.
 
     Args:
-        cfg: Configuration object for the legged robot.
+        cfg (LeggedRobotCfg): Configuration object for the legged robot.
         sim_params: Parameters for the simulation.
-        physics_engine: Physics engin e used in the simulation.
+        physics_engine: Physics engine used in the simulation.
         sim_device: Device used for the simulation.
         headless: Flag indicating whether the simulation should be run in headless mode.
 
@@ -57,7 +59,6 @@ class ZerothEnv(LeggedRobot):
 
         self.legs_joints = {}
         for name, joint in Robot.legs.left.joints_motors():
-            print(name)
             joint_handle = self.gym.find_actor_dof_handle(env_handle, actor_handle, joint)
             self.legs_joints["left_" + name] = joint_handle
 
@@ -66,20 +67,84 @@ class ZerothEnv(LeggedRobot):
             self.legs_joints["right_" + name] = joint_handle
 
         self.compute_observations()
+        self._initialize_push_intervals()
 
-    def _push_robots(self):
-        """Random pushes the robots. Emulates an impulse by setting a randomized base velocity."""
+    def step(self, actions):
+        """Apply actions, simulate, call self.post_physics_step()
+
+        Args:
+            actions (torch.Tensor): Tensor of shape (num_envs, num_actions_per_env)
+        """
+        if self.cfg.env.use_ref_actions:
+            actions += self.ref_action
+        actions = torch.clip(actions, -self.cfg.normalization.clip_actions, self.cfg.normalization.clip_actions)
+
+        # dynamic randomization
+        delay = torch.rand((self.num_envs, 1), device=self.device) * self.cfg.domain_rand.action_delay
+        actions = (1 - delay) * actions + delay * self.actions
+        actions += self.cfg.domain_rand.action_noise * torch.randn_like(actions) * actions
+
+        clip_actions = self.cfg.normalization.clip_actions
+        self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
+        # step physics and render each frame
+        target_positions = self.actions[:, : self.cfg.env.num_actions // 2]
+        target_velocities = self.actions[:, self.cfg.env.num_actions // 2 :]
+        self.render()
+        for _ in range(self.cfg.control.decimation):
+            self.torques = self._compute_torques(target_positions, target_velocities).view(self.torques.shape)
+            self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
+
+            self.gym.simulate(self.sim)
+            if self.device == "cpu":
+                self.gym.fetch_results(self.sim, True)
+            self.gym.refresh_dof_state_tensor(self.sim)
+        self.post_physics_step()
+
+        # return clipped obs, clipped states (None), rewards, dones and infos
+        clip_obs = self.cfg.normalization.clip_observations
+        self.obs_buf = torch.clip(self.obs_buf, -clip_obs, clip_obs)
+        if self.privileged_obs_buf is not None:
+            self.privileged_obs_buf = torch.clip(self.privileged_obs_buf, -clip_obs, clip_obs)
+        return self.obs_buf, self.privileged_obs_buf, self.rew_buf, self.reset_buf, self.extras
+
+    def _compute_torques(self, positions, velocities):
+        """Compute torques from actions.
+            Actions can be interpreted as position or velocity targets given to a PD controller, or directly as scaled torques.
+            [NOTE]: torques must have the same dimension as the number of DOFs, even if some DOFs are not actuated.
+
+        Args:
+            actions (torch.Tensor): Actions
+
+        Returns:
+            [torch.Tensor]: Torques sent to the simulation
+        """
+        pos_scaled = positions * self.cfg.control.action_scale
+        vel_scaled = velocities * self.cfg.control.action_scale
+        p_gains = self.p_gains
+        d_gains = self.d_gains
+        torques = p_gains * (pos_scaled + self.default_dof_pos - self.dof_pos) + d_gains * (vel_scaled - self.dof_vel)
+        res = torch.clip(torques, -self.torque_limits, self.torque_limits)
+        return res
+
+    def _push_robots(self, env_ids=None):
+        """Randomly pushes the robots for specific environments.
+
+        If env_ids is None, push all environments; otherwise, push only for the provided indices.
+        """
         max_vel = self.cfg.domain_rand.max_push_vel_xy
         max_push_angular = self.cfg.domain_rand.max_push_ang_vel
-        self.rand_push_force[:, :2] = torch_rand_float(
-            -max_vel, max_vel, (self.num_envs, 2), device=self.device
-        )  # lin vel x/y
-        self.root_states[:, 7:9] = self.rand_push_force[:, :2]
 
-        self.rand_push_torque = torch_rand_float(
-            -max_push_angular, max_push_angular, (self.num_envs, 3), device=self.device
+        if env_ids is None:
+            env_ids = torch.arange(self.num_envs, device=self.device)
+
+        # For the selected environments, sample random push forces and torques
+        self.rand_push_force[env_ids, :2] = torch_rand_float(-max_vel, max_vel, (len(env_ids), 2), device=self.device)
+        self.root_states[env_ids, 7:9] = self.rand_push_force[env_ids, :2]
+
+        self.rand_push_torque[env_ids] = torch_rand_float(
+            -max_push_angular, max_push_angular, (len(env_ids), 3), device=self.device
         )
-        self.root_states[:, 10:13] = self.rand_push_torque
+        self.root_states[env_ids, 10:13] = self.rand_push_torque[env_ids]
 
         self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
 
@@ -125,15 +190,17 @@ class ZerothEnv(LeggedRobot):
         scale_2 = 2 * scale_1
         # left foot stance phase set to default joint pos
         sin_pos_l[sin_pos_l > 0] = 0
-        self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += sin_pos_l * scale_1
+
+        self.ref_dof_pos[:, self.legs_joints["left_hip_pitch"]] += -sin_pos_l * scale_1
         self.ref_dof_pos[:, self.legs_joints["left_knee_pitch"]] += sin_pos_l * scale_2
         self.ref_dof_pos[:, self.legs_joints["left_ankle_pitch"]] += sin_pos_l * scale_1
 
         # right foot stance phase set to default joint pos
         sin_pos_r[sin_pos_r < 0] = 0
-        self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] += sin_pos_r * scale_1
-        self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] += sin_pos_r * scale_2
-        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += sin_pos_r * scale_1
+        # pfb30 last one should be -1
+        self.ref_dof_pos[:, self.legs_joints["right_hip_pitch"]] += -sin_pos_r * scale_1
+        self.ref_dof_pos[:, self.legs_joints["right_knee_pitch"]] += -sin_pos_r * scale_2
+        self.ref_dof_pos[:, self.legs_joints["right_ankle_pitch"]] += -sin_pos_r * scale_1
 
         # Double support phase
         self.ref_dof_pos[torch.abs(sin_pos) < 0.1] = 0
@@ -172,20 +239,17 @@ class ZerothEnv(LeggedRobot):
         Returns:
             [torch.Tensor]: Vector of scales used to multiply a uniform distribution in [-1, 1]
         """
-        num_actions = self.num_actions
+        num_joints = self.num_actions // 2  # Since num_actions is now NUM_JOINTS * 2
         noise_vec = torch.zeros(self.cfg.env.num_single_obs, device=self.device)
         self.add_noise = self.cfg.noise.add_noise
         noise_scales = self.cfg.noise.noise_scales
         noise_vec[0:5] = 0.0  # commands
-        noise_vec[5 : (num_actions + 5)] = noise_scales.dof_pos * self.obs_scales.dof_pos
-        noise_vec[(num_actions + 5) : (2 * num_actions + 5)] = noise_scales.dof_vel * self.obs_scales.dof_vel
-        noise_vec[(2 * num_actions + 5) : (3 * num_actions + 5)] = 0.0  # previous actions
-        noise_vec[(3 * num_actions + 5) : (3 * num_actions + 5) + 3] = (
-            noise_scales.ang_vel * self.obs_scales.ang_vel
-        )  # ang vel
-        noise_vec[(3 * num_actions + 5) + 3 : (3 * num_actions + 5)] = (
+        noise_vec[5 : (num_joints + 5)] = noise_scales.dof_pos * self.obs_scales.dof_pos
+        noise_vec[(num_joints + 5) : (2 * num_joints + 5)] = noise_scales.dof_vel * self.obs_scales.dof_vel
+        noise_vec[(2 * num_joints + 5) : (4 * num_joints + 5)] = 0.0  # previous actions (now includes both pos and vel)
+        noise_vec[(4 * num_joints + 5) : (4 * num_joints + 8)] = (
             noise_scales.quat * self.obs_scales.quat
-        )  # euler x,y
+        )  # projected_gravity
         return noise_vec
 
     def compute_observations(self):
@@ -226,11 +290,10 @@ class ZerothEnv(LeggedRobot):
         obs_buf = torch.cat(
             (
                 self.command_input,  # 5 = 2D(sin cos) + 3D(vel_x, vel_y, aug_vel_yaw)
-                q,  # 20D
-                dq,  # 20D
-                self.actions,  # 20D
-                self.base_ang_vel * self.obs_scales.ang_vel,  # 3
-                self.base_euler_xyz * self.obs_scales.quat,  # 3
+                q,  # 12D
+                dq,  # 12D
+                self.actions,  # 12D
+                self.projected_gravity,  # 3
             ),
             dim=-1,
         )
@@ -245,7 +308,6 @@ class ZerothEnv(LeggedRobot):
                 * self.obs_scales.height_measurements
             )
             self.privileged_obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
-
         if self.add_noise:
             obs_now = obs_buf.clone() + torch.randn_like(obs_buf) * self.noise_scale_vec * self.cfg.noise.noise_level
         else:
@@ -327,7 +389,7 @@ class ZerothEnv(LeggedRobot):
         """
         contact = self.contact_forces[:, self.feet_indices, 2] > 5.0
         stance_mask = self._get_gait_phase()
-        reward = torch.where(contact == stance_mask, 1, -0.3)
+        reward = torch.where(contact == stance_mask, 1.0, -0.3)
         return torch.mean(reward, dim=1)
 
     def _reward_orientation(self):
@@ -336,7 +398,8 @@ class ZerothEnv(LeggedRobot):
         """
         quat_mismatch = torch.exp(-torch.sum(torch.abs(self.base_euler_xyz[:, :2]), dim=1) * 10)
         orientation = torch.exp(-torch.norm(self.projected_gravity[:, :2], dim=1) * 20)
-        return (quat_mismatch + orientation) / 2
+
+        return (quat_mismatch + orientation) / 2.0
 
     def _reward_feet_contact_forces(self):
         """Calculates the reward for keeping contact forces within a specified range. Penalizes
@@ -358,6 +421,7 @@ class ZerothEnv(LeggedRobot):
         right_yaw_roll = joint_diff[:, [self.legs_joints["right_hip_roll"], self.legs_joints["right_hip_yaw"]]]
         yaw_roll = torch.norm(left_yaw_roll, dim=1) + torch.norm(right_yaw_roll, dim=1)
         yaw_roll = torch.clamp(yaw_roll - 0.1, 0, 50)
+
         return torch.exp(-yaw_roll * 100) - 0.01 * torch.norm(joint_diff, dim=1)
 
     def _reward_base_height(self):
@@ -514,3 +578,49 @@ class ZerothEnv(LeggedRobot):
         )
         term_3 = 0.05 * torch.sum(torch.abs(self.actions), dim=1)
         return term_1 + term_2 + term_3
+
+    def _reward_termination(self):
+        """Returns a penalty for each environment that is terminated."""
+        penalty = 1.0
+        # Apply the penalty element-wise: only environments that need reset get the penalty
+        return penalty * self.reset_buf.float()
+
+    def _initialize_push_intervals(self):
+        # Create a tensor of size (num_envs,) for the next push step.
+        # We'll assume self.num_envs is available and self.dt is the simulation time step.
+        self.next_push_steps = torch.empty(self.num_envs, dtype=torch.int64, device=self.device)
+        for i in range(self.num_envs):
+            random_interval_sec = random.uniform(
+                self.cfg.domain_rand.push_random_interval_min, self.cfg.domain_rand.push_random_interval_max
+            )
+            self.next_push_steps[i] = self.common_step_counter + int(random_interval_sec / self.dt)
+
+    def _post_physics_step_callback(self):
+        """Callback called before computing terminations, rewards, and observations."""
+        env_ids = (
+            (self.episode_length_buf % int(self.cfg.commands.resampling_time / self.dt) == 0)
+            .nonzero(as_tuple=False)
+            .flatten()
+        )
+        self._resample_commands(env_ids)
+        if self.cfg.commands.heading_command:
+            forward = quat_apply(self.base_quat, self.forward_vec)
+            heading = torch.atan2(forward[:, 1], forward[:, 0])
+            self.commands[:, 2] = torch.clip(0.5 * wrap_to_pi(self.commands[:, 3] - heading), -1.0, 1.0)
+        if self.cfg.terrain.measure_heights:
+            self.measured_heights = self._get_heights()
+        if self.cfg.domain_rand.push_robots:
+            # Initialize per-env push intervals if not done yet.
+            if not hasattr(self, "next_push_steps"):
+                self._initialize_push_intervals()
+            # Determine which environments are due for a push
+            envs_to_push = (self.common_step_counter >= self.next_push_steps).nonzero(as_tuple=False).flatten()
+            if len(envs_to_push) > 0:
+                # Apply push only to the environments that are due
+                self._push_robots(envs_to_push)
+                # For each pushed environment, set a new random push time
+                for env_id in envs_to_push:
+                    random_interval_sec = random.uniform(
+                        self.cfg.domain_rand.push_random_interval_min, self.cfg.domain_rand.push_random_interval_max
+                    )
+                    self.next_push_steps[env_id] = self.common_step_counter + int(random_interval_sec / self.dt)

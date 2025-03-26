@@ -5,55 +5,63 @@ from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
     LeggedRobotCfgPPO,
 )
-from sim.resources.zeroth.joints import Robot
+from sim.resources.gpr_headless.joints import Robot
 
-NUM_JOINTS = len(Robot.all_joints())  # 20
+NUM_JOINTS = len(Robot.all_joints())
 
 
-class ZerothCfg(LeggedRobotCfg):
+class GprHeadlessCfg(LeggedRobotCfg):
     """Configuration class for the Legs humanoid robot."""
 
     class env(LeggedRobotCfg.env):
         # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
-        num_single_obs = 11 + NUM_JOINTS * 3
+        num_single_obs = 8 + NUM_JOINTS * 4  # 2 for past actions, 1 for dof pos, 1 for dof vel
         num_observations = int(frame_stack * num_single_obs)
-        single_num_privileged_obs = 25 + NUM_JOINTS * 4
+        single_num_privileged_obs = 25 + NUM_JOINTS * 5  # 2 for past actions, 1 for dof pos, 1 for dof vel, 1 for diff
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
-        num_actions = NUM_JOINTS
+        num_joints = NUM_JOINTS
+        num_actions = NUM_JOINTS * 2
         num_envs = 4096
         episode_length_s = 24  # episode length in seconds
         use_ref_actions = False
 
-    class safety:
+    class safety(LeggedRobotCfg.safety):
         # safety factors
         pos_limit = 1.0
         vel_limit = 1.0
-        torque_limit = 0.85
-        terminate_after_contacts_on = []
+        torque_limit = 1.0
 
     class asset(LeggedRobotCfg.asset):
-        name = "zeroth"
+        name = "gpr_headless"
+
         file = str(robot_urdf_path(name))
 
-        foot_name = ["foot_bracket_for_5dof_leg_v9", "foot_bracket_for_5dof_leg_v9_2"]
-        knee_name = ["leg_top_bracket_v8_1", "leg_top_bracket_v8_1_2"]
+        foot_name = ["foot1", "foot3"]
+        knee_name = ["leg3_shell1", "leg3_shell11"]
+        imu_name = "imu"
 
-        termination_height = 0.05
-        default_feet_height = 0.01
+        # foot_name = ["foot1", "foot3"]
+        # knee_name = ["leg3_shell1", "leg3_shell11"]
+        # imu_name = "imu"
 
-        terminate_after_contacts_on = ["torso"]
+        # terminate_after_contacts_on = ["arm1_top_2", "arm1_top", "shoulder", "shoulder_2",
+        #                                "arm2_shell_2", "arm2_shell", "arm3_shell2", "arm3_shell",
+        #                                "hand_shell", "hand_shell_2"]
+        terminate_after_contacts_on = ["shoulder", "shoulder_2", "arm1_top", "arm1_top_2"]
+        termination_height = 0.2
+        default_feet_height = 0.0
 
         penalize_contacts_on = []
-        self_collisions = 1  # 1 to disable, 0 to enable...bitwise filter
+        self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = False
         replace_cylinder_with_capsule = False
         fix_base_link = False
 
     class terrain(LeggedRobotCfg.terrain):
         mesh_type = "plane"
-        # mesh_type = 'trimesh'
+        # mesh_type = "trimesh"
         curriculum = False
         # rough terrain only:
         measure_heights = False
@@ -74,16 +82,15 @@ class ZerothCfg(LeggedRobotCfg):
 
         class noise_scales:
             dof_pos = 0.05
-            dof_vel = 0.5
+            dof_vel = 2.5
             ang_vel = 0.1
             lin_vel = 0.05
             quat = 0.03
             height_measurements = 0.1
 
     class init_state(LeggedRobotCfg.init_state):
-        pos = [0.0, 0.0, Robot.height]
+        pos = [0.0, 0.0, Robot.height + 0.025]
         rot = Robot.rotation
-
         default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
 
         default_positions = Robot.default_standing()
@@ -97,7 +104,8 @@ class ZerothCfg(LeggedRobotCfg):
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
-        decimation = 10  # 100hz
+        decimation = 20  # 50hz
+        pd_decimation = 1
 
     class sim(LeggedRobotCfg.sim):
         dt = 0.001  # 1000 Hz
@@ -122,15 +130,18 @@ class ZerothCfg(LeggedRobotCfg):
         start_pos_noise = 0.1
         randomize_friction = True
         friction_range = [0.1, 2.0]
-        randomize_base_mass = True  # True
-        added_mass_range = [-0.25, 0.25]
-        push_robots = True  # True
-        push_interval_s = 4
-        max_push_vel_xy = 0.05
-        max_push_ang_vel = 0.1
+
+        randomize_base_mass = True
+        added_mass_range = [-2.0, 2.0]
+        push_robots = True
+        push_random_interval_min = 1.0
+        push_random_interval_max = 4.0
+        max_push_vel_xy = 1.0  # 1.2 # 0.4
+        max_push_ang_vel = 1.0  # 1.2 # 0.4
         # dynamic randomization
-        action_delay = 0.5
         action_noise = 0.02
+        action_delay = 0.5
+        randomize_pd_gains = False
 
     class commands(LeggedRobotCfg.commands):
         # Vers: lin_vel_x, lin_vel_y, ang_vel_yaw, heading (in heading mode ang_vel_yaw is recomputed from heading error)
@@ -139,20 +150,21 @@ class ZerothCfg(LeggedRobotCfg):
         heading_command = True  # if true: compute ang vel command from heading error
 
         class ranges:
-            lin_vel_x = [-0.3, 0.6]  # min max [m/s]
-            lin_vel_y = [-0.3, 0.3]  # min max [m/s]
-            ang_vel_yaw = [-0.3, 0.3]  # min max [rad/s]
+            lin_vel_x = [-0.0, 1.0]  # min max [m/s]
+            lin_vel_y = [-0.5, 0.5]  # min max [m/s]
+            ang_vel_yaw = [-1.5, 1.5]  # min max [rad/s]
             heading = [-3.14, 3.14]
 
     class rewards:
+        # quite important to keep it right
         base_height_target = Robot.height
-        min_dist = 0.07
-        max_dist = 0.14
-
+        min_dist = 0.2
+        max_dist = 0.5
         # put some settings here for LLM parameter tuning
-        target_joint_pos_scale = 0.17  # rad
-        target_feet_height = 0.02  # m
-        cycle_time = 0.2  # sec
+        target_joint_pos_scale = 0.24  # rad
+        target_feet_height = 0.06  # m
+
+        cycle_time = 0.4  # sec
         # if true negative total rewards are clipped at zero (avoids early termination problems)
         only_positive_rewards = True
         # tracking reward = exp(error*sigma)
@@ -160,13 +172,14 @@ class ZerothCfg(LeggedRobotCfg):
         max_contact_force = 400  # forces above this value are penalized
 
         class scales:
+            termination = -10.0
             # reference motion tracking
-            joint_pos = 1.6
-            feet_clearance = 1.2
-            feet_contact_number = 1.2
+            joint_pos = 1.2  # 1.6
+            feet_clearance = 0.8  # 1.2
+            feet_contact_number = 0.8  # 0.8 # 1.4
+            # gait
             feet_air_time = 1.2
             foot_slip = -0.05
-            feet_distance = 0.2
             knee_distance = 0.2
             # contact
             feet_contact_forces = -0.01
@@ -174,19 +187,19 @@ class ZerothCfg(LeggedRobotCfg):
             tracking_lin_vel = 1.2
             tracking_ang_vel = 1.1
             vel_mismatch_exp = 0.5  # lin_z; ang x,y
-            low_speed = 0.4
+            low_speed = 0.2
             track_vel_hard = 0.5
 
             # base pos
-            default_joint_pos = 1.0
-            orientation = 1
+            default_joint_pos = 0.5
+            orientation = 1.0
             base_height = 0.2
             base_acc = 0.2
             # energy
             action_smoothness = -0.002
             torques = -1e-5
-            dof_vel = -5e-4
-            dof_acc = -1e-7
+            dof_vel = -5e-4  # -1e-3
+            dof_acc = -2.5e-7  # -1e-7  # -2.5e-7
             collision = -1.0
 
     class normalization:
@@ -207,7 +220,44 @@ class ZerothCfg(LeggedRobotCfg):
         lookat = [0, -2, 0]
 
 
-class ZerothCfgPPO(LeggedRobotCfgPPO):
+class GprHeadlessStandingCfg(GprHeadlessCfg):
+    """Configuration class for the GPR humanoid robot."""
+
+    class init_state(LeggedRobotCfg.init_state):
+        pos = [0.0, 0.0, Robot.standing_height + 0.025]
+        rot = Robot.rotation
+        default_joint_angles = {k: 0.0 for k in Robot.all_joints()}
+
+    class rewards:
+        # quite important to keep it right
+        base_height_target = Robot.standing_height
+        min_dist = 0.2
+        max_dist = 0.5
+        # put some settings here for LLM parameter tuning
+        target_joint_pos_scale = 0.17  # rad
+        target_feet_height = 0.06  # m
+        cycle_time = 0.4  # sec
+        # if true negative total rewards are clipped at zero (avoids early termination problems)
+        only_positive_rewards = False
+        # tracking reward = exp(error*sigma)
+        tracking_sigma = 5
+        max_contact_force = 200  # forces above this value are penalized
+
+        class scales:
+            # base pos
+            default_joint_pos = 1.0
+            orientation = 1
+            base_height = 0.2
+            base_acc = 0.2
+            # energy
+            action_smoothness = -0.002
+            torques = -1e-5
+            dof_vel = -1e-3
+            dof_acc = -2.5e-7
+            collision = -1.0
+
+
+class GprHeadlessCfgPPO(LeggedRobotCfgPPO):
     seed = 5
     runner_class_name = "OnPolicyRunner"  # DWLOnPolicyRunner
 
@@ -231,8 +281,8 @@ class ZerothCfgPPO(LeggedRobotCfgPPO):
         max_iterations = 3001  # number of policy updates
 
         # logging
-        save_interval = 300  # check for potential saves every this many iterations
-        experiment_name = "zeroth"
+        save_interval = 100  # check for potential saves every this many iterations
+        experiment_name = "gpr_headless"
         run_name = ""
         # load and resume
         resume = False

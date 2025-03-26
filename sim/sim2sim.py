@@ -73,7 +73,7 @@ def get_gravity_orientation(quaternion):
     """
     Args:
         quaternion: np.ndarray[float, float, float, float]
-    
+
     Returns:
         gravity_orientation: np.ndarray[float, float, float]
     """
@@ -126,6 +126,7 @@ def run_mujoco(
     render: bool = True,
     sim_duration: float = 60.0,
     h5_out_dir: str = "sim/resources",
+    terrain: bool = False,
 ) -> None:
     """
     Run the Mujoco simulation using the provided policy and configuration.
@@ -135,7 +136,10 @@ def run_mujoco(
         cfg: The configuration object containing simulation settings.
     """
     model_dir = os.environ.get("MODEL_DIR", "sim/resources")
-    mujoco_model_path = f"{model_dir}/{embodiment}/robot_fixed.xml"
+    if terrain:
+        mujoco_model_path = f"{model_dir}/{embodiment}/robot_fixed_terrain.xml"
+    else:
+        mujoco_model_path = f"{model_dir}/{embodiment}/robot_fixed.xml"
 
     model = mujoco.MjModel.from_xml_path(mujoco_model_path)
     model.opt.timestep = model_info["sim_dt"]
@@ -147,10 +151,21 @@ def run_mujoco(
     assert isinstance(model_info["robot_stiffness"], list)
     assert isinstance(model_info["robot_damping"], list)
 
-    tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"]
-    kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
-    kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
+    # tau_limit = np.array(list(model_info["robot_effort"]) + list(model_info["robot_effort"])) * model_info["tau_factor"]
+    # kps = np.array(list(model_info["robot_stiffness"]) + list(model_info["robot_stiffness"]))
+    # kds = np.array(list(model_info["robot_damping"]) + list(model_info["robot_damping"]))
+    # HACKY FOR HEADLESS
+    efforts = model_info["robot_effort"]
+    stiffnesses = model_info["robot_stiffness"]
+    dampings = model_info["robot_damping"]
+    leg_lims = [efforts[0], efforts[1], efforts[1], efforts[0], efforts[2]]
+    tau_limit = np.array(leg_lims + leg_lims) * model_info["tau_factor"]
 
+    leg_kps = [stiffnesses[0], stiffnesses[1], stiffnesses[1], stiffnesses[0], stiffnesses[2]]
+    kps = np.array(leg_kps + leg_kps)
+
+    leg_kds = [dampings[0], dampings[1], dampings[1], dampings[0], dampings[2]]
+    kds = np.array(leg_kds + leg_kds)
     try:
         data.qpos = model.keyframe("default").qpos
         default = deepcopy(model.keyframe("default").qpos)[-model_info["num_actions"] :]
@@ -184,9 +199,9 @@ def run_mujoco(
         "dof_pos.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "dof_vel.1": np.zeros(model_info["num_actions"]).astype(np.float32),
         "prev_actions.1": np.zeros(model_info["num_actions"]).astype(np.float32),
-        # "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         # "imu_euler_xyz.1": np.zeros(3).astype(np.float32),
         "projected_gravity.1": np.zeros(3).astype(np.float32),
+        "imu_ang_vel.1": np.zeros(3).astype(np.float32),
         "buffer.1": np.zeros(model_info["num_observations"]).astype(np.float32),
     }
 
@@ -221,7 +236,7 @@ def run_mujoco(
 
         # eu_ang = np.array([0.0, 0.0, 0.0])
         # omega = np.array([0.0, 0.0, 0.0])
-
+        # gvec = np.array([0.0, 0.0, -1.0])
         # Calculate speed and accumulate for average speed calculation
         speed = np.linalg.norm(v[:2])  # Speed in the x-y plane
         total_speed += speed
@@ -245,7 +260,7 @@ def run_mujoco(
             input_data["prev_actions.1"] = prev_actions.astype(np.float32)
 
             input_data["projected_gravity.1"] = gvec.astype(np.float32)
-            # input_data["imu_ang_vel.1"] = omega.astype(np.float32)
+            input_data["imu_ang_vel.1"] = omega.astype(np.float32)
             # input_data["imu_euler_xyz.1"] = eu_ang.astype(np.float32)
 
             input_data["buffer.1"] = hist_obs.astype(np.float32)
@@ -264,6 +279,7 @@ def run_mujoco(
         tau = np.clip(tau, -tau_limit, tau_limit)  # Clamp torques
 
         data.ctrl = tau
+
         mujoco.mj_step(model, data)
 
         if render:
@@ -295,7 +311,9 @@ if __name__ == "__main__":
     parser.add_argument("--log_h5", action="store_true", help="log_h5")
     parser.add_argument("--h5_out_dir", type=str, default="sim/resources", help="Directory to save HDF5 files")
     parser.add_argument("--no_render", action="store_false", dest="render", help="Disable rendering")
-    parser.set_defaults(render=True)
+    parser.add_argument("--terrain", action="store_true", help="terrain")
+    parser.set_defaults(render=True, terrain=False)
+
     args = parser.parse_args()
 
     if args.keyboard_use:
@@ -303,7 +321,7 @@ if __name__ == "__main__":
         pygame.init()
         pygame.display.set_caption("Simulation Control")
     else:
-        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = 0.15, 0.0, 0.0
+        x_vel_cmd, y_vel_cmd, yaw_vel_cmd = -0.5, 0.0, 0.0
 
     policy = ONNXModel(args.load_model)
     metadata = policy.get_metadata()
@@ -326,4 +344,5 @@ if __name__ == "__main__":
         log_h5=args.log_h5,
         render=args.render,
         h5_out_dir=args.h5_out_dir,
+        terrain=args.terrain,
     )

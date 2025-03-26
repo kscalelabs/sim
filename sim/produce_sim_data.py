@@ -60,5 +60,5 @@ if __name__ == "__main__":
     for batch in range(num_batches):
         examples_remaining = args.num_examples - (batch * args.num_threads)
         threads_this_batch = min(args.num_threads, examples_remaining)
-        print(f"\nRunning batch {batch+1}/{num_batches} ({threads_this_batch} simulations)")
+        print(f"\nRunning batch {batch + 1}/{num_batches} ({threads_this_batch} simulations)")
         run_parallel_sims(threads_this_batch, args)

@@ -1,7 +1,5 @@
 """Defines the environment configuration for the Getting up task"""
 
-
-
 from sim.env import robot_urdf_path
 from sim.envs.base.legged_robot_config import (  # type: ignore
     LeggedRobotCfg,
@@ -19,8 +17,7 @@ class ZBot2Cfg(LeggedRobotCfg):
         # change the observation dim
         frame_stack = 15
         c_frame_stack = 3
-        # num_single_obs = 11 + NUM_JOINTS * 3
-        num_single_obs = 8 + NUM_JOINTS * 3 # pfb30
+        num_single_obs = 8 + NUM_JOINTS * 3
         num_observations = int(frame_stack * num_single_obs)
         single_num_privileged_obs = 25 + NUM_JOINTS * 4
         num_privileged_obs = int(c_frame_stack * single_num_privileged_obs)
@@ -264,7 +261,7 @@ class ZBot2Cfg(LeggedRobotCfg):
             foot_slip = -0.1
             feet_distance = 0.2
             knee_distance = 0.2
-            # contact 
+            # contact
             feet_contact_forces = -0.02
             # vel tracking
             tracking_lin_vel = 1.4
@@ -275,7 +272,7 @@ class ZBot2Cfg(LeggedRobotCfg):
             # stand_still = 5
             # base pos
             default_joint_pos = 0.8
-            orientation = 1.
+            orientation = 1.0
             base_height = 0.2
             base_acc = 0.2
             # energy
@@ -283,7 +280,7 @@ class ZBot2Cfg(LeggedRobotCfg):
             torques = -1e-10
             dof_vel = -1e-5
             dof_acc = -5e-9
-            collision = -1.
+            collision = -1.0
 
     class normalization:
         class obs_scales:

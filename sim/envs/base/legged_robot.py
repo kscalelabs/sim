@@ -82,7 +82,7 @@ class LeggedRobot(BaseTask):
         """Reset all robots"""
 
         self.reset_idx(torch.arange(self.num_envs, device=self.device))
-        
+
         obs, privileged_obs, _, _, _ = self.step(
             torch.zeros(self.num_envs, self.num_actions, device=self.device, requires_grad=False)
         )
@@ -412,7 +412,9 @@ class LeggedRobot(BaseTask):
             self.root_states[env_ids] = self.base_init_state
             self.root_states[env_ids, :3] += self.env_origins[env_ids]
         # base velocities
-        # self.root_states[env_ids, 7:13] = torch_rand_float(-0.05, 0.05, (len(env_ids), 6), device=self.device) # [7:10]: lin vel, [10:13]: ang vel
+        self.root_states[env_ids, 7:13] = torch_rand_float(
+            -0.05, 0.05, (len(env_ids), 6), device=self.device
+        )  # [7:10]: lin vel, [10:13]: ang vel
         if self.cfg.asset.fix_base_link:
             self.root_states[env_ids, 7:13] = 0
             self.root_states[env_ids, 2] += 1.8
@@ -521,13 +523,13 @@ class LeggedRobot(BaseTask):
         )
         self.forward_vec = to_torch([1.0, 0.0, 0.0], device=self.device).repeat((self.num_envs, 1))
         self.torques = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.p_gains = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.d_gains = torch.zeros(
-            self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
+            self.num_envs, self.num_joints, dtype=torch.float, device=self.device, requires_grad=False
         )
         self.actions = torch.zeros(
             self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False
@@ -612,11 +614,13 @@ class LeggedRobot(BaseTask):
 
         # remove zero scales + multiply non-zero ones by dt
         for key in list(self.reward_scales.keys()):
-            scale = self.reward_scales[key]
-            if scale == 0:
-                self.reward_scales.pop(key)
-            else:
-                self.reward_scales[key] *= self.dt
+            if key != "termination":
+                scale = self.reward_scales[key]
+                if scale == 0:
+                    self.reward_scales.pop(key)
+                else:
+                    self.reward_scales[key] *= self.dt
+
         # prepare list of functions
         self.reward_functions = []
         self.reward_names = []
